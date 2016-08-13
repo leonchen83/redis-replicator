@@ -1,12 +1,16 @@
-# Redis-replicator
+# Redis-replicator  
 `Redis Replicator` is a redis `RDB` and `Command` parser written in java.  
 It can `parse`,`filter`,`broadcast` the `RDB` and `Command` events in a real time manner.  
+  
+#Requirements  
+jdk 1.7+  
+rdb version 6+  
 
 #Usage  
   
 ##Socket  
-
-```java
+  
+```java  
         RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379);
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -25,7 +29,7 @@ It can `parse`,`filter`,`broadcast` the `RDB` and `Command` events in a real tim
 
 ##File  
 
-```java
+```java  
         RedisReplicator replicator = new RedisReplicator(new File("dump.rdb"));
         replicator.addRdbFilter(new RdbFilter() {
             @Override
@@ -42,3 +46,62 @@ It can `parse`,`filter`,`broadcast` the `RDB` and `Command` events in a real tim
 
         replicator.open();
 ```  
+
+#Command Extension  
+  
+1. write a command parser.  
+```java  
+public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
+
+    @Override
+    public AppendCommand parse(CommandName cmdName, Object[] params) {
+        return new AppendCommand((String) params[0], (String) params[1]);
+    }
+
+    public static class AppendCommand implements Command {
+        public final String key;
+        public final String value;
+
+        public AppendCommand(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "AppendCommand{" +
+                    "key='" + key + '\'' +
+                    ", value='" + value + '\'' +
+                    '}';
+        }
+
+        @Override
+        public CommandName name() {
+            return CommandName.name("APPEND");
+        }
+    }
+}
+```
+  
+2. register this parser.  
+```java  
+    RedisReplicator replicator = new RedisReplicator("127.0.0.1",6379);
+    replicator.addCommandParser(CommandName.name("APPEND"),new AppendParser());
+```
+  
+3. handler event about this command.  
+```java
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                if(command.name().equals(CommandName.name("APPEND"))){
+                    //your code here
+                }
+            }
+        });
+```
+  
+#References  
+  * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  
+  * [Redis RDB File Format](https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format)  
+  * [Redis Protocol specification](http://redis.io/topics/protocol)  

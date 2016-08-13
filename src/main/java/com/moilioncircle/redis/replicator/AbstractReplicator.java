@@ -125,5 +125,6 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("SET"), new SetParser());
         addCommandParser(CommandName.name("MSET"), new MSetParser());
         addCommandParser(CommandName.name("DEL"), new DelParser());
+        addCommandParser(CommandName.name("SADD"), new SAddParser());
     }
 }

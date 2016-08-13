@@ -20,6 +20,8 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
+import java.util.Arrays;
+
 /**
  * Created by leon on 8/14/16.
  */
@@ -38,6 +40,13 @@ public class DelParser implements CommandParser<DelParser.DelCommand> {
 
         public DelCommand(String... keys) {
             this.keys = keys;
+        }
+
+        @Override
+        public String toString() {
+            return "DelCommand{" +
+                    "keys=" + Arrays.toString(keys) +
+                    '}';
         }
 
         @Override

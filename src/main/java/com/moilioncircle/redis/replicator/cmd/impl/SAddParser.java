@@ -20,43 +20,45 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Created by leon on 8/14/16.
  */
-public class MSetParser implements CommandParser<MSetParser.MSetCommand> {
+public class SAddParser implements CommandParser<SAddParser.SAddCommand> {
+
+
     @Override
-    public MSetCommand parse(CommandName cmdName, Object[] params) {
-        if (params == null) return new MSetCommand(null);
-        int idx = 0;
-        Map<String, String> kv = new LinkedHashMap<>();
+    public SAddCommand parse(CommandName cmdName, Object[] params) {
+        int idx = 0, newIdx = 0;
+        String key = (String) params[idx++];
+        String[] members = new String[params.length - 1];
         while (idx < params.length) {
-            String key = (String) params[idx++];
-            String value = idx == params.length ? null : (String) params[idx++];
-            kv.put(key, value);
+            members[newIdx++] = (String) params[idx++];
         }
-        return new MSetCommand(kv);
+        return new SAddCommand(key, members);
     }
 
-    public static class MSetCommand implements Command {
-        public final Map<String, String> kv;
+    public static class SAddCommand implements Command {
+        public final String key;
+        public final String[] members;
 
-        public MSetCommand(Map<String, String> kv) {
-            this.kv = kv;
+        public SAddCommand(String key, String... members) {
+            this.key = key;
+            this.members = members;
         }
 
         @Override
         public String toString() {
-            return "MSetCommand{" +
-                    "kv=" + kv +
+            return "SAddCommand{" +
+                    "key='" + key + '\'' +
+                    ", members=" + Arrays.toString(members) +
                     '}';
         }
 
         @Override
         public CommandName name() {
-            return CommandName.name("MSET");
+            return CommandName.name("SADD");
         }
     }
 }

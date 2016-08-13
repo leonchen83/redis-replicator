@@ -92,9 +92,7 @@ public class ReplyParser {
                     }
                 }
                 len = Long.parseLong(builder.toString());
-                if (len == -1) {
-                    return null;
-                }
+                if (len == -1) return null;
                 Object[] ary = new Object[(int) len];
                 for (int i = 0; i < len; i++) {
                     Object obj = parse();

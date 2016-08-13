@@ -50,9 +50,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     public RedisSocketReplicator(String host, int port, String password) throws IOException {
         this.host = host;
         this.port = port;
-        if (password != null) {
-            auth(password);
-        }
+        if (password != null) auth(password);
         buildInCommandParserRegister();
     }
 
@@ -83,6 +81,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
     }
 
+    @Override
     public void open() throws IOException {
         send("SYNC".getBytes());
         final Replicator replicator = this;

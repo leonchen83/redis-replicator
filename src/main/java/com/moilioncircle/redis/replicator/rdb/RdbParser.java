@@ -286,11 +286,7 @@ public class RdbParser {
                 value = new byte[]{0x00};
                 break;
         }
-        if (encode) {
-            return String.valueOf(in.readInt(value));
-        } else {
-            return value;
-        }
+        return encode ? String.valueOf(in.readInt(value)) : value;
     }
 
     /**
@@ -309,11 +305,7 @@ public class RdbParser {
         int len = rdbLoadLen().len;
         byte[] inBytes = in.readBytes(clen);
         byte[] outBytes = Lzf.decode(inBytes, len);
-        if (encode) {
-            return new String(outBytes, "UTF-8");
-        } else {
-            return outBytes;
-        }
+        return encode ? new String(outBytes, "UTF-8") : outBytes;
     }
 
     /**
@@ -619,12 +611,12 @@ public class RdbParser {
          * <length-prev-entry> format:
          * |xxxxxxxx| if first byte value < 254. then 1 byte as prev len.
          * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| if first byte >=254 then next 4 byte as prev len.
-         * <p/>
+         * <p>
          * <special-flag>:
          * |00xxxxxx| remaining 6 bit as string len.
          * |01xxxxxx|xxxxxxxx| combined 14 bit as string len.
          * |10xxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 byte as string len.
-         * <p/>
+         * <p>
          * |11111110|xxxxxxxx| next 1 byte as 8bit int
          * |11000000|xxxxxxxx|xxxxxxxx| next 2 bytes as 16bit int
          * |11110000|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 3 bytes as 24bit int

@@ -40,12 +40,14 @@ public abstract class AbstractReplicator implements Replicator {
     protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
 
+    @Override
     public void doCommandHandler(Command command) {
         for (CommandListener listener : listeners) {
             listener.handle(this, command);
         }
     }
 
+    @Override
     public boolean doCommandFilter(Command command) {
         for (CommandFilter filter : filters) {
             if (!filter.accept(command)) return false;
@@ -53,12 +55,14 @@ public abstract class AbstractReplicator implements Replicator {
         return true;
     }
 
+    @Override
     public void doRdbHandler(KeyValuePair<?> kv) {
         for (RdbListener listener : rdbListeners) {
             listener.handle(this, kv);
         }
     }
 
+    @Override
     public boolean doRdbFilter(KeyValuePair<?> kv) {
         for (RdbFilter filter : rdbFilters) {
             if (!filter.accept(kv)) return false;

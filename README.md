@@ -49,7 +49,7 @@ rdb version 6+
 
 #Command Extension  
   
-1. write a command parser.  
+* write a command parser.  
 ```java  
 public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 
@@ -83,13 +83,13 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 }
 ```
   
-2. register this parser.  
+* register this parser.  
 ```java  
     RedisReplicator replicator = new RedisReplicator("127.0.0.1",6379);
     replicator.addCommandParser(CommandName.name("APPEND"),new AppendParser());
 ```
   
-3. handler event about this command.  
+* handler event about this command.  
 ```java
         replicator.addCommandListener(new CommandListener() {
             @Override

@@ -23,6 +23,8 @@ import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 
+import java.io.File;
+
 /**
  * Created by leon on 8/13/16.
  */
@@ -30,7 +32,7 @@ public class RedisReplicatorTest {
 
     @Test
     public void testSync() throws Exception {
-        RedisReplicator replicator = new RedisReplicator(RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dump.rdb"));
+        RedisReplicator replicator = new RedisReplicator(new File("dump.rdb"));
         replicator.addRdbFilter(new RdbFilter() {
             @Override
             public boolean accept(KeyValuePair<?> kv) {
@@ -45,7 +47,6 @@ public class RedisReplicatorTest {
         });
 
         replicator.open();
-        replicator.close();
 
         //socket
         replicator = new RedisReplicator("127.0.0.1", 6379);

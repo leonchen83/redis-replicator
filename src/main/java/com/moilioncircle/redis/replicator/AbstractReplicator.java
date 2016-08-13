@@ -17,9 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
-import com.moilioncircle.redis.replicator.cmd.impl.AppendParser;
-import com.moilioncircle.redis.replicator.cmd.impl.PingParser;
-import com.moilioncircle.redis.replicator.cmd.impl.SetParser;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -122,8 +120,10 @@ public abstract class AbstractReplicator implements Replicator {
 
     @Override
     public void buildInCommandParserRegister() {
-        commands.putIfAbsent(CommandName.name("PING"), new PingParser());
-        commands.putIfAbsent(CommandName.name("APPEND"), new AppendParser());
-        commands.putIfAbsent(CommandName.name("SET"), new SetParser());
+        addCommandParser(CommandName.name("PING"), new PingParser());
+        addCommandParser(CommandName.name("APPEND"), new AppendParser());
+        addCommandParser(CommandName.name("SET"), new SetParser());
+        addCommandParser(CommandName.name("MSET"), new MSetParser());
+        addCommandParser(CommandName.name("DEL"), new DelParser());
     }
 }

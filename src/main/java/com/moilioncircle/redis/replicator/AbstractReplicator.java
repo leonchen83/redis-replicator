@@ -123,11 +123,14 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("PING"), new PingParser());
         addCommandParser(CommandName.name("APPEND"), new AppendParser());
         addCommandParser(CommandName.name("SET"), new SetParser());
+        addCommandParser(CommandName.name("SETEX"), new SetExParser());
         addCommandParser(CommandName.name("MSET"), new MSetParser());
         addCommandParser(CommandName.name("DEL"), new DelParser());
         addCommandParser(CommandName.name("SADD"), new SAddParser());
         addCommandParser(CommandName.name("HMSET"), new HMSetParser());
         addCommandParser(CommandName.name("HSET"), new HSetParser());
         addCommandParser(CommandName.name("LSET"), new LSetParser());
+        addCommandParser(CommandName.name("EXPIRE"), new ExpireParser());
+        addCommandParser(CommandName.name("EXPIREAT"), new ExpireAtParser());
     }
 }

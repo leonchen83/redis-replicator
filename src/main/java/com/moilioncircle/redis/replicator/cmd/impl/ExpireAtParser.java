@@ -21,32 +21,37 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
 /**
- * Created by leon on 8/13/16.
+ * Created by leon on 8/14/16.
  */
-public class PingParser implements CommandParser<PingParser.PingCommand> {
+public class ExpireAtParser implements CommandParser<ExpireAtParser.ExpireAtCommand> {
     @Override
-    public PingCommand parse(CommandName cmdName, Object[] params) {
-        String message = params.length == 0 ? null : (String) params[0];
-        return new PingCommand(message);
+    public ExpireAtCommand parse(CommandName cmdName, Object[] params) {
+        int idx = 0;
+        String key = (String) params[idx++];
+        long ex = Long.parseLong((String) params[idx++]);
+        return new ExpireAtCommand(key, ex);
     }
 
-    public static class PingCommand implements Command {
-        public final String message;
+    public static class ExpireAtCommand implements Command {
+        public final String key;
+        public final long ex;
 
-        public PingCommand(String message) {
-            this.message = message;
+        public ExpireAtCommand(String key, long ex) {
+            this.key = key;
+            this.ex = ex;
         }
 
         @Override
         public String toString() {
-            return "PingCommand{" +
-                    "message='" + message + '\'' +
+            return "ExpireAtCommand{" +
+                    "key='" + key + '\'' +
+                    ", ex=" + ex +
                     '}';
         }
 
         @Override
         public CommandName name() {
-            return CommandName.name("PING");
+            return CommandName.name("EXPIREAT");
         }
     }
 }

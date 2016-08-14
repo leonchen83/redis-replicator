@@ -21,32 +21,41 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
 /**
- * Created by leon on 8/13/16.
+ * Created by leon on 8/14/16.
  */
-public class PingParser implements CommandParser<PingParser.PingCommand> {
+public class SetExParser implements CommandParser<SetExParser.SetExCommand> {
     @Override
-    public PingCommand parse(CommandName cmdName, Object[] params) {
-        String message = params.length == 0 ? null : (String) params[0];
-        return new PingCommand(message);
+    public SetExCommand parse(CommandName cmdName, Object[] params) {
+        int idx = 0;
+        String key = (String) params[idx++];
+        int ex = Integer.parseInt((String) params[idx++]);
+        String value = (String) params[idx++];
+        return new SetExCommand(key, ex, value);
     }
 
-    public static class PingCommand implements Command {
-        public final String message;
+    public static class SetExCommand implements Command {
+        public final String key;
+        public final int ex;
+        public final String value;
 
-        public PingCommand(String message) {
-            this.message = message;
+        public SetExCommand(String key, int ex, String value) {
+            this.key = key;
+            this.value = value;
+            this.ex = ex;
         }
 
         @Override
         public String toString() {
-            return "PingCommand{" +
-                    "message='" + message + '\'' +
+            return "SetExCommand{" +
+                    "key='" + key + '\'' +
+                    ", ex=" + ex +
+                    ", value='" + value + '\'' +
                     '}';
         }
 
         @Override
         public CommandName name() {
-            return CommandName.name("PING");
+            return CommandName.name("SETEX");
         }
     }
 }

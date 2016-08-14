@@ -29,7 +29,7 @@ public class LSetParser implements CommandParser<LSetParser.LSetCommand> {
     public LSetCommand parse(CommandName cmdName, Object[] params) {
         int idx = 0;
         String key = (String) params[idx++];
-        int index = ((Long) params[idx++]).intValue();
+        int index = Integer.parseInt((String) params[idx++]);
         String value = (String) params[idx++];
         return new LSetCommand(key, index, value);
     }

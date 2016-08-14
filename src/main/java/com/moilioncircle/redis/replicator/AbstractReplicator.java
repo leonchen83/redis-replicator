@@ -138,5 +138,9 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("PSETEX"), new PSetExParser());
         addCommandParser(CommandName.name("SETNX"), new SetNxParser());
         addCommandParser(CommandName.name("SETRANGE"), new SetRangeParser());
+        addCommandParser(CommandName.name("HDEL"), new HDelParser());
+        addCommandParser(CommandName.name("HEXISTS"), new HExistsParser());
+        addCommandParser(CommandName.name("HKEYS"), new HKeysParser());
+        addCommandParser(CommandName.name("HVALS"), new HValsParser());
     }
 }

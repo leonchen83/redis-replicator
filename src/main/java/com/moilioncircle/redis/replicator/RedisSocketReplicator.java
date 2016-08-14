@@ -66,8 +66,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 socket.setKeepAlive(true);
                 socket.setTcpNoDelay(true);
                 socket.setSoLinger(true, 0);
-                socket.connect(new InetSocketAddress(host, port), 10000);
-                socket.setSoTimeout(10000);
+                socket.connect(new InetSocketAddress(host, port), 30000);
+                socket.setSoTimeout(30000);
                 outputStream = new RedisOutputStream(socket.getOutputStream());
                 inputStream = new RedisInputStream(socket.getInputStream());
                 replyParser = new ReplyParser(inputStream);

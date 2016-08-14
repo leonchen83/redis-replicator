@@ -23,40 +23,39 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 /**
  * Created by leon on 8/14/16.
  */
-public class HSetParser implements CommandParser<HSetParser.HSetCommand> {
-
+public class PSetExParser implements CommandParser<PSetExParser.PSetExCommand> {
     @Override
-    public HSetCommand parse(CommandName cmdName, Object[] params) {
+    public PSetExCommand parse(CommandName cmdName, Object[] params) {
         int idx = 0;
         String key = (String) params[idx++];
-        String field = (String) params[idx++];
+        long ex = Long.parseLong((String) params[idx++]);
         String value = (String) params[idx++];
-        return new HSetCommand(key, field, value);
+        return new PSetExCommand(key, ex, value);
     }
 
-    public static class HSetCommand implements Command {
+    public static class PSetExCommand implements Command {
         public final String key;
-        public final String field;
+        public final long ex;
         public final String value;
 
-        public HSetCommand(String key, String field, String value) {
+        public PSetExCommand(String key, long ex, String value) {
             this.key = key;
-            this.field = field;
             this.value = value;
+            this.ex = ex;
         }
 
         @Override
         public String toString() {
-            return "HSetCommand{" +
+            return "PSetExCommand{" +
                     "key='" + key + '\'' +
-                    ", field='" + field + '\'' +
+                    ", ex=" + ex +
                     ", value='" + value + '\'' +
                     '}';
         }
 
         @Override
         public CommandName name() {
-            return CommandName.name("HSET");
+            return CommandName.name("PSETEX");
         }
     }
 }

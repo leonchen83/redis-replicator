@@ -23,23 +23,23 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 /**
  * Created by leon on 8/14/16.
  */
-public class HSetParser implements CommandParser<HSetParser.HSetCommand> {
+public class HSetNxParser implements CommandParser<HSetNxParser.HSetNxCommand> {
 
     @Override
-    public HSetCommand parse(CommandName cmdName, Object[] params) {
+    public HSetNxCommand parse(CommandName cmdName, Object[] params) {
         int idx = 0;
         String key = (String) params[idx++];
         String field = (String) params[idx++];
         String value = (String) params[idx++];
-        return new HSetCommand(key, field, value);
+        return new HSetNxCommand(key, field, value);
     }
 
-    public static class HSetCommand implements Command {
+    public static class HSetNxCommand implements Command {
         public final String key;
         public final String field;
         public final String value;
 
-        public HSetCommand(String key, String field, String value) {
+        public HSetNxCommand(String key, String field, String value) {
             this.key = key;
             this.field = field;
             this.value = value;
@@ -47,7 +47,7 @@ public class HSetParser implements CommandParser<HSetParser.HSetCommand> {
 
         @Override
         public String toString() {
-            return "HSetCommand{" +
+            return "HSetNxCommand{" +
                     "key='" + key + '\'' +
                     ", field='" + field + '\'' +
                     ", value='" + value + '\'' +
@@ -56,7 +56,7 @@ public class HSetParser implements CommandParser<HSetParser.HSetCommand> {
 
         @Override
         public CommandName name() {
-            return CommandName.name("HSET");
+            return CommandName.name("HSETNX");
         }
     }
 }

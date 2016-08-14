@@ -20,43 +20,43 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Created by leon on 8/14/16.
  */
-public class HSetParser implements CommandParser<HSetParser.HSetCommand> {
-
+public class MSetNxParser implements CommandParser<MSetNxParser.MSetNxCommand> {
     @Override
-    public HSetCommand parse(CommandName cmdName, Object[] params) {
+    public MSetNxCommand parse(CommandName cmdName, Object[] params) {
+        if (params == null) return new MSetNxCommand(null);
         int idx = 0;
-        String key = (String) params[idx++];
-        String field = (String) params[idx++];
-        String value = (String) params[idx++];
-        return new HSetCommand(key, field, value);
+        Map<String, String> kv = new LinkedHashMap<>();
+        while (idx < params.length) {
+            String key = (String) params[idx++];
+            String value = idx == params.length ? null : (String) params[idx++];
+            kv.put(key, value);
+        }
+        return new MSetNxCommand(kv);
     }
 
-    public static class HSetCommand implements Command {
-        public final String key;
-        public final String field;
-        public final String value;
+    public static class MSetNxCommand implements Command {
+        public final Map<String, String> kv;
 
-        public HSetCommand(String key, String field, String value) {
-            this.key = key;
-            this.field = field;
-            this.value = value;
+        public MSetNxCommand(Map<String, String> kv) {
+            this.kv = kv;
         }
 
         @Override
         public String toString() {
-            return "HSetCommand{" +
-                    "key='" + key + '\'' +
-                    ", field='" + field + '\'' +
-                    ", value='" + value + '\'' +
+            return "MSetNxCommand{" +
+                    "kv=" + kv +
                     '}';
         }
 
         @Override
         public CommandName name() {
-            return CommandName.name("HSET");
+            return CommandName.name("MSETNX");
         }
     }
 }

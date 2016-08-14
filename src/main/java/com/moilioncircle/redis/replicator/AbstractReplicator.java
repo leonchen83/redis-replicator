@@ -132,5 +132,11 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("LSET"), new LSetParser());
         addCommandParser(CommandName.name("EXPIRE"), new ExpireParser());
         addCommandParser(CommandName.name("EXPIREAT"), new ExpireAtParser());
+        addCommandParser(CommandName.name("GETSET"), new GetSetParser());
+        addCommandParser(CommandName.name("HSETNX"), new HSetNxParser());
+        addCommandParser(CommandName.name("MSETNX"), new MSetNxParser());
+        addCommandParser(CommandName.name("PSETEX"), new PSetExParser());
+        addCommandParser(CommandName.name("SETNX"), new SetNxParser());
+        addCommandParser(CommandName.name("SETRANGE"), new SetRangeParser());
     }
 }

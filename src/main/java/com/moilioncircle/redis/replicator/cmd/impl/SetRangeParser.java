@@ -20,43 +20,43 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
+
 /**
  * Created by leon on 8/14/16.
  */
-public class HSetParser implements CommandParser<HSetParser.HSetCommand> {
-
+public class SetRangeParser implements CommandParser<SetRangeParser.SetRangeCommand> {
     @Override
-    public HSetCommand parse(CommandName cmdName, Object[] params) {
+    public SetRangeCommand parse(CommandName cmdName, Object[] params) {
         int idx = 0;
         String key = (String) params[idx++];
-        String field = (String) params[idx++];
+        int index = Integer.parseInt((String) params[idx++]);
         String value = (String) params[idx++];
-        return new HSetCommand(key, field, value);
+        return new SetRangeCommand(key, index, value);
     }
 
-    public static class HSetCommand implements Command {
+    public static class SetRangeCommand implements Command {
         public final String key;
-        public final String field;
+        public final int index;
         public final String value;
 
-        public HSetCommand(String key, String field, String value) {
+        public SetRangeCommand(String key, int index, String value) {
             this.key = key;
-            this.field = field;
+            this.index = index;
             this.value = value;
         }
 
         @Override
         public String toString() {
-            return "HSetCommand{" +
+            return "SetRangeCommand{" +
                     "key='" + key + '\'' +
-                    ", field='" + field + '\'' +
+                    ", index=" + index +
                     ", value='" + value + '\'' +
                     '}';
         }
 
         @Override
         public CommandName name() {
-            return CommandName.name("HSET");
+            return CommandName.name("SETRANGE");
         }
     }
 }

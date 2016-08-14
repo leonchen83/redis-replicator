@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd;
 
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.util.ByteBuilder;
 
 import java.io.IOException;
 
@@ -29,21 +30,21 @@ public interface BulkReplyHandler {
     class SimpleBulkReplyHandler implements BulkReplyHandler {
         @Override
         public String handle(long len, RedisInputStream in) throws IOException {
-            StringBuilder builder = new StringBuilder();
-            char c;
+            ByteBuilder builder = ByteBuilder.allocate(512);
+            int c;
             while (true) {
-                while ((c = (char) in.read()) != '\r') {
-                    builder.append(c);
+                while ((c = in.read()) != '\r') {
+                    builder.put((byte) c);
                 }
-                if ((c = (char) in.read()) == '\n') {
+                if ((c = in.read()) == '\n') {
                     break;
                 } else {
-                    builder.append(c);
+                    builder.put((byte) c);
                 }
             }
             //simple reply
             String reply = builder.toString();
-            if (reply.length() != len) {
+            if (builder.length() != len) {
                 throw new AssertionError("reply len " + reply.length() + " != bulk len " + len);
             }
             return reply;

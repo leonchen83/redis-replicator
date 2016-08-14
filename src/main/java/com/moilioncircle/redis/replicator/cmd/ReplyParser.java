@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd;
 
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.util.ByteBuilder;
 
 import java.io.IOException;
 
@@ -42,19 +43,19 @@ public class ReplyParser {
      * @throws IOException
      */
     public Object parse(BulkReplyHandler handler) throws IOException {
-        char c = (char) in.read();
+        int c = in.read();
         switch (c) {
             case DOLLAR:
                 //RESP Bulk Strings
-                StringBuilder builder = new StringBuilder();
+                ByteBuilder builder = ByteBuilder.allocate(512);
                 while (true) {
-                    while ((c = (char) in.read()) != '\r') {
-                        builder.append(c);
+                    while ((c = in.read()) != '\r') {
+                        builder.put((byte) c);
                     }
-                    if ((c = (char) in.read()) == '\n') {
+                    if ((c = in.read()) == '\n') {
                         break;
                     } else {
-                        builder.append(c);
+                        builder.put((byte) c);
                     }
                 }
                 long len = Long.parseLong(builder.toString());
@@ -65,30 +66,30 @@ public class ReplyParser {
                 throw new AssertionError("callback is null");
             case COLON:
                 // RESP Integers
-                builder = new StringBuilder();
+                builder = ByteBuilder.allocate(512);
                 while (true) {
-                    while ((c = (char) in.read()) != '\r') {
-                        builder.append(c);
+                    while ((c = in.read()) != '\r') {
+                        builder.put((byte) c);
                     }
-                    if ((c = (char) in.read()) == '\n') {
+                    if ((c = in.read()) == '\n') {
                         break;
                     } else {
-                        builder.append(c);
+                        builder.put((byte) c);
                     }
                 }
                 //as integer
                 return Long.parseLong(builder.toString());
             case STAR:
                 // RESP Arrays
-                builder = new StringBuilder();
+                builder = ByteBuilder.allocate(512);
                 while (true) {
-                    while ((c = (char) in.read()) != '\r') {
-                        builder.append(c);
+                    while ((c = in.read()) != '\r') {
+                        builder.put((byte) c);
                     }
-                    if ((c = (char) in.read()) == '\n') {
+                    if ((c = in.read()) == '\n') {
                         break;
                     } else {
-                        builder.append(c);
+                        builder.put((byte) c);
                     }
                 }
                 len = Long.parseLong(builder.toString());
@@ -101,28 +102,28 @@ public class ReplyParser {
                 return ary;
             case PLUS:
                 // RESP Simple Strings
-                builder = new StringBuilder();
+                builder = ByteBuilder.allocate(512);
                 while (true) {
-                    while ((c = (char) in.read()) != '\r') {
-                        builder.append(c);
+                    while ((c = in.read()) != '\r') {
+                        builder.put((byte) c);
                     }
-                    if ((c = (char) in.read()) == '\n') {
+                    if ((c = in.read()) == '\n') {
                         return builder.toString();
                     } else {
-                        builder.append(c);
+                        builder.put((byte) c);
                     }
                 }
             case MINUS:
                 // RESP Errors
-                builder = new StringBuilder();
+                builder = ByteBuilder.allocate(512);
                 while (true) {
-                    while ((c = (char) in.read()) != '\r') {
-                        builder.append(c);
+                    while ((c = in.read()) != '\r') {
+                        builder.put((byte) c);
                     }
-                    if ((c = (char) in.read()) == '\n') {
+                    if ((c = in.read()) == '\n') {
                         return builder.toString();
                     } else {
-                        builder.append(c);
+                        builder.put((byte) c);
                     }
                 }
             default:

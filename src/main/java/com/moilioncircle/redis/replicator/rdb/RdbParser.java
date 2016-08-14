@@ -93,12 +93,12 @@ public class RdbParser {
         String magicString = StringHelper.str(in, 5);//REDIS
         if (!magicString.equals("REDIS")) {
             logger.error("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
-            return in.total;
+            return in.total();
         }
         int version = Integer.parseInt(StringHelper.str(in, 4));//0006
         if (version < 1 || version > 6) {
             logger.error("Can't handle RDB format version " + version);
-            return in.total;
+            return in.total();
         }
         /*
          * ----------------------------
@@ -108,7 +108,7 @@ public class RdbParser {
         int flag;
         if ((flag = in.read()) != 0xfe) {
             logger.error("Expect byte [0xfe] but :[0x" + Integer.toHexString(flag) + "]");
-            return in.total;
+            return in.total();
         }
         int dbNumber = in.readInt(1);
 
@@ -203,7 +203,7 @@ public class RdbParser {
             if (!replicator.doRdbFilter(kv)) continue;
             replicator.doRdbHandler(kv);
         }
-        return in.total;
+        return in.total();
     }
 
     /**

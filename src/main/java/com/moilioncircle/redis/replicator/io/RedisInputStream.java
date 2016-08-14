@@ -27,7 +27,7 @@ public class RedisInputStream extends InputStream {
 
     private final InputStream in;
 
-    public long total = 0;
+    private long total = 0;
     private int head = 0;
     private int tail = 0;
 
@@ -40,6 +40,18 @@ public class RedisInputStream extends InputStream {
     public RedisInputStream(final InputStream in, int len) {
         this.in = in;
         this.buf = new byte[len];
+    }
+
+    public int head() {
+        return head;
+    }
+
+    public int tail() {
+        return tail;
+    }
+
+    public long total() {
+        return total;
     }
 
     @Override

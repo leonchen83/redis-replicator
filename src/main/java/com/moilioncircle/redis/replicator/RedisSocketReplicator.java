@@ -163,6 +163,14 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
         outputStream.flush();
     }
+    
+    public Object reply() throws IOException {
+        return replyParser.parse();
+    }
+
+    public Object reply(BulkReplyHandler handler) throws IOException {
+        return replyParser.parse(handler);
+    }
 
     @Override
     public void close() throws IOException {

@@ -25,10 +25,10 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="com.roiland.platform.redis.replicator.rdb" level="info" additivity="false">
+        <Logger name="com.moilioncircle.redis.replicator.rdb" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Logger name="com.roiland.platform.redis.replicator.RedisSocketReplicator" level="debug" additivity="false">
+        <Logger name="com.moilioncircle.redis.replicator.RedisSocketReplicator" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="error">

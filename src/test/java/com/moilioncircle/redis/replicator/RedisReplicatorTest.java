@@ -18,12 +18,9 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
-
-import java.io.File;
 
 /**
  * Created by leon on 8/13/16.
@@ -32,24 +29,8 @@ public class RedisReplicatorTest {
 
     @Test
     public void testSync() throws Exception {
-        RedisReplicator replicator = new RedisReplicator(new File("dump.rdb"));
-        replicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getKey().startsWith("SESSION");
-            }
-        });
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-
-        replicator.open();
-
         //socket
-        replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -63,6 +44,5 @@ public class RedisReplicatorTest {
             }
         });
         replicator.open();
-
     }
 }

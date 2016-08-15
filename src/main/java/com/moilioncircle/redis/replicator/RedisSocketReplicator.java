@@ -95,6 +95,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         String reply = (String) replyParser.parse(new BulkReplyHandler() {
             @Override
             public String handle(long len, RedisInputStream in) throws IOException {
+                if (logger.isDebugEnabled()) logger.debug("RDB dump file size:" + len);
                 RdbParser parser = new RdbParser(in, replicator);
                 parser.parse();
                 return "OK";

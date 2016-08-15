@@ -59,25 +59,24 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     private void connect() {
-        if (!connected.get()) {
+        if (!connected.compareAndSet(false, true)) return;
+
+        try {
+            socket = new Socket();
+            socket.setReuseAddress(true);
+            socket.setKeepAlive(true);
+            socket.setTcpNoDelay(true);
+            socket.setSoLinger(true, 0);
+            socket.connect(new InetSocketAddress(host, port), 30000);
+            socket.setSoTimeout(30000);
+            outputStream = new RedisOutputStream(socket.getOutputStream());
+            inputStream = new RedisInputStream(socket.getInputStream());
+            replyParser = new ReplyParser(inputStream);
+        } catch (IOException ex) {
             try {
-                socket = new Socket();
-                socket.setReuseAddress(true);
-                socket.setKeepAlive(true);
-                socket.setTcpNoDelay(true);
-                socket.setSoLinger(true, 0);
-                socket.connect(new InetSocketAddress(host, port), 30000);
-                socket.setSoTimeout(30000);
-                outputStream = new RedisOutputStream(socket.getOutputStream());
-                inputStream = new RedisInputStream(socket.getInputStream());
-                replyParser = new ReplyParser(inputStream);
-                connected.compareAndSet(false, true);
-            } catch (IOException ex) {
-                try {
-                    close();
-                } catch (IOException e) {
-                    logger.error("Error", e);
-                }
+                close();
+            } catch (IOException e) {
+                logger.error("Error", e);
             }
         }
     }
@@ -162,9 +161,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void close() throws IOException {
         if (!connected.compareAndSet(true, false)) return;
-        inputStream.close();
-        outputStream.close();
-        socket.close();
+        if (inputStream != null) inputStream.close();
+        if (outputStream != null) outputStream.close();
+        if (socket != null && !socket.isClosed()) socket.close();
         logger.info("channel closed");
     }
 }

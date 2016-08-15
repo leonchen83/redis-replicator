@@ -76,7 +76,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
             socket.connect(new InetSocketAddress(host, port), configuration.getConnectionTimeout());
             outputStream = new RedisOutputStream(socket.getOutputStream());
-            inputStream = new RedisInputStream(socket.getInputStream());
+            inputStream = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
             replyParser = new ReplyParser(inputStream);
         } catch (IOException ex) {
             try {

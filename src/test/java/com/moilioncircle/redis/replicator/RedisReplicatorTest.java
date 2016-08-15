@@ -49,7 +49,7 @@ public class RedisReplicatorTest {
         replicator.open();
 
         //socket
-        replicator = new RedisReplicator("127.0.0.1", 6379);
+        replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

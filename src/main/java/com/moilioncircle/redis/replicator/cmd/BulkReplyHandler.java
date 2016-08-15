@@ -32,16 +32,12 @@ public interface BulkReplyHandler {
         public String handle(long len, RedisInputStream in) throws IOException {
             ByteBuilder builder = ByteBuilder.allocate(512);
             int c;
-            while (true) {
-                while ((c = in.read()) != '\r') {
-                    builder.put((byte) c);
-                }
-                if ((c = in.read()) == '\n') {
-                    break;
-                } else {
-                    builder.put((byte) c);
-                }
+            for (int i = 0; i < len; i++) {
+                c = in.read();
+                builder.put((byte) c);
             }
+            if ((c = in.read()) != '\r') throw new AssertionError("Expect '\r' but :" + (char) c);
+            if ((c = in.read()) != '\n') throw new AssertionError("Expect '\n' but :" + (char) c);
             //simple reply
             String reply = builder.toString();
             if (builder.length() != len) {

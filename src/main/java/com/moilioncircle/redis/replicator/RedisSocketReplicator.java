@@ -127,7 +127,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 //do command handler
                 doCommandHandler(parsedCommand);
             } else {
-                throw new AssertionError("Reply not a command:" + obj);
+                if (logger.isInfoEnabled()) logger.info("Redis reply:" + obj);
             }
         }
     }
@@ -164,7 +164,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
         outputStream.flush();
     }
-    
+
     public Object reply() throws IOException {
         return replyParser.parse();
     }
@@ -179,6 +179,6 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (inputStream != null) inputStream.close();
         if (outputStream != null) outputStream.close();
         if (socket != null && !socket.isClosed()) socket.close();
-        logger.info("channel closed");
+        if (logger.isInfoEnabled()) logger.info("channel closed");
     }
 }

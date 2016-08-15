@@ -50,6 +50,10 @@ public class RedisInputStream extends InputStream {
         return tail;
     }
 
+    public int bufSize() {
+        return buf.length;
+    }
+    
     public long total() {
         return total;
     }

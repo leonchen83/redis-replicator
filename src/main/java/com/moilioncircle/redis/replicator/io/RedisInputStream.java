@@ -34,7 +34,7 @@ public class RedisInputStream extends InputStream {
     private final byte[] buf;
 
     public RedisInputStream(final InputStream in) {
-        this(in, 8196);
+        this(in, 8192);
     }
 
     public RedisInputStream(final InputStream in, int len) {

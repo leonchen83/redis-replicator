@@ -127,7 +127,7 @@ public class ReplyParser {
                     }
                 }
             default:
-                throw new AssertionError("Expect [$,:,*,+,-] but: 0x" + Integer.toHexString(c));
+                throw new AssertionError("Expect [$,:,*,+,-] but: " + (char) c);
 
         }
     }

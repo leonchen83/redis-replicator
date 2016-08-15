@@ -11,7 +11,7 @@ rdb version 6+
 ##Socket  
   
 ```java  
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379);
+        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

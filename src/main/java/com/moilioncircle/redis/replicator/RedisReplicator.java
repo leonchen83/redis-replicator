@@ -40,12 +40,8 @@ public class RedisReplicator implements Replicator {
         replicator = new RedisFileReplicator(in);
     }
 
-    public RedisReplicator(String host, int port) throws IOException {
-        replicator = new RedisSocketReplicator(host, port);
-    }
-
-    public RedisReplicator(String host, int port, String password) throws IOException {
-        replicator = new RedisSocketReplicator(host, port, password);
+    public RedisReplicator(String host, int port, Configuration configuration) throws IOException {
+        replicator = new RedisSocketReplicator(host, port, configuration);
     }
 
     @Override

@@ -41,21 +41,19 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     private final String host;
     private final int port;
+    private final Configuration configuration;
     private RedisOutputStream outputStream;
     private Socket socket;
     private ReplyParser replyParser;
 
     private final AtomicBoolean connected = new AtomicBoolean(false);
 
-    public RedisSocketReplicator(String host, int port, String password) throws IOException {
+    public RedisSocketReplicator(String host, int port, Configuration configuration) throws IOException {
         this.host = host;
         this.port = port;
-        if (password != null) auth(password);
+        this.configuration = configuration;
+        if (configuration.getAuthPassword() != null) auth(configuration.getAuthPassword());
         buildInCommandParserRegister();
-    }
-
-    public RedisSocketReplicator(String host, int port) throws IOException {
-        this(host, port, null);
     }
 
     private void connect() {
@@ -67,8 +65,16 @@ public class RedisSocketReplicator extends AbstractReplicator {
             socket.setKeepAlive(true);
             socket.setTcpNoDelay(true);
             socket.setSoLinger(true, 0);
-            socket.connect(new InetSocketAddress(host, port), 30000);
-            socket.setSoTimeout(30000);
+            if (configuration.getReadTimeout() > 0) {
+                socket.setSoTimeout(configuration.getReadTimeout());
+            }
+            if (configuration.getReceiveBufferSize() > 0) {
+                socket.setReceiveBufferSize(configuration.getReceiveBufferSize());
+            }
+            if (configuration.getSendBufferSize() > 0) {
+                socket.setSendBufferSize(configuration.getSendBufferSize());
+            }
+            socket.connect(new InetSocketAddress(host, port), configuration.getConnectionTimeout());
             outputStream = new RedisOutputStream(socket.getOutputStream());
             inputStream = new RedisInputStream(socket.getInputStream());
             replyParser = new ReplyParser(inputStream);

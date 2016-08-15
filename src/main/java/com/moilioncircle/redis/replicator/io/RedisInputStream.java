@@ -161,13 +161,10 @@ public class RedisInputStream extends InputStream {
     }
 
     public void fill() throws IOException {
-        head = 0;
         tail = in.read(buf, 0, buf.length);
-        if (tail == -1) {
-            throw new EOFException("end of file.");
-        } else {
-            total += tail;
-        }
+        if (tail == -1) throw new EOFException("end of file.");
+        total += tail;
+        head = 0;
     }
 
     public long skip(long len) throws IOException {

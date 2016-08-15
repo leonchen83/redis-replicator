@@ -65,47 +65,53 @@ public class Configuration {
         return connectionTimeout;
     }
 
-    public void setConnectionTimeout(int connectionTimeout) {
+    public Configuration setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
+        return this;
     }
 
     public int getReadTimeout() {
         return readTimeout;
     }
 
-    public void setReadTimeout(int readTimeout) {
+    public Configuration setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
+        return this;
     }
 
     public int getRetries() {
         return retries;
     }
 
-    public void setRetries(int retries) {
+    public Configuration setRetries(int retries) {
         this.retries = retries;
+        return this;
     }
 
     public String getAuthPassword() {
         return authPassword;
     }
 
-    public void setAuthPassword(String authPassword) {
+    public Configuration setAuthPassword(String authPassword) {
         this.authPassword = authPassword;
+        return this;
     }
 
     public int getReceiveBufferSize() {
         return receiveBufferSize;
     }
 
-    public void setReceiveBufferSize(int receiveBufferSize) {
+    public Configuration setReceiveBufferSize(int receiveBufferSize) {
         this.receiveBufferSize = receiveBufferSize;
+        return this;
     }
 
     public int getSendBufferSize() {
         return sendBufferSize;
     }
 
-    public void setSendBufferSize(int sendBufferSize) {
+    public Configuration setSendBufferSize(int sendBufferSize) {
         this.sendBufferSize = sendBufferSize;
+        return this;
     }
 }

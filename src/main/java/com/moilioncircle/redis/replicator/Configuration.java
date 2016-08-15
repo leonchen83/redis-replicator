@@ -57,6 +57,11 @@ public class Configuration {
     private int retries = 5;
 
     /**
+     * redis input stream buffer size
+     */
+    private int bufferSize = 8192;
+    
+    /**
      * auth password
      */
     private String authPassword = null;
@@ -112,6 +117,15 @@ public class Configuration {
 
     public Configuration setSendBufferSize(int sendBufferSize) {
         this.sendBufferSize = sendBufferSize;
+        return this;
+    }
+    
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    public Configuration setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
         return this;
     }
 }

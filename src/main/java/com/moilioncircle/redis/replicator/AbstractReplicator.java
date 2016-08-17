@@ -152,5 +152,9 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("RPUSH"), new RPushParser());
         addCommandParser(CommandName.name("RPUSHX"), new RPushXParser());
         addCommandParser(CommandName.name("ZREM"), new ZRemParser());
+        addCommandParser(CommandName.name("RENAME"), new RenameParser());
+        addCommandParser(CommandName.name("INCR"), new IncrParser());
+        addCommandParser(CommandName.name("DECR"), new DecrParser());
+        addCommandParser(CommandName.name("INCRBY"), new IncrByParser());
     }
 }

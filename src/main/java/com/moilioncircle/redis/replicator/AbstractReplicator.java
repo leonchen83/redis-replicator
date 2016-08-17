@@ -156,5 +156,7 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("INCR"), new IncrParser());
         addCommandParser(CommandName.name("DECR"), new DecrParser());
         addCommandParser(CommandName.name("INCRBY"), new IncrByParser());
+        addCommandParser(CommandName.name("PERSIST"), new PersistParser());
+        addCommandParser(CommandName.name("SELECT"), new SelectParser());
     }
 }

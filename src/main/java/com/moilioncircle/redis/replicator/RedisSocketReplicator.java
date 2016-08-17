@@ -56,35 +56,27 @@ public class RedisSocketReplicator extends AbstractReplicator {
         buildInCommandParserRegister();
     }
 
-    private void connect() {
+    private void connect() throws IOException {
         if (!connected.compareAndSet(false, true)) return;
 
-        try {
-            socket = new Socket();
-            socket.setReuseAddress(true);
-            socket.setKeepAlive(true);
-            socket.setTcpNoDelay(true);
-            socket.setSoLinger(true, 0);
-            if (configuration.getReadTimeout() > 0) {
-                socket.setSoTimeout(configuration.getReadTimeout());
-            }
-            if (configuration.getReceiveBufferSize() > 0) {
-                socket.setReceiveBufferSize(configuration.getReceiveBufferSize());
-            }
-            if (configuration.getSendBufferSize() > 0) {
-                socket.setSendBufferSize(configuration.getSendBufferSize());
-            }
-            socket.connect(new InetSocketAddress(host, port), configuration.getConnectionTimeout());
-            outputStream = new RedisOutputStream(socket.getOutputStream());
-            inputStream = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
-            replyParser = new ReplyParser(inputStream);
-        } catch (IOException ex) {
-            try {
-                close();
-            } catch (IOException e) {
-                logger.error("Error", e);
-            }
+        socket = new Socket();
+        socket.setReuseAddress(true);
+        socket.setKeepAlive(true);
+        socket.setTcpNoDelay(true);
+        socket.setSoLinger(true, 0);
+        if (configuration.getReadTimeout() > 0) {
+            socket.setSoTimeout(configuration.getReadTimeout());
         }
+        if (configuration.getReceiveBufferSize() > 0) {
+            socket.setReceiveBufferSize(configuration.getReceiveBufferSize());
+        }
+        if (configuration.getSendBufferSize() > 0) {
+            socket.setSendBufferSize(configuration.getSendBufferSize());
+        }
+        socket.connect(new InetSocketAddress(host, port), configuration.getConnectionTimeout());
+        outputStream = new RedisOutputStream(socket.getOutputStream());
+        inputStream = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize(), configuration.getRetries());
+        replyParser = new ReplyParser(inputStream);
     }
 
     @Override

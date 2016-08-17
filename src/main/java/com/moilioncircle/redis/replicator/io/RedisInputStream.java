@@ -26,6 +26,7 @@ import java.io.InputStream;
 public class RedisInputStream extends InputStream {
 
     private final InputStream in;
+    private final int retries;
 
     private long total = 0;
     private int head = 0;
@@ -34,12 +35,13 @@ public class RedisInputStream extends InputStream {
     private final byte[] buf;
 
     public RedisInputStream(final InputStream in) {
-        this(in, 8192);
+        this(in, 8192, 5);
     }
 
-    public RedisInputStream(final InputStream in, int len) {
+    public RedisInputStream(final InputStream in, int len, int retries) {
         this.in = in;
         this.buf = new byte[len];
+        this.retries = retries;
     }
 
     public int head() {
@@ -165,7 +167,16 @@ public class RedisInputStream extends InputStream {
     }
 
     public void fill() throws IOException {
-        tail = in.read(buf, 0, buf.length);
+        int retries = this.retries;
+        while (retries > 0) {
+            try {
+                tail = in.read(buf, 0, buf.length);
+                break;
+            } catch (SocketTimeoutException e) {
+                retries--;
+            }
+        }
+        if (retries == 0) throw new SocketTimeoutException("Read timed out after retires:" + this.retries);
         if (tail == -1) throw new EOFException("end of file.");
         total += tail;
         head = 0;

@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 
 /**
  * Created by leon on 8/9/16.

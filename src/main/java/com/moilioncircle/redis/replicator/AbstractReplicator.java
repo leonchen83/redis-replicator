@@ -159,5 +159,6 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("FLUSHDB"), new FlushDBParser());
         addCommandParser(CommandName.name("HINCRBY"), new HIncrByParser());
         addCommandParser(CommandName.name("ZINCRBY"), new ZIncrByParser());
+        addCommandParser(CommandName.name("MOVE"), new MoveParser());
     }
 }

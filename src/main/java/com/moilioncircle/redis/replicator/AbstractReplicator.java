@@ -160,5 +160,12 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("HINCRBY"), new HIncrByParser());
         addCommandParser(CommandName.name("ZINCRBY"), new ZIncrByParser());
         addCommandParser(CommandName.name("MOVE"), new MoveParser());
+        addCommandParser(CommandName.name("SMOVE"), new SMoveParser());
+        addCommandParser(CommandName.name("PFADD"), new PFAddParser());
+        addCommandParser(CommandName.name("PFCOUNT"), new PFCountParser());
+        addCommandParser(CommandName.name("PFMERGE"), new PFMergeParser());
+        addCommandParser(CommandName.name("SDIFFSTORE"), new SDiffStoreParser());
+        addCommandParser(CommandName.name("SINTERSTORE"), new SInterStoreParser());
+        addCommandParser(CommandName.name("SUNIONSTORE"), new SUnionStoreParser());
     }
 }

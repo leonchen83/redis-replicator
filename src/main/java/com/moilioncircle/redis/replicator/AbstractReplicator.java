@@ -139,11 +139,8 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("SETNX"), new SetNxParser());
         addCommandParser(CommandName.name("SETRANGE"), new SetRangeParser());
         addCommandParser(CommandName.name("HDEL"), new HDelParser());
-        addCommandParser(CommandName.name("HEXISTS"), new HExistsParser());
         addCommandParser(CommandName.name("HKEYS"), new HKeysParser());
         addCommandParser(CommandName.name("HVALS"), new HValsParser());
-        addCommandParser(CommandName.name("EXISTS"), new ExistsParser());
-        addCommandParser(CommandName.name("LLEN"), new LLenParser());
         addCommandParser(CommandName.name("LPOP"), new LPopParser());
         addCommandParser(CommandName.name("LPUSH"), new LPushParser());
         addCommandParser(CommandName.name("LPUSHX"), new LPushXParser());
@@ -158,5 +155,9 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("INCRBY"), new IncrByParser());
         addCommandParser(CommandName.name("PERSIST"), new PersistParser());
         addCommandParser(CommandName.name("SELECT"), new SelectParser());
+        addCommandParser(CommandName.name("FLUSHALL"), new FlushAllParser());
+        addCommandParser(CommandName.name("FLUSHDB"), new FlushDBParser());
+        addCommandParser(CommandName.name("HINCRBY"), new HIncrByParser());
+        addCommandParser(CommandName.name("ZINCRBY"), new ZIncrByParser());
     }
 }

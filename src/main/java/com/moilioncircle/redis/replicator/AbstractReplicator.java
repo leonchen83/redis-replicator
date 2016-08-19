@@ -172,5 +172,9 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("ZUNIONSTORE"), new ZUnionStoreParser());
         addCommandParser(CommandName.name("BRPOPLPUSH"), new BRPopLPushParser());
         addCommandParser(CommandName.name("LINSERT"), new LInsertParser());
+        addCommandParser(CommandName.name("RENAMENX"), new RenameNxParser());
+        addCommandParser(CommandName.name("RESTORE"), new RestoreParser());
+        addCommandParser(CommandName.name("PEXPIRE"), new PExpireParser());
+        addCommandParser(CommandName.name("PEXPIREAT"), new PExpireAtParser());
     }
 }

@@ -179,5 +179,6 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("GEOADD"), new GEOAddParser());
         addCommandParser(CommandName.name("EVAL"), new EvalParser());
         addCommandParser(CommandName.name("SCRIPT"), new ScriptParser());
+        addCommandParser(CommandName.name("PUBLISH"), new PublishParser());
     }
 }

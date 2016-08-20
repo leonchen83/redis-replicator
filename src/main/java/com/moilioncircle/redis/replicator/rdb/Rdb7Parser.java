@@ -119,7 +119,7 @@ public class Rdb7Parser extends AbstractRdbParser {
                     if (auxKey.startsWith("%")) {
                         logger.info("RDB " + auxKey + ": " + auxValue);
                     } else {
-                        logger.debug("Unrecognized RDB AUX field: " + auxKey);
+                        logger.debug("Unrecognized RDB AUX field: " + auxKey + ",value: " + auxValue);
                     }
                     break;
                 case REDIS_RDB_OPCODE_RESIZEDB:

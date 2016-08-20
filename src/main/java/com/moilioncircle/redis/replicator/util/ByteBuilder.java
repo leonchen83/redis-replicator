@@ -27,7 +27,6 @@ public class ByteBuilder {
         total++;
         if (buffer.hasRemaining()) {
             buffer.put(b);
-            return;
         } else {
             byte[] temp = new byte[buffer.capacity()];
             System.arraycopy(buffer.array(), 0, temp, 0, buffer.capacity());

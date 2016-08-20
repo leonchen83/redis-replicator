@@ -302,10 +302,13 @@ public class Rdb7Parser extends AbstractRdbParser {
                     switch (encoding) {
                         case 2:
                             set.add(String.valueOf(stream.readInt(2)));
+                            break;
                         case 4:
                             set.add(String.valueOf(stream.readInt(4)));
+                            break;
                         case 8:
                             set.add(String.valueOf(stream.readLong(8)));
+                            break;
                         default:
                             throw new AssertionError("Expect encoding [2,4,8] but:" + encoding);
                     }
@@ -390,7 +393,7 @@ public class Rdb7Parser extends AbstractRdbParser {
             /* rdb version 7*/
             case REDIS_RDB_TYPE_LIST_QUICKLIST:
                 len = rdbLoadLen().len;
-                KeyStringValueList<byte[]> o14 = new KeyStringValueList();
+                KeyStringValueList<byte[]> o14 = new KeyStringValueList<>();
                 List<byte[]> byteList = new ArrayList<>();
                 for (int i = 0; i < len; i++) {
                     byte[] element = rdbLoadRawStringObject();

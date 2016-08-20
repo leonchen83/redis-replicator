@@ -236,10 +236,13 @@ public class Rdb6Parser extends AbstractRdbParser {
                     switch (encoding) {
                         case 2:
                             set.add(String.valueOf(stream.readInt(2)));
+                            break;
                         case 4:
                             set.add(String.valueOf(stream.readInt(4)));
+                            break;
                         case 8:
                             set.add(String.valueOf(stream.readLong(8)));
+                            break;
                         default:
                             throw new AssertionError("Expect encoding [2,4,8] but:" + encoding);
                     }

@@ -20,8 +20,8 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * Created by leon on 8/19/16.
  */
 public class ZEntry {
-    public double score;
-    public String member;
+    public final double score;
+    public final String member;
 
     public ZEntry(double score, String member) {
         this.score = score;

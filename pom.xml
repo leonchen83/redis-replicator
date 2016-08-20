@@ -24,20 +24,18 @@
     <artifactId>redis-replicator</artifactId>
     <version>1.0.0</version>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <name>redis-replicator</name>
+    <description>Redis Replicator is a redis RDB and Command parser written in java.
+        It can parse,filter,broadcast the RDB and Command events in a real time manner.
+    </description>
+    <url>https://github.com/leonchen83/redis-replicator</url>
 
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <maven.plugin.compiler>2.0.2</maven.plugin.compiler>
-        <maven.plugin.resources>2.6</maven.plugin.resources>
-        <maven.plugin.javadoc>2.10.3</maven.plugin.javadoc>
-        <maven.jar.plugin>2.6</maven.jar.plugin>
-
-        <commons.logging.version>1.2</commons.logging.version>
-        <junit.version>4.11</junit.version>
-        <log4j.version>2.6.1</log4j.version>
-    </properties>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
@@ -46,6 +44,35 @@
             <organization>moilioncircle</organization>
         </developer>
     </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:leonchen83/redis-replicator.git</connection>
+        <url>scm:git:git@github.com:leonchen83/redis-replicator.git</url>
+        <developerConnection>scm:git:git@github.com:leonchen83/redis-replicator.git</developerConnection>
+        <tag>1.0.0</tag>
+    </scm>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/leonchen83/redis-replicator/issues</url>
+    </issueManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.plugin.compiler>2.0.2</maven.plugin.compiler>
+        <maven.plugin.resources>2.6</maven.plugin.resources>
+        <maven.plugin.javadoc>2.10.3</maven.plugin.javadoc>
+        <maven.plugin.gpg>1.6</maven.plugin.gpg>
+        <maven.plugin.source>3.0.0</maven.plugin.source>
+        <maven.jar.plugin>2.6</maven.jar.plugin>
+
+        <commons.logging.version>1.2</commons.logging.version>
+        <junit.version>4.11</junit.version>
+        <log4j.version>2.6.1</log4j.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -73,52 +100,71 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven.jar.plugin}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.plugin.compiler}</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <compilerArgument>-proc:none</compilerArgument>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven.plugin.resources}</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.plugin.javadoc}</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>${maven.jar.plugin}</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>${maven.plugin.compiler}</version>
+                        <configuration>
+                            <source>${maven.compiler.source}</source>
+                            <target>${maven.compiler.target}</target>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <compilerArgument>-proc:none</compilerArgument>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>${maven.plugin.resources}</version>
+                        <configuration>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven.plugin.javadoc}</version>
+                        <configuration>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven.plugin.source}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven.plugin.gpg}</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

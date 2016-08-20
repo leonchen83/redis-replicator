@@ -176,5 +176,6 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("RESTORE"), new RestoreParser());
         addCommandParser(CommandName.name("PEXPIRE"), new PExpireParser());
         addCommandParser(CommandName.name("PEXPIREAT"), new PExpireAtParser());
+        addCommandParser(CommandName.name("GEOADD"), new GEOAddParser());
     }
 }

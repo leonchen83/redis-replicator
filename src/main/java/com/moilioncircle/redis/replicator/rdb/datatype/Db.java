@@ -5,7 +5,9 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  */
 public class Db {
     public int dbNumber;
+    /* rdb version 7 */
     public int dbsize = -1;
+    /* rdb version 7 */
     public int expires = -1;
 
     public Db(int dbNumber) {

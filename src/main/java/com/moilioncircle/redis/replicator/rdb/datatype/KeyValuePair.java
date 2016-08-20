@@ -20,20 +20,12 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  * Created by leon on 8/13/16.
  */
 public class KeyValuePair<T> {
-    protected int dbNumber;
+    protected Db db;
     protected int valueRdbType;
     protected Integer expiredSeconds;
     protected Long expiredMs;
     protected String key;
     protected T value;
-
-    public int getDbNumber() {
-        return dbNumber;
-    }
-
-    public void setDbNumber(int dbNumber) {
-        this.dbNumber = dbNumber;
-    }
 
     public int getValueRdbType() {
         return valueRdbType;
@@ -75,10 +67,18 @@ public class KeyValuePair<T> {
         this.value = value;
     }
 
+    public Db getDb() {
+        return db;
+    }
+
+    public void setDb(Db db) {
+        this.db = db;
+    }
+
     @Override
     public String toString() {
         return "KeyValuePair{" +
-                "dbNumber=" + dbNumber +
+                "db=" + db +
                 ", valueRdbType=" + valueRdbType +
                 ", expiredSeconds=" + expiredSeconds +
                 ", expiredMs=" + expiredMs +

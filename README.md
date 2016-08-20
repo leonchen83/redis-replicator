@@ -4,8 +4,9 @@ It can `parse`,`filter`,`broadcast` the `RDB` and `Command` events in a real tim
   
 #Requirements  
 jdk 1.7+  
-rdb version 6+  
-
+rdb version 6  
+rdb version 7  
+  
 #Usage  
   
 ##Socket  

@@ -24,6 +24,7 @@ public class Configuration {
 
     /**
      * factory
+     *
      * @return Configuration
      */
     public static Configuration defaultSetting() {
@@ -60,11 +61,16 @@ public class Configuration {
      * redis input stream buffer size
      */
     private int bufferSize = 8192;
-    
+
     /**
      * auth password
      */
     private String authPassword = null;
+
+    /**
+     * discard rdb parser
+     */
+    private boolean discardRdbParser = false;
 
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -119,13 +125,22 @@ public class Configuration {
         this.sendBufferSize = sendBufferSize;
         return this;
     }
-    
+
     public int getBufferSize() {
         return bufferSize;
     }
 
     public Configuration setBufferSize(int bufferSize) {
         this.bufferSize = bufferSize;
+        return this;
+    }
+
+    public boolean isDiscardRdbParser() {
+        return discardRdbParser;
+    }
+
+    public Configuration setDiscardRdbParser(boolean discardRdbParser) {
+        this.discardRdbParser = discardRdbParser;
         return this;
     }
 }

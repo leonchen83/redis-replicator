@@ -88,8 +88,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
             @Override
             public String handle(long len, RedisInputStream in) throws IOException {
                 if (logger.isDebugEnabled()) logger.debug("RDB dump file size:" + len);
-                RdbParser parser = new RdbParser(in, replicator);
-                parser.parse();
+                if (configuration.isDiscardRdbParser()) {
+                    logger.info("Discard " + len + " bytes");
+                    in.skip(len);
+                } else {
+                    RdbParser parser = new RdbParser(in, replicator);
+                    parser.parse();
+                }
                 return "OK";
             }
         });

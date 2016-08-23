@@ -198,7 +198,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     private void sendSlavePort() throws IOException {
-        //REPLCONF listening-prot 6380
+        //REPLCONF listening-prot ${port}
         logger.info("REPLCONF listening-port " + socket.getLocalPort());
         send("REPLCONF".getBytes(), "listening-port".getBytes(), String.valueOf(socket.getLocalPort()).getBytes());
         final String reply = (String) reply();
@@ -208,7 +208,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     private void sendSlaveIp() throws IOException {
-        //REPLCONF capa eof
+        //REPLCONF ip-address ${address}
         logger.info("REPLCONF ip-address " + socket.getLocalAddress().getHostAddress());
         send("REPLCONF".getBytes(), "ip-address".getBytes(), socket.getLocalAddress().getHostAddress().getBytes());
         final String reply = (String) reply();

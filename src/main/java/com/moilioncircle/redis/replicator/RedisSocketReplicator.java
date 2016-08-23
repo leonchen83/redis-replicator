@@ -82,8 +82,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 send("PSYNC".getBytes(), configuration.getMasterRunId().getBytes(), String.valueOf(configuration.getOffset()).getBytes());
                 final String reply = (String) reply();
 
-                Sync syncMode = trySync(reply);
-                if (syncMode == Sync.PSYNC) {
+                SyncMode syncMode = trySync(reply);
+                if (syncMode == SyncMode.PSYNC) {
                     //heart beat send REPLCONF ACK ${slave offset}
                     heartBeat = new Timer("heart beat");
                     heartBeat.schedule(new TimerTask() {
@@ -144,7 +144,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
     }
 
-    private Sync trySync(final String reply) throws IOException {
+    private SyncMode trySync(final String reply) throws IOException {
         logger.info(reply);
         if (reply.startsWith("FULLRESYNC")) {
             //sync dump
@@ -153,16 +153,16 @@ public class RedisSocketReplicator extends AbstractReplicator {
             String[] ary = reply.split(" ");
             configuration.setMasterRunId(ary[1]);
             configuration.setOffset(Long.parseLong(ary[2]));
-            return Sync.PSYNC;
+            return SyncMode.PSYNC;
         } else if (reply.equals("CONTINUE")) {
             // do nothing
-            return Sync.PSYNC;
+            return SyncMode.PSYNC;
         } else {
             //server don't support psync
             logger.info("SYNC");
             send("SYNC".getBytes());
             parseDump(this);
-            return Sync.SYNC;
+            return SyncMode.SYNC;
         }
     }
 
@@ -295,7 +295,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (logger.isInfoEnabled()) logger.info("channel closed");
     }
 
-    private enum Sync {
+    private enum SyncMode {
         SYNC, PSYNC
     }
 }

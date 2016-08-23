@@ -27,8 +27,8 @@ import java.io.IOException;
  * rdb version 7
  *
  * @author leon.chen
- * @see [https://github.com/antirez/redis/blob/3.0/src/rdb.c]
- * @see [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
+ * [https://github.com/antirez/redis/blob/3.0/src/rdb.c]
+ * [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
  * @since 2016/8/11
  */
 public class RdbParser extends AbstractRdbParser {
@@ -65,7 +65,7 @@ public class RdbParser extends AbstractRdbParser {
      * 8 byte checksum             ## CRC 64 checksum of the entire file.
      *
      * @return read bytes
-     * @throws IOException
+     * @throws IOException when read timeout
      */
     public long parse() throws IOException {
         /*

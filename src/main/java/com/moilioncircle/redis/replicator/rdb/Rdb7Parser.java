@@ -47,7 +47,7 @@ public class Rdb7Parser extends AbstractRdbParser {
      * 8 byte checksum             ## CRC 64 checksum of the entire file.
      *
      * @return read bytes
-     * @throws IOException
+     * @throws IOException when read timeout
      */
     public long parse() throws IOException {
         /*

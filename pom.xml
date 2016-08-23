@@ -22,7 +22,7 @@
 
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
 
     <name>redis-replicator</name>
     <description>Redis Replicator is a redis RDB and Command parser written in java.
@@ -136,6 +136,14 @@
                         <configuration>
                             <encoding>${project.build.sourceEncoding}</encoding>
                         </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -162,6 +170,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <keyname>7032CC04</keyname>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

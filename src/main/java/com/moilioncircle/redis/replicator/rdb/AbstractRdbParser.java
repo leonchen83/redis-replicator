@@ -33,7 +33,7 @@ public abstract class AbstractRdbParser {
      * "expiry time in seconds". After that, expiry time is read as a 4 byte unsigned int
      *
      * @return seconds
-     * @throws IOException
+     * @throws IOException when read timeout
      */
     protected int rdbLoadTime() throws IOException {
         return in.readInt(4);
@@ -43,7 +43,7 @@ public abstract class AbstractRdbParser {
      * "expiry time in ms". After that, expiry time is read as a 8 byte unsigned long
      *
      * @return millisecond
-     * @throws IOException
+     * @throws IOException when read timeout
      */
     protected long rdbLoadMillisecondTime() throws IOException {
         return in.readLong(8);
@@ -57,7 +57,7 @@ public abstract class AbstractRdbParser {
      * 4. |11xxxxxx| the remaining 6 bits are read.and then the next object is encoded in a special format.so we set isencoded = true
      *
      * @return tuple(len, isencoded)
-     * @throws IOException
+     * @throws IOException when read timeout
      * @see #rdbLoadIntegerObject
      * @see #rdbLoadLzfStringObject
      */
@@ -91,7 +91,7 @@ public abstract class AbstractRdbParser {
      * @param enctype 0,1,2
      * @param encode  true: encoded string.false:raw bytes
      * @return String rdb object
-     * @throws IOException
+     * @throws IOException when read timeout
      */
     protected Object rdbLoadIntegerObject(int enctype, boolean encode) throws IOException {
         byte[] value;
@@ -120,7 +120,7 @@ public abstract class AbstractRdbParser {
      *
      * @param encode true: encoded string.false:raw bytes
      * @return String rdb object
-     * @throws IOException
+     * @throws IOException when read timeout
      * @see #rdbLoadLen
      */
     protected Object rdbLoadLzfStringObject(boolean encode) throws IOException {
@@ -139,7 +139,7 @@ public abstract class AbstractRdbParser {
      *
      * @param encode true: encoded string.false:raw bytes
      * @return String rdb object
-     * @throws IOException
+     * @throws IOException when read timeout
      * @see #rdbLoadIntegerObject
      * @see #rdbLoadLzfStringObject
      */
@@ -164,7 +164,7 @@ public abstract class AbstractRdbParser {
 
     /**
      * @return String rdb object with raw bytes
-     * @throws IOException
+     * @throws IOException when read timeout
      */
     protected byte[] rdbLoadRawStringObject() throws IOException {
         return (byte[]) rdbGenericLoadStringObject(false);
@@ -172,7 +172,7 @@ public abstract class AbstractRdbParser {
 
     /**
      * @return String rdb object with UTF-8 string
-     * @throws IOException
+     * @throws IOException when read timeout
      */
     protected String rdbLoadEncodedStringObject() throws IOException {
         return (String) rdbGenericLoadStringObject(true);
@@ -218,27 +218,21 @@ public abstract class AbstractRdbParser {
             return in.skip(len);
         }
 
-        /**
-         * <length-prev-entry><special-flag><raw-bytes-of-entry>
-         * <length-prev-entry> format:
-         * |xxxxxxxx| if first byte value < 254. then 1 byte as prev len.
-         * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| if first byte >=254 then next 4 byte as prev len.
-         * <p>
-         * <special-flag>:
+        /*
+         * length-prev-entry special-flag raw-bytes-of-entry
+         * length-prev-entry format
+         * |xxxxxxxx| if first byte value &lt 254. then 1 byte as prev len.
+         * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| if first byte &gt=254 then next 4 byte as prev len.
+         * special-flag
          * |00xxxxxx| remaining 6 bit as string len.
          * |01xxxxxx|xxxxxxxx| combined 14 bit as string len.
          * |10xxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 byte as string len.
-         * <p>
          * |11111110|xxxxxxxx| next 1 byte as 8bit int
          * |11000000|xxxxxxxx|xxxxxxxx| next 2 bytes as 16bit int
          * |11110000|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 3 bytes as 24bit int
          * |11010000|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 bytes as 32bit int
          * |11100000|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 8 bytes as 64bit long
          * |11xxxxxx| next 6 bit value as int value
-         *
-         * @param in ziplist raw bytes stream
-         * @return encoded string
-         * @throws IOException
          */
         public static String zipListEntry(RedisInputStream in) throws IOException {
             int prevlen = in.read();

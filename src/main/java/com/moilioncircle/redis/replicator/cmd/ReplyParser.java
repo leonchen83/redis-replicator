@@ -50,9 +50,9 @@ public class ReplyParser {
     }
 
     /**
-     * @param handler
+     * @param handler bulk string handler
      * @return return Object[] or String or Long
-     * @throws IOException
+     * @throws IOException when read timeout
      */
     public Object parse(BulkReplyHandler handler) throws IOException {
         int c = in.read();

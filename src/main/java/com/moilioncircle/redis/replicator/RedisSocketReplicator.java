@@ -63,7 +63,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     /**
      * PSYNC
      *
-     * @throws IOException
+     * @throws IOException when read timeout or connect timeout
      */
     @Override
     public void open() throws IOException {

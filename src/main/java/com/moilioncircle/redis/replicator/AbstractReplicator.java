@@ -69,6 +69,20 @@ public abstract class AbstractReplicator implements Replicator {
     }
 
     @Override
+    public void doPreFullSync() {
+        for (RdbListener listener : rdbListeners) {
+            listener.preFullSync(this);
+        }
+    }
+
+    @Override
+    public void doPostFullSync() {
+        for (RdbListener listener : rdbListeners) {
+            listener.postFullSync(this);
+        }
+    }
+
+    @Override
     public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
         commands.putIfAbsent(command, parser);
     }

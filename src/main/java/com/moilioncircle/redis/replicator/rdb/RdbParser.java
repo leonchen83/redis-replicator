@@ -97,7 +97,10 @@ public class RdbParser extends AbstractRdbParser {
                 logger.error("Can't handle RDB format version " + version);
                 return in.total();
         }
-        return rdbParser.rdbLoad();
+        replicator.doPreFullSync();
+        long rs = rdbParser.rdbLoad();
+        replicator.doPostFullSync();
+        return rs;
     }
 }
 

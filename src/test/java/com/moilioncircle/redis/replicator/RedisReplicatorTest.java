@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator;
 
+import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 
 /**
@@ -26,7 +28,13 @@ public class RedisReplicatorTest {
     @Test
     public void testSync() throws Exception {
         //socket
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        RedisSocketReplicator replicator = new RedisSocketReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setAuthPassword("test"));
+        replicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+
+            }
+        });
         replicator.open();
     }
 }

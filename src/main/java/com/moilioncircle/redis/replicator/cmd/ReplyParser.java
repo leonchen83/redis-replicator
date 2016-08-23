@@ -34,7 +34,19 @@ public class ReplyParser {
     }
 
     public Object parse() throws IOException {
-        return parse(new BulkReplyHandler.SimpleBulkReplyHandler());
+        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(), null);
+    }
+
+    public Object parse(OffsetHandler offsetHandler) throws IOException {
+        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(), offsetHandler);
+    }
+
+    public Object parse(BulkReplyHandler handler, OffsetHandler offsetHandler) throws IOException {
+        in.mark();
+        Object rs = parse(handler);
+        long len = in.unmark();
+        if (offsetHandler != null) offsetHandler.handle(len);
+        return rs;
     }
 
     /**
@@ -96,7 +108,7 @@ public class ReplyParser {
                 if (len == -1) return null;
                 Object[] ary = new Object[(int) len];
                 for (int i = 0; i < len; i++) {
-                    Object obj = parse();
+                    Object obj = parse(new BulkReplyHandler.SimpleBulkReplyHandler());
                     ary[i] = obj;
                 }
                 return ary;
@@ -126,6 +138,9 @@ public class ReplyParser {
                         builder.put((byte) c);
                     }
                 }
+            case '\n':
+                //skip +CONTINUE\r\n\n
+                return parse(new BulkReplyHandler.SimpleBulkReplyHandler());
             default:
                 throw new AssertionError("Expect [$,:,*,+,-] but: " + (char) c);
 

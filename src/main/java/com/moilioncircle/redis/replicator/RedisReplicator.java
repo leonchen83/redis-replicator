@@ -120,6 +120,16 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
+    public void doPreFullSync() {
+        replicator.doPreFullSync();
+    }
+
+    @Override
+    public void doPostFullSync() {
+        replicator.doPostFullSync();
+    }
+
+    @Override
     public void open() throws IOException {
         replicator.open();
     }

@@ -16,11 +16,15 @@
 
 package com.moilioncircle.redis.replicator;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * @author leon.chen
  * @since 2016/8/15
  */
 public class Configuration {
+
+    private static final Configuration defaultSetting = new Configuration();
 
     /**
      * factory
@@ -28,7 +32,7 @@ public class Configuration {
      * @return Configuration
      */
     public static Configuration defaultSetting() {
-        return new Configuration();
+        return defaultSetting;
     }
 
     /**
@@ -71,6 +75,16 @@ public class Configuration {
      * discard rdb parser
      */
     private boolean discardRdbParser = false;
+
+    /**
+     * psync master run id
+     */
+    private String masterRunId = "?";
+
+    /**
+     * psync offset
+     */
+    private AtomicLong offset = new AtomicLong(-1);
 
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -141,6 +155,29 @@ public class Configuration {
 
     public Configuration setDiscardRdbParser(boolean discardRdbParser) {
         this.discardRdbParser = discardRdbParser;
+        return this;
+    }
+
+    public String getMasterRunId() {
+        return masterRunId;
+    }
+
+    public Configuration setMasterRunId(String masterRunId) {
+        this.masterRunId = masterRunId;
+        return this;
+    }
+
+    public long getOffset() {
+        return offset.get();
+    }
+
+    public Configuration setOffset(long offset) {
+        this.offset.set(offset);
+        return this;
+    }
+
+    public Configuration addOffset(long offset) {
+        this.offset.addAndGet(offset);
         return this;
     }
 }

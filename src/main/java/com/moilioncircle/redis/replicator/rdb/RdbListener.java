@@ -23,5 +23,20 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
  * Created by leon on 8/13/16.
  */
 public interface RdbListener {
+    void preFullSync(Replicator replicator);
+
     void handle(Replicator replicator, KeyValuePair<?> kv);
+
+    void postFullSync(Replicator replicator);
+
+    abstract class Adaptor implements RdbListener {
+
+        public void preFullSync(Replicator replicator) {
+            //do nothing
+        }
+
+        public void postFullSync(Replicator replicator) {
+            //do nothing
+        }
+    }
 }

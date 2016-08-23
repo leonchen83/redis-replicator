@@ -38,7 +38,7 @@ rdb version 7
                 return kv.getKey().startsWith("SESSION");
             }
         });
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 System.out.println(kv);

@@ -19,7 +19,6 @@ package com.moilioncircle.redis.replicator.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.SocketTimeoutException;
 
 /**
  * Created by leon on 8/9/16.
@@ -32,6 +31,8 @@ public class RedisInputStream extends InputStream {
     private long total = 0;
     private int head = 0;
     private int tail = 0;
+    private boolean mark = false;
+    private long markLen = 0;
 
     private final byte[] buf;
 
@@ -56,7 +57,25 @@ public class RedisInputStream extends InputStream {
     public int bufSize() {
         return buf.length;
     }
-    
+
+    public void mark() {
+        if (!mark) {
+            mark = true;
+            return;
+        }
+        throw new AssertionError("already marked");
+    }
+
+    public long unmark() {
+        if (mark) {
+            long rs = markLen;
+            markLen = 0;
+            mark = false;
+            return rs;
+        }
+        throw new AssertionError("must mark first");
+    }
+
     public long total() {
         return total;
     }
@@ -64,12 +83,14 @@ public class RedisInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         if (head >= tail) fill();
+        if (mark) markLen += 1;
         return buf[head++] & 0xff;
     }
 
     public byte[] readBytes(int len) throws IOException {
         byte[] bytes = new byte[len];
         read(bytes, 0, len);
+        if (mark) markLen += len;
         return bytes;
     }
 
@@ -168,16 +189,7 @@ public class RedisInputStream extends InputStream {
     }
 
     public void fill() throws IOException {
-        int retries = this.retries;
-        while (retries > 0) {
-            try {
-                tail = in.read(buf, 0, buf.length);
-                break;
-            } catch (SocketTimeoutException e) {
-                retries--;
-            }
-        }
-        if (retries == 0) throw new SocketTimeoutException("Read timed out after retires:" + this.retries);
+        tail = in.read(buf, 0, buf.length);
         if (tail == -1) throw new EOFException("end of file.");
         total += tail;
         head = 0;

@@ -59,5 +59,9 @@ public interface Replicator extends Closeable {
 
     boolean doRdbFilter(KeyValuePair<?> kv);
 
+    void doPreFullSync();
+
+    void doPostFullSync();
+
     void open() throws IOException;
 }

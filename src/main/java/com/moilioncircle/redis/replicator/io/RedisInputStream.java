@@ -26,7 +26,6 @@ import java.io.InputStream;
 public class RedisInputStream extends InputStream {
 
     private final InputStream in;
-    private final int retries;
 
     private long total = 0;
     private int head = 0;
@@ -37,13 +36,12 @@ public class RedisInputStream extends InputStream {
     private final byte[] buf;
 
     public RedisInputStream(final InputStream in) {
-        this(in, 8192, 5);
+        this(in, 8192);
     }
 
-    public RedisInputStream(final InputStream in, int len, int retries) {
+    public RedisInputStream(final InputStream in, int len) {
         this.in = in;
         this.buf = new byte[len];
-        this.retries = retries;
     }
 
     public int head() {

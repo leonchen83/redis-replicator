@@ -6,6 +6,16 @@ It can `parse`,`filter`,`broadcast` the `RDB` and `Command` events in a real tim
 jdk 1.7+  
 rdb version 6  
 rdb version 7  
+
+#Maven Dependency
+
+```java  
+<dependency>
+    <groupId>com.moilioncircle</groupId>
+    <artifactId>redis-replicator</artifactId>
+    <version>1.0.2</version>
+</dependency>
+```
   
 #Usage  
   

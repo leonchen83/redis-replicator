@@ -193,7 +193,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             String reply = (String) replyParser.parse();
             logger.info(reply);
             if (reply.equals("OK")) return;
-            throw new AssertionError("AUTH failed." + reply);
+            throw new AssertionError("[AUTH " + password + "]failed." + reply);
         }
     }
 
@@ -204,7 +204,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         final String reply = (String) reply();
         logger.info(reply);
         if (reply.equals("OK")) return;
-        logger.error("REPLCONF listening-port " + socket.getLocalPort() + " failed." + reply);
+        logger.error("[REPLCONF listening-port " + socket.getLocalPort() + "] failed." + reply);
     }
 
     private void sendSlaveIp() throws IOException {
@@ -215,7 +215,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.info(reply);
         if (reply.equals("OK")) return;
         //redis 3.2+
-        logger.error("REPLCONF ip-address " + socket.getLocalAddress().getHostAddress() + " failed." + reply);
+        logger.error("[REPLCONF ip-address " + socket.getLocalAddress().getHostAddress() + "] failed." + reply);
     }
 
     private void sendSlaveCapa() throws IOException {
@@ -225,7 +225,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         final String reply = (String) reply();
         logger.info(reply);
         if (reply.equals("OK")) return;
-        logger.error("REPLCONF capa eof failed." + reply);
+        logger.error("[REPLCONF capa eof] failed." + reply);
     }
 
     public void send(byte[] command) throws IOException {

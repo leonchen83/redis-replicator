@@ -56,8 +56,7 @@ public class Configuration {
     private int sendBufferSize = 0;
 
     /**
-     * if readTimeout <=0 this property inefficiency.
-     * socket input stream read retries
+     * connection retry times
      */
     private int retries = 5;
 

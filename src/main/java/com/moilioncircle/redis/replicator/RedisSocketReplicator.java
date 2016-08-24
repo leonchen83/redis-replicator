@@ -78,6 +78,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
                 sendSlaveCapa();
 
+                //reset retries
+                i = 0;
+
                 logger.info("PSYNC " + configuration.getMasterRunId() + " " + String.valueOf(configuration.getOffset()));
                 send("PSYNC".getBytes(), configuration.getMasterRunId().getBytes(), String.valueOf(configuration.getOffset()).getBytes());
                 final String reply = (String) reply();
@@ -132,8 +135,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         if (logger.isInfoEnabled()) logger.info("Redis reply:" + obj);
                     }
                 }
+                //connected = false
                 break;
             } catch (SocketException | SocketTimeoutException e) {
+                //when close socket manual
+                if (!connected.get()) {
+                    break;
+                }
                 //connect timeout
                 //read timeout
                 //connect abort

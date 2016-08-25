@@ -17,6 +17,8 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,6 +55,10 @@ class EventHandlerWorker extends Thread implements Closeable {
                     Command command = (Command) object;
                     if (!replicator.doCommandFilter(command)) continue;
                     replicator.doCommandHandler(command);
+                } else if (object instanceof PreFullSyncEvent) {
+                    replicator.doPreFullSync();
+                } else if (object instanceof PostFullSyncEvent) {
+                    replicator.doPostFullSync();
                 } else {
                     throw new AssertionError(object);
                 }

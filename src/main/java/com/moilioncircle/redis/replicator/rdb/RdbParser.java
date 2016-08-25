@@ -17,6 +17,8 @@
 package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.AbstractReplicator;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 
 import java.io.IOException;
@@ -99,9 +101,9 @@ public class RdbParser extends AbstractRdbParser {
                     logger.error("Can't handle RDB format version " + version);
                     return in.total();
             }
-            replicator.doPreFullSync();
+            this.eventQueue.add(new PreFullSyncEvent());
             long rs = rdbParser.rdbLoad();
-            replicator.doPostFullSync();
+            this.eventQueue.add(new PostFullSyncEvent());
             return rs;
         } catch (InterruptedException e) {
             logger.error(e);

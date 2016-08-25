@@ -16,10 +16,11 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Redis RDB format
@@ -27,14 +28,14 @@ import java.io.IOException;
  * rdb version 7
  *
  * @author leon.chen
- * [https://github.com/antirez/redis/blob/3.0/src/rdb.c]
- * [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
+ *         [https://github.com/antirez/redis/blob/3.0/src/rdb.c]
+ *         [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
  * @since 2016/8/11
  */
 public class RdbParser extends AbstractRdbParser {
 
-    public RdbParser(RedisInputStream in, Replicator replicator) {
-        super(in, replicator);
+    public RdbParser(RedisInputStream in, AbstractReplicator replicator, BlockingQueue<Object> eventQueue) {
+        super(in, replicator, eventQueue);
     }
 
     /**
@@ -68,39 +69,45 @@ public class RdbParser extends AbstractRdbParser {
      * @throws IOException when read timeout
      */
     public long parse() throws IOException {
-        /*
+        try {
+            /*
          * ----------------------------
          * 52 45 44 49 53              # Magic String "REDIS"
          * 30 30 30 33                 # RDB Version Number in big endian. In this case, version = 0003 = 3
          * ----------------------------
          */
-        String magicString = StringHelper.str(in, 5);//REDIS
-        if (!magicString.equals("REDIS")) {
-            logger.error("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
-            return in.total();
-        }
-        int version = Integer.parseInt(StringHelper.str(in, 4));//0006 or 0007
-        AbstractRdbParser rdbParser;
-        switch (version) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                rdbParser = new Rdb6Parser(in, replicator);
-                break;
-            case 7:
-                rdbParser = new Rdb7Parser(in, replicator);
-                break;
-            default:
-                logger.error("Can't handle RDB format version " + version);
+            String magicString = StringHelper.str(in, 5);//REDIS
+            if (!magicString.equals("REDIS")) {
+                logger.error("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
                 return in.total();
+            }
+            int version = Integer.parseInt(StringHelper.str(in, 4));//0006 or 0007
+            AbstractRdbParser rdbParser;
+            switch (version) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    rdbParser = new Rdb6Parser(in, replicator, eventQueue);
+                    break;
+                case 7:
+                    rdbParser = new Rdb7Parser(in, replicator, eventQueue);
+                    break;
+                default:
+                    logger.error("Can't handle RDB format version " + version);
+                    return in.total();
+            }
+            replicator.doPreFullSync();
+            long rs = rdbParser.rdbLoad();
+            replicator.doPostFullSync();
+            return rs;
+        } catch (InterruptedException e) {
+            logger.error(e);
+            Thread.currentThread().interrupt();
+            return -1;
         }
-        replicator.doPreFullSync();
-        long rs = rdbParser.rdbLoad();
-        replicator.doPostFullSync();
-        return rs;
     }
 }
 

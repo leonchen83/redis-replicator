@@ -24,6 +24,7 @@ import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -32,11 +33,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AbstractReplicator implements Replicator {
     protected RedisInputStream inputStream;
+    protected BlockingQueue<Object> eventQueue;
     protected final ConcurrentHashMap<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
     protected final List<CommandFilter> filters = new CopyOnWriteArrayList<>();
     protected final List<CommandListener> listeners = new CopyOnWriteArrayList<>();
     protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
+    protected final EventHandlerWorker worker = new EventHandlerWorker(this);
 
     @Override
     public void doCommandHandler(Command command) {

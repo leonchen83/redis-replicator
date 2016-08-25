@@ -32,12 +32,12 @@ import java.io.InputStream;
 public class RedisReplicator implements Replicator {
     private final Replicator replicator;
 
-    public RedisReplicator(File file) throws FileNotFoundException {
-        replicator = new RedisFileReplicator(file);
+    public RedisReplicator(File file, Configuration configuration) throws FileNotFoundException {
+        replicator = new RedisFileReplicator(file, configuration);
     }
 
-    public RedisReplicator(InputStream in) {
-        replicator = new RedisFileReplicator(in);
+    public RedisReplicator(InputStream in, Configuration configuration) {
+        replicator = new RedisFileReplicator(in, configuration);
     }
 
     public RedisReplicator(String host, int port, Configuration configuration) throws IOException {

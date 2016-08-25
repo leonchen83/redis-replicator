@@ -13,7 +13,7 @@ rdb version 7
 <dependency>
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
   
@@ -41,7 +41,7 @@ rdb version 7
 ##File  
 
 ```java  
-        RedisReplicator replicator = new RedisReplicator(new File("dump.rdb"));
+        RedisReplicator replicator = new RedisReplicator(new File("dump.rdb"), Configuration.defaultSetting());
         replicator.addRdbFilter(new RdbFilter() {
             @Override
             public boolean accept(KeyValuePair<?> kv) {

@@ -1,12 +1,13 @@
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.util.Lzf;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
 
@@ -18,14 +19,17 @@ public abstract class AbstractRdbParser {
 
     protected final RedisInputStream in;
 
-    protected final Replicator replicator;
+    protected final AbstractReplicator replicator;
 
-    public AbstractRdbParser(RedisInputStream in, Replicator replicator) {
+    protected final BlockingQueue<Object> eventQueue;
+
+    public AbstractRdbParser(RedisInputStream in, AbstractReplicator replicator, BlockingQueue<Object> eventQueue) {
         this.in = in;
         this.replicator = replicator;
+        this.eventQueue = eventQueue;
     }
 
-    protected long rdbLoad() throws IOException {
+    protected long rdbLoad() throws IOException, InterruptedException {
         throw new UnsupportedOperationException("rdbLoad()");
     }
 

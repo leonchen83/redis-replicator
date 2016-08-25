@@ -31,6 +31,8 @@ import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
@@ -39,7 +41,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
 /**
  * Created by leon on 8/9/16.
  */
-public class RedisSocketReplicator extends AbstractReplicator {
+class RedisSocketReplicator extends AbstractReplicator {
 
     private static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
 
@@ -57,6 +59,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         this.host = host;
         this.port = port;
         this.configuration = configuration;
+        this.eventQueue = new ArrayBlockingQueue<>(configuration.getEventQueueSize());
         buildInCommandParserRegister();
     }
 
@@ -67,6 +70,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
      */
     @Override
     public void open() throws IOException {
+        worker.start();
         for (int i = 0; i < configuration.getRetries(); i++) {
             try {
 
@@ -126,22 +130,21 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         CommandParser<? extends Command> operations = commands.get(cmdName);
                         Command parsedCommand = operations.parse(cmdName, params);
 
-                        //do command filter
-                        if (!doCommandFilter(parsedCommand)) continue;
-
-                        //do command handler
-                        doCommandHandler(parsedCommand);
+                        //submit event
+                        this.eventQueue.put(parsedCommand);
                     } else {
                         if (logger.isInfoEnabled()) logger.info("Redis reply:" + obj);
                     }
                 }
                 //connected = false
                 break;
-            } catch (SocketException | SocketTimeoutException e) {
+            } catch (SocketException | SocketTimeoutException | InterruptedException e) {
+                logger.error(e);
                 //when close socket manual
                 if (!connected.get()) {
                     break;
                 }
+                //connect refused
                 //connect timeout
                 //read timeout
                 //connect abort
@@ -150,13 +153,15 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 logger.info("retry connect to redis.");
             }
         }
+        //
+        if (worker != null && !worker.isClosed()) worker.close();
     }
 
     private SyncMode trySync(final String reply) throws IOException {
         logger.info(reply);
         if (reply.startsWith("FULLRESYNC")) {
             //sync dump
-            parseDump(this);
+            parseDump(this, this.eventQueue);
             //after parsed dump file,cache master run id and offset so that next psync.
             String[] ary = reply.split(" ");
             configuration.setMasterRunId(ary[1]);
@@ -169,12 +174,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
             //server don't support psync
             logger.info("SYNC");
             send("SYNC".getBytes());
-            parseDump(this);
+            parseDump(this, this.eventQueue);
             return SyncMode.SYNC;
         }
     }
 
-    private void parseDump(final Replicator replicator) throws IOException {
+    private void parseDump(final AbstractReplicator replicator, final BlockingQueue<Object> eventQueue) throws IOException {
         //sync dump
         String reply = (String) replyParser.parse(new BulkReplyHandler() {
             @Override
@@ -184,7 +189,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     logger.info("Discard " + len + " bytes");
                     in.skip(len);
                 } else {
-                    RdbParser parser = new RdbParser(in, replicator);
+                    RdbParser parser = new RdbParser(in, replicator, eventQueue);
                     parser.parse();
                 }
                 return "OK";
@@ -289,6 +294,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         outputStream = new RedisOutputStream(socket.getOutputStream());
         inputStream = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
         replyParser = new ReplyParser(inputStream);
+    }
+
+    private void close0() throws IOException {
+
     }
 
     @Override

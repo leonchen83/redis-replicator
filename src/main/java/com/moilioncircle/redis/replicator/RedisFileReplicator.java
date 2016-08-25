@@ -20,28 +20,32 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 
 import java.io.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Created by leon on 8/13/16.
  */
-public class RedisFileReplicator extends AbstractReplicator {
+class RedisFileReplicator extends AbstractReplicator {
 
-    public RedisFileReplicator(File file) throws FileNotFoundException {
-        this.inputStream = new RedisInputStream(new FileInputStream(file));
+    public RedisFileReplicator(File file, Configuration configuration) throws FileNotFoundException {
+        this(new RedisInputStream(new FileInputStream(file)), configuration);
     }
 
-    public RedisFileReplicator(InputStream in) {
-        this.inputStream = new RedisInputStream(in);
+    public RedisFileReplicator(InputStream in, Configuration configuration) {
+        this.inputStream = new RedisInputStream(in, configuration.getBufferSize());
+        this.eventQueue = new ArrayBlockingQueue<>(configuration.getEventQueueSize());
     }
 
     @Override
     public void open() throws IOException {
-        RdbParser parser = new RdbParser(inputStream, this);
+        worker.start();
+        RdbParser parser = new RdbParser(inputStream, this, this.eventQueue);
         parser.parse();
     }
 
     @Override
     public void close() throws IOException {
         inputStream.close();
+        if (worker != null && !worker.isClosed()) worker.close();
     }
 }

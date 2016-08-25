@@ -81,6 +81,11 @@ public class Configuration {
     private String masterRunId = "?";
 
     /**
+     * blocking queue size
+     */
+    private int eventQueueSize = 1000;
+
+    /**
      * psync offset
      */
     private AtomicLong offset = new AtomicLong(-1);
@@ -177,6 +182,15 @@ public class Configuration {
 
     public Configuration addOffset(long offset) {
         this.offset.addAndGet(offset);
+        return this;
+    }
+
+    public int getEventQueueSize() {
+        return eventQueueSize;
+    }
+
+    public Configuration setEventQueueSize(int eventQueueSize) {
+        this.eventQueueSize = eventQueueSize;
         return this;
     }
 }

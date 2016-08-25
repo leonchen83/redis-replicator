@@ -1,12 +1,13 @@
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
 
@@ -15,11 +16,11 @@ import static com.moilioncircle.redis.replicator.Constants.*;
  */
 public class Rdb6Parser extends AbstractRdbParser {
 
-    public Rdb6Parser(RedisInputStream in, Replicator replicator) {
-        super(in, replicator);
+    public Rdb6Parser(RedisInputStream in, AbstractReplicator replicator, BlockingQueue<Object> eventQueue) {
+        super(in, replicator, eventQueue);
     }
 
-    protected long rdbLoad() throws IOException {
+    protected long rdbLoad() throws IOException, InterruptedException {
         Db db = null;
         /**
          * rdb
@@ -110,8 +111,8 @@ public class Rdb6Parser extends AbstractRdbParser {
             }
             if (kv == null) continue;
             if (logger.isDebugEnabled()) logger.debug(kv);
-            if (!replicator.doRdbFilter(kv)) continue;
-            replicator.doRdbHandler(kv);
+            //submit event
+            this.eventQueue.put(kv);
         }
         return in.total();
     }

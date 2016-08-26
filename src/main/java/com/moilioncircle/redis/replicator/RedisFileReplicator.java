@@ -32,8 +32,9 @@ class RedisFileReplicator extends AbstractReplicator {
     }
 
     public RedisFileReplicator(InputStream in, Configuration configuration) {
-        this.inputStream = new RedisInputStream(in, configuration.getBufferSize());
-        this.eventQueue = new ArrayBlockingQueue<>(configuration.getEventQueueSize());
+        this.configuration = configuration;
+        this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
+        this.eventQueue = new ArrayBlockingQueue<>(this.configuration.getEventQueueSize());
     }
 
     @Override

@@ -46,7 +46,6 @@ class RedisSocketReplicator extends AbstractReplicator {
 
     private final String host;
     private final int port;
-    private final Configuration configuration;
     private RedisOutputStream outputStream;
     private Socket socket;
     private ReplyParser replyParser;
@@ -115,7 +114,8 @@ class RedisSocketReplicator extends AbstractReplicator {
                     });
                     //command
                     if (obj instanceof Object[]) {
-                        if (logger.isDebugEnabled()) logger.debug(Arrays.deepToString((Object[]) obj));
+                        if (configuration.isVerbose() && logger.isDebugEnabled())
+                            logger.debug(Arrays.deepToString((Object[]) obj));
 
                         Object[] command = (Object[]) obj;
                         CommandName cmdName = CommandName.name((String) command[0]);
@@ -130,7 +130,7 @@ class RedisSocketReplicator extends AbstractReplicator {
                         Command parsedCommand = operations.parse(cmdName, params);
 
                         //submit event
-                        this.eventQueue.put(parsedCommand);
+                        this.submitEvent(parsedCommand);
                     } else {
                         if (logger.isInfoEnabled()) logger.info("Redis reply:" + obj);
                     }
@@ -183,7 +183,7 @@ class RedisSocketReplicator extends AbstractReplicator {
         String reply = (String) replyParser.parse(new BulkReplyHandler() {
             @Override
             public String handle(long len, RedisInputStream in) throws IOException {
-                if (logger.isDebugEnabled()) logger.debug("RDB dump file size:" + len);
+                logger.info("RDB dump file size:" + len);
                 if (configuration.isDiscardRdbEvent()) {
                     logger.info("Discard " + len + " bytes");
                     in.skip(len);
@@ -195,7 +195,8 @@ class RedisSocketReplicator extends AbstractReplicator {
             }
         });
         //sync command
-        if (!reply.equals("OK")) throw new AssertionError("SYNC failed." + reply);
+        if (reply.equals("OK")) return;
+        throw new AssertionError("SYNC failed." + reply);
     }
 
     private void auth(String password) throws IOException {
@@ -305,7 +306,7 @@ class RedisSocketReplicator extends AbstractReplicator {
             heartBeat.cancel();
             heartBeat = null;
         }
-        if (logger.isInfoEnabled()) logger.info("channel closed");
+        logger.info("channel closed");
     }
 
     private enum SyncMode {SYNC, PSYNC}

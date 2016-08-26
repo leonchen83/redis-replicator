@@ -135,6 +135,11 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
+    public boolean verbose() {
+        return replicator.verbose();
+    }
+
+    @Override
     public void open() throws IOException {
         replicator.open();
     }

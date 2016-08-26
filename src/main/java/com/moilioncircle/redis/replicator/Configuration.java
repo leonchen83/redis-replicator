@@ -79,6 +79,11 @@ public class Configuration {
     private int eventQueueSize = 1000;
 
     /**
+     * trace event log
+     */
+    private boolean verbose = false;
+
+    /**
      * psync master run id
      */
     private String masterRunId = "?";
@@ -190,5 +195,32 @@ public class Configuration {
     public Configuration setEventQueueSize(int eventQueueSize) {
         this.eventQueueSize = eventQueueSize;
         return this;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public Configuration setVerbose(boolean verbose) {
+        this.verbose = verbose;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Configuration{" +
+                "connectionTimeout=" + connectionTimeout +
+                ", readTimeout=" + readTimeout +
+                ", receiveBufferSize=" + receiveBufferSize +
+                ", sendBufferSize=" + sendBufferSize +
+                ", retries=" + retries +
+                ", bufferSize=" + bufferSize +
+                ", authPassword='" + authPassword + '\'' +
+                ", discardRdbEvent=" + discardRdbEvent +
+                ", eventQueueSize=" + eventQueueSize +
+                ", verbose=" + verbose +
+                ", masterRunId='" + masterRunId + '\'' +
+                ", offset=" + offset +
+                '}';
     }
 }

@@ -65,5 +65,7 @@ public interface Replicator extends Closeable {
 
     void submitEvent(Object object) throws InterruptedException;
 
+    boolean verbose();
+
     void open() throws IOException;
 }

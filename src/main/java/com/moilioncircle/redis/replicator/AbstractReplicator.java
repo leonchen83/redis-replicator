@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class AbstractReplicator implements Replicator {
     protected RedisInputStream inputStream;
     protected BlockingQueue<Object> eventQueue;
+    protected Configuration configuration;
     protected final ConcurrentHashMap<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
     protected final List<CommandFilter> filters = new CopyOnWriteArrayList<>();
     protected final List<CommandListener> listeners = new CopyOnWriteArrayList<>();
@@ -138,6 +139,11 @@ public abstract class AbstractReplicator implements Replicator {
     @Override
     public void submitEvent(Object object) throws InterruptedException {
         eventQueue.put(object);
+    }
+
+    @Override
+    public boolean verbose() {
+        return configuration == null ? false : configuration.isVerbose();
     }
 
     @Override

@@ -109,7 +109,7 @@ public class Rdb6Parser extends AbstractRdbParser {
                     throw new AssertionError("Un-except value-type:" + type);
             }
             if (kv == null) continue;
-            if (logger.isDebugEnabled()) logger.debug(kv);
+            if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(kv);
             //submit event
             this.replicator.submitEvent(kv);
         }

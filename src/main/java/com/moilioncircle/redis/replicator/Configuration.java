@@ -24,15 +24,13 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Configuration {
 
-    private static final Configuration defaultSetting = new Configuration();
-
     /**
      * factory
      *
      * @return Configuration
      */
     public static Configuration defaultSetting() {
-        return defaultSetting;
+        return new Configuration();
     }
 
     /**
@@ -56,7 +54,7 @@ public class Configuration {
     private int sendBufferSize = 0;
 
     /**
-     * connection retry times
+     * connection retry times. if retries <= 0 then always retry
      */
     private int retries = 5;
 
@@ -73,17 +71,17 @@ public class Configuration {
     /**
      * discard rdb parser
      */
-    private boolean discardRdbParser = false;
-
-    /**
-     * psync master run id
-     */
-    private String masterRunId = "?";
+    private boolean discardRdbEvent = false;
 
     /**
      * blocking queue size
      */
     private int eventQueueSize = 1000;
+
+    /**
+     * psync master run id
+     */
+    private String masterRunId = "?";
 
     /**
      * psync offset
@@ -153,12 +151,12 @@ public class Configuration {
         return this;
     }
 
-    public boolean isDiscardRdbParser() {
-        return discardRdbParser;
+    public boolean isDiscardRdbEvent() {
+        return discardRdbEvent;
     }
 
-    public Configuration setDiscardRdbParser(boolean discardRdbParser) {
-        this.discardRdbParser = discardRdbParser;
+    public Configuration setDiscardRdbEvent(boolean discardRdbEvent) {
+        this.discardRdbEvent = discardRdbEvent;
         return this;
     }
 

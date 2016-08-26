@@ -7,7 +7,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
 
@@ -21,12 +20,9 @@ public abstract class AbstractRdbParser {
 
     protected final AbstractReplicator replicator;
 
-    protected final BlockingQueue<Object> eventQueue;
-
-    public AbstractRdbParser(RedisInputStream in, AbstractReplicator replicator, BlockingQueue<Object> eventQueue) {
+    public AbstractRdbParser(RedisInputStream in, AbstractReplicator replicator) {
         this.in = in;
         this.replicator = replicator;
-        this.eventQueue = eventQueue;
     }
 
     protected long rdbLoad() throws IOException, InterruptedException {

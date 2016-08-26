@@ -39,7 +39,7 @@ class RedisFileReplicator extends AbstractReplicator {
     @Override
     public void open() throws IOException {
         worker.start();
-        RdbParser parser = new RdbParser(inputStream, this, this.eventQueue);
+        RdbParser parser = new RdbParser(inputStream, this);
         parser.parse();
     }
 

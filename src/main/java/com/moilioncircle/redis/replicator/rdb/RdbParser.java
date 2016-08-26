@@ -22,7 +22,6 @@ import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 
 import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Redis RDB format
@@ -36,8 +35,8 @@ import java.util.concurrent.BlockingQueue;
  */
 public class RdbParser extends AbstractRdbParser {
 
-    public RdbParser(RedisInputStream in, AbstractReplicator replicator, BlockingQueue<Object> eventQueue) {
-        super(in, replicator, eventQueue);
+    public RdbParser(RedisInputStream in, AbstractReplicator replicator) {
+        super(in, replicator);
     }
 
     /**
@@ -92,18 +91,18 @@ public class RdbParser extends AbstractRdbParser {
                 case 4:
                 case 5:
                 case 6:
-                    rdbParser = new Rdb6Parser(in, replicator, eventQueue);
+                    rdbParser = new Rdb6Parser(in, replicator);
                     break;
                 case 7:
-                    rdbParser = new Rdb7Parser(in, replicator, eventQueue);
+                    rdbParser = new Rdb7Parser(in, replicator);
                     break;
                 default:
                     logger.error("Can't handle RDB format version " + version);
                     return in.total();
             }
-            this.eventQueue.add(new PreFullSyncEvent());
+            this.replicator.submitEvent(new PreFullSyncEvent());
             long rs = rdbParser.rdbLoad();
-            this.eventQueue.add(new PostFullSyncEvent());
+            this.replicator.submitEvent(new PostFullSyncEvent());
             return rs;
         } catch (InterruptedException e) {
             logger.error(e);

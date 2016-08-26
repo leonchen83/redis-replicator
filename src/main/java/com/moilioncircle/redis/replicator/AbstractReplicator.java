@@ -136,6 +136,11 @@ public abstract class AbstractReplicator implements Replicator {
     }
 
     @Override
+    public void submitEvent(Object object) throws InterruptedException {
+        eventQueue.put(object);
+    }
+
+    @Override
     public void buildInCommandParserRegister() {
         addCommandParser(CommandName.name("PING"), new PingParser());
         addCommandParser(CommandName.name("APPEND"), new AppendParser());

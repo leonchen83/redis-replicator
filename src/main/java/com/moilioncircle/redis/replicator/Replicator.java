@@ -63,5 +63,7 @@ public interface Replicator extends Closeable {
 
     void doPostFullSync();
 
+    void submitEvent(Object object) throws InterruptedException;
+
     void open() throws IOException;
 }

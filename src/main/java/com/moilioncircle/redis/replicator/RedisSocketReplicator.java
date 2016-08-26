@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
@@ -71,7 +70,7 @@ class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void open() throws IOException {
         worker.start();
-        for (int i = 0; i < configuration.getRetries(); i++) {
+        for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
 
                 if (configuration.getAuthPassword() != null) auth(configuration.getAuthPassword());
@@ -161,7 +160,7 @@ class RedisSocketReplicator extends AbstractReplicator {
         logger.info(reply);
         if (reply.startsWith("FULLRESYNC")) {
             //sync dump
-            parseDump(this, this.eventQueue);
+            parseDump(this);
             //after parsed dump file,cache master run id and offset so that next psync.
             String[] ary = reply.split(" ");
             configuration.setMasterRunId(ary[1]);
@@ -174,22 +173,22 @@ class RedisSocketReplicator extends AbstractReplicator {
             //server don't support psync
             logger.info("SYNC");
             send("SYNC".getBytes());
-            parseDump(this, this.eventQueue);
+            parseDump(this);
             return SyncMode.SYNC;
         }
     }
 
-    private void parseDump(final AbstractReplicator replicator, final BlockingQueue<Object> eventQueue) throws IOException {
+    private void parseDump(final AbstractReplicator replicator) throws IOException {
         //sync dump
         String reply = (String) replyParser.parse(new BulkReplyHandler() {
             @Override
             public String handle(long len, RedisInputStream in) throws IOException {
                 if (logger.isDebugEnabled()) logger.debug("RDB dump file size:" + len);
-                if (configuration.isDiscardRdbParser()) {
+                if (configuration.isDiscardRdbEvent()) {
                     logger.info("Discard " + len + " bytes");
                     in.skip(len);
                 } else {
-                    RdbParser parser = new RdbParser(in, replicator, eventQueue);
+                    RdbParser parser = new RdbParser(in, replicator);
                     parser.parse();
                 }
                 return "OK";
@@ -294,10 +293,6 @@ class RedisSocketReplicator extends AbstractReplicator {
         outputStream = new RedisOutputStream(socket.getOutputStream());
         inputStream = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
         replyParser = new ReplyParser(inputStream);
-    }
-
-    private void close0() throws IOException {
-
     }
 
     @Override

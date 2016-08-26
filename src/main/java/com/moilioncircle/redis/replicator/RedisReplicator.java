@@ -130,6 +130,11 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
+    public void submitEvent(Object object) throws InterruptedException {
+        replicator.submitEvent(object);
+    }
+
+    @Override
     public void open() throws IOException {
         replicator.open();
     }

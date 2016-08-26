@@ -18,7 +18,7 @@ rdb version 7
 ```
   
 #Flow Chart  
-[[https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-flow-chart.png|alt=octocat]]  
+![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-flow-chart.png)  
 
 #Usage  
   

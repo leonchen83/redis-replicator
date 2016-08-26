@@ -19,7 +19,10 @@ rdb version 7
   
 #Flow Chart  
 ![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-flow-chart.png)  
-
+  
+#Class Chart  
+![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-class-chart.png)  
+  
 #Usage  
   
 ##Socket  

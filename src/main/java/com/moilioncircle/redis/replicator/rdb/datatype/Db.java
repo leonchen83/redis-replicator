@@ -6,9 +6,9 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
 public class Db {
     public int dbNumber;
     /* rdb version 7 */
-    public int dbsize = -1;
+    public Integer dbsize = null;
     /* rdb version 7 */
-    public int expires = -1;
+    public Integer expires = null;
 
     public Db(int dbNumber) {
         this.dbNumber = dbNumber;
@@ -28,19 +28,19 @@ public class Db {
         this.dbNumber = dbNumber;
     }
 
-    public int getDbsize() {
+    public Integer getDbsize() {
         return dbsize;
     }
 
-    public void setDbsize(int dbsize) {
+    public void setDbsize(Integer dbsize) {
         this.dbsize = dbsize;
     }
 
-    public int getExpires() {
+    public Integer getExpires() {
         return expires;
     }
 
-    public void setExpires(int expires) {
+    public void setExpires(Integer expires) {
         this.expires = expires;
     }
 

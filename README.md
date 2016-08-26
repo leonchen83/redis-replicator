@@ -17,6 +17,9 @@ rdb version 7
 </dependency>
 ```
   
+#Flow Chart  
+![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-flow-chart.png)  
+
 #Usage  
   
 ##Socket  

@@ -1,0 +1,9 @@
+language: java
+sudo: required
+jdk:
+    - oraclejdk7
+    - oraclejdk8
+    - openjdk7
+branches:
+  only:
+    - master

@@ -9,4 +9,6 @@ branches:
     - master
 services:
   - redis-server
+before_script:
+  - sleep 10
 script: "mvn clean package -P travis"

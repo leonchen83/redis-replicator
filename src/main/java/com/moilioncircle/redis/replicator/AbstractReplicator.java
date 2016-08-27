@@ -88,7 +88,7 @@ public abstract class AbstractReplicator implements Replicator {
 
     @Override
     public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
-        commands.putIfAbsent(command, parser);
+        commands.put(command, parser);
     }
 
     @Override

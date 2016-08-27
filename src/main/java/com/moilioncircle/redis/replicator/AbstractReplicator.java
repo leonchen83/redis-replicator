@@ -208,5 +208,7 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("EVAL"), new EvalParser());
         addCommandParser(CommandName.name("SCRIPT"), new ScriptParser());
         addCommandParser(CommandName.name("PUBLISH"), new PublishParser());
+        addCommandParser(CommandName.name("BITOP"), new BitOpParser());
+        addCommandParser(CommandName.name("BITFIELD"), new BitFieldParser());
     }
 }

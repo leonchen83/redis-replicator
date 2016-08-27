@@ -36,7 +36,7 @@ public class RedisReplicatorTest extends TestCase {
     @Test
     public void testSync() throws Exception {
         //socket
-        final RedisReplicator replicator = new RedisReplicator("127.0.0.1",
+        final RedisReplicator replicator = new RedisReplicator("localhost",
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0)
@@ -45,7 +45,7 @@ public class RedisReplicatorTest extends TestCase {
             public void run() {
                 try {
                     Thread.sleep(5000);
-                    Jedis jedis = new Jedis("127.0.0.1", 6379);
+                    Jedis jedis = new Jedis("localhost", 6379);
                     jedis.set("abc", "bcd");
                     jedis.close();
                 } catch (InterruptedException e) {

@@ -7,4 +7,6 @@ jdk:
 branches:
   only:
     - master
+services:
+  - redis-server
 script: "mvn clean package -P travis -Dmaven.test.skip=true"

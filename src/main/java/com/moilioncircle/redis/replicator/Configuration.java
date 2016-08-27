@@ -84,6 +84,16 @@ public class Configuration {
     private boolean verbose = false;
 
     /**
+     * used in psync heart beat
+     */
+    private int heartBeatDelay = 1000;
+
+    /**
+     * used in psync heart beat
+     */
+    private int heartBeatPeriod = 1000;
+
+    /**
      * psync master run id
      */
     private String masterRunId = "?";
@@ -206,6 +216,24 @@ public class Configuration {
         return this;
     }
 
+    public int getHeartBeatDelay() {
+        return heartBeatDelay;
+    }
+
+    public Configuration setHeartBeatDelay(int heartBeatDelay) {
+        this.heartBeatDelay = heartBeatDelay;
+        return this;
+    }
+
+    public int getHeartBeatPeriod() {
+        return heartBeatPeriod;
+    }
+
+    public Configuration setHeartBeatPeriod(int heartBeatPeriod) {
+        this.heartBeatPeriod = heartBeatPeriod;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Configuration{" +
@@ -219,6 +247,8 @@ public class Configuration {
                 ", discardRdbEvent=" + discardRdbEvent +
                 ", eventQueueSize=" + eventQueueSize +
                 ", verbose=" + verbose +
+                ", heartBeatDelay=" + heartBeatDelay +
+                ", heartBeatPeriod=" + heartBeatPeriod +
                 ", masterRunId='" + masterRunId + '\'' +
                 ", offset=" + offset +
                 '}';

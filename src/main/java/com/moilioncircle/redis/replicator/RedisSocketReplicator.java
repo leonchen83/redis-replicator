@@ -102,7 +102,7 @@ class RedisSocketReplicator extends AbstractReplicator {
                             }
 
                         }
-                    }, 1000, 1000);
+                    }, configuration.getHeartBeatDelay(), configuration.getHeartBeatPeriod());
                 }
                 //sync command
                 while (connected.get()) {

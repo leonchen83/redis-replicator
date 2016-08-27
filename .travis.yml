@@ -7,3 +7,4 @@ jdk:
 branches:
   only:
     - master
+script: "mvn clean package -P travis -Dmaven.test.skip=true"

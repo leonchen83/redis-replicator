@@ -34,10 +34,12 @@ public class RedisReplicatorTest {
     @Test
     public void testSync() throws Exception {
         //socket
-        final RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting()
-                .setAuthPassword("test")
-                .setRetries(0)
-                .setVerbose(true));
+        final RedisReplicator replicator = new RedisReplicator("127.0.0.1",
+                6379,
+                Configuration.defaultSetting()
+                        .setAuthPassword("test")
+                        .setRetries(0)
+                        .setVerbose(true));
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

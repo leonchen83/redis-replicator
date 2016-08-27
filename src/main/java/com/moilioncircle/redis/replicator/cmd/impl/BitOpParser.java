@@ -68,8 +68,4 @@ public class BitOpParser implements CommandParser<BitOpParser.BitOpCommand> {
     public enum Op {
         AND, OR, XOR, NOT
     }
-
-    public static void main(String[] args) {
-        System.out.println(Op.valueOf("AND"));
-    }
 }

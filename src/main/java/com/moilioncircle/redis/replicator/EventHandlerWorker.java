@@ -34,7 +34,7 @@ class EventHandlerWorker extends Thread implements Closeable {
     private static final Log logger = LogFactory.getLog(EventHandlerWorker.class);
 
     private final AbstractReplicator replicator;
-    private AtomicBoolean isClosed = new AtomicBoolean(false);
+    private final AtomicBoolean isClosed = new AtomicBoolean(false);
 
     public EventHandlerWorker(AbstractReplicator replicator) {
         this.replicator = replicator;

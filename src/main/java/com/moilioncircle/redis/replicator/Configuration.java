@@ -91,7 +91,7 @@ public class Configuration {
     /**
      * psync offset
      */
-    private AtomicLong offset = new AtomicLong(-1);
+    private final AtomicLong offset = new AtomicLong(-1);
 
     public int getConnectionTimeout() {
         return connectionTimeout;

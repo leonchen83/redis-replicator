@@ -40,7 +40,7 @@ public class RedisReplicator implements Replicator {
         replicator = new RedisFileReplicator(in, configuration);
     }
 
-    public RedisReplicator(String host, int port, Configuration configuration) throws IOException {
+    public RedisReplicator(String host, int port, Configuration configuration) {
         replicator = new RedisSocketReplicator(host, port, configuration);
     }
 

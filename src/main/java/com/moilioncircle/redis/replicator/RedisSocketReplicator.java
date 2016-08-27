@@ -53,7 +53,7 @@ class RedisSocketReplicator extends AbstractReplicator {
 
     private final AtomicBoolean connected = new AtomicBoolean(false);
 
-    public RedisSocketReplicator(String host, int port, Configuration configuration) throws IOException {
+    public RedisSocketReplicator(String host, int port, Configuration configuration) {
         this.host = host;
         this.port = port;
         this.configuration = configuration;

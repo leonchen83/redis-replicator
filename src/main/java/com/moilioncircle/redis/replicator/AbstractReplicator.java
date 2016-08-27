@@ -143,7 +143,7 @@ public abstract class AbstractReplicator implements Replicator {
 
     @Override
     public boolean verbose() {
-        return configuration == null ? false : configuration.isVerbose();
+        return configuration != null && configuration.isVerbose();
     }
 
     @Override

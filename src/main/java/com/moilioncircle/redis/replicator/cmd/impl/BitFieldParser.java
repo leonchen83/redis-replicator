@@ -108,7 +108,7 @@ public class BitFieldParser implements CommandParser<BitFieldParser.BitFieldComm
         } else {
             return i;
         }
-        if (statement != null) list.add(statement);
+        list.add(statement);
         return idx;
     }
 

@@ -35,6 +35,7 @@ public class RedisReplicatorTest extends TestCase {
 
     @Test
     public void testSync() throws Exception {
+        Thread.sleep(1000);
         //socket
         final RedisReplicator replicator = new RedisReplicator("localhost",
                 6379,

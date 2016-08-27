@@ -39,6 +39,7 @@ public class RedisReplicatorTest extends TestCase {
         final RedisReplicator replicator = new RedisReplicator("localhost",
                 6379,
                 Configuration.defaultSetting()
+                        .setAuthPassword("foobared")
                         .setRetries(0)
                         .setVerbose(true));
         new Thread() {
@@ -46,6 +47,7 @@ public class RedisReplicatorTest extends TestCase {
                 try {
                     Thread.sleep(5000);
                     Jedis jedis = new Jedis("localhost", 6379);
+                    jedis.auth("foobared");
                     jedis.set("abc", "bcd");
                     jedis.close();
                 } catch (InterruptedException e) {

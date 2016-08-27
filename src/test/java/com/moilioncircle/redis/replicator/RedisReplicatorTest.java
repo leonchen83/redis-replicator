@@ -16,8 +16,12 @@
 
 package com.moilioncircle.redis.replicator;
 
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 /**
@@ -25,14 +29,35 @@ import org.junit.Test;
  */
 public class RedisReplicatorTest {
 
+    private static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
+
     @Test
     public void testSync() throws Exception {
         //socket
-        RedisSocketReplicator replicator = new RedisSocketReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setAuthPassword("test"));
+        final RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting()
+                .setAuthPassword("test")
+                .setRetries(0)
+                .setVerbose(true));
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                logger.debug(kv);
+            }
+        });
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                logger.debug(command);
             }
         });
         replicator.open();

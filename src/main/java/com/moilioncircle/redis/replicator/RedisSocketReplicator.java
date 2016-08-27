@@ -71,6 +71,7 @@ class RedisSocketReplicator extends AbstractReplicator {
         worker.start();
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
+                connect();
 
                 if (configuration.getAuthPassword() != null) auth(configuration.getAuthPassword());
 
@@ -246,7 +247,6 @@ class RedisSocketReplicator extends AbstractReplicator {
     }
 
     public void send(byte[] command, final byte[]... args) throws IOException {
-        connect();
         outputStream.write(STAR);
         outputStream.write(String.valueOf(args.length + 1).getBytes());
         outputStream.writeCrLf();

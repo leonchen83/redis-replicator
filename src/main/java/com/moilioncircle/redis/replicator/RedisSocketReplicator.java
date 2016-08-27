@@ -206,7 +206,7 @@ class RedisSocketReplicator extends AbstractReplicator {
             final String reply = (String) reply();
             logger.info(reply);
             if (reply.equals("OK")) return;
-            throw new AssertionError("[AUTH " + password + "]failed." + reply);
+            throw new AssertionError("[AUTH " + password + "] failed." + reply);
         }
     }
 

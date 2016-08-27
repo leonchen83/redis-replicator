@@ -70,8 +70,10 @@
         <maven.jar.plugin>2.6</maven.jar.plugin>
 
         <commons.logging.version>1.2</commons.logging.version>
+        <!-- test -->
         <junit.version>4.11</junit.version>
         <log4j.version>2.6.1</log4j.version>
+        <jedis.version>2.8.1</jedis.version>
     </properties>
 
     <dependencies>
@@ -96,6 +98,12 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-jcl</artifactId>
             <version>${log4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

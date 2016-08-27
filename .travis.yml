@@ -9,4 +9,4 @@ branches:
     - master
 services:
   - redis-server
-script: "mvn clean package -P travis -Dmaven.test.skip=true"
+script: "mvn clean package -P travis"

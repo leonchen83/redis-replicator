@@ -1,6 +1,8 @@
 # Redis-replicator  
-`Redis Replicator` is a redis `RDB` and `Command` parser written in java.  
-It can `parse`,`filter`,`broadcast` the `RDB` and `Command` events in a real time manner.  
+[![Build Status](https://travis-ci.org/leonchen83/redis-replicator.svg?branch=master)](https://travis-ci.org/leonchen83/redis-replicator)  
+  
+Redis Replicator is a redis RDB and Command parser written in java.  
+It can parse,filter,broadcast the RDB and Command events in a real time manner.  
   
 #Requirements  
 jdk 1.7+  

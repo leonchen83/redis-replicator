@@ -20,7 +20,8 @@ rdb version 7
 ```
   
 #Flow Chart  
-![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-flow-chart.png)  
+![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-flow-chart.png)
+[![Coverage Status](https://coveralls.io/repos/github/leonchen83/redis-replicator/badge.svg?branch=master)](https://coveralls.io/github/leonchen83/redis-replicator?branch=master)  
   
 #Class Chart  
 ![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-class-chart.png)  

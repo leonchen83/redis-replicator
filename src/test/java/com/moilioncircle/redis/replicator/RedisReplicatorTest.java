@@ -284,4 +284,49 @@ public class RedisReplicatorTest extends TestCase {
                 15000);
         assertEquals("ok", ref.get());
     }
+
+    @Test
+    public void testExpireV6() throws Exception {
+        final AtomicReference<String> ref = new AtomicReference<>(null);
+        new TestTemplate() {
+            @Override
+            protected void test(RedisReplicator replicator) {
+                Jedis jedis = new Jedis("localhost",
+                        6379);
+                jedis.del("abc");
+                jedis.del("bbb");
+                jedis.set("abc", "bcd");
+                jedis.expire("abc", 500);
+                jedis.set("bbb", "bcd");
+                jedis.expireAt("bbb", System.currentTimeMillis() + 1000000);
+                jedis.close();
+
+                replicator.addRdbListener(new RdbListener() {
+                    @Override
+                    public void preFullSync(Replicator replicator) {
+                    }
+
+                    @Override
+                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                        if (kv.getKey().equals("abc")) {
+                            assertNotNull(kv.getExpiredMs());
+                        } else if (kv.getKey().equals("bbb")) {
+                            assertNotNull(kv.getExpiredMs());
+                        }
+                    }
+
+                    @Override
+                    public void postFullSync(Replicator replicator) {
+
+                    }
+                });
+            }
+        }.testSocket(
+                "localhost",
+                6379,
+                Configuration.defaultSetting()
+                        .setRetries(0)
+                        .setVerbose(true),
+                15000);
+    }
 }

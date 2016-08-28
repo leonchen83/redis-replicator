@@ -62,5 +62,15 @@ public class BitFieldParserTest {
             assertEquals(2, command.overFlows.get(0).statements.size());
         }
 
+        {
+            BitFieldParser parser = new BitFieldParser();
+            BitFieldParser.BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
+                    new Object[]{"mykey", "incrby", "i5", "100", "1", "get", "i8", "10", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
+            assertEquals("mykey", command.key);
+            assertEquals(2, command.statements.size());
+            assertEquals(3, command.overFlows.size());
+            assertEquals(2, command.overFlows.get(0).statements.size());
+        }
+
     }
 }

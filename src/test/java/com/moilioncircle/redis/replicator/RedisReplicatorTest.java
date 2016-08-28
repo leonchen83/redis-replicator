@@ -22,12 +22,16 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.SetParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZAddParser;
+import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import junit.framework.TestCase;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -145,6 +149,70 @@ public class RedisReplicatorTest extends TestCase {
                         .setVerbose(true),
                 15000);
         assertEquals("2", ref.get());
+    }
+
+    public void testFile() throws IOException, InterruptedException {
+        RedisReplicator redisReplicator = new RedisReplicator(
+                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dump.rdb"),
+                Configuration.defaultSetting().setVerbose(true));
+        final AtomicInteger acc = new AtomicInteger(0);
+        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+                acc.incrementAndGet();
+                if (kv.getKey().equals("abcd")) {
+                    KeyStringValueString ksvs = (KeyStringValueString) kv;
+                    assertEquals("abcd", ksvs.getValue());
+                }
+                if (kv.getKey().equals("foo")) {
+                    KeyStringValueString ksvs = (KeyStringValueString) kv;
+                    assertEquals("bar", ksvs.getValue());
+                }
+                if (kv.getKey().equals("aaa")) {
+                    KeyStringValueString ksvs = (KeyStringValueString) kv;
+                    assertEquals("bbb", ksvs.getValue());
+                }
+            }
+        });
+        redisReplicator.open();
+        Thread.sleep(2000);
+        assertEquals(16, acc.get());
+        redisReplicator.close();
+    }
+
+    public void testFilter() throws IOException, InterruptedException {
+        RedisReplicator redisReplicator = new RedisReplicator(
+                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dump.rdb"),
+                Configuration.defaultSetting().setVerbose(true));
+        final AtomicInteger acc = new AtomicInteger(0);
+        redisReplicator.addRdbFilter(new RdbFilter() {
+            @Override
+            public boolean accept(KeyValuePair<?> kv) {
+                return kv.getValueRdbType() == 0;
+            }
+        });
+        redisReplicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+                assertEquals(0, acc.get());
+            }
+
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+                acc.incrementAndGet();
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator) {
+                assertEquals(13, acc.get());
+            }
+        });
+        redisReplicator.open();
+        Thread.sleep(2000);
+        assertEquals(13, acc.get());
+        redisReplicator.close();
     }
 
 }

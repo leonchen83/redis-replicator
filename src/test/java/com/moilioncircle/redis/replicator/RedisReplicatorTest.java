@@ -233,4 +233,55 @@ public class RedisReplicatorTest extends TestCase {
         redisReplicator.close();
     }
 
+    @Test
+    public void testV7() throws Exception {
+        final AtomicReference<String> ref = new AtomicReference<>(null);
+        new TestTemplate() {
+            @Override
+            protected void test(RedisReplicator replicator) {
+                replicator.addRdbListener(new RdbListener() {
+                    @Override
+                    public void preFullSync(Replicator replicator) {
+                    }
+
+                    @Override
+                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                    }
+
+                    @Override
+                    public void postFullSync(Replicator replicator) {
+                        Jedis jedis = new Jedis("localhost",
+                                6380);
+                        jedis.auth("test");
+                        jedis.del("abc");
+                        jedis.set("abc", "bcd");
+                        jedis.close();
+                    }
+                });
+                replicator.addCommandFilter(new CommandFilter() {
+                    @Override
+                    public boolean accept(Command command) {
+                        return command.name().equals(CommandName.name("SET"));
+                    }
+                });
+                replicator.addCommandListener(new CommandListener() {
+                    @Override
+                    public void handle(Replicator replicator, Command command) {
+                        SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
+                        assertEquals("abc", setCommand.key);
+                        assertEquals("bcd", setCommand.value);
+                        ref.compareAndSet(null, "ok");
+                    }
+                });
+            }
+        }.testSocket(
+                "localhost",
+                6380,
+                Configuration.defaultSetting()
+                        .setAuthPassword("test")
+                        .setRetries(0)
+                        .setVerbose(true),
+                15000);
+        assertEquals("ok", ref.get());
+    }
 }

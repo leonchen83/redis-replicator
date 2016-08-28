@@ -12,3 +12,5 @@ services:
 before_script:
   - sleep 10
 script: "mvn clean package -P travis"
+after_success:
+  - mvn clean cobertura:cobertura coveralls:report

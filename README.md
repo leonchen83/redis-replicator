@@ -31,7 +31,7 @@ rdb version 7
   
 ```java  
         RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 System.out.println(kv);

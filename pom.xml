@@ -22,7 +22,7 @@
 
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7-SNAPSHOT</version>
 
     <name>redis-replicator</name>
     <description>Redis Replicator is a redis RDB and Command parser written in java.
@@ -251,6 +251,14 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.eluder.coveralls</groupId>
+                        <artifactId>coveralls-maven-plugin</artifactId>
+                        <version>4.2.0</version>
+                        <configuration>
+                            <repoToken>IgJ5nELUEO3RFdZl8BYnkeNjOxXMFQIkT</repoToken>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

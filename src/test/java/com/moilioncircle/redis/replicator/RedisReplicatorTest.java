@@ -151,9 +151,9 @@ public class RedisReplicatorTest extends TestCase {
         assertEquals("2", ref.get());
     }
 
-    public void testFile() throws IOException, InterruptedException {
+    public void testFileV7() throws IOException, InterruptedException {
         RedisReplicator redisReplicator = new RedisReplicator(
-                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dump.rdb"),
+                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
                 Configuration.defaultSetting().setVerbose(true));
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
@@ -177,13 +177,13 @@ public class RedisReplicatorTest extends TestCase {
         });
         redisReplicator.open();
         Thread.sleep(2000);
-        assertEquals(16, acc.get());
+        assertEquals(19, acc.get());
         redisReplicator.close();
     }
 
     public void testFilter() throws IOException, InterruptedException {
         RedisReplicator redisReplicator = new RedisReplicator(
-                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dump.rdb"),
+                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
                 Configuration.defaultSetting().setVerbose(true));
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addRdbFilter(new RdbFilter() {
@@ -212,6 +212,24 @@ public class RedisReplicatorTest extends TestCase {
         redisReplicator.open();
         Thread.sleep(2000);
         assertEquals(13, acc.get());
+        redisReplicator.close();
+    }
+
+    public void testFileV6() throws IOException, InterruptedException {
+        RedisReplicator redisReplicator = new RedisReplicator(
+                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
+                Configuration.defaultSetting().setVerbose(true));
+        final AtomicInteger acc = new AtomicInteger(0);
+        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+                acc.incrementAndGet();
+            }
+        });
+        redisReplicator.open();
+        Thread.sleep(2000);
+        assertEquals(132, acc.get());
         redisReplicator.close();
     }
 

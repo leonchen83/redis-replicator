@@ -28,7 +28,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 class RedisFileReplicator extends AbstractReplicator {
 
     public RedisFileReplicator(File file, Configuration configuration) throws FileNotFoundException {
-        this(new RedisInputStream(new FileInputStream(file)), configuration);
+        //bug fix http://git.oschina.net/leonchen83/redis-replicator/issues/2
+        this(new FileInputStream(file), configuration);
     }
 
     public RedisFileReplicator(InputStream in, Configuration configuration) {

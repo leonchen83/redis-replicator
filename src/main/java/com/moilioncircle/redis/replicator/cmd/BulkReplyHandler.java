@@ -36,8 +36,8 @@ public interface BulkReplyHandler {
                 c = in.read();
                 builder.put((byte) c);
             }
-            if ((c = in.read()) != '\r') throw new AssertionError("Expect '\r' but :" + (char) c);
-            if ((c = in.read()) != '\n') throw new AssertionError("Expect '\n' but :" + (char) c);
+            if ((c = in.read()) != '\r') throw new AssertionError("Expect '\\r' but :" + (char) c);
+            if ((c = in.read()) != '\n') throw new AssertionError("Expect '\\n' but :" + (char) c);
             //simple reply
             String reply = builder.toString();
             if (builder.length() != len) {

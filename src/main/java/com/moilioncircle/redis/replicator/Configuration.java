@@ -61,7 +61,7 @@ public class Configuration {
     /**
      * redis input stream buffer size
      */
-    private int bufferSize = 8192;
+    private int bufferSize = 1024 * 1024;
 
     /**
      * auth password

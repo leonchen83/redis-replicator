@@ -140,7 +140,9 @@ public class ReplyParser {
                 }
             case '\n':
                 //skip +CONTINUE\r\n\n
-                return parse(new BulkReplyHandler.SimpleBulkReplyHandler());
+                //skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
+                //bug fix
+                return parse(handler);
             default:
                 throw new AssertionError("Expect [$,:,*,+,-] but: " + (char) c);
 

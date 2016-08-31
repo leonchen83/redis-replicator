@@ -40,6 +40,7 @@ public abstract class AbstractReplicator implements Replicator {
     protected final List<CommandListener> listeners = new CopyOnWriteArrayList<>();
     protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
+    protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
     protected final EventHandlerWorker worker = new EventHandlerWorker(this);
 
     @Override
@@ -83,6 +84,13 @@ public abstract class AbstractReplicator implements Replicator {
     public void doPostFullSync() {
         for (RdbListener listener : rdbListeners) {
             listener.postFullSync(this);
+        }
+    }
+
+    @Override
+    public void doCloseListener() {
+        for (CloseListener listener : closeListeners) {
+            listener.handler(this);
         }
     }
 
@@ -134,6 +142,16 @@ public abstract class AbstractReplicator implements Replicator {
     @Override
     public void removeRdbListener(RdbListener listener) {
         rdbListeners.remove(listener);
+    }
+
+    @Override
+    public void addCloseListener(CloseListener listener) {
+        closeListeners.add(listener);
+    }
+
+    @Override
+    public void removeCloseListener(CloseListener listener) {
+        closeListeners.remove(listener);
     }
 
     @Override

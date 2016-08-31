@@ -151,6 +151,12 @@ class RedisSocketReplicator extends AbstractReplicator {
                 close();
                 //retry psync in next loop.
                 logger.info("retry connect to redis.");
+                try {
+                    Thread.sleep(configuration.getRetryTimeInterval());
+                } catch (InterruptedException e1) {
+                    //non interrupted
+                    logger.error(e1);
+                }
             }
         }
         //
@@ -306,6 +312,7 @@ class RedisSocketReplicator extends AbstractReplicator {
             heartBeat.cancel();
             heartBeat = null;
         }
+        doCloseListener();
         logger.info("channel closed");
     }
 

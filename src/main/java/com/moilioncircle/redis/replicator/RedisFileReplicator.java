@@ -49,5 +49,6 @@ class RedisFileReplicator extends AbstractReplicator {
     public void close() throws IOException {
         inputStream.close();
         if (worker != null && !worker.isClosed()) worker.close();
+        doCloseListener();
     }
 }

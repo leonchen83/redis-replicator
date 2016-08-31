@@ -100,6 +100,16 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
+    public void addCloseListener(CloseListener listener) {
+        replicator.addCloseListener(listener);
+    }
+
+    @Override
+    public void removeCloseListener(CloseListener listener) {
+        replicator.removeCloseListener(listener);
+    }
+
+    @Override
     public void doCommandHandler(Command command) {
         replicator.doCommandHandler(command);
     }
@@ -127,6 +137,11 @@ public class RedisReplicator implements Replicator {
     @Override
     public void doPostFullSync() {
         replicator.doPostFullSync();
+    }
+
+    @Override
+    public void doCloseListener() {
+        replicator.doCloseListener();
     }
 
     @Override

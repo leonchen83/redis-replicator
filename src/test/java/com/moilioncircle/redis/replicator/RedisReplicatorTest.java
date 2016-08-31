@@ -329,4 +329,18 @@ public class RedisReplicatorTest extends TestCase {
                         .setVerbose(true),
                 15000);
     }
+
+    @Test
+    public void testCloseListener() throws IOException, InterruptedException {
+        final AtomicInteger acc = new AtomicInteger(0);
+        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6666, Configuration.defaultSetting());
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handler(Replicator replicator) {
+                acc.incrementAndGet();
+            }
+        });
+        replicator.open();
+        assertEquals(5, acc.get());
+    }
 }

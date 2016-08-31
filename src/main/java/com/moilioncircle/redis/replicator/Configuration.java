@@ -59,6 +59,11 @@ public class Configuration {
     private int retries = 5;
 
     /**
+     * retry time interval
+     */
+    private int retryTimeInterval = 1000;
+
+    /**
      * redis input stream buffer size
      */
     private int bufferSize = 1024 * 1024;
@@ -234,6 +239,15 @@ public class Configuration {
         return this;
     }
 
+    public int getRetryTimeInterval() {
+        return retryTimeInterval;
+    }
+
+    public Configuration setRetryTimeInterval(int retryTimeInterval) {
+        this.retryTimeInterval = retryTimeInterval;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Configuration{" +
@@ -242,6 +256,7 @@ public class Configuration {
                 ", receiveBufferSize=" + receiveBufferSize +
                 ", sendBufferSize=" + sendBufferSize +
                 ", retries=" + retries +
+                ", retryTimeInterval=" + retryTimeInterval +
                 ", bufferSize=" + bufferSize +
                 ", authPassword='" + authPassword + '\'' +
                 ", discardRdbEvent=" + discardRdbEvent +

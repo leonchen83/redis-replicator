@@ -206,7 +206,8 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 
 ##Avoid Full Sync  
   
-adjust redis server setting below  
+* adjust redis server setting below  
+  
 ```java
     repl-backlog-size
     repl-backlog-ttl

@@ -122,6 +122,118 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
                 }
             }
         });
+```  
+
+#Buildin Parser  
+  
+**PING**  
+**APPEND**  
+**SET**  
+**SETEX**  
+**MSET**  
+**DEL**  
+**SADD**  
+**HMSET**  
+**HSET**  
+**LSET**  
+**EXPIRE**  
+**EXPIREAT**  
+**GETSET**  
+**HSETNX**  
+**MSETNX**  
+**PSETEX**  
+**SETNX**  
+**SETRANGE**  
+**HDEL**  
+**HKEYS**  
+**HVALS**  
+**LPOP**  
+**LPUSH**  
+**LPUSHX**  
+**LRem**  
+**RPOP**  
+**RPUSH**  
+**RPUSHX**  
+**ZREM**  
+**RENAME**  
+**INCR**  
+**DECR**  
+**INCRBY**  
+**PERSIST**  
+**SELECT**  
+**FLUSHALL**  
+**FLUSHDB**  
+**HINCRBY**  
+**ZINCRBY**  
+**MOVE**  
+**SMOVE**  
+**PFADD**  
+**PFCOUNT**  
+**PFMERGE**  
+**SDIFFSTORE**  
+**SINTERSTORE**  
+**SUNIONSTORE**  
+**ZADD**  
+**ZINTERSTORE**  
+**ZUNIONSTORE**  
+**BRPOPLPUSH**  
+**LINSERT**  
+**RENAMENX**  
+**RESTORE**  
+**PEXPIRE**  
+**PEXPIREAT**  
+**GEOADD**  
+**EVAL**  
+**SCRIPT**  
+**PUBLISH**  
+**BITOP**  
+**BITFIELD**  
+**SETBIT**  
+  
+##Trace Event log  
+  
+* set log level to **debug**  
+```java
+    Configuration.defaultSetting().setVerbose(true);
+```
+##Auth  
+  
+```java
+    Configuration.defaultSetting().setAuthPassword("foobared");
+```  
+
+##Avoid Full Sync  
+  
+adjust redis server setting below  
+```java
+    repl-backlog-size
+    repl-backlog-ttl
+```
+  
+##FullSyncEvent  
+  
+```java
+        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        final long start = System.currentTimeMillis();
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+                System.out.println("pre full sync");
+            }
+
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                acc.incrementAndGet();
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator) {
+                long end = System.currentTimeMillis();
+                System.out.println("time elapsed:" + (end - start));
+                System.out.println("rdb event count:" + acc.get());
+            }
+        });
 ```
   
 #References  

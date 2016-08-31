@@ -193,9 +193,11 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 ##Trace Event log  
   
 * set log level to **debug**  
+  
 ```java
     Configuration.defaultSetting().setVerbose(true);
 ```
+  
 ##Auth  
   
 ```java

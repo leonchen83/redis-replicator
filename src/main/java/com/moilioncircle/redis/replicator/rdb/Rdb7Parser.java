@@ -75,8 +75,8 @@ public class Rdb7Parser extends AbstractRdbParser {
                 case REDIS_RDB_OPCODE_RESIZEDB:
                     int dbsize = rdbLoadLen().len;
                     int expiresSize = rdbLoadLen().len;
-                    db.setDbsize(dbsize);
-                    db.setExpires(expiresSize);
+                    if (db != null) db.setDbsize(dbsize);
+                    if (db != null) db.setExpires(expiresSize);
                     break;
                 /*
                  * ----------------------------

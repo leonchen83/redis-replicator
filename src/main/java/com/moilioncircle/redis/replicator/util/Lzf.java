@@ -22,6 +22,9 @@ package com.moilioncircle.redis.replicator.util;
  */
 public class Lzf {
 
+    /*
+     * see [https://github.com/ning/compress/blob/master/src/main/java/com/ning/compress/lzf/impl/VanillaChunkDecoder.java]
+     */
     public static byte[] decode(byte[] bytes, int len) {
         byte[] out = new byte[len];
         decode(bytes, 0, out, 0, len);

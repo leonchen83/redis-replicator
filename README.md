@@ -7,6 +7,7 @@
   
 Redis Replicator is a redis RDB and Command parser written in java.  
 It can parse,filter,broadcast the RDB and Command events in a real time manner.  
+It also can sync redis data to your local cache or to database.  
   
 #Requirements  
 jdk 1.7+  
@@ -68,6 +69,14 @@ rdb version 7
         });
 
         replicator.open();
+        System.out.println("press 'q' to stop");
+        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        for(String line = br.readLine(); line != null; line = br.readLine()) {
+            if(line.equals("q")) {
+                replicator.close();
+                break;
+            }
+        }
 ```  
 
 #Command Extension  

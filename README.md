@@ -23,6 +23,12 @@ rdb version 7
     <version>1.0.9</version>
 </dependency>
 ```
+
+#Install from source  
+  
+```
+clean install package -Dmaven.test.skip=true
+```  
   
 #Flow Chart  
 ![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/redis-replicator-flow-chart.png)  

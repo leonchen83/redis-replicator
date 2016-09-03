@@ -27,6 +27,7 @@
     <name>redis-replicator</name>
     <description>Redis Replicator is a redis RDB and Command parser written in java.
         It can parse,filter,broadcast the RDB and Command events in a real time manner.
+        It also can sync redis data to your local cache or to database.
     </description>
     <url>https://github.com/leonchen83/redis-replicator</url>
 
@@ -59,7 +60,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
+        <!-- maven plugins -->
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.plugin.compiler>2.0.2</maven.plugin.compiler>
@@ -68,7 +69,7 @@
         <maven.plugin.gpg>1.6</maven.plugin.gpg>
         <maven.plugin.source>3.0.0</maven.plugin.source>
         <maven.jar.plugin>2.6</maven.jar.plugin>
-
+        <!-- log api -->
         <commons.logging.version>1.2</commons.logging.version>
         <!-- test -->
         <junit.version>4.11</junit.version>
@@ -195,6 +196,7 @@
                 </repository>
             </distributionManagement>
         </profile>
+        <!-- travis ci -->
         <profile>
             <id>travis</id>
             <build>

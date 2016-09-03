@@ -24,7 +24,7 @@ rdb version 7
 </dependency>
 ```
 
-#Install from source  
+#Install from source code  
   
 ```
 clean install package -Dmaven.test.skip=true

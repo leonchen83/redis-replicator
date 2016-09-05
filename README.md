@@ -75,14 +75,7 @@ clean install package -Dmaven.test.skip=true
         });
 
         replicator.open();
-        System.out.println("press 'q' to stop");
-        final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        for(String line = br.readLine(); line != null; line = br.readLine()) {
-            if(line.equals("q")) {
-                replicator.close();
-                break;
-            }
-        }
+        System.in.read();
 ```  
 
 #Command Extension  

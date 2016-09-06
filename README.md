@@ -198,6 +198,14 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 **BITFIELD**  
 **SETBIT**  
   
+##EOFException
+  
+* adjust redis server setting below.more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
+  
+```java
+    client-output-buffer-limit slave 0 0 0
+```  
+  
 ##Trace Event log  
   
 * set log level to **debug**  

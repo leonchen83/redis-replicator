@@ -25,7 +25,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 /**
  * Created by leon on 8/13/16.
  */
-class RedisFileReplicator extends AbstractReplicator {
+/*package*/ class RedisFileReplicator extends AbstractReplicator {
 
     public RedisFileReplicator(File file, Configuration configuration) throws FileNotFoundException {
         //bug fix http://git.oschina.net/leonchen83/redis-replicator/issues/2

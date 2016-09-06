@@ -40,7 +40,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
 /**
  * Created by leon on 8/9/16.
  */
-class RedisSocketReplicator extends AbstractReplicator {
+/*package*/ class RedisSocketReplicator extends AbstractReplicator {
 
     private static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
 

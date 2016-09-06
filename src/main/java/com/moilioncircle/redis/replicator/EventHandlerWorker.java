@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Created by leon on 8/25/16.
  */
-class EventHandlerWorker extends Thread implements Closeable {
+/*package*/ class EventHandlerWorker extends Thread implements Closeable {
     private static final Log logger = LogFactory.getLog(EventHandlerWorker.class);
 
     private final AbstractReplicator replicator;

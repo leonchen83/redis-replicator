@@ -10,7 +10,6 @@ It can parse,filter,broadcast the RDB and Command events in a real time manner.
 It also can sync redis data to your local cache or to database.  
   
 ##Online Coding  
-[![Livecoding status](https://tools.livecoding.tv/badge/statusSmall/0/leonchen83)](https://tools.livecoding.tv/badge/statusSmall/0/leonchen83)
 [![Livecoding viewers](https://tools.livecoding.tv/badge/viewersSmall/921/leonchen83)](https://tools.livecoding.tv/badge/viewersSmall/921/leonchen83)
 [![Livecoding fans](https://tools.livecoding.tv/badge/followersSmall/106/leonchen83)](https://tools.livecoding.tv/badge/followersSmall/106/leonchen83)
 [![Livecoding.scheduled](https://tools.livecoding.tv/badge/nextStreamSmall/no/leonchen83)](https://tools.livecoding.tv/badge/nextStreamSmall/no/leonchen83)  

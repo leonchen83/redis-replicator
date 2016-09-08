@@ -16,8 +16,10 @@
 
 package com.moilioncircle.redis.replicator.event;
 
+import java.io.Serializable;
+
 /**
  * Created by leon on 8/25/16.
  */
-public class PreFullSyncEvent {
+public class PreFullSyncEvent implements Serializable {
 }

@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
+import java.io.Serializable;
+
 /**
  * Created by leon on 8/13/16.
  */
-public class KeyValuePair<T> {
+public class KeyValuePair<T> implements Serializable {
     protected Db db;
     protected int valueRdbType;
     protected Integer expiredSeconds;

@@ -16,11 +16,13 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
+import java.io.Serializable;
+
 /**
  * @author leon.chen
  * @since 2016/8/11
  */
-public class ZSetEntry {
+public class ZSetEntry implements Serializable {
     public final String element;
     public final double score;
 

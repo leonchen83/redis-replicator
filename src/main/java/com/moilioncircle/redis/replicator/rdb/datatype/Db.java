@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
+import java.io.Serializable;
+
 /**
  * Created by leon on 8/20/16.
  */
-public class Db {
+public class Db implements Serializable {
     public int dbNumber;
     /* rdb version 7 */
     public Integer dbsize = null;

@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -179,7 +180,7 @@ public class BitFieldParser implements CommandParser<BitFieldParser.BitFieldComm
         }
     }
 
-    public interface Statement {
+    public interface Statement extends Serializable {
 
     }
 
@@ -290,7 +291,7 @@ public class BitFieldParser implements CommandParser<BitFieldParser.BitFieldComm
         }
     }
 
-    public static class OverFlow {
+    public static class OverFlow implements Serializable {
         public Boolean overFlowWrap;
         public Boolean overFlowSat;
         public Boolean overFlowFail;

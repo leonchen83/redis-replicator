@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -65,7 +66,7 @@ public class BitOpParser implements CommandParser<BitOpParser.BitOpCommand> {
         }
     }
 
-    public enum Op {
+    public enum Op implements Serializable {
         AND, OR, XOR, NOT
     }
 }

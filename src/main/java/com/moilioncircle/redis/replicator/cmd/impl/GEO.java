@@ -1,9 +1,11 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * Created by leon on 8/20/16.
  */
-public class GEO {
+public class GEO implements Serializable {
     public final String member;
     public final double longitude;
     public final double latitude;

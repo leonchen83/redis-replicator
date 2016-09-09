@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * Created by leon on 8/19/16.
  */
-public class ZEntry {
+public class ZEntry implements Serializable {
     public final double score;
     public final String member;
 

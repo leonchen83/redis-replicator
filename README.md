@@ -211,6 +211,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 ```java
     client-output-buffer-limit slave 0 0 0
 ```  
+**WARNNING: this setting may run out of memory of redis server in some cases.**  
   
 ##Trace Event log  
   

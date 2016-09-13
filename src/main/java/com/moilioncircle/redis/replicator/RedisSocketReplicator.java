@@ -23,6 +23,7 @@ import com.moilioncircle.redis.replicator.rdb.RdbParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -138,7 +139,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                 }
                 //connected = false
                 break;
-            } catch (SocketException | SocketTimeoutException | InterruptedException e) {
+            } catch (SocketException | SocketTimeoutException | InterruptedException | EOFException e) {
                 logger.error(e);
                 //when close socket manual
                 if (!connected.get()) {
@@ -148,6 +149,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                 //connect timeout
                 //read timeout
                 //connect abort
+                //server disconnect connection EOFException
                 close();
                 //retry psync in next loop.
                 logger.info("retry connect to redis.");

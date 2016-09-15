@@ -101,9 +101,9 @@ public class RdbParser extends AbstractRdbParser {
                     return in.total();
             }
             this.replicator.submitEvent(new PreFullSyncEvent());
-            long rs = rdbParser.rdbLoad();
-            this.replicator.submitEvent(new PostFullSyncEvent());
-            return rs;
+            long checksum = rdbParser.rdbLoad();
+            this.replicator.submitEvent(new PostFullSyncEvent(checksum));
+            return in.total();
         } catch (InterruptedException e) {
             logger.error(e);
             Thread.currentThread().interrupt();

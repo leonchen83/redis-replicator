@@ -32,6 +32,7 @@ import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -55,7 +56,7 @@ public class RedisReplicatorTest extends TestCase {
                     }
 
                     @Override
-                    public void postFullSync(Replicator replicator) {
+                    public void postFullSync(Replicator replicator, long checksum) {
                         Jedis jedis = new Jedis("localhost",
                                 6379);
                         jedis.del("abc");
@@ -105,7 +106,7 @@ public class RedisReplicatorTest extends TestCase {
                     }
 
                     @Override
-                    public void postFullSync(Replicator replicator) {
+                    public void postFullSync(Replicator replicator, long checksum) {
                         Jedis jedis = new Jedis("localhost",
                                 6379);
                         jedis.del("abc");
@@ -205,7 +206,7 @@ public class RedisReplicatorTest extends TestCase {
             }
 
             @Override
-            public void postFullSync(Replicator replicator) {
+            public void postFullSync(Replicator replicator, long checksum) {
                 assertEquals(13, acc.get());
             }
         });
@@ -249,7 +250,7 @@ public class RedisReplicatorTest extends TestCase {
                     }
 
                     @Override
-                    public void postFullSync(Replicator replicator) {
+                    public void postFullSync(Replicator replicator, long checksum) {
                         Jedis jedis = new Jedis("localhost",
                                 6380);
                         jedis.auth("test");
@@ -316,7 +317,7 @@ public class RedisReplicatorTest extends TestCase {
                     }
 
                     @Override
-                    public void postFullSync(Replicator replicator) {
+                    public void postFullSync(Replicator replicator, long checksum) {
 
                     }
                 });
@@ -342,5 +343,57 @@ public class RedisReplicatorTest extends TestCase {
         });
         replicator.open();
         assertEquals(5, acc.get());
+    }
+
+    @Test
+    public void testChecksumV6() throws IOException, InterruptedException {
+        RedisReplicator redisReplicator = new RedisReplicator(
+                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
+                Configuration.defaultSetting().setVerbose(true));
+        final AtomicInteger acc = new AtomicInteger(0);
+        final AtomicLong atomicChecksum = new AtomicLong(0);
+        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+                acc.incrementAndGet();
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+                atomicChecksum.compareAndSet(0, checksum);
+            }
+        });
+        redisReplicator.open();
+        Thread.sleep(2000);
+        assertEquals(132, acc.get());
+        assertEquals(-3409494954737929802L, atomicChecksum.get());
+        redisReplicator.close();
+    }
+
+    @Test
+    public void testChecksumV7() throws IOException, InterruptedException {
+        RedisReplicator redisReplicator = new RedisReplicator(
+                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
+                Configuration.defaultSetting().setVerbose(true));
+        final AtomicInteger acc = new AtomicInteger(0);
+        final AtomicLong atomicChecksum = new AtomicLong(0);
+        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+                acc.incrementAndGet();
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+                atomicChecksum.compareAndSet(0, checksum);
+            }
+        });
+        redisReplicator.open();
+        Thread.sleep(2000);
+        assertEquals(19, acc.get());
+        assertEquals(6576517133597126869L, atomicChecksum.get());
+        redisReplicator.close();
     }
 }

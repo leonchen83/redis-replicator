@@ -16,9 +16,12 @@
 
 package com.moilioncircle.redis.replicator.io;
 
+import com.moilioncircle.redis.replicator.Constants;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 /**
  * Created by leon on 8/9/16.
@@ -155,10 +158,10 @@ public class RedisInputStream extends InputStream {
         if (len == 0) {
             return null;
         }
-        return readString(len, "UTF-8");
+        return readString(len, Constants.CHARSET);
     }
 
-    public String readString(int len, String charset) throws IOException {
+    public String readString(int len, Charset charset) throws IOException {
         byte[] original = readBytes(len);
         return new String(original, charset);
     }

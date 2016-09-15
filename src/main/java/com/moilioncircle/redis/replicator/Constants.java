@@ -16,11 +16,15 @@
 
 package com.moilioncircle.redis.replicator;
 
+import java.nio.charset.Charset;
+
 /**
  * @author leon.chen
  * @since 2016/8/11
  */
 public class Constants {
+
+    public static final Charset CHARSET = Charset.forName("UTF-8");
 
     /**
      * len type

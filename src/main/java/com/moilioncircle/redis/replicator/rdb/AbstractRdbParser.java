@@ -1,6 +1,7 @@
 package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.AbstractReplicator;
+import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.util.Lzf;
 import org.apache.commons.logging.Log;
@@ -128,7 +129,7 @@ public abstract class AbstractRdbParser {
         int len = rdbLoadLen().len;
         byte[] inBytes = in.readBytes(clen);
         byte[] outBytes = Lzf.decode(inBytes, len);
-        return encode ? new String(outBytes, "UTF-8") : outBytes;
+        return encode ? new String(outBytes, Constants.CHARSET) : outBytes;
     }
 
     /**

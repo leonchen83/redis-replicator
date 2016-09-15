@@ -21,6 +21,7 @@ public class Rdb6Parser extends AbstractRdbParser {
 
     protected long rdbLoad() throws IOException, InterruptedException {
         Db db = null;
+        long checksum;
         /**
          * rdb
          */
@@ -103,7 +104,7 @@ public class Rdb6Parser extends AbstractRdbParser {
                  * ----------------------------
                  */
                 case REDIS_RDB_OPCODE_EOF:
-                    byte[] checksum = in.readBytes(8);
+                    checksum = in.readLong(8);
                     break loop;
                 default:
                     throw new AssertionError("Un-except value-type:" + type);
@@ -113,7 +114,7 @@ public class Rdb6Parser extends AbstractRdbParser {
             //submit event
             this.replicator.submitEvent(kv);
         }
-        return in.total();
+        return checksum;
     }
 
     private KeyValuePair rdbLoadObject(int rdbtype) throws IOException {

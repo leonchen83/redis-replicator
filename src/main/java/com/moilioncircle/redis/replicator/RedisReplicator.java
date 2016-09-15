@@ -135,8 +135,8 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public void doPostFullSync() {
-        replicator.doPostFullSync();
+    public void doPostFullSync(long checksum) {
+        replicator.doPostFullSync(checksum);
     }
 
     @Override

@@ -29,7 +29,7 @@ public interface RdbListener {
 
     void handle(Replicator replicator, KeyValuePair<?> kv);
 
-    void postFullSync(Replicator replicator);
+    void postFullSync(Replicator replicator, long checksum);
 
     abstract class Adaptor implements RdbListener {
 
@@ -40,7 +40,7 @@ public interface RdbListener {
             //do nothing
         }
 
-        public void postFullSync(Replicator replicator) {
+        public void postFullSync(Replicator replicator, long checksum) {
             logger.info("post full sync");
             //do nothing
         }

@@ -81,9 +81,9 @@ public abstract class AbstractReplicator implements Replicator {
     }
 
     @Override
-    public void doPostFullSync() {
+    public void doPostFullSync(final long checksum) {
         for (RdbListener listener : rdbListeners) {
-            listener.postFullSync(this);
+            listener.postFullSync(this, checksum);
         }
     }
 

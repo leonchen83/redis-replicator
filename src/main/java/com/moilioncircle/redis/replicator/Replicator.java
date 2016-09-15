@@ -65,7 +65,7 @@ public interface Replicator extends Closeable {
 
     void doPreFullSync();
 
-    void doPostFullSync();
+    void doPostFullSync(long checksum);
 
     void doCloseListener();
 

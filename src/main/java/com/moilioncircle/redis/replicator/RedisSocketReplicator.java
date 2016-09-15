@@ -124,7 +124,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                         Object[] params = new Object[command.length - 1];
                         System.arraycopy(command, 1, params, 0, params.length);
 
-                        //no register .ignore
+                        //if command do not register. ignore
                         if (commands.get(cmdName) == null) continue;
 
                         //do command replyParser
@@ -141,7 +141,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                 break;
             } catch (SocketException | SocketTimeoutException | InterruptedException | EOFException e) {
                 logger.error(e);
-                //when close socket manual
+                //close socket manual
                 if (!connected.get()) {
                     break;
                 }
@@ -168,7 +168,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
     private SyncMode trySync(final String reply) throws IOException {
         logger.info(reply);
         if (reply.startsWith("FULLRESYNC")) {
-            //sync dump
+            //sync rdb dump file
             parseDump(this);
             //after parsed dump file,cache master run id and offset so that next psync.
             String[] ary = reply.split(" ");

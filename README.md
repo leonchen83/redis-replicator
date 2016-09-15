@@ -131,7 +131,8 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
-                if(command.name().equals(CommandName.name("APPEND"))){
+                if(command instanceof AppendParser.AppendCommand){
+                    AppendParser.AppendCommand appendCommand = (AppendParser.AppendCommand)command;
                     //your code here
                 }
             }
@@ -254,7 +255,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
             }
 
             @Override
-            public void postFullSync(Replicator replicator) {
+            public void postFullSync(Replicator replicator, long checksum) {
                 long end = System.currentTimeMillis();
                 System.out.println("time elapsed:" + (end - start));
                 System.out.println("rdb event count:" + acc.get());

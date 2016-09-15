@@ -58,7 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
                 } else if (object instanceof PreFullSyncEvent) {
                     replicator.doPreFullSync();
                 } else if (object instanceof PostFullSyncEvent) {
-                    replicator.doPostFullSync();
+                    replicator.doPostFullSync(((PostFullSyncEvent) object).checksum);
                 } else {
                     throw new AssertionError(object);
                 }
@@ -80,6 +80,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
     }
 
     protected void exceptionHandler(Throwable e) {
-        logger.error(e);
+        logger.error("error", e);
     }
 }

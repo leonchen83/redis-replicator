@@ -1,6 +1,7 @@
 package com.moilioncircle.redis.replicator.util;
 
-import java.io.UnsupportedEncodingException;
+import com.moilioncircle.redis.replicator.Constants;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +56,7 @@ public class ByteBuilder {
 
     @Override
     public String toString() {
-        try {
-            return new String(array(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return null;
-        }
+        return new String(array(), Constants.CHARSET);
     }
+
 }

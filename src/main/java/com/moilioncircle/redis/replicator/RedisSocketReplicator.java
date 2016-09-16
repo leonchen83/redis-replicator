@@ -307,13 +307,13 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
     @Override
     public void close() throws IOException {
         if (!connected.compareAndSet(true, false)) return;
-        if (inputStream != null) inputStream.close();
-        if (outputStream != null) outputStream.close();
-        if (socket != null && !socket.isClosed()) socket.close();
         if (heartBeat != null) {
             heartBeat.cancel();
             heartBeat = null;
         }
+        if (inputStream != null) inputStream.close();
+        if (outputStream != null) outputStream.close();
+        if (socket != null && !socket.isClosed()) socket.close();
         doCloseListener();
         logger.info("channel closed");
     }

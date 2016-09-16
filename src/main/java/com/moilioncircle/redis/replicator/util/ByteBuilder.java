@@ -43,6 +43,7 @@ public class ByteBuilder {
 
     public byte[] array() {
         int len = total;
+        if (len < buffer.capacity()) return buffer.array();
         int offset = 0;
         byte[] ary = new byte[len];
         for (byte[] ba : list) {
@@ -56,7 +57,6 @@ public class ByteBuilder {
 
     @Override
     public String toString() {
-        return new String(array(), Constants.CHARSET);
+        return new String(array(), 0, total, Constants.CHARSET);
     }
-
 }

@@ -100,7 +100,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                                 send("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getOffset()).getBytes());
                             } catch (IOException e) {
                                 //NOP
-                                logger.error(e);
+                                logger.error("error", e);
                             }
 
                         }
@@ -157,7 +157,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                     Thread.sleep(configuration.getRetryTimeInterval());
                 } catch (InterruptedException e1) {
                     //non interrupted
-                    logger.error(e1);
+                    logger.error("error", e1);
                 }
             }
         }

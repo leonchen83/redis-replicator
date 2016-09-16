@@ -92,6 +92,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                 SyncMode syncMode = trySync(reply);
                 if (syncMode == SyncMode.PSYNC) {
                     //heart beat send REPLCONF ACK ${slave offset}
+
                     heartBeat = new Timer("heart beat");
                     heartBeat.schedule(new TimerTask() {
                         @Override
@@ -100,11 +101,10 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                                 send("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getOffset()).getBytes());
                             } catch (IOException e) {
                                 //NOP
-                                logger.error("error", e);
                             }
-
                         }
                     }, configuration.getHeartBeatDelay(), configuration.getHeartBeatPeriod());
+                    logger.info("heart beat started.");
                 }
                 //sync command
                 while (connected.get()) {
@@ -140,7 +140,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                 //connected = false
                 break;
             } catch (SocketException | SocketTimeoutException | InterruptedException | EOFException e) {
-                logger.error(e);
+                logger.error("socket error", e);
                 //close socket manual
                 if (!connected.get()) {
                     break;
@@ -152,7 +152,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                 //server disconnect connection EOFException
                 close();
                 //retry psync in next loop.
-                logger.info("retry connect to redis.");
+                logger.info("reconnect to redis-server. retry times:" + i);
                 try {
                     Thread.sleep(configuration.getRetryTimeInterval());
                 } catch (InterruptedException e1) {
@@ -305,15 +305,28 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         if (!connected.compareAndSet(true, false)) return;
         if (heartBeat != null) {
             heartBeat.cancel();
             heartBeat = null;
+            logger.info("heart beat canceled.");
         }
-        if (inputStream != null) inputStream.close();
-        if (outputStream != null) outputStream.close();
-        if (socket != null && !socket.isClosed()) socket.close();
+        try {
+            if (inputStream != null) inputStream.close();
+        } catch (IOException e) {
+            //NOP
+        }
+        try {
+            if (outputStream != null) outputStream.close();
+        } catch (IOException e) {
+            //NOP
+        }
+        try {
+            if (socket != null && !socket.isClosed()) socket.close();
+        } catch (IOException e) {
+            //NOP
+        }
         doCloseListener();
         logger.info("channel closed");
     }

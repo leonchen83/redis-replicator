@@ -20,5 +20,5 @@ package com.moilioncircle.redis.replicator;
  * Created by leon on 8/31/16.
  */
 public interface CloseListener {
-    void handler(Replicator replicator);
+    void handle(Replicator replicator);
 }

@@ -90,7 +90,7 @@ public abstract class AbstractReplicator implements Replicator {
     @Override
     public void doCloseListener() {
         for (CloseListener listener : closeListeners) {
-            listener.handler(this);
+            listener.handle(this);
         }
     }
 

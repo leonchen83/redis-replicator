@@ -337,7 +337,7 @@ public class RedisReplicatorTest extends TestCase {
         RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6666, Configuration.defaultSetting());
         replicator.addCloseListener(new CloseListener() {
             @Override
-            public void handler(Replicator replicator) {
+            public void handle(Replicator replicator) {
                 acc.incrementAndGet();
             }
         });

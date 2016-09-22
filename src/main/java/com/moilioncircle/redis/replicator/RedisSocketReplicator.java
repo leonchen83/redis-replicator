@@ -226,7 +226,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
         final String reply = (String) reply();
         logger.info(reply);
         if (reply.equals("OK")) return;
-        logger.error("[REPLCONF listening-port " + socket.getLocalPort() + "] failed." + reply);
+        logger.warn("[REPLCONF listening-port " + socket.getLocalPort() + "] failed." + reply);
     }
 
     private void sendSlaveIp() throws IOException {
@@ -237,7 +237,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
         logger.info(reply);
         if (reply.equals("OK")) return;
         //redis 3.2+
-        logger.error("[REPLCONF ip-address " + socket.getLocalAddress().getHostAddress() + "] failed." + reply);
+        logger.warn("[REPLCONF ip-address " + socket.getLocalAddress().getHostAddress() + "] failed." + reply);
     }
 
     private void sendSlaveCapa() throws IOException {
@@ -247,7 +247,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
         final String reply = (String) reply();
         logger.info(reply);
         if (reply.equals("OK")) return;
-        logger.error("[REPLCONF capa eof] failed." + reply);
+        logger.warn("[REPLCONF capa eof] failed." + reply);
     }
 
     public void send(byte[] command) throws IOException {

@@ -19,9 +19,9 @@ public class Rdb7Parser extends AbstractRdbParser {
         super(in, replicator);
     }
 
-    protected long rdbLoad() throws IOException, InterruptedException {
+    protected long rdbLoad(int version) throws IOException, InterruptedException {
         Db db = null;
-        long checksum;
+        long checksum = 0;
         /**
          * rdb
          */
@@ -120,7 +120,7 @@ public class Rdb7Parser extends AbstractRdbParser {
                  * ----------------------------
                  */
                 case REDIS_RDB_OPCODE_EOF:
-                    checksum = in.readLong(8);
+                    if (version >= 5) checksum = in.readLong(8);
                     break loop;
                 default:
                     throw new AssertionError("Un-except value-type:" + type);
@@ -221,23 +221,23 @@ public class Rdb7Parser extends AbstractRdbParser {
                 int zmlen = AbstractRdbParser.LenHelper.zmlen(stream);
                 while (true) {
                     int zmEleLen = AbstractRdbParser.LenHelper.zmElementLen(stream);
-                    if (zmEleLen == -1) {
-                        break;
+                    if (zmEleLen == 255) {
+                        o9.setValueRdbType(rdbtype);
+                        o9.setValue(map);
+                        return o9;
                     }
                     String field = AbstractRdbParser.StringHelper.str(stream, zmEleLen);
                     zmEleLen = AbstractRdbParser.LenHelper.zmElementLen(stream);
+                    if (zmEleLen == 255) {
+                        o9.setValueRdbType(rdbtype);
+                        o9.setValue(map);
+                        return o9;
+                    }
                     int free = AbstractRdbParser.LenHelper.free(stream);
                     String value = AbstractRdbParser.StringHelper.str(stream, zmEleLen);
                     AbstractRdbParser.StringHelper.skip(stream, free);
                     map.put(field, value);
                 }
-                int zmend = AbstractRdbParser.LenHelper.zmend(stream);
-                if (zmend != 255) {
-                    throw new AssertionError("zmend expected 255 but " + zmend);
-                }
-                o9.setValueRdbType(rdbtype);
-                o9.setValue(map);
-                return o9;
             /*
              * |<encoding>| <length-of-contents>|              <contents>                           |
              * | 4 bytes  |            4 bytes  | 2 bytes lement| 4 bytes element | 8 bytes element |

@@ -26,7 +26,7 @@ public abstract class AbstractRdbParser {
         this.replicator = replicator;
     }
 
-    protected long rdbLoad() throws IOException, InterruptedException {
+    protected long rdbLoad(int version) throws IOException, InterruptedException {
         throw new UnsupportedOperationException("rdbLoad()");
     }
 
@@ -297,7 +297,7 @@ public abstract class AbstractRdbParser {
             } else if (len == 254) {
                 return in.readInt(4, false);
             } else {
-                return -1;
+                return len;
             }
         }
 

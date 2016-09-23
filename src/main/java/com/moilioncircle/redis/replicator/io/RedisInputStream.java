@@ -113,7 +113,8 @@ public class RedisInputStream extends InputStream {
                 r = (r << 8) | v;
             }
         }
-        return r;
+        int c;
+        return r << (c = (4 - length << 3)) >> c;
     }
 
     public long readUInt(int length) throws IOException {
@@ -138,7 +139,8 @@ public class RedisInputStream extends InputStream {
                 r = (r << 8) | v;
             }
         }
-        return r;
+        int c;
+        return r << (c = (4 - length << 3)) >> c;
     }
 
     public long readLong(int length, boolean littleEndian) throws IOException {

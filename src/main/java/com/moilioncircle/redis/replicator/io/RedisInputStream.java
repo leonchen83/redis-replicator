@@ -131,7 +131,8 @@ public class RedisInputStream extends InputStream {
 
     public int readInt(byte[] bytes, boolean littleEndian) {
         int r = 0;
-        for (int i = 0; i < bytes.length; ++i) {
+        int length = bytes.length;
+        for (int i = 0; i < length; ++i) {
             final int v = bytes[i] & 0xff;
             if (littleEndian) {
                 r |= (v << (i << 3));

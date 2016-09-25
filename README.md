@@ -261,7 +261,31 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
                 System.out.println("rdb event count:" + acc.get());
             }
         });
-```
+```  
+  
+##Handle Raw Bytes  
+  
+* when kv.getValueRdbType() == 0, you can get the raw bytes of value. In some cases(eg. HyperLogLog),this is very useful.  
+  
+```java
+        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        replicator.addRdbFilter(new RdbFilter() {
+            @Override
+            public boolean accept(KeyValuePair<?> kv) {
+                return kv.getValueRdbType() == 0;
+            }
+        });
+        replicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                if (kv.getValueRdbType() == 0) {
+                    KeyStringValueString ksvs = (KeyStringValueString) kv;
+                    System.out.println(Arrays.toString(ksvs.getRawBytes()));
+                }
+            }
+        });
+        replicator.open();
+```  
   
 #References  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

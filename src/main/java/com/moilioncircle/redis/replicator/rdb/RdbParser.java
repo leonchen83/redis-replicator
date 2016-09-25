@@ -135,7 +135,7 @@ public class RdbParser extends AbstractRdbParser {
                 case REDIS_RDB_OPCODE_EXPIRETIME:
                     int expiredSec = rdbLoadTime();
                     int valueType = in.read();
-                    String key = rdbLoadEncodedStringObject();
+                    String key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);
                     kv.setDb(db);
                     kv.setExpiredSeconds(expiredSec);
@@ -152,15 +152,15 @@ public class RdbParser extends AbstractRdbParser {
                 case REDIS_RDB_OPCODE_EXPIRETIME_MS:
                     long expiredMs = rdbLoadMillisecondTime();
                     valueType = in.read();
-                    key = rdbLoadEncodedStringObject();
+                    key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);
                     kv.setDb(db);
                     kv.setExpiredMs(expiredMs);
                     kv.setKey(key);
                     break;
                 case REDIS_RDB_OPCODE_AUX:
-                    String auxKey = rdbLoadEncodedStringObject();
-                    String auxValue = rdbLoadEncodedStringObject();
+                    String auxKey = rdbLoadEncodedStringObject().string;
+                    String auxValue = rdbLoadEncodedStringObject().string;
                     if (auxKey.startsWith("%")) {
                         logger.info("RDB " + auxKey + ": " + auxValue);
                     } else {
@@ -192,7 +192,7 @@ public class RdbParser extends AbstractRdbParser {
                 case REDIS_RDB_TYPE_HASH_ZIPLIST:
                 case REDIS_RDB_TYPE_LIST_QUICKLIST:
                     valueType = type;
-                    key = rdbLoadEncodedStringObject();
+                    key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);
                     kv.setDb(db);
                     kv.setKey(key);
@@ -235,9 +235,10 @@ public class RdbParser extends AbstractRdbParser {
              */
             case REDIS_RDB_TYPE_STRING:
                 KeyStringValueString o0 = new KeyStringValueString();
-                String val = rdbLoadEncodedStringObject();
+                EncodedString val = rdbLoadEncodedStringObject();
                 o0.setValueRdbType(rdbtype);
-                o0.setValue(val);
+                o0.setValue(val.string);
+                o0.setRawBytes(val.rawBytes);
                 return o0;
             /*
              * |    <len>     |       <content>       |
@@ -248,7 +249,7 @@ public class RdbParser extends AbstractRdbParser {
                 KeyStringValueList<String> o1 = new KeyStringValueList<>();
                 List<String> list = new ArrayList<>();
                 for (int i = 0; i < len; i++) {
-                    String element = rdbLoadEncodedStringObject();
+                    String element = rdbLoadEncodedStringObject().string;
                     list.add(element);
                 }
                 o1.setValueRdbType(rdbtype);
@@ -263,7 +264,7 @@ public class RdbParser extends AbstractRdbParser {
                 KeyStringValueSet o2 = new KeyStringValueSet();
                 Set<String> set = new LinkedHashSet<>();
                 for (int i = 0; i < len; i++) {
-                    String element = rdbLoadEncodedStringObject();
+                    String element = rdbLoadEncodedStringObject().string;
                     set.add(element);
                 }
                 o2.setValueRdbType(rdbtype);
@@ -278,7 +279,7 @@ public class RdbParser extends AbstractRdbParser {
                 KeyStringValueZSet o3 = new KeyStringValueZSet();
                 Set<ZSetEntry> zset = new LinkedHashSet<>();
                 while (len > 0) {
-                    String element = rdbLoadEncodedStringObject();
+                    String element = rdbLoadEncodedStringObject().string;
                     double score = rdbLoadDoubleValue();
                     zset.add(new ZSetEntry(element, score));
                     len--;
@@ -295,8 +296,8 @@ public class RdbParser extends AbstractRdbParser {
                 KeyStringValueHash o4 = new KeyStringValueHash();
                 Map<String, String> map = new LinkedHashMap<>();
                 while (len > 0) {
-                    String field = rdbLoadEncodedStringObject();
-                    String value = rdbLoadEncodedStringObject();
+                    String field = rdbLoadEncodedStringObject().string;
+                    String value = rdbLoadEncodedStringObject().string;
                     map.put(field, value);
                     len--;
                 }

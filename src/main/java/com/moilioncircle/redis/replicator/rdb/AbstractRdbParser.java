@@ -110,7 +110,7 @@ public abstract class AbstractRdbParser {
                 value = new byte[]{0x00};
                 break;
         }
-        return encode ? String.valueOf(in.readInt(value)) : value;
+        return encode ? new EncodedString(String.valueOf(in.readInt(value)), value) : value;
     }
 
     /**
@@ -129,7 +129,7 @@ public abstract class AbstractRdbParser {
         int len = rdbLoadLen().len;
         byte[] inBytes = in.readBytes(clen);
         byte[] outBytes = Lzf.decode(inBytes, len);
-        return encode ? new String(outBytes, Constants.CHARSET) : outBytes;
+        return encode ? new EncodedString(new String(outBytes, Constants.CHARSET), outBytes) : outBytes;
     }
 
     /**
@@ -160,11 +160,12 @@ public abstract class AbstractRdbParser {
                     throw new AssertionError("Unknown RdbParser encoding type:" + len);
             }
         }
-        return encode ? StringHelper.str(in, len) : in.readBytes(len);
+        byte[] bytes;
+        return encode ? new EncodedString(new String(bytes = in.readBytes(len), Constants.CHARSET), bytes) : in.readBytes(len);
     }
 
     /**
-     * @return String rdb object with raw bytes
+     * @return byte[] rdb object with raw bytes
      * @throws IOException when read timeout
      */
     protected byte[] rdbLoadRawStringObject() throws IOException {
@@ -172,11 +173,11 @@ public abstract class AbstractRdbParser {
     }
 
     /**
-     * @return String rdb object with UTF-8 string
+     * @return EncodedString rdb object with UTF-8 string
      * @throws IOException when read timeout
      */
-    protected String rdbLoadEncodedStringObject() throws IOException {
-        return (String) rdbGenericLoadStringObject(true);
+    protected EncodedString rdbLoadEncodedStringObject() throws IOException {
+        return (EncodedString) rdbGenericLoadStringObject(true);
     }
 
     protected double rdbLoadDoubleValue() throws IOException {
@@ -325,6 +326,16 @@ public abstract class AbstractRdbParser {
 
         public static int lenOfContent(RedisInputStream in) throws IOException {
             return in.readInt(4);
+        }
+    }
+
+    protected static class EncodedString {
+        public String string;
+        public byte[] rawBytes;
+
+        public EncodedString(String string, byte[] rawBytes) {
+            this.string = string;
+            this.rawBytes = rawBytes;
         }
     }
 }

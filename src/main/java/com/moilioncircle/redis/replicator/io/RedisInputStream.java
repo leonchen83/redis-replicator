@@ -158,9 +158,6 @@ public class RedisInputStream extends InputStream {
     }
 
     public String readString(int len) throws IOException {
-        if (len == 0) {
-            return null;
-        }
         return readString(len, Constants.CHARSET);
     }
 

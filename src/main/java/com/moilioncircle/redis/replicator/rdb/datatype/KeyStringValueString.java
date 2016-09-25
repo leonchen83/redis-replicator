@@ -20,4 +20,13 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  * Created by leon on 8/13/16.
  */
 public class KeyStringValueString extends KeyValuePair<String> {
+    protected byte[] rawBytes;
+
+    public byte[] getRawBytes() {
+        return rawBytes;
+    }
+
+    public void setRawBytes(byte[] rawBytes) {
+        this.rawBytes = rawBytes;
+    }
 }

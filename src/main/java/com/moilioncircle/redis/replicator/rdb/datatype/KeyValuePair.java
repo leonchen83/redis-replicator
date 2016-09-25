@@ -28,6 +28,7 @@ public class KeyValuePair<T> implements Serializable {
     protected Long expiredMs;
     protected String key;
     protected T value;
+    protected byte[] rawBytes;
 
     public int getValueRdbType() {
         return valueRdbType;
@@ -75,6 +76,14 @@ public class KeyValuePair<T> implements Serializable {
 
     public void setDb(Db db) {
         this.db = db;
+    }
+
+    public byte[] getRawBytes() {
+        return rawBytes;
+    }
+
+    public void setRawBytes(byte[] rawBytes) {
+        this.rawBytes = rawBytes;
     }
 
     @Override

@@ -22,7 +22,7 @@
 
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>1.0.13</version>
+    <version>1.0.14-SNAPSHOT</version>
 
     <name>redis-replicator</name>
     <description>Redis Replicator is a redis RDB and Command parser written in java.

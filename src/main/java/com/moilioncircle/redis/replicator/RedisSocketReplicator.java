@@ -140,11 +140,11 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                 //connected = false
                 break;
             } catch (SocketException | SocketTimeoutException | InterruptedException | EOFException e) {
-                logger.error("socket error", e);
                 //close socket manual
                 if (!connected.get()) {
                     break;
                 }
+                logger.error("socket error", e);
                 //connect refused
                 //connect timeout
                 //read timeout

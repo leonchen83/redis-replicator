@@ -65,18 +65,18 @@ public class ZInterStoreParser implements CommandParser<ZInterStoreParser.ZInter
         public final int numkeys;
         public final String[] keys;
         public final double[] weights;
-        public final Boolean isSum;
-        public final Boolean isMin;
-        public final Boolean isMax;
+        public final Boolean isAggregateSum;
+        public final Boolean isAggregateMin;
+        public final Boolean isAggregateMax;
 
-        public ZInterStoreCommand(String destination, int numkeys, String[] keys, double[] weights, Boolean isSum, Boolean isMin, Boolean isMax) {
+        public ZInterStoreCommand(String destination, int numkeys, String[] keys, double[] weights, Boolean isAggregateSum, Boolean isAggregateMin, Boolean isAggregateMax) {
             this.destination = destination;
             this.numkeys = numkeys;
             this.keys = keys;
             this.weights = weights;
-            this.isSum = isSum;
-            this.isMin = isMin;
-            this.isMax = isMax;
+            this.isAggregateSum = isAggregateSum;
+            this.isAggregateMin = isAggregateMin;
+            this.isAggregateMax = isAggregateMax;
         }
 
         @Override
@@ -86,9 +86,9 @@ public class ZInterStoreParser implements CommandParser<ZInterStoreParser.ZInter
                     ", numkeys=" + numkeys +
                     ", keys=" + Arrays.toString(keys) +
                     ", weights=" + Arrays.toString(weights) +
-                    ", isSum=" + isSum +
-                    ", isMin=" + isMin +
-                    ", isMax=" + isMax +
+                    ", isAggregateSum=" + isAggregateSum +
+                    ", isAggregateMin=" + isAggregateMin +
+                    ", isAggregateMax=" + isAggregateMax +
                     '}';
         }
 

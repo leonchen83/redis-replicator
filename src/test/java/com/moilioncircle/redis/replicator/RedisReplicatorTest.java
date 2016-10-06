@@ -22,6 +22,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.SetParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZAddParser;
+import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreParser;
+import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreParser;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
@@ -76,6 +78,126 @@ public class RedisReplicatorTest extends TestCase {
                         SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
                         assertEquals("abc", setCommand.key);
                         assertEquals("bcd", setCommand.value);
+                        ref.compareAndSet(null, "ok");
+                    }
+                });
+            }
+        }.testSocket(
+                "localhost",
+                6379,
+                Configuration.defaultSetting()
+                        .setRetries(0)
+                        .setVerbose(true),
+                15000);
+        assertEquals("ok", ref.get());
+    }
+
+    @Test
+    public void testZInterStore() throws Exception {
+        final AtomicReference<String> ref = new AtomicReference<>(null);
+        new TestTemplate() {
+            @Override
+            protected void test(RedisReplicator replicator) {
+                replicator.addRdbListener(new RdbListener() {
+                    @Override
+                    public void preFullSync(Replicator replicator) {
+                    }
+
+                    @Override
+                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                    }
+
+                    @Override
+                    public void postFullSync(Replicator replicator, long checksum) {
+                        Jedis jedis = new Jedis("localhost",
+                                6379);
+                        jedis.del("zset1");
+                        jedis.del("zset2");
+                        jedis.del("out");
+                        jedis.zadd("zset1", 1, "one");
+                        jedis.zadd("zset1", 2, "two");
+                        jedis.zadd("zset2", 1, "one");
+                        jedis.zadd("zset2", 2, "two");
+                        jedis.zadd("zset2", 3, "three");
+                        //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
+                        System.out.println(jedis.zinterstore("out", "zset1", "zset2"));
+                        jedis.close();
+                    }
+                });
+                replicator.addCommandFilter(new CommandFilter() {
+                    @Override
+                    public boolean accept(Command command) {
+                        return command.name().equals(CommandName.name("ZINTERSTORE"));
+                    }
+                });
+                replicator.addCommandListener(new CommandListener() {
+                    @Override
+                    public void handle(Replicator replicator, Command command) {
+                        ZInterStoreParser.ZInterStoreCommand zInterStoreCommand = (ZInterStoreParser.ZInterStoreCommand) command;
+                        assertEquals("out", zInterStoreCommand.destination);
+                        assertEquals(2, zInterStoreCommand.numkeys);
+                        assertEquals("zset1", zInterStoreCommand.keys[0]);
+                        assertEquals("zset2", zInterStoreCommand.keys[1]);
+                        ref.compareAndSet(null, "ok");
+                    }
+                });
+            }
+        }.testSocket(
+                "localhost",
+                6379,
+                Configuration.defaultSetting()
+                        .setRetries(0)
+                        .setVerbose(true),
+                15000);
+        assertEquals("ok", ref.get());
+    }
+
+    @Test
+    public void testZUnionStore() throws Exception {
+        final AtomicReference<String> ref = new AtomicReference<>(null);
+        new TestTemplate() {
+            @Override
+            protected void test(RedisReplicator replicator) {
+                replicator.addRdbListener(new RdbListener() {
+                    @Override
+                    public void preFullSync(Replicator replicator) {
+                    }
+
+                    @Override
+                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                    }
+
+                    @Override
+                    public void postFullSync(Replicator replicator, long checksum) {
+                        Jedis jedis = new Jedis("localhost",
+                                6379);
+                        jedis.del("zset3");
+                        jedis.del("zset4");
+                        jedis.del("out1");
+                        jedis.zadd("zset3", 1, "one");
+                        jedis.zadd("zset3", 2, "two");
+                        jedis.zadd("zset4", 1, "one");
+                        jedis.zadd("zset4", 2, "two");
+                        jedis.zadd("zset4", 3, "three");
+                        //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
+                        System.out.println(jedis.zunionstore("out1", "zset3", "zset4"));
+                        jedis.close();
+                    }
+                });
+                replicator.addCommandFilter(new CommandFilter() {
+                    @Override
+                    public boolean accept(Command command) {
+                        return command.name().equals(CommandName.name("ZUNIONSTORE"));
+                    }
+                });
+                replicator.addCommandListener(new CommandListener() {
+                    @Override
+                    public void handle(Replicator replicator, Command command) {
+                        ZUnionStoreParser.ZUnionStoreCommand zInterStoreCommand = (ZUnionStoreParser.ZUnionStoreCommand) command;
+                        assertEquals("out1", zInterStoreCommand.destination);
+                        assertEquals(2, zInterStoreCommand.numkeys);
+                        assertEquals("zset3", zInterStoreCommand.keys[0]);
+                        assertEquals("zset4", zInterStoreCommand.keys[1]);
                         ref.compareAndSet(null, "ok");
                     }
                 });
@@ -152,6 +274,7 @@ public class RedisReplicatorTest extends TestCase {
         assertEquals("2", ref.get());
     }
 
+    @Test
     public void testFileV7() throws IOException, InterruptedException {
         RedisReplicator redisReplicator = new RedisReplicator(
                 RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),

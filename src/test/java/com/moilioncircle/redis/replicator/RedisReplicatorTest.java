@@ -31,6 +31,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import junit.framework.TestCase;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ZParams;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -180,7 +181,9 @@ public class RedisReplicatorTest extends TestCase {
                         jedis.zadd("zset4", 2, "two");
                         jedis.zadd("zset4", 3, "three");
                         //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
-                        System.out.println(jedis.zunionstore("out1", "zset3", "zset4"));
+                        ZParams zParams = new ZParams();
+                        zParams.weightsByDouble(2, 3);
+                        System.out.println(jedis.zunionstore("out1", zParams, "zset3", "zset4"));
                         jedis.close();
                     }
                 });
@@ -198,6 +201,8 @@ public class RedisReplicatorTest extends TestCase {
                         assertEquals(2, zInterStoreCommand.numkeys);
                         assertEquals("zset3", zInterStoreCommand.keys[0]);
                         assertEquals("zset4", zInterStoreCommand.keys[1]);
+                        assertEquals(2.0, zInterStoreCommand.weights[0]);
+                        assertEquals(3.0, zInterStoreCommand.weights[1]);
                         ref.compareAndSet(null, "ok");
                     }
                 });

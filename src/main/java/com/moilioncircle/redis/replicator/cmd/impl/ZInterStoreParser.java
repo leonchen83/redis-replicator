@@ -37,7 +37,7 @@ public class ZInterStoreParser implements CommandParser<ZInterStoreParser.ZInter
             keys[i] = (String) params[idx++];
         }
         double[] weights = null;
-        if (idx < params.length) {
+        while (idx < params.length) {
             String param = (String) params[idx];
             if (param.equalsIgnoreCase("WEIGHTS")) {
                 idx++;
@@ -45,9 +45,10 @@ public class ZInterStoreParser implements CommandParser<ZInterStoreParser.ZInter
                 for (int i = 0; i < numkeys; i++) {
                     weights[i] = Double.parseDouble((String) params[idx++]);
                 }
-            } else if (param.equalsIgnoreCase("AGGREGATE")) {
+            }
+            if (param.equalsIgnoreCase("AGGREGATE")) {
                 idx++;
-                String next = (String) params[idx];
+                String next = (String) params[idx++];
                 if (next.equalsIgnoreCase("SUM")) {
                     isSum = true;
                 } else if (next.equalsIgnoreCase("MIN")) {

@@ -121,7 +121,10 @@ public class RedisReplicatorTest extends TestCase {
                         jedis.zadd("zset2", 2, "two");
                         jedis.zadd("zset2", 3, "three");
                         //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
-                        System.out.println(jedis.zinterstore("out", "zset1", "zset2"));
+                        ZParams zParams = new ZParams();
+                        zParams.weightsByDouble(2, 3);
+                        zParams.aggregate(ZParams.Aggregate.MIN);
+                        System.out.println(jedis.zinterstore("out", zParams, "zset1", "zset2"));
                         jedis.close();
                     }
                 });
@@ -139,6 +142,9 @@ public class RedisReplicatorTest extends TestCase {
                         assertEquals(2, zInterStoreCommand.numkeys);
                         assertEquals("zset1", zInterStoreCommand.keys[0]);
                         assertEquals("zset2", zInterStoreCommand.keys[1]);
+                        assertEquals(2.0, zInterStoreCommand.weights[0]);
+                        assertEquals(3.0, zInterStoreCommand.weights[1]);
+                        assertEquals(Boolean.TRUE, zInterStoreCommand.isAggregateMin);
                         ref.compareAndSet(null, "ok");
                     }
                 });
@@ -183,6 +189,7 @@ public class RedisReplicatorTest extends TestCase {
                         //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
                         ZParams zParams = new ZParams();
                         zParams.weightsByDouble(2, 3);
+                        zParams.aggregate(ZParams.Aggregate.SUM);
                         System.out.println(jedis.zunionstore("out1", zParams, "zset3", "zset4"));
                         jedis.close();
                     }
@@ -203,6 +210,7 @@ public class RedisReplicatorTest extends TestCase {
                         assertEquals("zset4", zInterStoreCommand.keys[1]);
                         assertEquals(2.0, zInterStoreCommand.weights[0]);
                         assertEquals(3.0, zInterStoreCommand.weights[1]);
+                        assertEquals(Boolean.TRUE, zInterStoreCommand.isAggregateSum);
                         ref.compareAndSet(null, "ok");
                     }
                 });

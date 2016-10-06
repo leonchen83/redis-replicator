@@ -32,6 +32,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ZParams;
+import redis.clients.jedis.params.sortedset.ZAddParams;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -247,7 +248,7 @@ public class RedisReplicatorTest extends TestCase {
                         jedis.del("abc");
                         jedis.zrem("zzlist", "member");
                         jedis.set("abc", "bcd");
-                        jedis.zadd("zzlist", 1.5, "member");
+                        jedis.zadd("zzlist", 1.5, "member", ZAddParams.zAddParams().nx());
                         jedis.close();
                     }
                 });
@@ -271,6 +272,7 @@ public class RedisReplicatorTest extends TestCase {
                             assertEquals("zzlist", zaddCommand.key);
                             assertEquals(1.5, zaddCommand.zEntries[0].score);
                             assertEquals("member", zaddCommand.zEntries[0].member);
+                            assertEquals(Boolean.TRUE, zaddCommand.isNx);
                             ref.compareAndSet("1", "2");
                         }
 

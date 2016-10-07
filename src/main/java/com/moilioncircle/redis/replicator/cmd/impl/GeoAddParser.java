@@ -27,35 +27,35 @@ import java.util.List;
 /**
  * Created by leon on 8/20/16.
  */
-public class GEOAddParser implements CommandParser<GEOAddParser.GEOAddCommand> {
+public class GeoAddParser implements CommandParser<GeoAddParser.GeoAddCommand> {
     @Override
-    public GEOAddCommand parse(CommandName cmdName, Object[] params) {
+    public GeoAddCommand parse(CommandName cmdName, Object[] params) {
         int idx = 0;
         String key = (String) params[idx++];
-        List<GEO> list = new ArrayList<>();
+        List<Geo> list = new ArrayList<>();
         while (idx < params.length) {
             double longitude = Double.parseDouble((String) params[idx++]);
             double latitude = Double.parseDouble((String) params[idx++]);
             String member = (String) params[idx++];
-            list.add(new GEO(member, longitude, latitude));
+            list.add(new Geo(member, longitude, latitude));
         }
-        GEO[] geos = new GEO[list.size()];
+        Geo[] geos = new Geo[list.size()];
         list.toArray(geos);
-        return new GEOAddCommand(key, geos);
+        return new GeoAddCommand(key, geos);
     }
 
-    public static class GEOAddCommand implements Command {
+    public static class GeoAddCommand implements Command {
         public final String key;
-        public final GEO[] geos;
+        public final Geo[] geos;
 
-        public GEOAddCommand(String key, GEO[] geos) {
+        public GeoAddCommand(String key, Geo[] geos) {
             this.key = key;
             this.geos = geos;
         }
 
         @Override
         public String toString() {
-            return "GEOAddCommand{" +
+            return "GeoAddCommand{" +
                     "key='" + key + '\'' +
                     ", geos=" + Arrays.toString(geos) +
                     '}';

@@ -5,12 +5,12 @@ import java.io.Serializable;
 /**
  * Created by leon on 8/20/16.
  */
-public class GEO implements Serializable {
+public class Geo implements Serializable {
     public final String member;
     public final double longitude;
     public final double latitude;
 
-    public GEO(String member, double longitude, double latitude) {
+    public Geo(String member, double longitude, double latitude) {
         this.member = member;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -18,7 +18,7 @@ public class GEO implements Serializable {
 
     @Override
     public String toString() {
-        return "GEO{" +
+        return "Geo{" +
                 "member='" + member + '\'' +
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +

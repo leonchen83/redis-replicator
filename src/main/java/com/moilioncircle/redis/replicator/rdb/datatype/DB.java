@@ -21,18 +21,18 @@ import java.io.Serializable;
 /**
  * Created by leon on 8/20/16.
  */
-public class Db implements Serializable {
+public class DB implements Serializable {
     public int dbNumber;
     /* rdb version 7 */
     public Integer dbsize = null;
     /* rdb version 7 */
     public Integer expires = null;
 
-    public Db(int dbNumber) {
+    public DB(int dbNumber) {
         this.dbNumber = dbNumber;
     }
 
-    public Db(int dbNumber, int dbsize, int expires) {
+    public DB(int dbNumber, int dbsize, int expires) {
         this.dbNumber = dbNumber;
         this.dbsize = dbsize;
         this.expires = expires;
@@ -64,7 +64,7 @@ public class Db implements Serializable {
 
     @Override
     public String toString() {
-        return "Db{" +
+        return "DB{" +
                 "dbNumber=" + dbNumber +
                 ", dbsize=" + dbsize +
                 ", expires=" + expires +

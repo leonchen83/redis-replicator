@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Created by leon on 8/13/16.
  */
 public class KeyValuePair<T> implements Serializable {
-    protected Db db;
+    protected DB db;
     protected int valueRdbType;
     protected Integer expiredSeconds;
     protected Long expiredMs;
@@ -69,11 +69,11 @@ public class KeyValuePair<T> implements Serializable {
         this.value = value;
     }
 
-    public Db getDb() {
+    public DB getDb() {
         return db;
     }
 
-    public void setDb(Db db) {
+    public void setDb(DB db) {
         this.db = db;
     }
 

@@ -114,7 +114,7 @@ public class RdbParser extends AbstractRdbParser {
 
 
     protected long rdbLoad(int version) throws IOException, InterruptedException {
-        Db db = null;
+        DB db = null;
         long checksum = 0;
         /**
          * rdb
@@ -204,7 +204,7 @@ public class RdbParser extends AbstractRdbParser {
                  */
                 case REDIS_RDB_OPCODE_SELECTDB:
                     int dbNumber = rdbLoadLen().len;
-                    db = new Db(dbNumber);
+                    db = new DB(dbNumber);
                     break;
                 /*
                  * ----------------------------

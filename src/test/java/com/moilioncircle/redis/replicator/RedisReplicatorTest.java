@@ -20,10 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandFilter;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
-import com.moilioncircle.redis.replicator.cmd.impl.SetParser;
-import com.moilioncircle.redis.replicator.cmd.impl.ZAddParser;
-import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreParser;
-import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreParser;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
@@ -145,7 +142,7 @@ public class RedisReplicatorTest extends TestCase {
                         assertEquals("zset2", zInterStoreCommand.keys[1]);
                         assertEquals(2.0, zInterStoreCommand.weights[0]);
                         assertEquals(3.0, zInterStoreCommand.weights[1]);
-                        assertEquals(Boolean.TRUE, zInterStoreCommand.isAggregateMin);
+                        assertEquals(AggregateType.MIN, zInterStoreCommand.aggregateType);
                         ref.compareAndSet(null, "ok");
                     }
                 });
@@ -211,7 +208,7 @@ public class RedisReplicatorTest extends TestCase {
                         assertEquals("zset4", zInterStoreCommand.keys[1]);
                         assertEquals(2.0, zInterStoreCommand.weights[0]);
                         assertEquals(3.0, zInterStoreCommand.weights[1]);
-                        assertEquals(Boolean.TRUE, zInterStoreCommand.isAggregateSum);
+                        assertEquals(AggregateType.SUM, zInterStoreCommand.aggregateType);
                         ref.compareAndSet(null, "ok");
                     }
                 });
@@ -272,7 +269,7 @@ public class RedisReplicatorTest extends TestCase {
                             assertEquals("zzlist", zaddCommand.key);
                             assertEquals(1.5, zaddCommand.zEntries[0].score);
                             assertEquals("member", zaddCommand.zEntries[0].member);
-                            assertEquals(Boolean.TRUE, zaddCommand.isNx);
+                            assertEquals(ExistType.NX, zaddCommand.existType);
                             ref.compareAndSet("1", "2");
                         }
 

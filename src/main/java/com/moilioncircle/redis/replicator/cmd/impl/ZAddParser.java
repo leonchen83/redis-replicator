@@ -32,15 +32,16 @@ public class ZAddParser implements CommandParser<ZAddParser.ZAddCommand> {
     @Override
     public ZAddCommand parse(CommandName cmdName, Object[] params) {
         int idx = 0;
-        Boolean isNx = null, isXx = null, isCh = null, isIncr = null;
+        Boolean isCh = null, isIncr = null;
+        ExistType existType = ExistType.NONE;
         List<ZEntry> list = new ArrayList<>();
         String key = (String) params[idx++];
         while (idx < params.length) {
             String param = (String) params[idx];
             if (param.equalsIgnoreCase("NX")) {
-                isNx = true;
+                existType = ExistType.NX;
             } else if (param.equalsIgnoreCase("XX")) {
-                isXx = true;
+                existType = ExistType.XX;
             } else if (param.equalsIgnoreCase("CH")) {
                 isCh = true;
             } else if (param.equalsIgnoreCase("INCR")) {
@@ -55,21 +56,19 @@ public class ZAddParser implements CommandParser<ZAddParser.ZAddCommand> {
         }
         ZEntry[] zEntries = new ZEntry[list.size()];
         list.toArray(zEntries);
-        return new ZAddCommand(key, isNx, isXx, isCh, isIncr, zEntries);
+        return new ZAddCommand(key, existType, isCh, isIncr, zEntries);
     }
 
     public static class ZAddCommand implements Command {
         public final String key;
-        public final Boolean isNx;
-        public final Boolean isXx;
+        public final ExistType existType;
         public final Boolean isCh;
         public final Boolean isIncr;
         public final ZEntry[] zEntries;
 
-        public ZAddCommand(String key, Boolean isNx, Boolean isXx, Boolean isCh, Boolean isIncr, ZEntry[] zEntries) {
+        public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZEntry[] zEntries) {
             this.key = key;
-            this.isNx = isNx;
-            this.isXx = isXx;
+            this.existType = existType;
             this.isCh = isCh;
             this.isIncr = isIncr;
             this.zEntries = zEntries;
@@ -79,8 +78,7 @@ public class ZAddParser implements CommandParser<ZAddParser.ZAddCommand> {
         public String toString() {
             return "ZAddCommand{" +
                     "key='" + key + '\'' +
-                    ", isNx=" + isNx +
-                    ", isXx=" + isXx +
+                    ", existType=" + existType +
                     ", isCh=" + isCh +
                     ", isIncr=" + isIncr +
                     ", zEntries=" + Arrays.toString(zEntries) +

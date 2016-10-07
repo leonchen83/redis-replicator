@@ -29,7 +29,7 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreParser.ZUnion
     @Override
     public ZUnionStoreCommand parse(CommandName cmdName, Object[] params) {
         int idx = 0;
-        Boolean isSum = null, isMin = null, isMax = null;
+        AggregateType aggregateType = null;
         String destination = (String) params[idx++];
         int numkeys = Integer.parseInt((String) params[idx++]);
         String[] keys = new String[numkeys];
@@ -49,15 +49,15 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreParser.ZUnion
                 idx++;
                 String next = (String) params[idx++];
                 if (next.equalsIgnoreCase("SUM")) {
-                    isSum = true;
+                    aggregateType = AggregateType.SUM;
                 } else if (next.equalsIgnoreCase("MIN")) {
-                    isMin = true;
+                    aggregateType = AggregateType.MIN;
                 } else if (next.equalsIgnoreCase("MAX")) {
-                    isMax = true;
+                    aggregateType = AggregateType.MAX;
                 }
             }
         }
-        return new ZUnionStoreCommand(destination, numkeys, keys, weights, isSum, isMin, isMax);
+        return new ZUnionStoreCommand(destination, numkeys, keys, weights, aggregateType);
     }
 
     public static class ZUnionStoreCommand implements Command {
@@ -65,18 +65,14 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreParser.ZUnion
         public final int numkeys;
         public final String[] keys;
         public final double[] weights;
-        public final Boolean isAggregateSum;
-        public final Boolean isAggregateMin;
-        public final Boolean isAggregateMax;
+        public final AggregateType aggregateType;
 
-        public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, Boolean isAggregateSum, Boolean isAggregateMin, Boolean isAggregateMax) {
+        public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType) {
             this.destination = destination;
             this.numkeys = numkeys;
             this.keys = keys;
             this.weights = weights;
-            this.isAggregateSum = isAggregateSum;
-            this.isAggregateMin = isAggregateMin;
-            this.isAggregateMax = isAggregateMax;
+            this.aggregateType = aggregateType;
         }
 
         @Override
@@ -86,9 +82,7 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreParser.ZUnion
                     ", numkeys=" + numkeys +
                     ", keys=" + Arrays.toString(keys) +
                     ", weights=" + Arrays.toString(weights) +
-                    ", isAggregateSum=" + isAggregateSum +
-                    ", isAggregateMin=" + isAggregateMin +
-                    ", isAggregateMax=" + isAggregateMax +
+                    ", aggregateType=" + aggregateType +
                     '}';
         }
 

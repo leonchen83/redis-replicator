@@ -27,40 +27,37 @@ public class LInsertParser implements CommandParser<LInsertParser.LInsertCommand
     @Override
     public LInsertCommand parse(CommandName cmdName, Object[] params) {
         int idx = 0;
-        Boolean isBefore = null, isAfter = null;
+        LInsertType lInsertType = null;
         String key = (String) params[idx++];
         String keyWord = (String) params[idx++];
         if (keyWord.equalsIgnoreCase("BEFORE")) {
-            isBefore = true;
+            lInsertType = LInsertType.BEFORE;
         } else if (keyWord.equalsIgnoreCase("AFTER")) {
-            isAfter = true;
+            lInsertType = LInsertType.AFTER;
         }
         String pivot = (String) params[idx++];
         String value = (String) params[idx++];
-        return new LInsertCommand(key, isBefore, isAfter, pivot, value);
+        return new LInsertCommand(key, lInsertType, pivot, value);
     }
 
     public static class LInsertCommand implements Command {
         public final String key;
-        public final Boolean isBefore;
-        public final Boolean isAfter;
+        public final LInsertType lInsertType;
         public final String pivot;
         public final String value;
 
-        public LInsertCommand(String key, Boolean isBefore, Boolean isAfter, String pivot, String value) {
+        public LInsertCommand(String key, LInsertType lInsertType, String pivot, String value) {
             this.key = key;
-            this.isBefore = isBefore;
-            this.isAfter = isAfter;
             this.pivot = pivot;
             this.value = value;
+            this.lInsertType = lInsertType;
         }
 
         @Override
         public String toString() {
             return "LInsertCommand{" +
                     "key='" + key + '\'' +
-                    ", isBefore=" + isBefore +
-                    ", isAfter=" + isAfter +
+                    ", lInsertType=" + lInsertType +
                     ", pivot='" + pivot + '\'' +
                     ", value='" + value + '\'' +
                     '}';

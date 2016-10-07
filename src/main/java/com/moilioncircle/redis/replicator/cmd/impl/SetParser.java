@@ -30,17 +30,16 @@ public class SetParser implements CommandParser<SetParser.SetCommand> {
         String key = (String) params[0];
         String value = (String) params[1];
         int idx = 2;
-        Boolean isNx = null;
-        Boolean isXx = null;
+        ExistType existType = ExistType.NONE;
         Integer ex = null;
         Long px = null;
         while (idx < params.length) {
             String param = (String) params[idx++];
             if (param.equalsIgnoreCase("NX")) {
-                isNx = true;
+                existType = ExistType.NX;
                 break;
             } else if (param.equalsIgnoreCase("XX")) {
-                isXx = true;
+                existType = ExistType.XX;
                 break;
             } else if (param.equalsIgnoreCase("EX")) {
                 ex = Integer.valueOf((String) params[idx++]);
@@ -50,24 +49,22 @@ public class SetParser implements CommandParser<SetParser.SetCommand> {
                 break;
             }
         }
-        return new SetCommand(key, value, isNx, isXx, ex, px);
+        return new SetCommand(key, value, ex, px, existType);
     }
 
     public static class SetCommand implements Command {
         public final String key;
         public final String value;
-        public final Boolean isNx;
-        public final Boolean isXx;
         public final Integer ex;
         public final Long px;
+        public final ExistType existType;
 
-        public SetCommand(String key, String value, Boolean isNx, Boolean isXx, Integer ex, Long px) {
+        public SetCommand(String key, String value, Integer ex, Long px, ExistType existType) {
             this.key = key;
             this.value = value;
-            this.isNx = isNx;
-            this.isXx = isXx;
             this.ex = ex;
             this.px = px;
+            this.existType = existType;
         }
 
         @Override
@@ -75,10 +72,9 @@ public class SetParser implements CommandParser<SetParser.SetCommand> {
             return "SetCommand{" +
                     "name='" + key + '\'' +
                     ", value='" + value + '\'' +
-                    ", isNx=" + isNx +
-                    ", isXx=" + isXx +
                     ", ex=" + ex +
                     ", px=" + px +
+                    ", existType=" + existType +
                     '}';
         }
 

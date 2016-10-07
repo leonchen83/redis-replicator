@@ -138,7 +138,8 @@ public class RdbParser extends AbstractRdbParser {
                     String key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);
                     kv.setDb(db);
-                    kv.setExpiredSeconds(expiredSec);
+                    kv.setExpiredType(ExpiredType.SECONDS);
+                    kv.setExpiredValue((long) expiredSec);
                     kv.setKey(key);
                     break;
                 /*
@@ -155,7 +156,8 @@ public class RdbParser extends AbstractRdbParser {
                     key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);
                     kv.setDb(db);
-                    kv.setExpiredMs(expiredMs);
+                    kv.setExpiredType(ExpiredType.MS);
+                    kv.setExpiredValue(expiredMs);
                     kv.setKey(key);
                     break;
                 case REDIS_RDB_OPCODE_AUX:

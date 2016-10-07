@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,16 +59,14 @@ public class BitFieldParser implements CommandParser<BitFieldParser.BitFieldComm
     private int parseOverFlow(int i, Object[] params, OverFlow overFlow) {
         int idx = i;
         accept((String) params[idx++], "OVERFLOW");
-        Boolean overFlowWrap = null;
-        Boolean overFlowSat = null;
-        Boolean overFlowFail = null;
+        OverFlowType overFlowType = null;
         String keyWord = (String) params[idx++];
         if (keyWord.equalsIgnoreCase("WRAP")) {
-            overFlowWrap = true;
+            overFlowType = OverFlowType.WRAP;
         } else if (keyWord.equalsIgnoreCase("SAT")) {
-            overFlowSat = true;
+            overFlowType = OverFlowType.SAT;
         } else if (keyWord.equalsIgnoreCase("FAIL")) {
-            overFlowFail = true;
+            overFlowType = OverFlowType.FAIL;
         } else {
             throw new AssertionError("parse [BITFIELD] command error." + keyWord);
         }
@@ -83,9 +80,7 @@ public class BitFieldParser implements CommandParser<BitFieldParser.BitFieldComm
             }
             while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
         }
-        overFlow.setOverFlowFail(overFlowFail);
-        overFlow.setOverFlowSat(overFlowSat);
-        overFlow.setOverFlowWrap(overFlowWrap);
+        overFlow.setOverFlowType(overFlowType);
         overFlow.setStatements(list);
         return idx;
     }
@@ -177,166 +172,6 @@ public class BitFieldParser implements CommandParser<BitFieldParser.BitFieldComm
         @Override
         public CommandName name() {
             return CommandName.name("BITFIELD");
-        }
-    }
-
-    public interface Statement extends Serializable {
-
-    }
-
-    public static class GetTypeOffset implements Statement {
-        public String type;
-        public String offset;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getOffset() {
-            return offset;
-        }
-
-        public void setOffset(String offset) {
-            this.offset = offset;
-        }
-
-        @Override
-        public String toString() {
-            return "GetTypeOffset{" +
-                    "type='" + type + '\'' +
-                    ", offset=" + offset +
-                    '}';
-        }
-    }
-
-    public static class SetTypeOffsetValue implements Statement {
-        public String type;
-        public String offset;
-        public int value;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getOffset() {
-            return offset;
-        }
-
-        public void setOffset(String offset) {
-            this.offset = offset;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public void setValue(int value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return "SetTypeOffsetValue{" +
-                    "type='" + type + '\'' +
-                    ", offset='" + offset + '\'' +
-                    ", value=" + value +
-                    '}';
-        }
-    }
-
-    public static class IncrByTypeOffsetIncrement implements Statement {
-        public String type;
-        public String offset;
-        public int increment;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getOffset() {
-            return offset;
-        }
-
-        public void setOffset(String offset) {
-            this.offset = offset;
-        }
-
-        public int getIncrement() {
-            return increment;
-        }
-
-        public void setIncrement(int increment) {
-            this.increment = increment;
-        }
-
-        @Override
-        public String toString() {
-            return "IncrByTypeOffsetIncrement{" +
-                    "type='" + type + '\'' +
-                    ", offset='" + offset + '\'' +
-                    ", increment=" + increment +
-                    '}';
-        }
-    }
-
-    public static class OverFlow implements Serializable {
-        public Boolean overFlowWrap;
-        public Boolean overFlowSat;
-        public Boolean overFlowFail;
-        public List<Statement> statements;
-
-        public Boolean getOverFlowWrap() {
-            return overFlowWrap;
-        }
-
-        public void setOverFlowWrap(Boolean overFlowWrap) {
-            this.overFlowWrap = overFlowWrap;
-        }
-
-        public Boolean getOverFlowSat() {
-            return overFlowSat;
-        }
-
-        public void setOverFlowSat(Boolean overFlowSat) {
-            this.overFlowSat = overFlowSat;
-        }
-
-        public Boolean getOverFlowFail() {
-            return overFlowFail;
-        }
-
-        public void setOverFlowFail(Boolean overFlowFail) {
-            this.overFlowFail = overFlowFail;
-        }
-
-        public List<Statement> getStatements() {
-            return statements;
-        }
-
-        public void setStatements(List<Statement> statements) {
-            this.statements = statements;
-        }
-
-        @Override
-        public String toString() {
-            return "OverFlow{" +
-                    "overFlowWrap=" + overFlowWrap +
-                    ", overFlowSat=" + overFlowSat +
-                    ", overFlowFail=" + overFlowFail +
-                    ", statements=" + statements +
-                    '}';
         }
     }
 }

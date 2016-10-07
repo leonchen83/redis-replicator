@@ -17,6 +17,10 @@ It also can sync redis data to your local cache or to database.
 
 #Requirements  
 jdk 1.7+  
+rdb version 2  
+rdb version 3  
+rdb version 4  
+rdb version 5  
 rdb version 6  
 rdb version 7  
 
@@ -26,7 +30,7 @@ rdb version 7
 <dependency>
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>1.0.13</version>
+    <version>2.0.0-SNAPSHOT</version>
 </dependency>
 ```
 

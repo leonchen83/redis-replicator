@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 public class InputStreamExample {
     public static void main(String[] args) throws IOException {
-        RedisReplicator replicator = new RedisReplicator(
+        final RedisReplicator replicator = new RedisReplicator(
                 InputStreamExample.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
                 Configuration.defaultSetting());
 
@@ -25,6 +25,7 @@ public class InputStreamExample {
         });
 
         replicator.open();
+
         System.in.read();
     }
 }

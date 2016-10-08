@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class SocketExample {
     public static void main(String[] args) throws IOException {
-        RedisReplicator replicator = new RedisReplicator(
+        final RedisReplicator replicator = new RedisReplicator(
                 "127.0.0.1", 6379,
                 Configuration.defaultSetting());
 
@@ -34,6 +34,7 @@ public class SocketExample {
         });
 
         replicator.open();
+
         System.in.read();
     }
 }

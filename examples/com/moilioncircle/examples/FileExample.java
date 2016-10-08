@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class FileExample {
     public static void main(String[] args) throws IOException {
-        RedisReplicator replicator = new RedisReplicator(
+        final RedisReplicator replicator = new RedisReplicator(
                 new File("dumpV7.rdb"),
                 Configuration.defaultSetting());
 
@@ -26,6 +26,7 @@ public class FileExample {
         });
 
         replicator.open();
+
         System.in.read();
     }
 }

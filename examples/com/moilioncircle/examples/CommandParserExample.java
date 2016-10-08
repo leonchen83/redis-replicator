@@ -13,7 +13,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
  */
 public class CommandParserExample {
     public static void main(String[] args) throws Exception {
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        final RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
 
         replicator.addCommandParser(CommandName.name("APPEND"), new YourAppendParser());
 
@@ -28,6 +28,7 @@ public class CommandParserExample {
             }
         });
         replicator.open();
+
         System.in.read();
     }
 

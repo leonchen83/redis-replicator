@@ -17,6 +17,7 @@ public class TimerTaskExample {
     public static void main(String[] args) throws IOException {
         final Timer timer = new Timer("sync");
         timer.schedule(new Task(), 30000, 30000);
+
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

@@ -24,16 +24,6 @@ rdb version 5
 rdb version 6  
 rdb version 7  
 
-#Maven Dependency
-
-```java  
-<dependency>
-    <groupId>com.moilioncircle</groupId>
-    <artifactId>redis-replicator</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
-</dependency>
-```
-
 #Install from source code  
   
 ```

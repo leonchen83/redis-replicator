@@ -31,10 +31,10 @@ clean install package -Dmaven.test.skip=true
 ```  
   
 #Flow Chart  
-![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/docs/redis-replicator-flow-chart.png)  
+![Alt text](https://raw.githubusercontent.com/leonchen83/redis-replicator/master/docs/redis-replicator-flow-chart.png)  
   
 #Class Chart  
-![Alt text](https://github.com/leonchen83/redis-replicator/blob/master/docs/redis-replicator-class-chart.png)  
+![Alt text](https://raw.githubusercontent.com/leonchen83/redis-replicator/master/docs/redis-replicator-class-chart.png)  
   
 #Usage  
   

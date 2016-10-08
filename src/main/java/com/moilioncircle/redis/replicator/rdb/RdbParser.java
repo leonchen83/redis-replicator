@@ -138,7 +138,7 @@ public class RdbParser extends AbstractRdbParser {
                     String key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);
                     kv.setDb(db);
-                    kv.setExpiredType(ExpiredType.SECONDS);
+                    kv.setExpiredType(ExpiredType.SECOND);
                     kv.setExpiredValue((long) expiredSec);
                     kv.setKey(key);
                     break;

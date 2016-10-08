@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ public class ZAddParser implements CommandParser<ZAddParser.ZAddCommand> {
         int idx = 0;
         Boolean isCh = null, isIncr = null;
         ExistType existType = ExistType.NONE;
-        List<ZEntry> list = new ArrayList<>();
+        List<ZSetEntry> list = new ArrayList<>();
         String key = (String) params[idx++];
         while (idx < params.length) {
             String param = (String) params[idx];
@@ -50,13 +51,13 @@ public class ZAddParser implements CommandParser<ZAddParser.ZAddCommand> {
                 double score = Double.parseDouble(param);
                 idx++;
                 String member = (String) params[idx];
-                list.add(new ZEntry(score, member));
+                list.add(new ZSetEntry(member, score));
             }
             idx++;
         }
-        ZEntry[] zEntries = new ZEntry[list.size()];
-        list.toArray(zEntries);
-        return new ZAddCommand(key, existType, isCh, isIncr, zEntries);
+        ZSetEntry[] zSetEntries = new ZSetEntry[list.size()];
+        list.toArray(zSetEntries);
+        return new ZAddCommand(key, existType, isCh, isIncr, zSetEntries);
     }
 
     public static class ZAddCommand implements Command {
@@ -64,14 +65,14 @@ public class ZAddParser implements CommandParser<ZAddParser.ZAddCommand> {
         public final ExistType existType;
         public final Boolean isCh;
         public final Boolean isIncr;
-        public final ZEntry[] zEntries;
+        public final ZSetEntry[] zSetEntries;
 
-        public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZEntry[] zEntries) {
+        public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries) {
             this.key = key;
             this.existType = existType;
             this.isCh = isCh;
             this.isIncr = isIncr;
-            this.zEntries = zEntries;
+            this.zSetEntries = zSetEntries;
         }
 
         @Override
@@ -81,7 +82,7 @@ public class ZAddParser implements CommandParser<ZAddParser.ZAddCommand> {
                     ", existType=" + existType +
                     ", isCh=" + isCh +
                     ", isIncr=" + isIncr +
-                    ", zEntries=" + Arrays.toString(zEntries) +
+                    ", zSetEntries=" + Arrays.toString(zSetEntries) +
                     '}';
         }
 

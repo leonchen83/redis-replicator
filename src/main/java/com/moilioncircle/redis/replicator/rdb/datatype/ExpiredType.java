@@ -29,7 +29,7 @@ public enum ExpiredType implements Serializable {
     /**
      * expired by seconds
      */
-    SECONDS,
+    SECOND,
     /**
      * expired by millisecond
      */

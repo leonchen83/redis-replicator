@@ -14,7 +14,7 @@ import java.util.TimerTask;
  * Created by leon on 10/8/16.
  */
 public class TimerTaskExample {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         final Timer timer = new Timer("sync");
         timer.schedule(new Task(), 30000, 30000);
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -23,6 +23,7 @@ public class TimerTaskExample {
                 timer.cancel();
             }
         });
+        System.in.read();
     }
 
     private static class Task extends TimerTask {

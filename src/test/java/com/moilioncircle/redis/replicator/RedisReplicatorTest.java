@@ -267,8 +267,8 @@ public class RedisReplicatorTest extends TestCase {
                         } else if (command.name().equals(CommandName.name("ZADD"))) {
                             ZAddParser.ZAddCommand zaddCommand = (ZAddParser.ZAddCommand) command;
                             assertEquals("zzlist", zaddCommand.key);
-                            assertEquals(1.5, zaddCommand.zEntries[0].score);
-                            assertEquals("member", zaddCommand.zEntries[0].member);
+                            assertEquals(1.5, zaddCommand.zSetEntries[0].score);
+                            assertEquals("member", zaddCommand.zSetEntries[0].element);
                             assertEquals(ExistType.NX, zaddCommand.existType);
                             ref.compareAndSet("1", "2");
                         }

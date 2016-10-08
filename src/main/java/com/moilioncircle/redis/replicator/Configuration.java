@@ -91,11 +91,6 @@ public class Configuration {
     /**
      * used in psync heart beat
      */
-    private int heartBeatDelay = 1000;
-
-    /**
-     * used in psync heart beat
-     */
     private int heartBeatPeriod = 1000;
 
     /**
@@ -221,15 +216,6 @@ public class Configuration {
         return this;
     }
 
-    public int getHeartBeatDelay() {
-        return heartBeatDelay;
-    }
-
-    public Configuration setHeartBeatDelay(int heartBeatDelay) {
-        this.heartBeatDelay = heartBeatDelay;
-        return this;
-    }
-
     public int getHeartBeatPeriod() {
         return heartBeatPeriod;
     }
@@ -262,7 +248,6 @@ public class Configuration {
                 ", discardRdbEvent=" + discardRdbEvent +
                 ", eventQueueSize=" + eventQueueSize +
                 ", verbose=" + verbose +
-                ", heartBeatDelay=" + heartBeatDelay +
                 ", heartBeatPeriod=" + heartBeatPeriod +
                 ", masterRunId='" + masterRunId + '\'' +
                 ", offset=" + offset +

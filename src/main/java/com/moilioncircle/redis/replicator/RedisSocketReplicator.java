@@ -103,7 +103,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
                                 //NOP
                             }
                         }
-                    }, configuration.getHeartBeatDelay(), configuration.getHeartBeatPeriod());
+                    }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod());
                     logger.info("heart beat started.");
                 }
                 //sync command

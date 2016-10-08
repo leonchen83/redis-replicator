@@ -126,7 +126,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
   
 * **register this parser.**  
 ```java  
-    RedisReplicator replicator = new RedisReplicator("127.0.0.1",6379);
+    RedisReplicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
     replicator.addCommandParser(CommandName.name("APPEND"),new AppendParser());
 ```
   

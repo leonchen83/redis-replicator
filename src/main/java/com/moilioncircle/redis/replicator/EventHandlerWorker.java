@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
     @Override
     public void run() {
-        while (!isClosed.get()) {
+        while (!isClosed.get() || replicator.eventQueue.size() > 0) {
             try {
                 Object object = replicator.eventQueue.take();
                 if (object instanceof KeyValuePair<?>) {
@@ -63,7 +63,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
                     throw new AssertionError(object);
                 }
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                close();
             } catch (Throwable e) {
                 exceptionHandler(e);
             }
@@ -71,7 +71,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         isClosed.compareAndSet(false, true);
     }
 

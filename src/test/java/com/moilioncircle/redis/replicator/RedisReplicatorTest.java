@@ -477,7 +477,44 @@ public class RedisReplicatorTest extends TestCase {
             }
         });
         replicator.open();
-        assertEquals(5, acc.get());
+        assertEquals(1, acc.get());
+    }
+
+    @Test
+    public void testCloseListener1() throws IOException, InterruptedException {
+        final AtomicInteger acc = new AtomicInteger(0);
+        RedisReplicator replicator = new RedisReplicator(
+                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
+                Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+
+            }
+
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+                try {
+                    replicator.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                acc.incrementAndGet();
+            }
+        });
+        replicator.open();
+        Thread.sleep(2000);
+        assertEquals(1, acc.get());
     }
 
     @Test

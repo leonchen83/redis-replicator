@@ -6,7 +6,7 @@ jdk:
     - openjdk7
 branches:
   only:
-    - master
+    - 1.0.14
 services:
   - redis-server
 before_install:

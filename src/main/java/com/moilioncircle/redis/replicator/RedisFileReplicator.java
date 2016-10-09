@@ -47,7 +47,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
     @Override
     public void close() throws IOException {
-        inputStream.close();
+        if (inputStream != null) inputStream.close();
         if (worker != null && !worker.isClosed()) worker.close();
         doCloseListener();
     }

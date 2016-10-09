@@ -122,7 +122,7 @@ public class RedisReplicatorTest extends TestCase {
                         ZParams zParams = new ZParams();
                         zParams.weightsByDouble(2, 3);
                         zParams.aggregate(ZParams.Aggregate.MIN);
-                        System.out.println(jedis.zinterstore("out", zParams, "zset1", "zset2"));
+                        jedis.zinterstore("out", zParams, "zset1", "zset2");
                         jedis.close();
                     }
                 });
@@ -188,7 +188,7 @@ public class RedisReplicatorTest extends TestCase {
                         ZParams zParams = new ZParams();
                         zParams.weightsByDouble(2, 3);
                         zParams.aggregate(ZParams.Aggregate.SUM);
-                        System.out.println(jedis.zunionstore("out1", zParams, "zset3", "zset4"));
+                        jedis.zunionstore("out1", zParams, "zset3", "zset4");
                         jedis.close();
                     }
                 });

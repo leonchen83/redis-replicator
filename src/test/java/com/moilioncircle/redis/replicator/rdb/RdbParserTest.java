@@ -161,7 +161,6 @@ public class RdbParserTest {
     }
 
     public void template(String filename, final ConcurrentHashMap<String, KeyValuePair> map) {
-        System.out.println(filename);
         try {
             RedisReplicator replicator = new RedisReplicator(RdbParserTest.class.
                     getClassLoader().getResourceAsStream(filename)
@@ -169,7 +168,6 @@ public class RdbParserTest {
             replicator.addRdbListener(new RdbListener.Adaptor() {
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                    System.out.println(kv);
                     map.put(kv.getKey(), kv);
                 }
             });

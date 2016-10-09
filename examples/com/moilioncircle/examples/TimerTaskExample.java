@@ -30,33 +30,40 @@ public class TimerTaskExample {
     private static class Task extends TimerTask {
         @Override
         public void run() {
-            RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
-            replicator.addRdbListener(new RdbListener() {
-                @Override
-                public void preFullSync(Replicator replicator) {
-                    System.out.println("data sync started");
-                }
-
-                @Override
-                public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                    //shard kv.getKey to different thread so that speed up save process.
-                    save(kv);
-                }
-
-                @Override
-                public void postFullSync(Replicator replicator, long checksum) {
-                    try {
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            try {
+                RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+                replicator.addRdbListener(new RdbListener() {
+                    @Override
+                    public void preFullSync(Replicator replicator) {
+                        System.out.println("data sync started");
                     }
-                    System.out.println("data sync done");
-                }
-            });
+
+                    @Override
+                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                        //shard kv.getKey to different thread so that speed up save process.
+                        save(kv);
+                    }
+
+                    @Override
+                    public void postFullSync(Replicator replicator, long checksum) {
+                        try {
+                            replicator.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("data sync done");
+                    }
+                });
+
+                replicator.open();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private static void save(KeyValuePair<?> kv) {
+        System.out.println(kv);
         //save kv to mysql or to anywhere.
     }
 }

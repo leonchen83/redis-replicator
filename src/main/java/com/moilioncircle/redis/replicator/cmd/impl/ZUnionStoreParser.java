@@ -37,7 +37,7 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreParser.ZUnion
             keys[i] = (String) params[idx++];
         }
         double[] weights = null;
-        if (idx < params.length) {
+        while (idx < params.length) {
             String param = (String) params[idx];
             if (param.equalsIgnoreCase("WEIGHTS")) {
                 idx++;
@@ -47,7 +47,7 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreParser.ZUnion
                 }
             } else if (param.equalsIgnoreCase("AGGREGATE")) {
                 idx++;
-                String next = (String) params[idx];
+                String next = (String) params[idx++];
                 if (next.equalsIgnoreCase("SUM")) {
                     isSum = true;
                 } else if (next.equalsIgnoreCase("MIN")) {
@@ -61,13 +61,13 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreParser.ZUnion
     }
 
     public static class ZUnionStoreCommand implements Command {
-        private final String destination;
-        private final int numkeys;
-        private final String[] keys;
-        private final double[] weights;
-        private final Boolean isSum;
-        private final Boolean isMin;
-        private final Boolean isMax;
+        public final String destination;
+        public final int numkeys;
+        public final String[] keys;
+        public final double[] weights;
+        public final Boolean isSum;
+        public final Boolean isMin;
+        public final Boolean isMax;
 
         public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, Boolean isSum, Boolean isMin, Boolean isMax) {
             this.destination = destination;

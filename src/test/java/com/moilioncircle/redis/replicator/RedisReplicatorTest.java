@@ -85,8 +85,7 @@ public class RedisReplicatorTest extends TestCase {
                 "localhost",
                 6379,
                 Configuration.defaultSetting()
-                        .setRetries(0)
-                        .setVerbose(true),
+                        .setRetries(0),
                 15000);
         assertEquals("ok", ref.get());
     }
@@ -151,8 +150,7 @@ public class RedisReplicatorTest extends TestCase {
                 "localhost",
                 6379,
                 Configuration.defaultSetting()
-                        .setRetries(0)
-                        .setVerbose(true),
+                        .setRetries(0),
                 15000);
         assertEquals("ok", ref.get());
     }
@@ -217,8 +215,7 @@ public class RedisReplicatorTest extends TestCase {
                 "localhost",
                 6379,
                 Configuration.defaultSetting()
-                        .setRetries(0)
-                        .setVerbose(true),
+                        .setRetries(0),
                 15000);
         assertEquals("ok", ref.get());
     }
@@ -280,8 +277,7 @@ public class RedisReplicatorTest extends TestCase {
                 "localhost",
                 6379,
                 Configuration.defaultSetting()
-                        .setRetries(0)
-                        .setVerbose(true),
+                        .setRetries(0),
                 15000);
         assertEquals("2", ref.get());
     }
@@ -412,8 +408,7 @@ public class RedisReplicatorTest extends TestCase {
                 6380,
                 Configuration.defaultSetting()
                         .setAuthPassword("test")
-                        .setRetries(0)
-                        .setVerbose(true),
+                        .setRetries(0),
                 15000);
         assertEquals("ok", ref.get());
     }
@@ -458,8 +453,7 @@ public class RedisReplicatorTest extends TestCase {
                 "localhost",
                 6379,
                 Configuration.defaultSetting()
-                        .setRetries(0)
-                        .setVerbose(true),
+                        .setRetries(0),
                 15000);
     }
 

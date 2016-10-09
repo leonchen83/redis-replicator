@@ -14,7 +14,10 @@ It also can sync redis data to your local cache or to database.
 [![Livecoding fans](https://tools.livecoding.tv/badge/followersSmall/106/leonchen83)](https://www.livecoding.tv/leonchen83)
 [![Livecoding.scheduled](https://tools.livecoding.tv/badge/nextStreamSmall/no/leonchen83)](https://www.livecoding.tv/leonchen83)  
   
-
+##QQ Group 
+  
+**479688557**  
+  
 #Requirements  
 jdk 1.7+  
 rdb version 2  

@@ -85,7 +85,7 @@ public class RedisReplicatorTest extends TestCase {
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0)
-                        .setVerbose(true),
+                ,
                 15000);
         assertEquals("ok", ref.get());
     }
@@ -147,7 +147,7 @@ public class RedisReplicatorTest extends TestCase {
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0)
-                        .setVerbose(true),
+                ,
                 15000);
         assertEquals("2", ref.get());
     }
@@ -160,7 +160,6 @@ public class RedisReplicatorTest extends TestCase {
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
                 acc.incrementAndGet();
                 if (kv.getKey().equals("abcd")) {
                     KeyStringValueString ksvs = (KeyStringValueString) kv;
@@ -201,7 +200,6 @@ public class RedisReplicatorTest extends TestCase {
 
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
                 acc.incrementAndGet();
             }
 
@@ -224,7 +222,6 @@ public class RedisReplicatorTest extends TestCase {
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
                 acc.incrementAndGet();
             }
         });
@@ -281,7 +278,7 @@ public class RedisReplicatorTest extends TestCase {
                 Configuration.defaultSetting()
                         .setAuthPassword("test")
                         .setRetries(0)
-                        .setVerbose(true),
+                ,
                 15000);
         assertEquals("ok", ref.get());
     }
@@ -327,7 +324,7 @@ public class RedisReplicatorTest extends TestCase {
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0)
-                        .setVerbose(true),
+                ,
                 15000);
     }
 
@@ -342,7 +339,7 @@ public class RedisReplicatorTest extends TestCase {
             }
         });
         replicator.open();
-        assertEquals(5, acc.get());
+        assertEquals(1, acc.get());
     }
 
     @Test
@@ -355,7 +352,6 @@ public class RedisReplicatorTest extends TestCase {
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
                 acc.incrementAndGet();
             }
 
@@ -381,7 +377,6 @@ public class RedisReplicatorTest extends TestCase {
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
                 acc.incrementAndGet();
             }
 

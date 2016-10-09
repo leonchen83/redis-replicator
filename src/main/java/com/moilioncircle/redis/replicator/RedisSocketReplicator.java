@@ -163,6 +163,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
         }
         //
         if (worker != null && !worker.isClosed()) worker.close();
+        doCloseListener();
     }
 
     private SyncMode trySync(final String reply) throws IOException {
@@ -327,7 +328,6 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
         } catch (IOException e) {
             //NOP
         }
-        doCloseListener();
         logger.info("channel closed");
     }
 

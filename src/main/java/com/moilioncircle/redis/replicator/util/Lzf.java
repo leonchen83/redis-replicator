@@ -31,7 +31,7 @@ public class Lzf {
         return out;
     }
 
-    public static void decode(byte[] in, int inPos, byte[] out, int outPos, int outEnd) {
+    private static void decode(byte[] in, int inPos, byte[] out, int outPos, int outEnd) {
         do {
             int ctrl = in[inPos++] & 255;
             if (ctrl < 1 << 5) {

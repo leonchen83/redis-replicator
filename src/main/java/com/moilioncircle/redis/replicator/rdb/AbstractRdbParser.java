@@ -283,10 +283,6 @@ public abstract class AbstractRdbParser {
             return in.read();
         }
 
-        public static int zmend(RedisInputStream in) throws IOException {
-            return in.read();
-        }
-
         public static int free(RedisInputStream in) throws IOException {
             return in.read();
         }

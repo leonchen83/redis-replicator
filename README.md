@@ -17,6 +17,16 @@ It also can sync redis data to your local cache or to database.
 ##QQ Group 
   
 **479688557**  
+
+##Current Stable Version  
+  
+```java
+<dependency>
+    <groupId>com.moilioncircle</groupId>
+    <artifactId>redis-replicator</artifactId>
+    <version>1.0.14</version>
+</dependency>
+```  
   
 #Requirements  
 jdk 1.7+  

@@ -30,12 +30,7 @@ It also can sync redis data to your local cache or to database.
   
 #Requirements  
 jdk 1.7+  
-rdb version 2  
-rdb version 3  
-rdb version 4  
-rdb version 5  
-rdb version 6  
-rdb version 7  
+redis 2.4+  
 
 #Install from source code  
   

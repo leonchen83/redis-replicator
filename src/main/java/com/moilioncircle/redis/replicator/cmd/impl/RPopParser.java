@@ -31,7 +31,11 @@ public class RPopParser implements CommandParser<RPopParser.RPopCommand> {
     }
 
     public static class RPopCommand implements Command {
-        public final String key;
+        private final String key;
+
+        public String getKey() {
+            return key;
+        }
 
         public RPopCommand(String key) {
             this.key = key;

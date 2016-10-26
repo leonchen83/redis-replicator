@@ -38,8 +38,16 @@ public class PFMergeParser implements CommandParser<PFMergeParser.PFMergeCommand
     }
 
     public static class PFMergeCommand implements Command {
-        public final String destkey;
-        public final String sourcekeys[];
+        private final String destkey;
+        private final String sourcekeys[];
+
+        public String getDestkey() {
+            return destkey;
+        }
+
+        public String[] getSourcekeys() {
+            return sourcekeys;
+        }
 
         public PFMergeCommand(String destkey, String... sourcekeys) {
             this.destkey = destkey;

@@ -40,8 +40,16 @@ public class LPushParser implements CommandParser<LPushParser.LPushCommand> {
     }
 
     public static class LPushCommand implements Command {
-        public final String key;
-        public final String[] values;
+        private final String key;
+        private final String[] values;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String[] getValues() {
+            return values;
+        }
 
         public LPushCommand(String key, String... values) {
             this.key = key;

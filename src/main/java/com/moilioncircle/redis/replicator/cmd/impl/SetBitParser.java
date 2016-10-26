@@ -34,9 +34,21 @@ public class SetBitParser implements CommandParser<SetBitParser.SetBitCommand> {
     }
 
     public static class SetBitCommand implements Command {
-        public final String key;
-        public final int offset;
-        public final int value;
+        private final String key;
+        private final int offset;
+        private final int value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getOffset() {
+            return offset;
+        }
+
+        public int getValue() {
+            return value;
+        }
 
         public SetBitCommand(String key, int offset, int value) {
             this.key = key;

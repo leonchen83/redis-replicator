@@ -31,7 +31,11 @@ public class LPopParser implements CommandParser<LPopParser.LPopCommand> {
     }
 
     public static class LPopCommand implements Command {
-        public final String key;
+        private final String key;
+
+        public String getKey() {
+            return key;
+        }
 
         public LPopCommand(String key) {
             this.key = key;

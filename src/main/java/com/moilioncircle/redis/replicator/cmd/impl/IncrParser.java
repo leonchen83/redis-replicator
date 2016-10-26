@@ -31,7 +31,11 @@ public class IncrParser implements CommandParser<IncrParser.IncrCommand> {
     }
 
     public static class IncrCommand implements Command {
-        public final String key;
+        private final String key;
+
+        public String getKey() {
+            return key;
+        }
 
         public IncrCommand(String key) {
             this.key = key;

@@ -22,11 +22,11 @@ import java.io.Serializable;
  * Created by leon on 8/20/16.
  */
 public class DB implements Serializable {
-    public int dbNumber;
+    private int dbNumber;
     /* rdb version 7 */
-    public Integer dbsize = null;
+    private Integer dbsize = null;
     /* rdb version 7 */
-    public Integer expires = null;
+    private Integer expires = null;
 
     public DB(int dbNumber) {
         this.dbNumber = dbNumber;

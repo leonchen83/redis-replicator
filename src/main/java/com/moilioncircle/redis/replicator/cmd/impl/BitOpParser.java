@@ -41,9 +41,21 @@ public class BitOpParser implements CommandParser<BitOpParser.BitOpCommand> {
     }
 
     public static class BitOpCommand implements Command {
-        public final Op op;
-        public final String destkey;
-        public final String keys[];
+        private final Op op;
+        private final String destkey;
+        private final String keys[];
+
+        public Op getOp() {
+            return op;
+        }
+
+        public String getDestkey() {
+            return destkey;
+        }
+
+        public String[] getKeys() {
+            return keys;
+        }
 
         public BitOpCommand(Op op, String destkey, String[] keys) {
             this.op = op;

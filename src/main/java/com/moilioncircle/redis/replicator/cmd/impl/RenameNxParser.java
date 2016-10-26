@@ -33,8 +33,16 @@ public class RenameNxParser implements CommandParser<RenameNxParser.RenameNxComm
     }
 
     public static class RenameNxCommand implements Command {
-        public final String key;
-        public final String newKey;
+        private final String key;
+        private final String newKey;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getNewKey() {
+            return newKey;
+        }
 
         public RenameNxCommand(String key, String newKey) {
             this.key = key;

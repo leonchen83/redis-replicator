@@ -31,7 +31,11 @@ public class HKeysParser implements CommandParser<HKeysParser.HKeysCommand> {
     }
 
     public static class HKeysCommand implements Command {
-        public final String key;
+        private final String key;
+
+        public String getKey() {
+            return key;
+        }
 
         public HKeysCommand(String key) {
             this.key = key;

@@ -35,9 +35,21 @@ public class SMoveParser implements CommandParser<SMoveParser.SMoveCommand> {
     }
 
     public static class SMoveCommand implements Command {
-        public final String source;
-        public final String destination;
-        public final String member;
+        private final String source;
+        private final String destination;
+        private final String member;
+
+        public String getSource() {
+            return source;
+        }
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public String getMember() {
+            return member;
+        }
 
         public SMoveCommand(String source, String destination, String member) {
             this.source = source;

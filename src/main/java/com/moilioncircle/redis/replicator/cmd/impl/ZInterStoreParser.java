@@ -62,11 +62,31 @@ public class ZInterStoreParser implements CommandParser<ZInterStoreParser.ZInter
     }
 
     public static class ZInterStoreCommand implements Command {
-        public final String destination;
-        public final int numkeys;
-        public final String[] keys;
-        public final double[] weights;
-        public final AggregateType aggregateType;
+        private final String destination;
+        private final int numkeys;
+        private final String[] keys;
+        private final double[] weights;
+        private final AggregateType aggregateType;
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public int getNumkeys() {
+            return numkeys;
+        }
+
+        public String[] getKeys() {
+            return keys;
+        }
+
+        public double[] getWeights() {
+            return weights;
+        }
+
+        public AggregateType getAggregateType() {
+            return aggregateType;
+        }
 
         public ZInterStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType) {
             this.destination = destination;

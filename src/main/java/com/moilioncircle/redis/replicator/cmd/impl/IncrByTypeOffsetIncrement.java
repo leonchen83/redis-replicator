@@ -20,9 +20,9 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * Created by leon on 10/7/16.
  */
 public class IncrByTypeOffsetIncrement implements Statement {
-    public String type;
-    public String offset;
-    public int increment;
+    private String type;
+    private String offset;
+    private int increment;
 
     public String getType() {
         return type;

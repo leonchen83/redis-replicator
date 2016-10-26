@@ -31,7 +31,11 @@ public class DecrParser implements CommandParser<DecrParser.DecrCommand> {
     }
 
     public static class DecrCommand implements Command {
-        public final String key;
+        private final String key;
+
+        public String getKey() {
+            return key;
+        }
 
         public DecrCommand(String key) {
             this.key = key;

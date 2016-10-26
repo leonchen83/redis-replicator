@@ -35,9 +35,21 @@ public class SetRangeParser implements CommandParser<SetRangeParser.SetRangeComm
     }
 
     public static class SetRangeCommand implements Command {
-        public final String key;
-        public final int index;
-        public final String value;
+        private final String key;
+        private final int index;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public SetRangeCommand(String key, int index, String value) {
             this.key = key;

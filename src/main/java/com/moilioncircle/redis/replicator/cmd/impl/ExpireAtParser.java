@@ -33,8 +33,16 @@ public class ExpireAtParser implements CommandParser<ExpireAtParser.ExpireAtComm
     }
 
     public static class ExpireAtCommand implements Command {
-        public final String key;
-        public final long ex;
+        private final String key;
+        private final long ex;
+
+        public String getKey() {
+            return key;
+        }
+
+        public long getEx() {
+            return ex;
+        }
 
         public ExpireAtCommand(String key, long ex) {
             this.key = key;

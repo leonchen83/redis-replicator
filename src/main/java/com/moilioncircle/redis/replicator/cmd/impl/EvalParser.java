@@ -47,10 +47,26 @@ public class EvalParser implements CommandParser<EvalParser.EvalCommand> {
     }
 
     public static class EvalCommand implements Command {
-        public final String script;
-        public final int numkeys;
-        public final String[] keys;
-        public final String[] args;
+        private final String script;
+        private final int numkeys;
+        private final String[] keys;
+        private final String[] args;
+
+        public String getScript() {
+            return script;
+        }
+
+        public int getNumkeys() {
+            return numkeys;
+        }
+
+        public String[] getKeys() {
+            return keys;
+        }
+
+        public String[] getArgs() {
+            return args;
+        }
 
         public EvalCommand(String script, int numkeys, String[] keys, String[] args) {
             this.script = script;

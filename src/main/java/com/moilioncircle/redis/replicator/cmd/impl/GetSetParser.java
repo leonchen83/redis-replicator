@@ -33,8 +33,16 @@ public class GetSetParser implements CommandParser<GetSetParser.GetSetCommand> {
     }
 
     public static class GetSetCommand implements Command {
-        public final String key;
-        public final String value;
+        private final String key;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public GetSetCommand(String key, String value) {
             this.key = key;

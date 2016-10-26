@@ -38,8 +38,16 @@ public class PFAddParser implements CommandParser<PFAddParser.PFAddCommand> {
     }
 
     public static class PFAddCommand implements Command {
-        public final String key;
-        public final String elements[];
+        private final String key;
+        private final String elements[];
+
+        public String getKey() {
+            return key;
+        }
+
+        public String[] getElements() {
+            return elements;
+        }
 
         public PFAddCommand(String key, String... elements) {
             this.key = key;

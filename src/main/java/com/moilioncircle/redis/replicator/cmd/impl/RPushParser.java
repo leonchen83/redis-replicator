@@ -40,8 +40,16 @@ public class RPushParser implements CommandParser<RPushParser.RPushCommand> {
     }
 
     public static class RPushCommand implements Command {
-        public final String key;
-        public final String[] values;
+        private final String key;
+        private final String[] values;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String[] getValues() {
+            return values;
+        }
 
         public RPushCommand(String key, String... values) {
             this.key = key;

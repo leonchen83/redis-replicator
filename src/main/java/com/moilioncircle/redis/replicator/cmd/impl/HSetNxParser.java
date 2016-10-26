@@ -35,9 +35,21 @@ public class HSetNxParser implements CommandParser<HSetNxParser.HSetNxCommand> {
     }
 
     public static class HSetNxCommand implements Command {
-        public final String key;
-        public final String field;
-        public final String value;
+        private final String key;
+        private final String field;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getField() {
+            return field;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public HSetNxCommand(String key, String field, String value) {
             this.key = key;

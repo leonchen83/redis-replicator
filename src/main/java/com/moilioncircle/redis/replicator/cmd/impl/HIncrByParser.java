@@ -35,9 +35,21 @@ public class HIncrByParser implements CommandParser<HIncrByParser.HIncrByCommand
     }
 
     public static class HIncrByCommand implements Command {
-        public final String key;
-        public final String field;
-        public final int increment;
+        private final String key;
+        private final String field;
+        private final int increment;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getField() {
+            return field;
+        }
+
+        public int getIncrement() {
+            return increment;
+        }
 
         public HIncrByCommand(String key, String field, int increment) {
             this.key = key;

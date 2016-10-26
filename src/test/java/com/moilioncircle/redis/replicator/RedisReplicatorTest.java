@@ -75,8 +75,8 @@ public class RedisReplicatorTest extends TestCase {
                     @Override
                     public void handle(Replicator replicator, Command command) {
                         SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
-                        assertEquals("abc", setCommand.key);
-                        assertEquals("bcd", setCommand.value);
+                        assertEquals("abc", setCommand.getKey());
+                        assertEquals("bcd", setCommand.getValue());
                         ref.compareAndSet(null, "ok");
                     }
                 });
@@ -135,13 +135,13 @@ public class RedisReplicatorTest extends TestCase {
                     @Override
                     public void handle(Replicator replicator, Command command) {
                         ZInterStoreParser.ZInterStoreCommand zInterStoreCommand = (ZInterStoreParser.ZInterStoreCommand) command;
-                        assertEquals("out", zInterStoreCommand.destination);
-                        assertEquals(2, zInterStoreCommand.numkeys);
-                        assertEquals("zset1", zInterStoreCommand.keys[0]);
-                        assertEquals("zset2", zInterStoreCommand.keys[1]);
-                        assertEquals(2.0, zInterStoreCommand.weights[0]);
-                        assertEquals(3.0, zInterStoreCommand.weights[1]);
-                        assertEquals(AggregateType.MIN, zInterStoreCommand.aggregateType);
+                        assertEquals("out", zInterStoreCommand.getDestination());
+                        assertEquals(2, zInterStoreCommand.getNumkeys());
+                        assertEquals("zset1", zInterStoreCommand.getKeys()[0]);
+                        assertEquals("zset2", zInterStoreCommand.getKeys()[1]);
+                        assertEquals(2.0, zInterStoreCommand.getWeights()[0]);
+                        assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
+                        assertEquals(AggregateType.MIN, zInterStoreCommand.getAggregateType());
                         ref.compareAndSet(null, "ok");
                     }
                 });
@@ -200,13 +200,13 @@ public class RedisReplicatorTest extends TestCase {
                     @Override
                     public void handle(Replicator replicator, Command command) {
                         ZUnionStoreParser.ZUnionStoreCommand zInterStoreCommand = (ZUnionStoreParser.ZUnionStoreCommand) command;
-                        assertEquals("out1", zInterStoreCommand.destination);
-                        assertEquals(2, zInterStoreCommand.numkeys);
-                        assertEquals("zset3", zInterStoreCommand.keys[0]);
-                        assertEquals("zset4", zInterStoreCommand.keys[1]);
-                        assertEquals(2.0, zInterStoreCommand.weights[0]);
-                        assertEquals(3.0, zInterStoreCommand.weights[1]);
-                        assertEquals(AggregateType.SUM, zInterStoreCommand.aggregateType);
+                        assertEquals("out1", zInterStoreCommand.getDestination());
+                        assertEquals(2, zInterStoreCommand.getNumkeys());
+                        assertEquals("zset3", zInterStoreCommand.getKeys()[0]);
+                        assertEquals("zset4", zInterStoreCommand.getKeys()[1]);
+                        assertEquals(2.0, zInterStoreCommand.getWeights()[0]);
+                        assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
+                        assertEquals(AggregateType.SUM, zInterStoreCommand.getAggregateType());
                         ref.compareAndSet(null, "ok");
                     }
                 });
@@ -258,15 +258,15 @@ public class RedisReplicatorTest extends TestCase {
                     public void handle(Replicator replicator, Command command) {
                         if (command.name().equals(CommandName.name("SET"))) {
                             SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
-                            assertEquals("abc", setCommand.key);
-                            assertEquals("bcd", setCommand.value);
+                            assertEquals("abc", setCommand.getKey());
+                            assertEquals("bcd", setCommand.getValue());
                             ref.compareAndSet(null, "1");
                         } else if (command.name().equals(CommandName.name("ZADD"))) {
                             ZAddParser.ZAddCommand zaddCommand = (ZAddParser.ZAddCommand) command;
-                            assertEquals("zzlist", zaddCommand.key);
-                            assertEquals(1.5, zaddCommand.zSetEntries[0].score);
-                            assertEquals("member", zaddCommand.zSetEntries[0].element);
-                            assertEquals(ExistType.NX, zaddCommand.existType);
+                            assertEquals("zzlist", zaddCommand.getKey());
+                            assertEquals(1.5, zaddCommand.getZSetEntries()[0].getScore());
+                            assertEquals("member", zaddCommand.getZSetEntries()[0].getElement());
+                            assertEquals(ExistType.NX, zaddCommand.getExistType());
                             ref.compareAndSet("1", "2");
                         }
 
@@ -397,8 +397,8 @@ public class RedisReplicatorTest extends TestCase {
                     @Override
                     public void handle(Replicator replicator, Command command) {
                         SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
-                        assertEquals("abc", setCommand.key);
-                        assertEquals("bcd", setCommand.value);
+                        assertEquals("abc", setCommand.getKey());
+                        assertEquals("bcd", setCommand.getValue());
                         ref.compareAndSet(null, "ok");
                     }
                 });

@@ -45,8 +45,16 @@ public class GeoAddParser implements CommandParser<GeoAddParser.GeoAddCommand> {
     }
 
     public static class GeoAddCommand implements Command {
-        public final String key;
-        public final Geo[] geos;
+        private final String key;
+        private final Geo[] geos;
+
+        public String getKey() {
+            return key;
+        }
+
+        public Geo[] getGeos() {
+            return geos;
+        }
 
         public GeoAddCommand(String key, Geo[] geos) {
             this.key = key;

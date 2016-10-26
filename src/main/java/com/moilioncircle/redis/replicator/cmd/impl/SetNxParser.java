@@ -33,8 +33,16 @@ public class SetNxParser implements CommandParser<SetNxParser.SetNxCommand> {
     }
 
     public static class SetNxCommand implements Command {
-        public final String key;
-        public final String value;
+        private final String key;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public SetNxCommand(String key, String value) {
             this.key = key;

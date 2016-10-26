@@ -6,9 +6,21 @@ import java.io.Serializable;
  * Created by leon on 8/20/16.
  */
 public class Geo implements Serializable {
-    public final String member;
-    public final double longitude;
-    public final double latitude;
+    private final String member;
+    private final double longitude;
+    private final double latitude;
+
+    public String getMember() {
+        return member;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
 
     public Geo(String member, double longitude, double latitude) {
         this.member = member;

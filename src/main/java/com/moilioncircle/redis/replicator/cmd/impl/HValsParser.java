@@ -31,7 +31,11 @@ public class HValsParser implements CommandParser<HValsParser.HValsCommand> {
     }
 
     public static class HValsCommand implements Command {
-        public final String key;
+        private final String key;
+
+        public String getKey() {
+            return key;
+        }
 
         public HValsCommand(String key) {
             this.key = key;

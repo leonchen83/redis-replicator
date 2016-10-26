@@ -42,7 +42,11 @@ public class ScriptParser implements CommandParser<ScriptParser.ScriptCommand> {
     }
 
     public static class ScriptLoadCommand extends ScriptCommand {
-        public final String script;
+        private final String script;
+
+        public String getScript() {
+            return script;
+        }
 
         public ScriptLoadCommand(String script) {
             this.script = script;

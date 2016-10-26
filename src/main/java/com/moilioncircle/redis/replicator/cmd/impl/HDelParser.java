@@ -38,8 +38,16 @@ public class HDelParser implements CommandParser<HDelParser.HDelCommand> {
     }
 
     public static class HDelCommand implements Command {
-        public final String key;
-        public final String fields[];
+        private final String key;
+        private final String fields[];
+
+        public String getKey() {
+            return key;
+        }
+
+        public String[] getFields() {
+            return fields;
+        }
 
         public HDelCommand(String key, String... fields) {
             this.key = key;

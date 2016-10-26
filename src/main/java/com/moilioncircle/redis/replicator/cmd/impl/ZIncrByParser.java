@@ -35,9 +35,21 @@ public class ZIncrByParser implements CommandParser<ZIncrByParser.ZIncrByCommand
     }
 
     public static class ZIncrByCommand implements Command {
-        public final String key;
-        public final int increment;
-        public final String member;
+        private final String key;
+        private final int increment;
+        private final String member;
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getIncrement() {
+            return increment;
+        }
+
+        public String getMember() {
+            return member;
+        }
 
         public ZIncrByCommand(String key, int increment, String member) {
             this.key = key;

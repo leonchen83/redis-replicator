@@ -31,7 +31,11 @@ public class SelectParser implements CommandParser<SelectParser.SelectCommand> {
     }
 
     public static class SelectCommand implements Command {
-        public final int index;
+        private final int index;
+
+        public int getIndex() {
+            return index;
+        }
 
         public SelectCommand(int index) {
             this.index = index;

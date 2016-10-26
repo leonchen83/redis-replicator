@@ -31,7 +31,11 @@ public class PersistParser implements CommandParser<PersistParser.PersistCommand
     }
 
     public static class PersistCommand implements Command {
-        public final String key;
+        private final String key;
+
+        public String getKey() {
+            return key;
+        }
 
         public PersistCommand(String key) {
             this.key = key;

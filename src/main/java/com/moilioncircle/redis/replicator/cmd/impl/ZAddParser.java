@@ -61,11 +61,31 @@ public class ZAddParser implements CommandParser<ZAddParser.ZAddCommand> {
     }
 
     public static class ZAddCommand implements Command {
-        public final String key;
-        public final ExistType existType;
-        public final Boolean isCh;
-        public final Boolean isIncr;
-        public final ZSetEntry[] zSetEntries;
+        private final String key;
+        private final ExistType existType;
+        private final Boolean isCh;
+        private final Boolean isIncr;
+        private final ZSetEntry[] zSetEntries;
+
+        public String getKey() {
+            return key;
+        }
+
+        public ExistType getExistType() {
+            return existType;
+        }
+
+        public Boolean getCh() {
+            return isCh;
+        }
+
+        public Boolean getIncr() {
+            return isIncr;
+        }
+
+        public ZSetEntry[] getZSetEntries() {
+            return zSetEntries;
+        }
 
         public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries) {
             this.key = key;

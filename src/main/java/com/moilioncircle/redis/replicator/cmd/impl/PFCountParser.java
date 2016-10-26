@@ -36,7 +36,11 @@ public class PFCountParser implements CommandParser<PFCountParser.PFCountCommand
     }
 
     public static class PFCountCommand implements Command {
-        public final String[] keys;
+        private final String[] keys;
+
+        public String[] getKeys() {
+            return keys;
+        }
 
         public PFCountCommand(String... keys) {
             this.keys = keys;

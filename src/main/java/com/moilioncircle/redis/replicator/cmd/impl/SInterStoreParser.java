@@ -38,8 +38,16 @@ public class SInterStoreParser implements CommandParser<SInterStoreParser.SInter
     }
 
     public static class SInterStoreCommand implements Command {
-        public final String destination;
-        public final String keys[];
+        private final String destination;
+        private final String keys[];
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public String[] getKeys() {
+            return keys;
+        }
 
         public SInterStoreCommand(String destination, String... keys) {
             this.destination = destination;

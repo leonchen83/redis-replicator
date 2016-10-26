@@ -129,14 +129,14 @@ public class RdbParserTest {
         List<ZSetEntry> zset = new ArrayList(((Set<ZSetEntry>) map.get("sorted_set_as_ziplist").getValue()));
 
         for (ZSetEntry entry : zset) {
-            if (entry.element.equals("8b6ba6718a786daefa69438148361901")) {
-                assertEquals(1d, entry.score);
+            if (entry.getElement().equals("8b6ba6718a786daefa69438148361901")) {
+                assertEquals(1d, entry.getScore());
             }
-            if (entry.element.equals("cb7a24bb7528f934b841b34c3a73e0c7")) {
-                assertEquals(2.37d, entry.score);
+            if (entry.getElement().equals("cb7a24bb7528f934b841b34c3a73e0c7")) {
+                assertEquals(2.37d, entry.getScore());
             }
-            if (entry.element.equals("523af537946b79c4f8369ed39ba78605")) {
-                assertEquals(3.423d, entry.score);
+            if (entry.getElement().equals("523af537946b79c4f8369ed39ba78605")) {
+                assertEquals(3.423d, entry.getScore());
             }
         }
 
@@ -148,8 +148,8 @@ public class RdbParserTest {
         assertEquals(true, map.containsKey("z3"));
         assertEquals(true, map.containsKey("z4"));
 
-        assertEquals(0, map.get("key_in_zeroth_database").getDb().dbNumber);
-        assertEquals(2, map.get("key_in_second_database").getDb().dbNumber);
+        assertEquals(0, map.get("key_in_zeroth_database").getDb().getDbNumber());
+        assertEquals(2, map.get("key_in_second_database").getDb().getDbNumber());
 
         assertEquals("efgh", map.get("abcd").getValue());
         assertEquals("bar", map.get("foo").getValue());

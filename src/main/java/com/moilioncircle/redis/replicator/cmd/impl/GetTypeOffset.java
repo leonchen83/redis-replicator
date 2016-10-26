@@ -20,8 +20,8 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * Created by leon on 10/7/16.
  */
 public class GetTypeOffset implements Statement {
-    public String type;
-    public String offset;
+    private String type;
+    private String offset;
 
     public String getType() {
         return type;

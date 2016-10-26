@@ -31,7 +31,11 @@ public class PingParser implements CommandParser<PingParser.PingCommand> {
     }
 
     public static class PingCommand implements Command {
-        public final String message;
+        private final String message;
+
+        public String getMessage() {
+            return message;
+        }
 
         public PingCommand(String message) {
             this.message = message;

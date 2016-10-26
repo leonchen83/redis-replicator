@@ -23,8 +23,8 @@ import java.util.List;
  * Created by leon on 10/7/16.
  */
 public class OverFlow implements Serializable {
-    public OverFlowType overFlowType;
-    public List<Statement> statements;
+    private OverFlowType overFlowType;
+    private List<Statement> statements;
 
     public OverFlowType getOverFlowType() {
         return overFlowType;

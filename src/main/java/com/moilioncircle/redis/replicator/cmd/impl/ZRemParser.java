@@ -40,8 +40,16 @@ public class ZRemParser implements CommandParser<ZRemParser.ZRemCommand> {
     }
 
     public static class ZRemCommand implements Command {
-        public final String key;
-        public final String[] members;
+        private final String key;
+        private final String[] members;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String[] getMembers() {
+            return members;
+        }
 
         public ZRemCommand(String key, String... members) {
             this.key = key;

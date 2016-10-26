@@ -33,8 +33,16 @@ public class PublishParser implements CommandParser<PublishParser.PublishCommand
     }
 
     public static class PublishCommand implements Command {
-        public final String channel;
-        public final String message;
+        private final String channel;
+        private final String message;
+
+        public String getChannel() {
+            return channel;
+        }
+
+        public String getMessage() {
+            return message;
+        }
 
         public PublishCommand(String channel, String message) {
             this.channel = channel;

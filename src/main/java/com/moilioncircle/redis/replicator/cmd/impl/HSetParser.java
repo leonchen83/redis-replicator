@@ -35,9 +35,21 @@ public class HSetParser implements CommandParser<HSetParser.HSetCommand> {
     }
 
     public static class HSetCommand implements Command {
-        public final String key;
-        public final String field;
-        public final String value;
+        private final String key;
+        private final String field;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getField() {
+            return field;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public HSetCommand(String key, String field, String value) {
             this.key = key;

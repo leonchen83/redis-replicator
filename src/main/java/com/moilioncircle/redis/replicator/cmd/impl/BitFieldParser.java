@@ -148,9 +148,21 @@ public class BitFieldParser implements CommandParser<BitFieldParser.BitFieldComm
     }
 
     public static class BitFieldCommand implements Command {
-        public final String key;
-        public final List<Statement> statements;
-        public final List<OverFlow> overFlows;
+        private final String key;
+        private final List<Statement> statements;
+        private final List<OverFlow> overFlows;
+
+        public String getKey() {
+            return key;
+        }
+
+        public List<Statement> getStatements() {
+            return statements;
+        }
+
+        public List<OverFlow> getOverFlows() {
+            return overFlows;
+        }
 
         public BitFieldCommand(String key,
                                List<Statement> statements,

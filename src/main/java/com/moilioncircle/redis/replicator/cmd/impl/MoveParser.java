@@ -33,8 +33,16 @@ public class MoveParser implements CommandParser<MoveParser.MoveCommand> {
     }
 
     public static class MoveCommand implements Command {
-        public final String key;
-        public final int db;
+        private final String key;
+        private final int db;
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getDb() {
+            return db;
+        }
 
         public MoveCommand(String key, int db) {
             this.key = key;

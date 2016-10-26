@@ -42,8 +42,16 @@ public class HMSetParser implements CommandParser<HMSetParser.HMSetCommand> {
     }
 
     public static class HMSetCommand implements Command {
-        public final String key;
-        public final Map<String, String> fields;
+        private final String key;
+        private final Map<String, String> fields;
+
+        public String getKey() {
+            return key;
+        }
+
+        public Map<String, String> getFields() {
+            return fields;
+        }
 
         public HMSetCommand(String key, Map<String, String> fields) {
             this.key = key;

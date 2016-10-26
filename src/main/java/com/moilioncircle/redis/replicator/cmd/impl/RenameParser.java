@@ -33,8 +33,16 @@ public class RenameParser implements CommandParser<RenameParser.RenameCommand> {
     }
 
     public static class RenameCommand implements Command {
-        public final String key;
-        public final String newKey;
+        private final String key;
+        private final String newKey;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getNewKey() {
+            return newKey;
+        }
 
         public RenameCommand(String key, String newKey) {
             this.key = key;

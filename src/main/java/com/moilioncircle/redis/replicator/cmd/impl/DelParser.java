@@ -36,7 +36,11 @@ public class DelParser implements CommandParser<DelParser.DelCommand> {
     }
 
     public static class DelCommand implements Command {
-        public final String[] keys;
+        private final String[] keys;
+
+        public String[] getKeys() {
+            return keys;
+        }
 
         public DelCommand(String... keys) {
             this.keys = keys;

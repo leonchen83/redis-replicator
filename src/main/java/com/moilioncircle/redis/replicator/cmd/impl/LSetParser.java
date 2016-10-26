@@ -35,9 +35,21 @@ public class LSetParser implements CommandParser<LSetParser.LSetCommand> {
     }
 
     public static class LSetCommand implements Command {
-        public final String key;
-        public final int index;
-        public final String value;
+        private final String key;
+        private final int index;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public LSetCommand(String key, int index, String value) {
             this.key = key;

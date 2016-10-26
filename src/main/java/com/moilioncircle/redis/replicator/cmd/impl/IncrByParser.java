@@ -33,8 +33,16 @@ public class IncrByParser implements CommandParser<IncrByParser.IncrByCommand> {
     }
 
     public static class IncrByCommand implements Command {
-        public final String key;
-        public final int value;
+        private final String key;
+        private final int value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getValue() {
+            return value;
+        }
 
         public IncrByCommand(String key, int value) {
             this.key = key;

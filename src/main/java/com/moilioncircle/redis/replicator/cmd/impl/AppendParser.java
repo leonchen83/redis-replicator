@@ -31,8 +31,16 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
     }
 
     public static class AppendCommand implements Command {
-        public final String key;
-        public final String value;
+        private final String key;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public AppendCommand(String key, String value) {
             this.key = key;

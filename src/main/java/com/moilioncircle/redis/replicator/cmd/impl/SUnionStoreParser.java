@@ -38,8 +38,16 @@ public class SUnionStoreParser implements CommandParser<SUnionStoreParser.SUnion
     }
 
     public static class SUnionStoreCommand implements Command {
-        public final String destination;
-        public final String keys[];
+        private final String destination;
+        private final String keys[];
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public String[] getKeys() {
+            return keys;
+        }
 
         public SUnionStoreCommand(String destination, String... keys) {
             this.destination = destination;

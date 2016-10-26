@@ -22,7 +22,11 @@ import java.io.Serializable;
  * Created by leon on 8/25/16.
  */
 public class PostFullSyncEvent implements Serializable {
-    public final long checksum;
+    private final long checksum;
+
+    public long getChecksum() {
+        return checksum;
+    }
 
     public PostFullSyncEvent(final long checksum) {
         this.checksum = checksum;

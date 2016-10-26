@@ -35,9 +35,21 @@ public class LRemParser implements CommandParser<LRemParser.LRemCommand> {
     }
 
     public static class LRemCommand implements Command {
-        public final String key;
-        public final int index;
-        public final String value;
+        private final String key;
+        private final int index;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public LRemCommand(String key, int index, String value) {
             this.key = key;

@@ -34,9 +34,21 @@ public class BRPopLPushParser implements CommandParser<BRPopLPushParser.BRPopLPu
     }
 
     public static class BRPopLPushCommand implements Command {
-        public final String source;
-        public final String destination;
-        public final int timeout;
+        private final String source;
+        private final String destination;
+        private final int timeout;
+
+        public String getSource() {
+            return source;
+        }
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public int getTimeout() {
+            return timeout;
+        }
 
         public BRPopLPushCommand(String source, String destination, int timeout) {
             this.source = source;

@@ -41,10 +41,26 @@ public class LInsertParser implements CommandParser<LInsertParser.LInsertCommand
     }
 
     public static class LInsertCommand implements Command {
-        public final String key;
-        public final LInsertType lInsertType;
-        public final String pivot;
-        public final String value;
+        private final String key;
+        private final LInsertType lInsertType;
+        private final String pivot;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public LInsertType getlInsertType() {
+            return lInsertType;
+        }
+
+        public String getPivot() {
+            return pivot;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public LInsertCommand(String key, LInsertType lInsertType, String pivot, String value) {
             this.key = key;

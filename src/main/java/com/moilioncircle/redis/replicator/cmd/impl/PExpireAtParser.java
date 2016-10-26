@@ -33,8 +33,16 @@ public class PExpireAtParser implements CommandParser<PExpireAtParser.PExpireAtC
     }
 
     public static class PExpireAtCommand implements Command {
-        public final String key;
-        public final long ex;
+        private final String key;
+        private final long ex;
+
+        public String getKey() {
+            return key;
+        }
+
+        public long getEx() {
+            return ex;
+        }
 
         public PExpireAtCommand(String key, long ex) {
             this.key = key;

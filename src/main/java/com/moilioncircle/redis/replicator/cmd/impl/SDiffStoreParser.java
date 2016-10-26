@@ -38,8 +38,16 @@ public class SDiffStoreParser implements CommandParser<SDiffStoreParser.SDiffSto
     }
 
     public static class SDiffStoreCommand implements Command {
-        public final String destination;
-        public final String keys[];
+        private final String destination;
+        private final String keys[];
+
+        public String getDestination() {
+            return destination;
+        }
+
+        public String[] getKeys() {
+            return keys;
+        }
 
         public SDiffStoreCommand(String destination, String... keys) {
             this.destination = destination;

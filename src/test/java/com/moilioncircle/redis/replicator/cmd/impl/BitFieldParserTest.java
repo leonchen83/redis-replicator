@@ -16,9 +16,9 @@ public class BitFieldParserTest {
             BitFieldParser parser = new BitFieldParser();
             BitFieldParser.BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
                     new Object[]{"mykey", "overflow", "sat"});
-            assertEquals("mykey", command.key);
-            assertEquals(0, command.statements.size());
-            assertEquals(1, command.overFlows.size());
+            assertEquals("mykey", command.getKey());
+            assertEquals(0, command.getStatements().size());
+            assertEquals(1, command.getOverFlows().size());
         }
 
 
@@ -27,9 +27,9 @@ public class BitFieldParserTest {
             BitFieldParser parser = new BitFieldParser();
             BitFieldParser.BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
                     new Object[]{"mykey", "incrby", "i5", "100", "1", "overflow", "sat"});
-            assertEquals("mykey", command.key);
-            assertEquals(1, command.statements.size());
-            assertEquals(1, command.overFlows.size());
+            assertEquals("mykey", command.getKey());
+            assertEquals(1, command.getStatements().size());
+            assertEquals(1, command.getOverFlows().size());
         }
 
         //
@@ -37,9 +37,9 @@ public class BitFieldParserTest {
             BitFieldParser parser = new BitFieldParser();
             BitFieldParser.BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
                     new Object[]{"mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "sat"});
-            assertEquals("mykey", command.key);
-            assertEquals(2, command.statements.size());
-            assertEquals(1, command.overFlows.size());
+            assertEquals("mykey", command.getKey());
+            assertEquals(2, command.getStatements().size());
+            assertEquals(1, command.getOverFlows().size());
         }
 
         //
@@ -47,29 +47,29 @@ public class BitFieldParserTest {
             BitFieldParser parser = new BitFieldParser();
             BitFieldParser.BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
                     new Object[]{"mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
-            assertEquals("mykey", command.key);
-            assertEquals(2, command.statements.size());
-            assertEquals(1, command.overFlows.size());
+            assertEquals("mykey", command.getKey());
+            assertEquals(2, command.getStatements().size());
+            assertEquals(1, command.getOverFlows().size());
         }
 
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldParser.BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
                     new Object[]{"mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
-            assertEquals("mykey", command.key);
-            assertEquals(2, command.statements.size());
-            assertEquals(3, command.overFlows.size());
-            assertEquals(2, command.overFlows.get(0).statements.size());
+            assertEquals("mykey", command.getKey());
+            assertEquals(2, command.getStatements().size());
+            assertEquals(3, command.getOverFlows().size());
+            assertEquals(2, command.getOverFlows().get(0).getStatements().size());
         }
 
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldParser.BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
                     new Object[]{"mykey", "incrby", "i5", "100", "1", "get", "i8", "10", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
-            assertEquals("mykey", command.key);
-            assertEquals(2, command.statements.size());
-            assertEquals(3, command.overFlows.size());
-            assertEquals(2, command.overFlows.get(0).statements.size());
+            assertEquals("mykey", command.getKey());
+            assertEquals(2, command.getStatements().size());
+            assertEquals(3, command.getOverFlows().size());
+            assertEquals(2, command.getOverFlows().get(0).getStatements().size());
         }
 
     }

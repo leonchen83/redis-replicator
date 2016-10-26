@@ -34,9 +34,21 @@ public class PSetExParser implements CommandParser<PSetExParser.PSetExCommand> {
     }
 
     public static class PSetExCommand implements Command {
-        public final String key;
-        public final long ex;
-        public final String value;
+        private final String key;
+        private final long ex;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public long getEx() {
+            return ex;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public PSetExCommand(String key, long ex, String value) {
             this.key = key;

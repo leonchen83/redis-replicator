@@ -34,9 +34,21 @@ public class SetExParser implements CommandParser<SetExParser.SetExCommand> {
     }
 
     public static class SetExCommand implements Command {
-        public final String key;
-        public final int ex;
-        public final String value;
+        private final String key;
+        private final int ex;
+        private final String value;
+
+        public String getKey() {
+            return key;
+        }
+
+        public int getEx() {
+            return ex;
+        }
+
+        public String getValue() {
+            return value;
+        }
 
         public SetExCommand(String key, int ex, String value) {
             this.key = key;

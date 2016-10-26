@@ -41,7 +41,11 @@ public class MSetNxParser implements CommandParser<MSetNxParser.MSetNxCommand> {
     }
 
     public static class MSetNxCommand implements Command {
-        public final Map<String, String> kv;
+        private final Map<String, String> kv;
+
+        public Map<String, String> getKv() {
+            return kv;
+        }
 
         public MSetNxCommand(Map<String, String> kv) {
             this.kv = kv;

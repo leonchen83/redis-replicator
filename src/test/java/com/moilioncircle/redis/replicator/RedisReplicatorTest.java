@@ -312,6 +312,7 @@ public class RedisReplicatorTest extends TestCase {
         redisReplicator.close();
     }
 
+    @Test
     public void testFilter() throws IOException, InterruptedException {
         RedisReplicator redisReplicator = new RedisReplicator(
                 RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
@@ -345,6 +346,7 @@ public class RedisReplicatorTest extends TestCase {
         redisReplicator.close();
     }
 
+    @Test
     public void testFileV6() throws IOException, InterruptedException {
         RedisReplicator redisReplicator = new RedisReplicator(
                 RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),

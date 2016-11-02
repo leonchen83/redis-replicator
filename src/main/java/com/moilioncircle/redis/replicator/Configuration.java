@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Configuration {
 
+    private Configuration() {
+    }
     /**
      * factory
      *

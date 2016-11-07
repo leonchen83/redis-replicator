@@ -59,7 +59,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
         this.port = port;
         this.configuration = configuration;
         this.eventQueue = new ArrayBlockingQueue<>(configuration.getEventQueueSize());
-        buildInCommandParserRegister();
+        builtInCommandParserRegister();
     }
 
     /**

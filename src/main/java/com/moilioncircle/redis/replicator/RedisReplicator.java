@@ -65,8 +65,8 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public void buildInCommandParserRegister() {
-        replicator.buildInCommandParserRegister();
+    public void builtInCommandParserRegister() {
+        replicator.builtInCommandParserRegister();
     }
 
     @Override

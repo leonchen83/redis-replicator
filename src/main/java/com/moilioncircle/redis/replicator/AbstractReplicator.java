@@ -165,7 +165,7 @@ public abstract class AbstractReplicator implements Replicator {
     }
 
     @Override
-    public void buildInCommandParserRegister() {
+    public void builtInCommandParserRegister() {
         addCommandParser(CommandName.name("PING"), new PingParser());
         addCommandParser(CommandName.name("APPEND"), new AppendParser());
         addCommandParser(CommandName.name("SET"), new SetParser());

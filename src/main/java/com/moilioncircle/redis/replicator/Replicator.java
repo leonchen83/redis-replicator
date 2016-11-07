@@ -37,7 +37,7 @@ public interface Replicator extends Closeable {
 
     void removeRdbListener(RdbListener listener);
 
-    void buildInCommandParserRegister();
+    void builtInCommandParserRegister();
 
     <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser);
 

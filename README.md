@@ -226,7 +226,15 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
   
 ##Trace Event log  
   
-* set log level to **debug**  
+* set log level to **debug**
+* if you are using log4j2,add logger below:
+
+```java
+    <Logger name="com.moilioncircle" level="debug">
+        <AppenderRef ref="YourAppender"/>
+    </Logger>
+```
+
   
 ```java
     Configuration.defaultSetting().setVerbose(true);
@@ -300,4 +308,6 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 #References  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  
   * [Redis RDB File Format](https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format)  
-  * [Redis Protocol specification](http://redis.io/topics/protocol)  
+  * [Redis Protocol specification](http://redis.io/topics/protocol)
+  * [Redis Replication](http://redis.io/topics/replication)
+

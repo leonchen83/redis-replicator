@@ -44,6 +44,9 @@ clean install package -Dmaven.test.skip=true
 #Class Chart  
 ![Alt text](https://raw.githubusercontent.com/leonchen83/redis-replicator/master/docs/redis-replicator-class-chart.png)  
   
+#All Classes Chart
+![Alt text](https://raw.githubusercontent.com/leonchen83/redis-replicator/master/docs/redis-replicator-all-classes-chart.png)  
+  
 #Usage  
   
 ##Socket  

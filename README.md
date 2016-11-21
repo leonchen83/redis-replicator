@@ -54,7 +54,7 @@ clean install package -Dmaven.test.skip=true
 ##Socket  
   
 ```java  
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -70,10 +70,10 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```
 
-##File  
+##Rdb file  
 
 ```java  
-        RedisReplicator replicator = new RedisReplicator(new File("dump.rdb"), Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator(new File("dump.rdb"), Configuration.defaultSetting());
         replicator.addRdbFilter(new RdbFilter() {
             @Override
             public boolean accept(KeyValuePair<?> kv) {
@@ -88,7 +88,25 @@ clean install package -Dmaven.test.skip=true
         });
 
         replicator.open();
-        System.in.read();
+```  
+
+##Aof file  
+
+```java  
+        Replicator replicator = new RedisReplicator(new File("appendonly.aof"), Configuration.defaultSetting(), false);
+        replicator.addCommandFilter(new CommandFilter() {
+                    @Override
+                    public boolean accept(Command command) {
+                        return command instanceof SetParser.SetCommand && ((SetParser.SetCommand)command).getKey().startsWith("test_");
+                    }
+                });
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                acc.incrementAndGet();
+            }
+        });
+        replicator.open();
 ```  
 
 #Command Extension  
@@ -137,7 +155,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
   
 * **register this parser.**  
 ```java  
-    RedisReplicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
+    Replicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
     replicator.addCommandParser(CommandName.name("APPEND"),new AppendParser());
 ```
   
@@ -263,7 +281,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 ##FullSyncEvent  
   
 ```java
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         final long start = System.currentTimeMillis();
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addRdbListener(new RdbListener() {
@@ -291,7 +309,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 * when kv.getValueRdbType() == 0, you can get the raw bytes of value. In some cases(eg. HyperLogLog),this is very useful.  
   
 ```java
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbFilter(new RdbFilter() {
             @Override
             public boolean accept(KeyValuePair<?> kv) {

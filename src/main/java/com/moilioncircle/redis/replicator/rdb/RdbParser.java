@@ -106,8 +106,7 @@ public class RdbParser extends AbstractRdbParser {
             }
 
         } catch (InterruptedException e) {
-            logger.error(e);
-            Thread.currentThread().interrupt();
+            logger.error("error", e);
             return -1;
         }
     }

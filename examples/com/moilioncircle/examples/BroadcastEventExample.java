@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class BroadcastEventExample {
     public static void main(String[] args) throws IOException {
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         //broadcast rdb event
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

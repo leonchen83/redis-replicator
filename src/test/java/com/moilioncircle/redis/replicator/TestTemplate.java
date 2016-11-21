@@ -9,7 +9,7 @@ import java.io.IOException;
  */
 public abstract class TestTemplate extends TestCase {
     public void testSocket(final String host, final int port, final Configuration configuration, final long sleep) throws IOException {
-        final RedisReplicator replicator = new RedisReplicator(host,
+        final Replicator replicator = new RedisReplicator(host,
                 port,
                 configuration);
         new Thread() {
@@ -26,5 +26,5 @@ public abstract class TestTemplate extends TestCase {
         replicator.open();
     }
 
-    protected abstract void test(RedisReplicator replicator);
+    protected abstract void test(Replicator replicator);
 }

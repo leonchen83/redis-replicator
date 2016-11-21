@@ -13,7 +13,9 @@ import java.util.Arrays;
  */
 public class TestRawBytes {
     public static void main(String[] args) throws IOException, InterruptedException {
-        RedisReplicator replicator = new RedisReplicator(TestRawBytes.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), Configuration.defaultSetting());
+        Replicator replicator = new RedisRdbReplicator(
+                TestRawBytes.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
+                Configuration.defaultSetting());
         replicator.addRdbFilter(new RdbFilter() {
             @Override
             public boolean accept(KeyValuePair<?> kv) {
@@ -30,6 +32,5 @@ public class TestRawBytes {
             }
         });
         replicator.open();
-        Thread.sleep(2000);
     }
 }

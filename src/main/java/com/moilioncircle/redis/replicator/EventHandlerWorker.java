@@ -37,7 +37,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
     public EventHandlerWorker(AbstractReplicator replicator) {
         this.replicator = replicator;
-        setDaemon(true);
         setName("event-handler-worker");
     }
 
@@ -61,12 +60,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
                 } else {
                     throw new AssertionError(object);
                 }
-            } catch (InterruptedException e) {
-                close();
             } catch (Throwable e) {
                 exceptionHandler(e);
             }
         }
+        replicator.doCloseListener();
     }
 
     @Override

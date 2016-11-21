@@ -47,6 +47,7 @@ public class RdbParserTest {
         for (String resource : resources) {
             template(resource, map);
         }
+        Thread.sleep(5000);
 
         assertEquals("zero", map.get("key_in_zeroth_database").getValue());
         assertEquals("second", map.get("key_in_second_database").getValue());
@@ -162,7 +163,7 @@ public class RdbParserTest {
 
     public void template(String filename, final ConcurrentHashMap<String, KeyValuePair> map) {
         try {
-            RedisReplicator replicator = new RedisReplicator(RdbParserTest.class.
+            Replicator replicator = new RedisReplicator(RdbParserTest.class.
                     getClassLoader().getResourceAsStream(filename)
                     , Configuration.defaultSetting());
             replicator.addRdbListener(new RdbListener.Adaptor() {
@@ -172,7 +173,6 @@ public class RdbParserTest {
                 }
             });
             replicator.open();
-            Thread.sleep(4000);
         } catch (Exception e) {
             TestCase.fail();
         }

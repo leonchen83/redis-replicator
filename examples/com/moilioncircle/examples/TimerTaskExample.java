@@ -31,7 +31,7 @@ public class TimerTaskExample {
         @Override
         public void run() {
             try {
-                RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+                Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
                 replicator.addRdbListener(new RdbListener() {
                     @Override
                     public void preFullSync(Replicator replicator) {

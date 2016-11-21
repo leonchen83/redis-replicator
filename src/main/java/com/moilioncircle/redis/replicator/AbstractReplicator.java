@@ -23,6 +23,7 @@ import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -229,5 +230,10 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("BITOP"), new BitOpParser());
         addCommandParser(CommandName.name("BITFIELD"), new BitFieldParser());
         addCommandParser(CommandName.name("SETBIT"), new SetBitParser());
+    }
+
+    protected void doClose() throws IOException {
+        if (inputStream != null) inputStream.close();
+        if (worker != null && !worker.isClosed()) worker.close();
     }
 }

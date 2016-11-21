@@ -26,6 +26,7 @@ public class Configuration {
 
     private Configuration() {
     }
+
     /**
      * factory
      *

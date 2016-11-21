@@ -11,12 +11,11 @@ import java.io.IOException;
 /**
  * Created by leon on 10/8/16.
  */
-public class InputStreamExample {
+public class RdbInputStreamExample {
     public static void main(String[] args) throws IOException {
-        final RedisReplicator replicator = new RedisReplicator(
-                InputStreamExample.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
+        final Replicator replicator = new RedisReplicator(
+                RdbInputStreamExample.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
                 Configuration.defaultSetting());
-
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -25,7 +24,5 @@ public class InputStreamExample {
         });
 
         replicator.open();
-
-        System.in.read();
     }
 }

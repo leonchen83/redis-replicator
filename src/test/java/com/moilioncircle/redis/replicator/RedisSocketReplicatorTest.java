@@ -23,7 +23,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -33,20 +32,19 @@ import redis.clients.jedis.params.sortedset.ZAddParams;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by leon on 8/13/16.
  */
-public class RedisReplicatorTest extends TestCase {
+public class RedisSocketReplicatorTest extends TestCase {
 
     @Test
     public void testSet() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
         new TestTemplate() {
             @Override
-            protected void test(RedisReplicator replicator) {
+            protected void test(Replicator replicator) {
                 replicator.addRdbListener(new RdbListener() {
                     @Override
                     public void preFullSync(Replicator replicator) {
@@ -86,7 +84,7 @@ public class RedisReplicatorTest extends TestCase {
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0),
-                15000);
+                5000);
         assertEquals("ok", ref.get());
     }
 
@@ -95,7 +93,7 @@ public class RedisReplicatorTest extends TestCase {
         final AtomicReference<String> ref = new AtomicReference<>(null);
         new TestTemplate() {
             @Override
-            protected void test(RedisReplicator replicator) {
+            protected void test(Replicator replicator) {
                 replicator.addRdbListener(new RdbListener() {
                     @Override
                     public void preFullSync(Replicator replicator) {
@@ -151,7 +149,7 @@ public class RedisReplicatorTest extends TestCase {
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0),
-                15000);
+                5000);
         assertEquals("ok", ref.get());
     }
 
@@ -160,7 +158,7 @@ public class RedisReplicatorTest extends TestCase {
         final AtomicReference<String> ref = new AtomicReference<>(null);
         new TestTemplate() {
             @Override
-            protected void test(RedisReplicator replicator) {
+            protected void test(Replicator replicator) {
                 replicator.addRdbListener(new RdbListener() {
                     @Override
                     public void preFullSync(Replicator replicator) {
@@ -216,8 +214,22 @@ public class RedisReplicatorTest extends TestCase {
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0),
-                15000);
+                5000);
         assertEquals("ok", ref.get());
+    }
+
+    @Test
+    public void testCloseListener() throws IOException, InterruptedException {
+        final AtomicInteger acc = new AtomicInteger(0);
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6666, Configuration.defaultSetting());
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                acc.incrementAndGet();
+                assertEquals(1, acc.get());
+            }
+        });
+        replicator.open();
     }
 
     @Test
@@ -225,7 +237,7 @@ public class RedisReplicatorTest extends TestCase {
         final AtomicReference<String> ref = new AtomicReference<>(null);
         new TestTemplate() {
             @Override
-            protected void test(RedisReplicator replicator) {
+            protected void test(Replicator replicator) {
                 replicator.addRdbListener(new RdbListener() {
                     @Override
                     public void preFullSync(Replicator replicator) {
@@ -278,90 +290,8 @@ public class RedisReplicatorTest extends TestCase {
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0),
-                15000);
+                5000);
         assertEquals("2", ref.get());
-    }
-
-    @Test
-    public void testFileV7() throws IOException, InterruptedException {
-        RedisReplicator redisReplicator = new RedisReplicator(
-                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
-                Configuration.defaultSetting());
-        final AtomicInteger acc = new AtomicInteger(0);
-        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-                if (kv.getKey().equals("abcd")) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    assertEquals("abcd", ksvs.getValue());
-                }
-                if (kv.getKey().equals("foo")) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    assertEquals("bar", ksvs.getValue());
-                }
-                if (kv.getKey().equals("aaa")) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    assertEquals("bbb", ksvs.getValue());
-                }
-            }
-        });
-        redisReplicator.open();
-        Thread.sleep(2000);
-        assertEquals(19, acc.get());
-        redisReplicator.close();
-    }
-
-    @Test
-    public void testFilter() throws IOException, InterruptedException {
-        RedisReplicator redisReplicator = new RedisReplicator(
-                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
-                Configuration.defaultSetting());
-        final AtomicInteger acc = new AtomicInteger(0);
-        redisReplicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getValueRdbType() == 0;
-            }
-        });
-        redisReplicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-                assertEquals(0, acc.get());
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                assertEquals(13, acc.get());
-            }
-        });
-        redisReplicator.open();
-        Thread.sleep(2000);
-        assertEquals(13, acc.get());
-        redisReplicator.close();
-    }
-
-    @Test
-    public void testFileV6() throws IOException, InterruptedException {
-        RedisReplicator redisReplicator = new RedisReplicator(
-                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
-                Configuration.defaultSetting());
-        final AtomicInteger acc = new AtomicInteger(0);
-        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-        });
-        redisReplicator.open();
-        Thread.sleep(2000);
-        assertEquals(132, acc.get());
-        redisReplicator.close();
     }
 
     @Test
@@ -369,7 +299,7 @@ public class RedisReplicatorTest extends TestCase {
         final AtomicReference<String> ref = new AtomicReference<>(null);
         new TestTemplate() {
             @Override
-            protected void test(RedisReplicator replicator) {
+            protected void test(Replicator replicator) {
                 replicator.addRdbListener(new RdbListener() {
                     @Override
                     public void preFullSync(Replicator replicator) {
@@ -411,16 +341,15 @@ public class RedisReplicatorTest extends TestCase {
                 Configuration.defaultSetting()
                         .setAuthPassword("test")
                         .setRetries(0),
-                15000);
+                5000);
         assertEquals("ok", ref.get());
     }
 
     @Test
     public void testExpireV6() throws Exception {
-        final AtomicReference<String> ref = new AtomicReference<>(null);
         new TestTemplate() {
             @Override
-            protected void test(RedisReplicator replicator) {
+            protected void test(Replicator replicator) {
                 Jedis jedis = new Jedis("localhost",
                         6379);
                 jedis.del("abc");
@@ -447,7 +376,11 @@ public class RedisReplicatorTest extends TestCase {
 
                     @Override
                     public void postFullSync(Replicator replicator, long checksum) {
-
+                        try {
+                            replicator.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
             }
@@ -456,108 +389,7 @@ public class RedisReplicatorTest extends TestCase {
                 6379,
                 Configuration.defaultSetting()
                         .setRetries(0),
-                15000);
-    }
-
-    @Test
-    public void testCloseListener() throws IOException, InterruptedException {
-        final AtomicInteger acc = new AtomicInteger(0);
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6666, Configuration.defaultSetting());
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                acc.incrementAndGet();
-            }
-        });
-        replicator.open();
-        assertEquals(1, acc.get());
-    }
-
-    @Test
-    public void testCloseListener1() throws IOException, InterruptedException {
-        final AtomicInteger acc = new AtomicInteger(0);
-        RedisReplicator replicator = new RedisReplicator(
-                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
-                Configuration.defaultSetting());
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                try {
-                    replicator.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                acc.incrementAndGet();
-            }
-        });
-        replicator.open();
-        Thread.sleep(2000);
-        assertEquals(1, acc.get());
-    }
-
-    @Test
-    public void testChecksumV6() throws IOException, InterruptedException {
-        RedisReplicator redisReplicator = new RedisReplicator(
-                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
-                Configuration.defaultSetting());
-        final AtomicInteger acc = new AtomicInteger(0);
-        final AtomicLong atomicChecksum = new AtomicLong(0);
-        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                atomicChecksum.compareAndSet(0, checksum);
-            }
-        });
-        redisReplicator.open();
-        Thread.sleep(2000);
-        assertEquals(132, acc.get());
-        assertEquals(-3409494954737929802L, atomicChecksum.get());
-        redisReplicator.close();
-    }
-
-    @Test
-    public void testChecksumV7() throws IOException, InterruptedException {
-        RedisReplicator redisReplicator = new RedisReplicator(
-                RedisReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
-                Configuration.defaultSetting());
-        final AtomicInteger acc = new AtomicInteger(0);
-        final AtomicLong atomicChecksum = new AtomicLong(0);
-        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                atomicChecksum.compareAndSet(0, checksum);
-            }
-        });
-        redisReplicator.open();
-        Thread.sleep(2000);
-        assertEquals(19, acc.get());
-        assertEquals(6576517133597126869L, atomicChecksum.get());
-        redisReplicator.close();
+                5000);
     }
 
     @Test
@@ -569,11 +401,10 @@ public class RedisReplicatorTest extends TestCase {
         }
         jedis.close();
 
-        RedisReplicator redisReplicator = new RedisReplicator(
+        Replicator redisReplicator = new RedisReplicator(
                 "127.0.0.1", 6379,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        final AtomicReference<String> ref = new AtomicReference<>(null);
         redisReplicator.addRdbFilter(new RdbFilter() {
             @Override
             public boolean accept(KeyValuePair<?> kv) {
@@ -603,11 +434,8 @@ public class RedisReplicatorTest extends TestCase {
                     e.printStackTrace();
                 }
                 assertEquals(8000, acc.get());
-                ref.compareAndSet(null, "ok");
             }
         });
         redisReplicator.open();
-        Thread.sleep(10000);
-        assertEquals("ok", ref.get());
     }
 }

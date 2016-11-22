@@ -26,7 +26,7 @@ It also can sync redis data to your local cache or to database.
 <dependency>
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
 </dependency>
 ```  
   
@@ -302,6 +302,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
                 System.out.println("rdb event count:" + acc.get());
             }
         });
+        replicator.open();
 ```  
   
 ##Handle Raw Bytes  

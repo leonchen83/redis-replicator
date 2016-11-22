@@ -29,6 +29,7 @@ public class RedisAofReplicatorTest {
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
+                System.out.println("close open");
                 assertEquals(4, acc.get());
             }
         });
@@ -56,7 +57,8 @@ public class RedisAofReplicatorTest {
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
-                assertEquals(8000, acc.get());
+                System.out.println("close open2");
+                assertEquals(48000, acc.get());
             }
         });
         replicator.open();

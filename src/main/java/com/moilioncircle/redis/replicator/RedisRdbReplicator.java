@@ -49,7 +49,7 @@ public class RedisRdbReplicator extends AbstractReplicator {
 
     @Override
     public void close() throws IOException {
-        //NOP
+        doClose();
     }
 
     @Override

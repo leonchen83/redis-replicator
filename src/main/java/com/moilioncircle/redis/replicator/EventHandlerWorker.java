@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.Closeable;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -44,8 +45,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
     public void run() {
         while (!isClosed.get() || replicator.eventQueue.size() > 0) {
             try {
-                Object object = replicator.eventQueue.take();
-                if (object instanceof KeyValuePair<?>) {
+                Object object = replicator.eventQueue.poll(replicator.configuration.getPollTimeout(), TimeUnit.MILLISECONDS);
+                if (object == null) {
+                    continue;
+                } else if (object instanceof KeyValuePair<?>) {
                     KeyValuePair<?> kv = (KeyValuePair<?>) object;
                     if (!replicator.doRdbFilter(kv)) continue;
                     replicator.doRdbHandler(kv);

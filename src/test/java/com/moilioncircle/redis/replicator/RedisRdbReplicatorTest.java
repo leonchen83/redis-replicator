@@ -33,6 +33,12 @@ public class RedisRdbReplicatorTest {
             public void postFullSync(Replicator replicator, long checksum) {
                 super.postFullSync(replicator, checksum);
                 atomicChecksum.compareAndSet(0, checksum);
+            }
+        });
+        redisReplicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testChecksumV7");
                 assertEquals(19, acc.get());
                 assertEquals(6576517133597126869L, atomicChecksum.get());
             }
@@ -57,6 +63,12 @@ public class RedisRdbReplicatorTest {
             public void postFullSync(Replicator replicator, long checksum) {
                 super.postFullSync(replicator, checksum);
                 atomicChecksum.compareAndSet(0, checksum);
+            }
+        });
+        redisReplicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testChecksumV6");
                 assertEquals(132, acc.get());
                 assertEquals(-3409494954737929802L, atomicChecksum.get());
             }
@@ -74,6 +86,7 @@ public class RedisRdbReplicatorTest {
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
+                System.out.println("close testCloseListener1");
                 acc.incrementAndGet();
                 assertEquals(1, acc.get());
             }
@@ -111,6 +124,13 @@ public class RedisRdbReplicatorTest {
                 assertEquals(19, acc.get());
             }
         });
+        redisReplicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testFileV7");
+                assertEquals(19, acc.get());
+            }
+        });
         redisReplicator.open();
 
     }
@@ -142,6 +162,12 @@ public class RedisRdbReplicatorTest {
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
                 super.postFullSync(replicator, checksum);
+            }
+        });
+        redisReplicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testFilter");
                 assertEquals(13, acc.get());
             }
         });
@@ -164,6 +190,12 @@ public class RedisRdbReplicatorTest {
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
                 super.postFullSync(replicator, checksum);
+            }
+        });
+        redisReplicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testFileV6");
                 assertEquals(132, acc.get());
             }
         });

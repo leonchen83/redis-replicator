@@ -28,8 +28,6 @@ public class CommandParserExample {
             }
         });
         replicator.open();
-
-        System.in.read();
     }
 
     public static class YourAppendParser implements CommandParser<YourAppendParser.YourAppendCommand> {

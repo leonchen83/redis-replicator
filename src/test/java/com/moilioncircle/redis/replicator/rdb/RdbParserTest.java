@@ -47,6 +47,7 @@ public class RdbParserTest {
         for (String resource : resources) {
             template(resource, map);
         }
+        Thread.sleep(4000);
 
         assertEquals("zero", map.get("key_in_zeroth_database").getValue());
         assertEquals("second", map.get("key_in_second_database").getValue());
@@ -173,7 +174,6 @@ public class RdbParserTest {
                 }
             });
             replicator.open();
-            Thread.sleep(4000);
         } catch (Exception e) {
             TestCase.fail();
         }

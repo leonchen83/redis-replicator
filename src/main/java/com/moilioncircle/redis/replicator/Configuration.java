@@ -99,6 +99,11 @@ public class Configuration {
     private int heartBeatPeriod = 1000;
 
     /**
+     * event queue poll timeout
+     */
+    private int pollTimeout = 2000;
+
+    /**
      * psync master run id
      */
     private String masterRunId = "?";
@@ -248,6 +253,15 @@ public class Configuration {
         return this;
     }
 
+    public int getPollTimeout() {
+        return pollTimeout;
+    }
+
+    public Configuration setPollTimeout(int pollTimeout) {
+        this.pollTimeout = pollTimeout;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Configuration{" +
@@ -264,6 +278,7 @@ public class Configuration {
                 ", verbose=" + verbose +
                 ", heartBeatDelay=" + heartBeatDelay +
                 ", heartBeatPeriod=" + heartBeatPeriod +
+                ", pollTimeout=" + pollTimeout +
                 ", masterRunId='" + masterRunId + '\'' +
                 ", offset=" + offset +
                 '}';

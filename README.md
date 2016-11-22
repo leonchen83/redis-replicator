@@ -26,7 +26,7 @@ rdb version 7
 <dependency>
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
 </dependency>
 ```
 
@@ -63,7 +63,7 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```
 
-##File  
+##Rdb file  
 
 ```java  
         RedisReplicator replicator = new RedisReplicator(new File("dump.rdb"), Configuration.defaultSetting());
@@ -81,12 +81,32 @@ clean install package -Dmaven.test.skip=true
         });
 
         replicator.open();
-        System.in.read();
 ```  
+
+##Aof file  
+
+```java  
+        Replicator replicator = new RedisReplicator(new File("appendonly.aof"), Configuration.defaultSetting(), false);
+        replicator.addCommandFilter(new CommandFilter() {
+            @Override
+            public boolean accept(Command command) {
+                return command instanceof SetParser.SetCommand && ((SetParser.SetCommand)command).key.startsWith("test_");
+            }
+        });
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                System.out.println(command);
+            }
+        });
+        replicator.open();
+```  
+
 
 #Command Extension  
   
 * **write a command parser.**  
+
 ```java  
 public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 
@@ -261,6 +281,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
                 System.out.println("rdb event count:" + acc.get());
             }
         });
+        replicator.open();
 ```  
   
 ##Handle Raw Bytes  

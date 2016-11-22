@@ -33,11 +33,19 @@ public class RedisReplicator implements Replicator {
     private final Replicator replicator;
 
     public RedisReplicator(File file, Configuration configuration) throws FileNotFoundException {
-        replicator = new RedisFileReplicator(file, configuration);
+        this(file, configuration, true);
     }
 
     public RedisReplicator(InputStream in, Configuration configuration) {
-        replicator = new RedisFileReplicator(in, configuration);
+        this(in, configuration, true);
+    }
+
+    public RedisReplicator(File file, Configuration configuration, boolean rdb) throws FileNotFoundException {
+        replicator = rdb ? new RedisRdbReplicator(file, configuration) : new RedisAofReplicator(file, configuration);
+    }
+
+    public RedisReplicator(InputStream in, Configuration configuration, boolean rdb) {
+        replicator = rdb ? new RedisRdbReplicator(in, configuration) : new RedisAofReplicator(in, configuration);
     }
 
     public RedisReplicator(String host, int port, Configuration configuration) {
@@ -65,8 +73,8 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public void buildInCommandParserRegister() {
-        replicator.buildInCommandParserRegister();
+    public void builtInCommandParserRegister() {
+        replicator.builtInCommandParserRegister();
     }
 
     @Override

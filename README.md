@@ -95,15 +95,15 @@ clean install package -Dmaven.test.skip=true
 ```java  
         Replicator replicator = new RedisReplicator(new File("appendonly.aof"), Configuration.defaultSetting(), false);
         replicator.addCommandFilter(new CommandFilter() {
-                    @Override
-                    public boolean accept(Command command) {
-                        return command instanceof SetParser.SetCommand && ((SetParser.SetCommand)command).getKey().startsWith("test_");
-                    }
-                });
+            @Override
+            public boolean accept(Command command) {
+                return command instanceof SetParser.SetCommand && ((SetParser.SetCommand)command).getKey().startsWith("test_");
+            }
+        });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
-                acc.incrementAndGet();
+                System.out.println(command);
             }
         });
         replicator.open();

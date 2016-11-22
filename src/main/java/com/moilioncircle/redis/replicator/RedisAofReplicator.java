@@ -89,7 +89,7 @@ public class RedisAofReplicator extends AbstractReplicator {
 
     @Override
     public void close() throws IOException {
-        //NOP
+        doClose();
     }
 
     @Override

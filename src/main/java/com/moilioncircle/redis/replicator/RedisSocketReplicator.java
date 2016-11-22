@@ -90,7 +90,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 final String reply = (String) reply();
 
                 SyncMode syncMode = trySync(reply);
-                if (syncMode == SyncMode.PSYNC) {
+                //bug fix.
+                if (syncMode == SyncMode.PSYNC && connected.get()) {
                     //heart beat send REPLCONF ACK ${slave offset}
 
                     heartBeat = new Timer("heart beat");

@@ -89,7 +89,6 @@ public class RdbParser extends AbstractRdbParser {
             }
             int version = Integer.parseInt(StringHelper.str(in, 4));//0006 or 0007
             switch (version) {
-                case 1:
                 case 2:
                 case 3:
                 case 4:

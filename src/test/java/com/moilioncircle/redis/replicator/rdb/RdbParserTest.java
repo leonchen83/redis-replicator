@@ -34,7 +34,7 @@ public class RdbParserTest {
     @Test
     public void testParse() throws Exception {
         ConcurrentHashMap<String, KeyValuePair> map = new ConcurrentHashMap<>();
-        String[] resources = new String[]{"dictionary.rdb", "dumpV6.rdb", "dumpV7.rdb",
+        String[] resources = new String[]{"dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
                 "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
                 "intset_32.rdb", "intset_64.rdb", "keys_with_expiry.rdb",
@@ -47,7 +47,7 @@ public class RdbParserTest {
         for (String resource : resources) {
             template(resource, map);
         }
-        Thread.sleep(4000);
+        Thread.sleep(5000);
 
         assertEquals("zero", map.get("key_in_zeroth_database").getValue());
         assertEquals("second", map.get("key_in_second_database").getValue());
@@ -162,7 +162,6 @@ public class RdbParserTest {
     }
 
     public void template(String filename, final ConcurrentHashMap<String, KeyValuePair> map) {
-        System.out.println(filename);
         try {
             RedisReplicator replicator = new RedisReplicator(RdbParserTest.class.
                     getClassLoader().getResourceAsStream(filename)

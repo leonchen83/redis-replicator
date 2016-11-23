@@ -125,11 +125,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         Object[] params = new Object[command.length - 1];
                         System.arraycopy(command, 1, params, 0, params.length);
 
+                        final CommandParser<? extends Command> operations;
                         //if command do not register. ignore
-                        if (commands.get(cmdName) == null) continue;
+                        if ((operations = commands.get(cmdName)) == null) continue;
 
                         //do command replyParser
-                        CommandParser<? extends Command> operations = commands.get(cmdName);
                         Command parsedCommand = operations.parse(cmdName, params);
 
                         //submit event

@@ -54,6 +54,14 @@ public class RedisAofReplicator extends AbstractReplicator {
 
     @Override
     public void open() throws IOException {
+        try {
+            doOpen();
+        } finally {
+            close();
+        }
+    }
+
+    private void doOpen() {
         worker.start();
         while (true) {
             try {
@@ -81,7 +89,6 @@ public class RedisAofReplicator extends AbstractReplicator {
                     logger.info("Redis reply:" + obj);
                 }
             } catch (IOException | InterruptedException e) {
-                doClose();
                 break;
             }
         }

@@ -41,10 +41,14 @@ public class RedisRdbReplicator extends AbstractReplicator {
 
     @Override
     public void open() throws IOException {
-        worker.start();
-        RdbParser parser = new RdbParser(inputStream, this);
-        parser.parse();
-        doClose();
+        try {
+            worker.start();
+            RdbParser parser = new RdbParser(inputStream, this);
+            parser.parse();
+        } catch (IOException e) {
+        } finally {
+            doClose();
+        }
     }
 
     @Override

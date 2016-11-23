@@ -78,6 +78,12 @@ public class RedisSocketReplicatorTest extends TestCase {
                         ref.compareAndSet(null, "ok");
                     }
                 });
+                replicator.addCloseListener(new CloseListener() {
+                    @Override
+                    public void handle(Replicator replicator) {
+                        System.out.println("close testSet");
+                    }
+                });
             }
         }.testSocket(
                 "localhost",
@@ -141,6 +147,12 @@ public class RedisSocketReplicatorTest extends TestCase {
                         assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
                         assertEquals(AggregateType.MIN, zInterStoreCommand.getAggregateType());
                         ref.compareAndSet(null, "ok");
+                    }
+                });
+                replicator.addCloseListener(new CloseListener() {
+                    @Override
+                    public void handle(Replicator replicator) {
+                        System.out.println("close testZInterStore");
                     }
                 });
             }
@@ -208,6 +220,12 @@ public class RedisSocketReplicatorTest extends TestCase {
                         ref.compareAndSet(null, "ok");
                     }
                 });
+                replicator.addCloseListener(new CloseListener() {
+                    @Override
+                    public void handle(Replicator replicator) {
+                        System.out.println("close testZUnionStore");
+                    }
+                });
             }
         }.testSocket(
                 "localhost",
@@ -227,6 +245,12 @@ public class RedisSocketReplicatorTest extends TestCase {
             public void handle(Replicator replicator) {
                 acc.incrementAndGet();
                 assertEquals(1, acc.get());
+            }
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testCloseListener");
             }
         });
         replicator.open();
@@ -284,6 +308,12 @@ public class RedisSocketReplicatorTest extends TestCase {
 
                     }
                 });
+                replicator.addCloseListener(new CloseListener() {
+                    @Override
+                    public void handle(Replicator replicator) {
+                        System.out.println("close testZAdd");
+                    }
+                });
             }
         }.testSocket(
                 "localhost",
@@ -334,6 +364,12 @@ public class RedisSocketReplicatorTest extends TestCase {
                         ref.compareAndSet(null, "ok");
                     }
                 });
+                replicator.addCloseListener(new CloseListener() {
+                    @Override
+                    public void handle(Replicator replicator) {
+                        System.out.println("close testV7");
+                    }
+                });
             }
         }.testSocket(
                 "localhost",
@@ -381,6 +417,12 @@ public class RedisSocketReplicatorTest extends TestCase {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }
+                });
+                replicator.addCloseListener(new CloseListener() {
+                    @Override
+                    public void handle(Replicator replicator) {
+                        System.out.println("close testExpireV6");
                     }
                 });
             }
@@ -434,6 +476,12 @@ public class RedisSocketReplicatorTest extends TestCase {
                     e.printStackTrace();
                 }
                 assertEquals(8000, acc.get());
+            }
+        });
+        redisReplicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testCount");
             }
         });
         redisReplicator.open();

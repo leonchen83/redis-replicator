@@ -166,6 +166,7 @@ public class RedisInputStream extends InputStream {
         return new String(original, charset);
     }
 
+    @Override
     public int read(byte[] bytes, int offset, int len) throws IOException {
         int total = len;
         int index = offset;
@@ -185,6 +186,7 @@ public class RedisInputStream extends InputStream {
         return len;
     }
 
+    @Override
     public int available() throws IOException {
         return tail - head + in.available();
     }
@@ -196,6 +198,7 @@ public class RedisInputStream extends InputStream {
         head = 0;
     }
 
+    @Override
     public long skip(long len) throws IOException {
         long total = len;
         while (total > 0) {
@@ -209,5 +212,10 @@ public class RedisInputStream extends InputStream {
             }
         }
         return len;
+    }
+
+    @Override
+    public void close() throws IOException {
+        in.close();
     }
 }

@@ -34,7 +34,7 @@ public class RdbParserTest {
     @Test
     public void testParse() throws Exception {
         ConcurrentHashMap<String, KeyValuePair> map = new ConcurrentHashMap<>();
-        String[] resources = new String[]{"dictionary.rdb", "dumpV6.rdb", "dumpV7.rdb",
+        String[] resources = new String[]{"dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
                 "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
                 "intset_32.rdb", "intset_64.rdb", "keys_with_expiry.rdb",

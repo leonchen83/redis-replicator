@@ -114,7 +114,7 @@ public class RdbParser extends AbstractRdbParser {
     protected long rdbLoad(int version) throws IOException, InterruptedException {
         DB db = null;
         long checksum = 0;
-        /**
+        /*
          * rdb
          */
         loop:

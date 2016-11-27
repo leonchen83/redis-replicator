@@ -242,6 +242,19 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
     Configuration.defaultSetting().setVerbose(true);
 ```
   
+##SSL connection  
+  
+```java
+    System.setProperty("javax.net.ssl.trustStore", "/path/to/truststore");
+    System.setProperty("javax.net.ssl.trustStorePassword", "password");
+    System.setProperty("javax.net.ssl.trustStoreType", "your_type");
+    Configuration.defaultSetting().setSsl(true);
+    //optional setting
+    Configuration.defaultSetting().setSslSocketFactory(sslSocketFactory);
+    Configuration.defaultSetting().setSslParameters(sslParameters);
+    Configuration.defaultSetting().setHostnameVerifier(hostnameVerifier);
+```
+  
 ##Auth  
   
 ```java

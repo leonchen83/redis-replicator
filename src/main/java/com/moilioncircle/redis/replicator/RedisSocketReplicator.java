@@ -23,6 +23,8 @@ import com.moilioncircle.redis.replicator.rdb.RdbParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -300,6 +302,18 @@ public class RedisSocketReplicator extends AbstractReplicator {
             socket.setSendBufferSize(configuration.getSendBufferSize());
         }
         socket.connect(new InetSocketAddress(host, port), configuration.getConnectionTimeout());
+        if (configuration.isSsl()) {
+            SSLSocketFactory sslSocketFactory = configuration.getSslSocketFactory();
+            socket = sslSocketFactory.createSocket(socket, host, port, true);
+
+            if (configuration.getSslParameters() != null) {
+                ((SSLSocket) socket).setSSLParameters(configuration.getSslParameters());
+            }
+
+            if (configuration.getHostnameVerifier() != null && !configuration.getHostnameVerifier().verify(host, ((SSLSocket) socket).getSession())) {
+                throw new SocketException("the connection to " + host + " failed ssl/tls hostname verification.");
+            }
+        }
         outputStream = new RedisOutputStream(socket.getOutputStream());
         inputStream = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
         replyParser = new ReplyParser(inputStream);

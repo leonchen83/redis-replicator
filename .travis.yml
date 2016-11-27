@@ -15,7 +15,7 @@ before_install:
   - wget -O stunnel.tar.gz ftp://ftp.stunnel.org/stunnel/archive/5.x/stunnel-5.29.tar.gz && tar -xvzf stunnel.tar.gz && cd ./stunnel-5.29 && ./configure && make && sudo make install && cd ..
   - wget https://raw.githubusercontent.com/leonchen83/redis-replicator/master/src/test/resources/keystore/stunnel.conf
   - pwd && ls
-  - ./stunnel-5.29/stunnel ../stunnel.conf
+  - ./stunnel-5.29/src/stunnel stunnel.conf
 before_script:
   - sleep 10
 script: "mvn clean package -P travis"

@@ -16,6 +16,6 @@ before_install:
   - pwd && ls && cd ../../
 before_script:
   - sleep 10
-script: "mvn clean package -P travis -Djavax.net.debug=all"
+script: "mvn clean package -P travis -Djavax.net.debug=ssl"
 after_success:
   - mvn clean test jacoco:report coveralls:report

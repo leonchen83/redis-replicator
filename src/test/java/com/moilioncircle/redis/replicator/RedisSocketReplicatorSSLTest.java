@@ -202,128 +202,128 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
         replicator.open();
     }
 
-//    @Test
-//    public void testSsl3() throws Exception {
-//        setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
-//        Replicator replicator = new RedisReplicator("localhost", 56379,
-//                Configuration.defaultSetting().setSsl(true)
-//                        .setHostnameVerifier(new BasicHostnameVerifier())
-//                        .setSslParameters(new SSLParameters())
-//                        .setSslSocketFactory(createTrustNoOneSslSocketFactory()));
-//        final AtomicInteger acc = new AtomicInteger(0);
-//        Jedis jedis = null;
-//        try {
-//            jedis = new Jedis("127.0.0.1", 6379);
-//            jedis.set("ssl3", "true");
-//        } finally {
-//            jedis.close();
-//        }
-//        replicator.addRdbFilter(new RdbFilter() {
-//            @Override
-//            public boolean accept(KeyValuePair<?> kv) {
-//                return kv.getKey().equals("ssl3");
-//            }
-//        });
-//        replicator.addRdbListener(new RdbListener() {
-//            @Override
-//            public void preFullSync(Replicator replicator) {
-//
-//            }
-//
-//            @Override
-//            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-//                acc.incrementAndGet();
-//            }
-//
-//            @Override
-//            public void postFullSync(Replicator replicator, long checksum) {
-//                Jedis jedis = null;
-//                try {
-//                    jedis = new Jedis("127.0.0.1", 6379);
-//                    jedis.del("ssl3");
-//                } finally {
-//                    jedis.close();
-//                }
-//                try {
-//                    replicator.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        replicator.addCloseListener(new CloseListener() {
-//            @Override
-//            public void handle(Replicator replicator) {
-//                System.out.println("close testSsl3");
-//                assertEquals(1, acc.get());
-//            }
-//        });
-//        try {
-//            replicator.open();
-//            fail();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-//
-//    @Test
-//    public void testSsl4() throws Exception {
-//        setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
-//        Replicator replicator = new RedisReplicator("127.0.0.1", 56379,
-//                Configuration.defaultSetting().setSsl(true)
-//                        .setHostnameVerifier(new BasicHostnameVerifier())
-//                        .setSslParameters(new SSLParameters())
-//                        .setSslSocketFactory(createTrustStoreSslSocketFactory()));
-//        final AtomicInteger acc = new AtomicInteger(0);
-//        Jedis jedis = null;
-//        try {
-//            jedis = new Jedis("127.0.0.1", 6379);
-//            jedis.set("ssl4", "true");
-//        } finally {
-//            jedis.close();
-//        }
-//        replicator.addRdbFilter(new RdbFilter() {
-//            @Override
-//            public boolean accept(KeyValuePair<?> kv) {
-//                return kv.getKey().equals("ssl4");
-//            }
-//        });
-//        replicator.addRdbListener(new RdbListener() {
-//            @Override
-//            public void preFullSync(Replicator replicator) {
-//            }
-//
-//            @Override
-//            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-//                acc.incrementAndGet();
-//            }
-//
-//            @Override
-//            public void postFullSync(Replicator replicator, long checksum) {
-//                Jedis jedis = null;
-//                try {
-//                    jedis = new Jedis("127.0.0.1", 6379);
-//                    jedis.del("ssl4");
-//                } finally {
-//                    jedis.close();
-//                }
-//                try {
-//                    replicator.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        replicator.addCloseListener(new CloseListener() {
-//            @Override
-//            public void handle(Replicator replicator) {
-//                System.out.println("close testSsl4");
-//                assertEquals(0, acc.get());
-//            }
-//        });
-//        replicator.open();
-//    }
+    @Test
+    public void testSsl3() throws Exception {
+        setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
+        Replicator replicator = new RedisReplicator("localhost", 56379,
+                Configuration.defaultSetting().setSsl(true)
+                        .setHostnameVerifier(new BasicHostnameVerifier())
+                        .setSslParameters(new SSLParameters())
+                        .setSslSocketFactory(createTrustNoOneSslSocketFactory()));
+        final AtomicInteger acc = new AtomicInteger(0);
+        Jedis jedis = null;
+        try {
+            jedis = new Jedis("127.0.0.1", 6379);
+            jedis.set("ssl3", "true");
+        } finally {
+            jedis.close();
+        }
+        replicator.addRdbFilter(new RdbFilter() {
+            @Override
+            public boolean accept(KeyValuePair<?> kv) {
+                return kv.getKey().equals("ssl3");
+            }
+        });
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+
+            }
+
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                acc.incrementAndGet();
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+                Jedis jedis = null;
+                try {
+                    jedis = new Jedis("127.0.0.1", 6379);
+                    jedis.del("ssl3");
+                } finally {
+                    jedis.close();
+                }
+                try {
+                    replicator.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testSsl3");
+                assertEquals(1, acc.get());
+            }
+        });
+        try {
+            replicator.open();
+            fail();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void testSsl4() throws Exception {
+        setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
+        Replicator replicator = new RedisReplicator("127.0.0.1", 56379,
+                Configuration.defaultSetting().setSsl(true)
+                        .setHostnameVerifier(new BasicHostnameVerifier())
+                        .setSslParameters(new SSLParameters())
+                        .setSslSocketFactory(createTrustStoreSslSocketFactory()));
+        final AtomicInteger acc = new AtomicInteger(0);
+        Jedis jedis = null;
+        try {
+            jedis = new Jedis("127.0.0.1", 6379);
+            jedis.set("ssl4", "true");
+        } finally {
+            jedis.close();
+        }
+        replicator.addRdbFilter(new RdbFilter() {
+            @Override
+            public boolean accept(KeyValuePair<?> kv) {
+                return kv.getKey().equals("ssl4");
+            }
+        });
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                acc.incrementAndGet();
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+                Jedis jedis = null;
+                try {
+                    jedis = new Jedis("127.0.0.1", 6379);
+                    jedis.del("ssl4");
+                } finally {
+                    jedis.close();
+                }
+                try {
+                    replicator.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testSsl4");
+                assertEquals(0, acc.get());
+            }
+        });
+        replicator.open();
+    }
 
     private static SSLSocketFactory createTrustStoreSslSocketFactory() throws Exception {
 

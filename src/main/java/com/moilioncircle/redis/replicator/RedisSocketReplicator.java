@@ -25,12 +25,10 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -145,7 +143,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
                 //connected = false
                 break;
-            } catch (SocketException | SocketTimeoutException | InterruptedException | EOFException e) {
+            } catch (IOException | InterruptedException e) {
                 //close socket manual
                 if (!connected.get()) {
                     break;

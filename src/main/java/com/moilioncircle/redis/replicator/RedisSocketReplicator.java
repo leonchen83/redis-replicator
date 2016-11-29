@@ -325,11 +325,15 @@ public class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void close() {
         if (!connected.compareAndSet(true, false)) return;
-        if (heartBeat != null) {
-            heartBeat.cancel();
-            heartBeat = null;
-            logger.info("heart beat canceled.");
+
+        synchronized (this) {
+            if (heartBeat != null) {
+                heartBeat.cancel();
+                heartBeat = null;
+                logger.info("heart beat canceled.");
+            }
         }
+
         try {
             if (inputStream != null) inputStream.close();
         } catch (IOException e) {

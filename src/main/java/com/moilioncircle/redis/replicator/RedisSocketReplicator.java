@@ -25,12 +25,10 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -49,9 +47,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     private final String host;
     private final int port;
+    private ReplyParser replyParser;
+
     private RedisOutputStream outputStream;
     private Socket socket;
-    private ReplyParser replyParser;
     private Timer heartBeat;
 
     private final AtomicBoolean connected = new AtomicBoolean(false);
@@ -95,19 +94,21 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 //bug fix.
                 if (syncMode == SyncMode.PSYNC && connected.get()) {
                     //heart beat send REPLCONF ACK ${slave offset}
-
-                    heartBeat = new Timer("heart beat");
-                    heartBeat.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            try {
-                                send("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getOffset()).getBytes());
-                            } catch (IOException e) {
-                                //NOP
+                    synchronized (this) {
+                        heartBeat = new Timer("heart beat");
+                        //bug fix. in this point closed by other thread. multi-thread issue
+                        heartBeat.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                try {
+                                    send("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getOffset()).getBytes());
+                                } catch (IOException e) {
+                                    //NOP
+                                }
                             }
-                        }
-                    }, configuration.getHeartBeatDelay(), configuration.getHeartBeatPeriod());
-                    logger.info("heart beat started.");
+                        }, configuration.getHeartBeatDelay(), configuration.getHeartBeatPeriod());
+                        logger.info("heart beat started.");
+                    }
                 }
                 //sync command
                 while (connected.get()) {
@@ -142,7 +143,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
                 //connected = false
                 break;
-            } catch (SocketException | SocketTimeoutException | InterruptedException | EOFException e) {
+            } catch (/*bug fix*/IOException | InterruptedException e) {
                 //close socket manual
                 if (!connected.get()) {
                     break;
@@ -322,11 +323,15 @@ public class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void close() {
         if (!connected.compareAndSet(true, false)) return;
-        if (heartBeat != null) {
-            heartBeat.cancel();
-            heartBeat = null;
-            logger.info("heart beat canceled.");
+
+        synchronized (this) {
+            if (heartBeat != null) {
+                heartBeat.cancel();
+                heartBeat = null;
+                logger.info("heart beat canceled.");
+            }
         }
+
         try {
             if (inputStream != null) inputStream.close();
         } catch (IOException e) {

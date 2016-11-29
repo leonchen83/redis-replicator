@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AbstractReplicator implements Replicator {
     protected RedisInputStream inputStream;
+
     protected BlockingQueue<Object> eventQueue;
     protected Configuration configuration;
     protected final ConcurrentHashMap<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();

@@ -146,6 +146,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
     @Test
     public void testSsl2() throws Exception {
+        System.setProperty("javax.net.debug", "all");
+        System.out.println(System.getProperty("javax.net.debug"));
         setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
         Replicator replicator = new RedisReplicator("localhost", 56379,
                 Configuration.defaultSetting().setSsl(true)

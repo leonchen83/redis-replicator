@@ -17,11 +17,17 @@
 package com.moilioncircle.redis.replicator;
 
 import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Created by leon on 8/13/16.
  */
 public class RedisSocketReplicatorTest extends TestCase {
+
+    @Test
+    public void testNull() {
+        assertEquals(true, true);
+    }
 
 //    @Test
 //    public void testSet() throws Exception {

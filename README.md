@@ -26,7 +26,7 @@ It also can sync redis data to your local cache or to database.
 <dependency>
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>1.0.17</version>
+    <version>1.0.18</version>
 </dependency>
 ```  
   

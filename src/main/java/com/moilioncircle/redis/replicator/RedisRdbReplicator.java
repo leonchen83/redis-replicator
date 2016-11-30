@@ -37,6 +37,7 @@ public class RedisRdbReplicator extends AbstractReplicator {
         this.configuration = configuration;
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
         this.eventQueue = new ArrayBlockingQueue<>(this.configuration.getEventQueueSize());
+        addExceptionListener(new DefaultExceptionListener());
     }
 
     @Override

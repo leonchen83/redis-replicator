@@ -50,6 +50,7 @@ public class RedisAofReplicator extends AbstractReplicator {
         this.eventQueue = new ArrayBlockingQueue<>(this.configuration.getEventQueueSize());
         this.replyParser = new ReplyParser(inputStream);
         builtInCommandParserRegister();
+        addExceptionListener(new DefaultExceptionListener());
     }
 
     @Override

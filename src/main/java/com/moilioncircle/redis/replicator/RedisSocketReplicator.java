@@ -61,6 +61,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         this.configuration = configuration;
         this.eventQueue = new ArrayBlockingQueue<>(configuration.getEventQueueSize());
         builtInCommandParserRegister();
+        addExceptionListener(new DefaultExceptionListener());
     }
 
     /**

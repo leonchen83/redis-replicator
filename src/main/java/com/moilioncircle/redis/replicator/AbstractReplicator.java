@@ -43,6 +43,7 @@ public abstract class AbstractReplicator implements Replicator {
     protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
+    protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
     protected final EventHandlerWorker worker = new EventHandlerWorker(this);
 
     @Override
@@ -93,6 +94,13 @@ public abstract class AbstractReplicator implements Replicator {
     public void doCloseListener() {
         for (CloseListener listener : closeListeners) {
             listener.handle(this);
+        }
+    }
+
+    @Override
+    public void doExceptionListener(Throwable throwable, Object event) {
+        for (ExceptionListener listener : exceptionListeners) {
+            listener.handle(this, throwable, event);
         }
     }
 
@@ -154,6 +162,16 @@ public abstract class AbstractReplicator implements Replicator {
     @Override
     public void removeCloseListener(CloseListener listener) {
         closeListeners.remove(listener);
+    }
+
+    @Override
+    public void addExceptionListener(ExceptionListener listener) {
+        exceptionListeners.add(listener);
+    }
+
+    @Override
+    public void removeExceptionListener(ExceptionListener listener) {
+        exceptionListeners.remove(listener);
     }
 
     @Override

@@ -118,6 +118,16 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
+    public void addExceptionListener(ExceptionListener listener) {
+        replicator.addExceptionListener(listener);
+    }
+
+    @Override
+    public void removeExceptionListener(ExceptionListener listener) {
+        replicator.removeExceptionListener(listener);
+    }
+
+    @Override
     public void doCommandHandler(Command command) {
         replicator.doCommandHandler(command);
     }
@@ -150,6 +160,11 @@ public class RedisReplicator implements Replicator {
     @Override
     public void doCloseListener() {
         replicator.doCloseListener();
+    }
+
+    @Override
+    public void doExceptionListener(Throwable throwable, Object event) {
+        replicator.doExceptionListener(throwable, event);
     }
 
     @Override

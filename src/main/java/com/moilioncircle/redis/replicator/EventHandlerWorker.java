@@ -44,27 +44,32 @@ import java.util.concurrent.atomic.AtomicBoolean;
     @Override
     public void run() {
         while (!isClosed.get() || replicator.eventQueue.size() > 0) {
+            Object event = null;
             try {
-                Object object = replicator.eventQueue.poll(replicator.configuration.getPollTimeout(), TimeUnit.MILLISECONDS);
-                if (object == null) {
+                event = replicator.eventQueue.poll(replicator.configuration.getPollTimeout(), TimeUnit.MILLISECONDS);
+                if (event == null) {
                     continue;
-                } else if (object instanceof KeyValuePair<?>) {
-                    KeyValuePair<?> kv = (KeyValuePair<?>) object;
+                } else if (event instanceof KeyValuePair<?>) {
+                    KeyValuePair<?> kv = (KeyValuePair<?>) event;
                     if (!replicator.doRdbFilter(kv)) continue;
                     replicator.doRdbHandler(kv);
-                } else if (object instanceof Command) {
-                    Command command = (Command) object;
+                } else if (event instanceof Command) {
+                    Command command = (Command) event;
                     if (!replicator.doCommandFilter(command)) continue;
                     replicator.doCommandHandler(command);
-                } else if (object instanceof PreFullSyncEvent) {
+                } else if (event instanceof PreFullSyncEvent) {
                     replicator.doPreFullSync();
-                } else if (object instanceof PostFullSyncEvent) {
-                    replicator.doPostFullSync(((PostFullSyncEvent) object).getChecksum());
+                } else if (event instanceof PostFullSyncEvent) {
+                    replicator.doPostFullSync(((PostFullSyncEvent) event).getChecksum());
                 } else {
-                    throw new AssertionError(object);
+                    throw new AssertionError(event);
                 }
-            } catch (Throwable e) {
-                exceptionHandler(e);
+            } catch (Throwable throwable) {
+                try {
+                    replicator.doExceptionListener(throwable, event);
+                } catch (Throwable e) {
+                    logger.error("error", e);
+                }
             }
         }
         replicator.doCloseListener();
@@ -79,7 +84,4 @@ import java.util.concurrent.atomic.AtomicBoolean;
         return isClosed.get();
     }
 
-    protected void exceptionHandler(Throwable e) {
-        logger.error("error", e);
-    }
 }

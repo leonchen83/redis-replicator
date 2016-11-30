@@ -55,6 +55,10 @@ public interface Replicator extends Closeable {
 
     void removeCloseListener(CloseListener listener);
 
+    void addExceptionListener(ExceptionListener listener);
+
+    void removeExceptionListener(ExceptionListener listener);
+
     void doCommandHandler(Command command);
 
     boolean doCommandFilter(Command command);
@@ -68,6 +72,8 @@ public interface Replicator extends Closeable {
     void doPostFullSync(long checksum);
 
     void doCloseListener();
+
+    void doExceptionListener(Throwable throwable, Object event);
 
     void submitEvent(Object object) throws InterruptedException;
 

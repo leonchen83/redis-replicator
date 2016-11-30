@@ -288,7 +288,10 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 ```java
     repl-backlog-size
     repl-backlog-ttl
+    repl-ping-slave-period
 ```
+`repl-ping-slave-period` **MUST** less than `Configuration.getReadTimeout()`  
+default `Configuration.getReadTimeout()` is 30 seconds
   
 ##FullSyncEvent  
   

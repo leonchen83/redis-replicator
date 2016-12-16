@@ -63,7 +63,7 @@ public class SRemParser implements CommandParser<SRemParser.SRemCommand> {
 
         @Override
         public String toString() {
-            return "SremCommand{" +
+            return "SRemCommand{" +
                     "key='" + key + '\'' +
                     ", members=" + Arrays.toString(members) +
                     '}';

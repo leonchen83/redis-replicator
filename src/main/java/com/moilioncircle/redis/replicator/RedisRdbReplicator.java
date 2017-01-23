@@ -48,6 +48,7 @@ public class RedisRdbReplicator extends AbstractReplicator {
         } finally {
             close();
         }
+        if (exception != null) throw exception;
     }
 
     private void doOpen() throws IOException {

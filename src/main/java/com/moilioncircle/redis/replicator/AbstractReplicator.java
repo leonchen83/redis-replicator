@@ -34,17 +34,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public abstract class AbstractReplicator implements Replicator {
     protected RedisInputStream inputStream;
-
-    protected BlockingQueue<Object> eventQueue;
     protected Configuration configuration;
-    protected final ConcurrentHashMap<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
-    protected final List<CommandFilter> filters = new CopyOnWriteArrayList<>();
-    protected final List<CommandListener> listeners = new CopyOnWriteArrayList<>();
+    protected BlockingQueue<Object> eventQueue;
+    protected volatile RuntimeException exception;
+    protected final EventHandlerWorker worker = new EventHandlerWorker(this);
     protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
+    protected final List<CommandFilter> filters = new CopyOnWriteArrayList<>();
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
+    protected final List<CommandListener> listeners = new CopyOnWriteArrayList<>();
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
     protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
-    protected final EventHandlerWorker worker = new EventHandlerWorker(this);
+    protected final ConcurrentHashMap<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
 
     @Override
     public void doCommandHandler(Command command) {
@@ -175,8 +175,12 @@ public abstract class AbstractReplicator implements Replicator {
     }
 
     @Override
-    public void submitEvent(Object object) throws InterruptedException {
-        eventQueue.put(object);
+    public void submitEvent(Object object) {
+        try {
+            eventQueue.put(object);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     @Override
@@ -250,6 +254,21 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("BITFIELD"), new BitFieldParser());
         addCommandParser(CommandName.name("SETBIT"), new SetBitParser());
         addCommandParser(CommandName.name("SREM"), new SRemParser());
+    }
+
+    protected void close(Throwable e) {
+        try {
+            close();
+        } catch (IOException ignore) {
+            //NOP
+        }
+        if (e instanceof RuntimeException) {
+            this.exception = (RuntimeException) e;
+        } else if (e instanceof InterruptedException) {
+            Thread.currentThread().interrupt();
+        } else {
+            this.exception = new RuntimeException(e);
+        }
     }
 
     protected void doClose() throws IOException {

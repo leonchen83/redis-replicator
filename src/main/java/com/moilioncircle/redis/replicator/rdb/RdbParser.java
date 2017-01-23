@@ -75,46 +75,40 @@ public class RdbParser extends AbstractRdbParser {
      * @throws IOException when read timeout
      */
     public long parse() throws IOException {
-        try {
-            /*
+        /*
          * ----------------------------
          * 52 45 44 49 53              # Magic String "REDIS"
          * 30 30 30 33                 # RDB Version Number in big endian. In this case, version = 0003 = 3
          * ----------------------------
          */
-            String magicString = StringHelper.str(in, 5);//REDIS
-            if (!magicString.equals("REDIS")) {
-                logger.error("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
+        String magicString = StringHelper.str(in, 5);//REDIS
+        if (!magicString.equals("REDIS")) {
+            logger.error("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
+            return in.total();
+        }
+        int version = Integer.parseInt(StringHelper.str(in, 4));//0006 or 0007
+        switch (version) {
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                this.replicator.submitEvent(new PreFullSyncEvent());
+                long checksum = rdbLoad(version);
+                this.replicator.submitEvent(new PostFullSyncEvent(checksum));
                 return in.total();
-            }
-            int version = Integer.parseInt(StringHelper.str(in, 4));//0006 or 0007
-            switch (version) {
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                    this.replicator.submitEvent(new PreFullSyncEvent());
-                    long checksum = rdbLoad(version);
-                    this.replicator.submitEvent(new PostFullSyncEvent(checksum));
-                    return in.total();
-                default:
-                    logger.error("Can't handle RDB format version " + version);
-                    return in.total();
-            }
-
-        } catch (InterruptedException e) {
-            logger.error("error", e);
-            return -1;
+            default:
+                logger.error("Can't handle RDB format version " + version);
+                return in.total();
         }
     }
 
 
-    protected long rdbLoad(int version) throws IOException, InterruptedException {
+    protected long rdbLoad(int version) throws IOException {
         DB db = null;
         long checksum = 0;
-        /*
+        /**
          * rdb
          */
         loop:

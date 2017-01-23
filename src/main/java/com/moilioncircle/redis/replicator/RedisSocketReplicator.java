@@ -45,13 +45,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     private static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
 
-    private final String host;
-    private final int port;
-    private ReplyParser replyParser;
-
-    private RedisOutputStream outputStream;
     private Socket socket;
+    private final int port;
     private Timer heartBeat;
+    private final String host;
+    private ReplyParser replyParser;
+    private RedisOutputStream outputStream;
 
     private final AtomicBoolean connected = new AtomicBoolean(false);
 
@@ -144,7 +143,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
                 //connected = false
                 break;
-            } catch (/*bug fix*/IOException | InterruptedException e) {
+            } catch (/*bug fix*/IOException e) {
                 //close socket manual
                 if (!connected.get()) {
                     break;
@@ -161,13 +160,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 try {
                     Thread.sleep(configuration.getRetryTimeInterval());
                 } catch (InterruptedException e1) {
-                    //non interrupted
-                    logger.error("error", e1);
+                    Thread.currentThread().interrupt();
                 }
             }
         }
         //
         if (worker != null && !worker.isClosed()) worker.close();
+        if (exception != null) throw exception;
     }
 
     private SyncMode trySync(final String reply) throws IOException {

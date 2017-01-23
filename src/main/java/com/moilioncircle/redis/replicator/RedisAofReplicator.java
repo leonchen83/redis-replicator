@@ -57,40 +57,38 @@ public class RedisAofReplicator extends AbstractReplicator {
     public void open() throws IOException {
         try {
             doOpen();
+        } catch (IOException e) {
         } finally {
             close();
         }
+        if (exception != null) throw exception;
     }
 
-    private void doOpen() {
+    private void doOpen() throws IOException {
         worker.start();
         while (true) {
-            try {
-                Object obj = replyParser.parse();
+            Object obj = replyParser.parse();
 
-                if (obj instanceof Object[]) {
-                    if (configuration.isVerbose() && logger.isDebugEnabled())
-                        logger.debug(Arrays.deepToString((Object[]) obj));
+            if (obj instanceof Object[]) {
+                if (configuration.isVerbose() && logger.isDebugEnabled())
+                    logger.debug(Arrays.deepToString((Object[]) obj));
 
-                    Object[] command = (Object[]) obj;
-                    CommandName cmdName = CommandName.name((String) command[0]);
-                    Object[] params = new Object[command.length - 1];
-                    System.arraycopy(command, 1, params, 0, params.length);
+                Object[] command = (Object[]) obj;
+                CommandName cmdName = CommandName.name((String) command[0]);
+                Object[] params = new Object[command.length - 1];
+                System.arraycopy(command, 1, params, 0, params.length);
 
-                    final CommandParser<? extends Command> operations;
-                    //if command do not register. ignore
-                    if ((operations = commands.get(cmdName)) == null) continue;
+                final CommandParser<? extends Command> operations;
+                //if command do not register. ignore
+                if ((operations = commands.get(cmdName)) == null) continue;
 
-                    //do command replyParser
-                    Command parsedCommand = operations.parse(cmdName, params);
+                //do command replyParser
+                Command parsedCommand = operations.parse(cmdName, params);
 
-                    //submit event
-                    this.submitEvent(parsedCommand);
-                } else {
-                    logger.info("Redis reply:" + obj);
-                }
-            } catch (IOException | InterruptedException e) {
-                break;
+                //submit event
+                this.submitEvent(parsedCommand);
+            } else {
+                logger.info("Redis reply:" + obj);
             }
         }
     }

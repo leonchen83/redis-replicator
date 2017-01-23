@@ -20,8 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by leon on 8/25/16.
  */
 /*package*/ class EventHandlerWorker extends Thread implements Closeable {
-    private static final Log logger = LogFactory.getLog(EventHandlerWorker.class);
 
     private final AbstractReplicator replicator;
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
@@ -64,11 +61,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
                 } else {
                     throw new AssertionError(event);
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             } catch (Throwable throwable) {
                 try {
                     replicator.doExceptionListener(throwable, event);
                 } catch (Throwable e) {
-                    logger.error("error", e);
+                    replicator.close(e);
+                    close();
+                    while (replicator.eventQueue.size() > 0) {
+                        replicator.eventQueue.clear(); //fail fast and discard event
+                    }
+                    break;
                 }
             }
         }

@@ -20,16 +20,15 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
+import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Created by leon on 11/21/16.
@@ -46,8 +45,7 @@ public class RedisAofReplicator extends AbstractReplicator {
 
     public RedisAofReplicator(InputStream in, Configuration configuration) {
         this.configuration = configuration;
-        this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
-        this.eventQueue = new ArrayBlockingQueue<>(this.configuration.getEventQueueSize());
+        this.inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(in) : in, this.configuration.getBufferSize());
         this.replyParser = new ReplyParser(inputStream);
         builtInCommandParserRegister();
         addExceptionListener(new DefaultExceptionListener());
@@ -61,11 +59,9 @@ public class RedisAofReplicator extends AbstractReplicator {
         } finally {
             close();
         }
-        if (exception != null) throw exception;
     }
 
     private void doOpen() throws IOException {
-        worker.start();
         while (true) {
             Object obj = replyParser.parse();
 
@@ -96,26 +92,6 @@ public class RedisAofReplicator extends AbstractReplicator {
     @Override
     public void close() throws IOException {
         doClose();
-    }
-
-    @Override
-    public void doRdbHandler(KeyValuePair<?> kv) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean doRdbFilter(KeyValuePair<?> kv) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void doPreFullSync() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void doPostFullSync(final long checksum) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

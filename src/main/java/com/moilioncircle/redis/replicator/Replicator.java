@@ -19,7 +19,6 @@ package com.moilioncircle.redis.replicator;
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -58,24 +57,6 @@ public interface Replicator extends Closeable {
     void addExceptionListener(ExceptionListener listener);
 
     void removeExceptionListener(ExceptionListener listener);
-
-    void doCommandHandler(Command command);
-
-    boolean doCommandFilter(Command command);
-
-    void doRdbHandler(KeyValuePair<?> kv);
-
-    boolean doRdbFilter(KeyValuePair<?> kv);
-
-    void doPreFullSync();
-
-    void doPostFullSync(long checksum);
-
-    void doCloseListener();
-
-    void doExceptionListener(Throwable throwable, Object event);
-
-    void submitEvent(Object object) throws InterruptedException;
 
     boolean verbose();
 

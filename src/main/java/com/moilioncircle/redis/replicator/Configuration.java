@@ -85,9 +85,9 @@ public class Configuration {
     private boolean discardRdbEvent = false;
 
     /**
-     * blocking queue size
+     * async cached bytes
      */
-    private int eventQueueSize = 1000;
+    private int asyncCachedBytes = 0;
 
     /**
      * trace event log
@@ -229,12 +229,12 @@ public class Configuration {
         return this;
     }
 
-    public int getEventQueueSize() {
-        return eventQueueSize;
+    public int getAsyncCachedBytes() {
+        return asyncCachedBytes;
     }
 
-    public Configuration setEventQueueSize(int eventQueueSize) {
-        this.eventQueueSize = eventQueueSize;
+    public Configuration setAsyncCachedBytes(int asyncCachedBytes) {
+        this.asyncCachedBytes = asyncCachedBytes;
         return this;
     }
 
@@ -322,7 +322,7 @@ public class Configuration {
                 ", bufferSize=" + bufferSize +
                 ", authPassword='" + authPassword + '\'' +
                 ", discardRdbEvent=" + discardRdbEvent +
-                ", eventQueueSize=" + eventQueueSize +
+                ", asyncCachedBytes=" + asyncCachedBytes +
                 ", verbose=" + verbose +
                 ", heartBeatPeriod=" + heartBeatPeriod +
                 ", pollTimeout=" + pollTimeout +

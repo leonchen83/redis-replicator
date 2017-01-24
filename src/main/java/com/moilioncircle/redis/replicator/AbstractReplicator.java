@@ -18,6 +18,8 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -36,8 +38,6 @@ public abstract class AbstractReplicator implements Replicator {
     protected RedisInputStream inputStream;
     protected Configuration configuration;
     protected BlockingQueue<Object> eventQueue;
-    protected volatile RuntimeException exception;
-    protected final EventHandlerWorker worker = new EventHandlerWorker(this);
     protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
     protected final List<CommandFilter> filters = new CopyOnWriteArrayList<>();
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
@@ -45,64 +45,6 @@ public abstract class AbstractReplicator implements Replicator {
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
     protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
     protected final ConcurrentHashMap<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
-
-    @Override
-    public void doCommandHandler(Command command) {
-        for (CommandListener listener : listeners) {
-            listener.handle(this, command);
-        }
-    }
-
-    @Override
-    public boolean doCommandFilter(Command command) {
-        for (CommandFilter filter : filters) {
-            if (!filter.accept(command)) return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void doRdbHandler(KeyValuePair<?> kv) {
-        for (RdbListener listener : rdbListeners) {
-            listener.handle(this, kv);
-        }
-    }
-
-    @Override
-    public boolean doRdbFilter(KeyValuePair<?> kv) {
-        for (RdbFilter filter : rdbFilters) {
-            if (!filter.accept(kv)) return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void doPreFullSync() {
-        for (RdbListener listener : rdbListeners) {
-            listener.preFullSync(this);
-        }
-    }
-
-    @Override
-    public void doPostFullSync(final long checksum) {
-        for (RdbListener listener : rdbListeners) {
-            listener.postFullSync(this, checksum);
-        }
-    }
-
-    @Override
-    public void doCloseListener() {
-        for (CloseListener listener : closeListeners) {
-            listener.handle(this);
-        }
-    }
-
-    @Override
-    public void doExceptionListener(Throwable throwable, Object event) {
-        for (ExceptionListener listener : exceptionListeners) {
-            listener.handle(this, throwable, event);
-        }
-    }
 
     @Override
     public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
@@ -174,12 +116,76 @@ public abstract class AbstractReplicator implements Replicator {
         exceptionListeners.remove(listener);
     }
 
-    @Override
-    public void submitEvent(Object object) {
+    public void submitEvent(Object event) {
         try {
-            eventQueue.put(object);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            if (event instanceof KeyValuePair<?>) {
+                KeyValuePair<?> kv = (KeyValuePair<?>) event;
+                if (!doRdbFilter(kv)) return;
+                doRdbHandler(kv);
+            } else if (event instanceof Command) {
+                Command command = (Command) event;
+                if (!doCommandFilter(command)) return;
+                doCommandHandler(command);
+            } else if (event instanceof PreFullSyncEvent) {
+                doPreFullSync();
+            } else if (event instanceof PostFullSyncEvent) {
+                doPostFullSync(((PostFullSyncEvent) event).getChecksum());
+            } else {
+
+            }
+        } catch (Throwable e) {
+            doExceptionListener(e, event);
+        }
+
+    }
+
+    protected void doCommandHandler(Command command) {
+        for (CommandListener listener : listeners) {
+            listener.handle(this, command);
+        }
+    }
+
+    protected boolean doCommandFilter(Command command) {
+        for (CommandFilter filter : filters) {
+            if (!filter.accept(command)) return false;
+        }
+        return true;
+    }
+
+    protected void doRdbHandler(KeyValuePair<?> kv) {
+        for (RdbListener listener : rdbListeners) {
+            listener.handle(this, kv);
+        }
+    }
+
+    protected boolean doRdbFilter(KeyValuePair<?> kv) {
+        for (RdbFilter filter : rdbFilters) {
+            if (!filter.accept(kv)) return false;
+        }
+        return true;
+    }
+
+    protected void doPreFullSync() {
+        for (RdbListener listener : rdbListeners) {
+            listener.preFullSync(this);
+        }
+    }
+
+    protected void doPostFullSync(final long checksum) {
+        for (RdbListener listener : rdbListeners) {
+            listener.postFullSync(this, checksum);
+        }
+    }
+
+    protected void doCloseListener() {
+        for (CloseListener listener : closeListeners) {
+            listener.handle(this);
+        }
+    }
+
+    protected void doExceptionListener(Throwable throwable, Object event) {
+        for (ExceptionListener listener : exceptionListeners) {
+            listener.handle(this, throwable, event);
         }
     }
 
@@ -256,23 +262,8 @@ public abstract class AbstractReplicator implements Replicator {
         addCommandParser(CommandName.name("SREM"), new SRemParser());
     }
 
-    protected void close(Throwable e) {
-        try {
-            close();
-        } catch (IOException ignore) {
-            //NOP
-        }
-        if (e instanceof RuntimeException) {
-            this.exception = (RuntimeException) e;
-        } else if (e instanceof InterruptedException) {
-            Thread.currentThread().interrupt();
-        } else {
-            this.exception = new RuntimeException(e);
-        }
-    }
-
     protected void doClose() throws IOException {
         if (inputStream != null) inputStream.close();
-        if (worker != null && !worker.isClosed()) worker.close();
+        doCloseListener();
     }
 }

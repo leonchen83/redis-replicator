@@ -17,22 +17,19 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
+import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
@@ -51,6 +48,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     private final String host;
     private ReplyParser replyParser;
     private RedisOutputStream outputStream;
+    private final RedisSocketFactory socketFactory;
 
     private final AtomicBoolean connected = new AtomicBoolean(false);
 
@@ -58,7 +56,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         this.host = host;
         this.port = port;
         this.configuration = configuration;
-        this.eventQueue = new ArrayBlockingQueue<>(configuration.getEventQueueSize());
+        this.socketFactory = new RedisSocketFactory(configuration);
         builtInCommandParserRegister();
         addExceptionListener(new DefaultExceptionListener());
     }
@@ -70,7 +68,6 @@ public class RedisSocketReplicator extends AbstractReplicator {
      */
     @Override
     public void open() throws IOException {
-        worker.start();
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
                 connect();
@@ -164,9 +161,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
             }
         }
-        //
-        if (worker != null && !worker.isClosed()) worker.close();
-        if (exception != null) throw exception;
+        doCloseListener();
     }
 
     private SyncMode trySync(final String reply) throws IOException {
@@ -287,36 +282,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     private void connect() throws IOException {
         if (!connected.compareAndSet(false, true)) return;
-
-        socket = new Socket();
-        socket.setReuseAddress(true);
-        socket.setKeepAlive(true);
-        socket.setTcpNoDelay(true);
-        socket.setSoLinger(true, 0);
-        if (configuration.getReadTimeout() > 0) {
-            socket.setSoTimeout(configuration.getReadTimeout());
-        }
-        if (configuration.getReceiveBufferSize() > 0) {
-            socket.setReceiveBufferSize(configuration.getReceiveBufferSize());
-        }
-        if (configuration.getSendBufferSize() > 0) {
-            socket.setSendBufferSize(configuration.getSendBufferSize());
-        }
-        socket.connect(new InetSocketAddress(host, port), configuration.getConnectionTimeout());
-        if (configuration.isSsl()) {
-            SSLSocketFactory sslSocketFactory = configuration.getSslSocketFactory();
-            socket = sslSocketFactory.createSocket(socket, host, port, true);
-
-            if (configuration.getSslParameters() != null) {
-                ((SSLSocket) socket).setSSLParameters(configuration.getSslParameters());
-            }
-
-            if (configuration.getHostnameVerifier() != null && !configuration.getHostnameVerifier().verify(host, ((SSLSocket) socket).getSession())) {
-                throw new SocketException("the connection to " + host + " failed ssl/tls hostname verification.");
-            }
-        }
+        socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
         outputStream = new RedisOutputStream(socket.getOutputStream());
-        inputStream = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
+        inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream()) : socket.getInputStream(), configuration.getBufferSize());
         replyParser = new ReplyParser(inputStream);
     }
 

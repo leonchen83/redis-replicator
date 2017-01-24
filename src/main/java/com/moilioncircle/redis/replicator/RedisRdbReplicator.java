@@ -17,11 +17,11 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 
 import java.io.*;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Created by leon on 8/13/16.
@@ -35,8 +35,7 @@ public class RedisRdbReplicator extends AbstractReplicator {
 
     public RedisRdbReplicator(InputStream in, Configuration configuration) {
         this.configuration = configuration;
-        this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
-        this.eventQueue = new ArrayBlockingQueue<>(this.configuration.getEventQueueSize());
+        this.inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(in) : in, this.configuration.getBufferSize());
         addExceptionListener(new DefaultExceptionListener());
     }
 
@@ -48,11 +47,9 @@ public class RedisRdbReplicator extends AbstractReplicator {
         } finally {
             close();
         }
-        if (exception != null) throw exception;
     }
 
     private void doOpen() throws IOException {
-        worker.start();
         RdbParser parser = new RdbParser(inputStream, this);
         parser.parse();
     }
@@ -89,16 +86,6 @@ public class RedisRdbReplicator extends AbstractReplicator {
 
     @Override
     public <T extends Command> void removeCommandParser(CommandName command, CommandParser<T> parser) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void doCommandHandler(Command command) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean doCommandFilter(Command command) {
         throw new UnsupportedOperationException();
     }
 

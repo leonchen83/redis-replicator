@@ -19,7 +19,6 @@ package com.moilioncircle.redis.replicator;
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -125,51 +124,6 @@ public class RedisReplicator implements Replicator {
     @Override
     public void removeExceptionListener(ExceptionListener listener) {
         replicator.removeExceptionListener(listener);
-    }
-
-    @Override
-    public void doCommandHandler(Command command) {
-        replicator.doCommandHandler(command);
-    }
-
-    @Override
-    public boolean doCommandFilter(Command command) {
-        return replicator.doCommandFilter(command);
-    }
-
-    @Override
-    public void doRdbHandler(KeyValuePair<?> kv) {
-        replicator.doRdbHandler(kv);
-    }
-
-    @Override
-    public boolean doRdbFilter(KeyValuePair<?> kv) {
-        return replicator.doRdbFilter(kv);
-    }
-
-    @Override
-    public void doPreFullSync() {
-        replicator.doPreFullSync();
-    }
-
-    @Override
-    public void doPostFullSync(long checksum) {
-        replicator.doPostFullSync(checksum);
-    }
-
-    @Override
-    public void doCloseListener() {
-        replicator.doCloseListener();
-    }
-
-    @Override
-    public void doExceptionListener(Throwable throwable, Object event) {
-        replicator.doExceptionListener(throwable, event);
-    }
-
-    @Override
-    public void submitEvent(Object object) throws InterruptedException {
-        replicator.submitEvent(object);
     }
 
     @Override

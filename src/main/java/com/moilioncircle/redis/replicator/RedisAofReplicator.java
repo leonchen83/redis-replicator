@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
-import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -45,7 +44,7 @@ public class RedisAofReplicator extends AbstractReplicator {
 
     public RedisAofReplicator(InputStream in, Configuration configuration) {
         this.configuration = configuration;
-        this.inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(in) : in, this.configuration.getBufferSize());
+        this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
         this.replyParser = new ReplyParser(inputStream);
         builtInCommandParserRegister();
         addExceptionListener(new DefaultExceptionListener());
@@ -55,7 +54,7 @@ public class RedisAofReplicator extends AbstractReplicator {
     public void open() throws IOException {
         try {
             doOpen();
-        } catch (IOException e) {
+        } catch (EOFException e) {
         } finally {
             close();
         }

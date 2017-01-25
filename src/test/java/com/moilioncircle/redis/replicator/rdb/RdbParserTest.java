@@ -47,7 +47,7 @@ public class RdbParserTest {
         for (String resource : resources) {
             template(resource, map);
         }
-        Thread.sleep(5000);
+        //Thread.sleep(5000);
 
         assertEquals("zero", map.get("key_in_zeroth_database").getValue());
         assertEquals("second", map.get("key_in_second_database").getValue());

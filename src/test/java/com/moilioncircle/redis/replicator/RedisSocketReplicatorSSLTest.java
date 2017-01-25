@@ -262,9 +262,7 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             replicator.open();
             fail();
         } catch (Exception e) {
-            e.printStackTrace();
         }
-
     }
 
     @Test

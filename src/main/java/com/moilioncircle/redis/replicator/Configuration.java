@@ -72,7 +72,7 @@ public class Configuration {
     /**
      * redis input stream buffer size
      */
-    private int bufferSize = 1024 * 1024;
+    private int bufferSize = 8 * 1024;
 
     /**
      * auth password
@@ -87,7 +87,7 @@ public class Configuration {
     /**
      * async cached bytes
      */
-    private int asyncCachedBytes = 8 * 1024;
+    private int asyncCachedBytes = 512 * 1024;
 
     /**
      * trace event log

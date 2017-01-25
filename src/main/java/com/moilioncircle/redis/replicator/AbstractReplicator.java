@@ -263,7 +263,9 @@ public abstract class AbstractReplicator implements Replicator {
     }
 
     protected void doClose() throws IOException {
-        if (inputStream != null) inputStream.close();
+        if (inputStream != null) try {
+            inputStream.close();
+        } catch (IOException ignore) { /*NOP*/ }
         doCloseListener();
     }
 }

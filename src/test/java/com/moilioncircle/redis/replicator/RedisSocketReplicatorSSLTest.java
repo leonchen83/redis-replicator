@@ -232,6 +232,7 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
                 acc.incrementAndGet();
             }
 
@@ -255,13 +256,13 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testSsl3");
-                assertEquals(1, acc.get());
             }
         });
         try {
             replicator.open();
             fail();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

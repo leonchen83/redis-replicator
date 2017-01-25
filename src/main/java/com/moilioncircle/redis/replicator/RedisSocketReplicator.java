@@ -72,6 +72,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             doOpen();
         } finally {
             close();
+            doCloseListener();
         }
     }
 
@@ -174,7 +175,6 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
             }
         }
-        doCloseListener();
     }
 
     private SyncMode trySync(final String reply) throws IOException {

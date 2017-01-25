@@ -87,7 +87,7 @@ public class Configuration {
     /**
      * async cached bytes
      */
-    private int asyncCachedBytes = 8 * 1024 * 1024;
+    private int asyncCachedBytes = 8 * 1024;
 
     /**
      * trace event log

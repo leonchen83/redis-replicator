@@ -68,6 +68,19 @@ public class RedisSocketReplicator extends AbstractReplicator {
      */
     @Override
     public void open() throws IOException {
+        try {
+            doOpen();
+        } finally {
+            close();
+        }
+    }
+
+    /**
+     * PSYNC
+     *
+     * @throws IOException when read timeout or connect timeout
+     */
+    private void doOpen() throws IOException {
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
                 connect();

@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 
@@ -35,6 +36,10 @@ public interface Replicator extends Closeable {
     void addRdbListener(RdbListener listener);
 
     void removeRdbListener(RdbListener listener);
+
+    void addRdbRawByteListener(RawByteListener listener);
+
+    void removeRdbRawByteListener(RawByteListener listener);
 
     void builtInCommandParserRegister();
 

@@ -22,19 +22,20 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by leon on 8/9/16.
  */
 public class RedisInputStream extends InputStream {
-
-    private final InputStream in;
-
-    private long total = 0;
     private int head = 0;
     private int tail = 0;
-    private boolean mark = false;
+    private long total = 0;
     private long markLen = 0;
+    private boolean mark = false;
+    private final InputStream in;
+    private final List<RawByteListener> listeners = new CopyOnWriteArrayList<>();
 
     private final byte[] buf;
 
@@ -45,6 +46,20 @@ public class RedisInputStream extends InputStream {
     public RedisInputStream(final InputStream in, int len) {
         this.in = in;
         this.buf = new byte[len];
+    }
+
+    public void addRawByteListener(RawByteListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeRawByteListener(RawByteListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    private void notify(byte... bytes) {
+        for (RawByteListener listener : listeners) {
+            listener.handle(bytes);
+        }
     }
 
     public int head() {
@@ -79,13 +94,6 @@ public class RedisInputStream extends InputStream {
 
     public long total() {
         return total;
-    }
-
-    @Override
-    public int read() throws IOException {
-        if (head >= tail) fill();
-        if (mark) markLen += 1;
-        return buf[head++] & 0xff;
     }
 
     public byte[] readBytes(int len) throws IOException {
@@ -167,6 +175,15 @@ public class RedisInputStream extends InputStream {
     }
 
     @Override
+    public int read() throws IOException {
+        if (head >= tail) fill();
+        if (mark) markLen += 1;
+        byte b = buf[head++];
+        notify(b);
+        return b & 0xff;
+    }
+
+    @Override
     public int read(byte[] bytes, int offset, int len) throws IOException {
         int total = len;
         int index = offset;
@@ -183,19 +200,13 @@ public class RedisInputStream extends InputStream {
                 fill();
             }
         }
+        notify(bytes);
         return len;
     }
 
     @Override
     public int available() throws IOException {
         return tail - head + in.available();
-    }
-
-    public void fill() throws IOException {
-        tail = in.read(buf, 0, buf.length);
-        if (tail == -1) throw new EOFException("end of file.");
-        total += tail;
-        head = 0;
     }
 
     @Override
@@ -217,5 +228,12 @@ public class RedisInputStream extends InputStream {
     @Override
     public void close() throws IOException {
         in.close();
+    }
+
+    private void fill() throws IOException {
+        tail = in.read(buf, 0, buf.length);
+        if (tail == -1) throw new EOFException("end of file.");
+        total += tail;
+        head = 0;
     }
 }

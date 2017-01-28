@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
+import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
@@ -38,7 +39,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
 /**
  * Created by leon on 8/9/16.
  */
-public class RedisSocketReplicator extends AbstractReplicator {
+public class RedisSocketReplicator extends AbstractReplicator implements RawByteListener {
 
     private static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
 
@@ -210,6 +211,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     in.skip(len);
                 } else {
                     RdbParser parser = new RdbParser(in, replicator);
+                    parser.addRawByteListener(RedisSocketReplicator.this);
                     parser.parse();
                 }
                 return "OK";
@@ -329,6 +331,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
             //NOP
         }
         logger.info("channel closed");
+    }
+
+    @Override
+    public void handle(byte... rawBytes) {
+        doRdbRawByteListener(rawBytes);
     }
 
     private enum SyncMode {SYNC, PSYNC}

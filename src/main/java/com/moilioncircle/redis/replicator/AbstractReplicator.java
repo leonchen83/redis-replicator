@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
+import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -27,7 +28,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -35,16 +36,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by leon on 8/13/16.
  */
 public abstract class AbstractReplicator implements Replicator {
-    protected RedisInputStream inputStream;
     protected Configuration configuration;
-    protected BlockingQueue<Object> eventQueue;
+    protected RedisInputStream inputStream;
     protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
     protected final List<CommandFilter> filters = new CopyOnWriteArrayList<>();
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
-    protected final List<CommandListener> listeners = new CopyOnWriteArrayList<>();
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
+    protected final List<CommandListener> commandListeners = new CopyOnWriteArrayList<>();
+    protected final List<RawByteListener> rawByteListeners = new CopyOnWriteArrayList<>();
     protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
-    protected final ConcurrentHashMap<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
+    protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
 
     @Override
     public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
@@ -68,12 +69,12 @@ public abstract class AbstractReplicator implements Replicator {
 
     @Override
     public void addCommandListener(CommandListener listener) {
-        listeners.add(listener);
+        commandListeners.add(listener);
     }
 
     @Override
     public void removeCommandListener(CommandListener listener) {
-        listeners.remove(listener);
+        commandListeners.remove(listener);
     }
 
     @Override
@@ -94,6 +95,16 @@ public abstract class AbstractReplicator implements Replicator {
     @Override
     public void removeRdbListener(RdbListener listener) {
         rdbListeners.remove(listener);
+    }
+
+    @Override
+    public void addRdbRawByteListener(RawByteListener listener) {
+        this.rawByteListeners.add(listener);
+    }
+
+    @Override
+    public void removeRdbRawByteListener(RawByteListener listener) {
+        this.rawByteListeners.remove(listener);
     }
 
     @Override
@@ -140,7 +151,7 @@ public abstract class AbstractReplicator implements Replicator {
     }
 
     protected void doCommandHandler(Command command) {
-        for (CommandListener listener : listeners) {
+        for (CommandListener listener : commandListeners) {
             listener.handle(this, command);
         }
     }
@@ -186,6 +197,12 @@ public abstract class AbstractReplicator implements Replicator {
     protected void doExceptionListener(Throwable throwable, Object event) {
         for (ExceptionListener listener : exceptionListeners) {
             listener.handle(this, throwable, event);
+        }
+    }
+
+    protected void doRdbRawByteListener(byte... bytes) {
+        for (RawByteListener listener : rawByteListeners) {
+            listener.handle(bytes);
         }
     }
 

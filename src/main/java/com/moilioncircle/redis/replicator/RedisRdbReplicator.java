@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 
@@ -25,7 +26,7 @@ import java.io.*;
 /**
  * Created by leon on 8/13/16.
  */
-public class RedisRdbReplicator extends AbstractReplicator {
+public class RedisRdbReplicator extends AbstractReplicator implements RawByteListener {
 
     public RedisRdbReplicator(File file, Configuration configuration) throws FileNotFoundException {
         //bug fix http://git.oschina.net/leonchen83/redis-replicator/issues/2
@@ -50,6 +51,7 @@ public class RedisRdbReplicator extends AbstractReplicator {
 
     private void doOpen() throws IOException {
         RdbParser parser = new RdbParser(inputStream, this);
+        parser.addRawByteListener(this);
         parser.parse();
     }
 
@@ -91,5 +93,10 @@ public class RedisRdbReplicator extends AbstractReplicator {
     @Override
     public void builtInCommandParserRegister() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void handle(byte... rawBytes) {
+        doRdbRawByteListener(rawBytes);
     }
 }

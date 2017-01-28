@@ -19,12 +19,14 @@ package com.moilioncircle.redis.replicator.rdb;
 import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
+import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
 
@@ -38,10 +40,30 @@ import static com.moilioncircle.redis.replicator.Constants.*;
  *         [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
  * @since 2016/8/11
  */
-public class RdbParser extends AbstractRdbParser {
+public class RdbParser extends AbstractRdbParser implements RawByteListener {
+    private final List<RawByteListener> listeners = new CopyOnWriteArrayList<>();
 
     public RdbParser(RedisInputStream in, AbstractReplicator replicator) {
         super(in, replicator);
+    }
+
+    public void addRawByteListener(RawByteListener listener) {
+        this.listeners.add(listener);
+    }
+
+    public void removeRawByteListener(RawByteListener listener) {
+        this.listeners.remove(listener);
+    }
+
+    private void notify(byte... bytes) {
+        for (RawByteListener listener : listeners) {
+            listener.handle(bytes);
+        }
+    }
+
+    @Override
+    public void handle(byte... rawBytes) {
+        notify(rawBytes);
     }
 
     /**
@@ -81,29 +103,34 @@ public class RdbParser extends AbstractRdbParser {
          * 30 30 30 33                 # RDB Version Number in big endian. In this case, version = 0003 = 3
          * ----------------------------
          */
-        String magicString = StringHelper.str(in, 5);//REDIS
-        if (!magicString.equals("REDIS")) {
-            logger.error("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
-            return in.total();
-        }
-        int version = Integer.parseInt(StringHelper.str(in, 4));//0006 or 0007
-        switch (version) {
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-                this.replicator.submitEvent(new PreFullSyncEvent());
-                long checksum = rdbLoad(version);
-                this.replicator.submitEvent(new PostFullSyncEvent(checksum));
+        in.addRawByteListener(this);
+        try {
+            String magicString = StringHelper.str(in, 5);//REDIS
+            if (!magicString.equals("REDIS")) {
+                logger.error("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
                 return in.total();
-            default:
-                logger.error("Can't handle RDB format version " + version);
-                return in.total();
+            }
+            int version = Integer.parseInt(StringHelper.str(in, 4));//0006 or 0007
+            switch (version) {
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                    this.replicator.submitEvent(new PreFullSyncEvent());
+                    long checksum = rdbLoad(version);
+                    this.replicator.submitEvent(new PostFullSyncEvent(checksum));
+                    return in.total();
+                default:
+                    logger.error("Can't handle RDB format version " + version);
+                    return in.total();
+            }
+        } finally {
+            in.removeRawByteListener(this);
         }
     }
-
 
     protected long rdbLoad(int version) throws IOException {
         DB db = null;
@@ -178,6 +205,7 @@ public class RdbParser extends AbstractRdbParser {
                 case REDIS_RDB_TYPE_LIST:
                 case REDIS_RDB_TYPE_SET:
                 case REDIS_RDB_TYPE_ZSET:
+//                case REDIS_RDB_TYPE_ZSET_2:
                 case REDIS_RDB_TYPE_HASH:
                 case REDIS_RDB_TYPE_HASH_ZIPMAP:
                 case REDIS_RDB_TYPE_LIST_ZIPLIST:
@@ -185,6 +213,7 @@ public class RdbParser extends AbstractRdbParser {
                 case REDIS_RDB_TYPE_ZSET_ZIPLIST:
                 case REDIS_RDB_TYPE_HASH_ZIPLIST:
                 case REDIS_RDB_TYPE_LIST_QUICKLIST:
+//                case REDIS_RDB_TYPE_MODULE:
                     valueType = type;
                     key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);

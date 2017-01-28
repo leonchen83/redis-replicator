@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 
@@ -69,6 +70,16 @@ public class RedisReplicator implements Replicator {
     @Override
     public void removeRdbListener(RdbListener listener) {
         replicator.removeRdbListener(listener);
+    }
+
+    @Override
+    public void addRdbRawByteListener(RawByteListener listener) {
+        replicator.addRdbRawByteListener(listener);
+    }
+
+    @Override
+    public void removeRdbRawByteListener(RawByteListener listener) {
+        replicator.removeRdbRawByteListener(listener);
     }
 
     @Override

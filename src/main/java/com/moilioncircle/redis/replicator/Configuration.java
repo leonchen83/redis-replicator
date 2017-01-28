@@ -100,11 +100,6 @@ public class Configuration {
     private int heartBeatPeriod = 1000;
 
     /**
-     * event queue poll timeout
-     */
-    private int pollTimeout = 2000;
-
-    /**
      * open ssl connection
      */
     private boolean ssl = false;
@@ -127,12 +122,12 @@ public class Configuration {
     /**
      * psync master run id
      */
-    private String masterRunId = "?";
+    private String replId = "?";
 
     /**
      * psync offset
      */
-    private final AtomicLong offset = new AtomicLong(-1);
+    private final AtomicLong replOffset = new AtomicLong(-1);
 
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -206,26 +201,26 @@ public class Configuration {
         return this;
     }
 
-    public String getMasterRunId() {
-        return masterRunId;
+    public String getReplId() {
+        return replId;
     }
 
-    public Configuration setMasterRunId(String masterRunId) {
-        this.masterRunId = masterRunId;
+    public Configuration setReplId(String replId) {
+        this.replId = replId;
         return this;
     }
 
-    public long getOffset() {
-        return offset.get();
+    public long getReplOffset() {
+        return replOffset.get();
     }
 
-    public Configuration setOffset(long offset) {
-        this.offset.set(offset);
+    public Configuration setReplOffset(long replOffset) {
+        this.replOffset.set(replOffset);
         return this;
     }
 
     public Configuration addOffset(long offset) {
-        this.offset.addAndGet(offset);
+        this.replOffset.addAndGet(offset);
         return this;
     }
 
@@ -262,15 +257,6 @@ public class Configuration {
 
     public Configuration setRetryTimeInterval(int retryTimeInterval) {
         this.retryTimeInterval = retryTimeInterval;
-        return this;
-    }
-
-    public int getPollTimeout() {
-        return pollTimeout;
-    }
-
-    public Configuration setPollTimeout(int pollTimeout) {
-        this.pollTimeout = pollTimeout;
         return this;
     }
 
@@ -325,13 +311,12 @@ public class Configuration {
                 ", asyncCachedBytes=" + asyncCachedBytes +
                 ", verbose=" + verbose +
                 ", heartBeatPeriod=" + heartBeatPeriod +
-                ", pollTimeout=" + pollTimeout +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +
                 ", sslParameters=" + sslParameters +
                 ", hostnameVerifier=" + hostnameVerifier +
-                ", masterRunId='" + masterRunId + '\'' +
-                ", offset=" + offset +
+                ", replId='" + replId + '\'' +
+                ", replOffset=" + replOffset +
                 '}';
     }
 }

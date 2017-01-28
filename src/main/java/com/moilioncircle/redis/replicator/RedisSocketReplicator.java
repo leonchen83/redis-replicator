@@ -31,7 +31,9 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
@@ -41,17 +43,16 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
  */
 public class RedisSocketReplicator extends AbstractReplicator implements RawByteListener {
 
-    private static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
+    protected static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
 
-    private Socket socket;
-    private final int port;
-    private Timer heartBeat;
-    private final String host;
-    private ReplyParser replyParser;
-    private RedisOutputStream outputStream;
-    private final RedisSocketFactory socketFactory;
-
-    private final AtomicBoolean connected = new AtomicBoolean(false);
+    protected Socket socket;
+    protected final int port;
+    protected Timer heartBeat;
+    protected final String host;
+    protected ReplyParser replyParser;
+    protected RedisOutputStream outputStream;
+    protected final RedisSocketFactory socketFactory;
+    protected final AtomicBoolean connected = new AtomicBoolean(false);
 
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         this.host = host;
@@ -82,45 +83,28 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
      *
      * @throws IOException when read timeout or connect timeout
      */
-    private void doOpen() throws IOException {
+    protected void doOpen() throws IOException {
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
-                connect();
-
-                if (configuration.getAuthPassword() != null) auth(configuration.getAuthPassword());
-
-                sendSlavePort();
-
-                sendSlaveIp();
-
-                sendSlaveCapa();
-
+                establishConnection();
                 //reset retries
                 i = 0;
 
-                logger.info("PSYNC " + configuration.getMasterRunId() + " " + String.valueOf(configuration.getOffset()));
-                send("PSYNC".getBytes(), configuration.getMasterRunId().getBytes(), String.valueOf(configuration.getOffset()).getBytes());
+                logger.info("PSYNC " + configuration.getReplId() + " " + String.valueOf(configuration.getReplOffset()));
+                send("PSYNC".getBytes(), configuration.getReplId().getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
                 final String reply = (String) reply();
 
                 SyncMode syncMode = trySync(reply);
                 //bug fix.
                 if (syncMode == SyncMode.PSYNC && connected.get()) {
                     //heart beat send REPLCONF ACK ${slave offset}
-                    synchronized (this) {
-                        heartBeat = new Timer("heart beat");
-                        //bug fix. in this point closed by other thread. multi-thread issue
-                        heartBeat.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                try {
-                                    send("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getOffset()).getBytes());
-                                } catch (IOException e) {
-                                    //NOP
-                                }
-                            }
-                        }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod());
-                        logger.info("heart beat started.");
-                    }
+                    heartBeat();
+                } else if (syncMode == SyncMode.SYNC_LATER && connected.get()) {
+                    //SYNC LATER
+                    i = 0;
+                    close();
+                    LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(configuration.getRetryTimeInterval()));
+                    continue;
                 }
                 //sync command
                 while (connected.get()) {
@@ -157,40 +141,35 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
                 break;
             } catch (/*bug fix*/IOException e) {
                 //close socket manual
-                if (!connected.get()) {
-                    break;
-                }
+                if (!connected.get()) break;
                 logger.error("socket error", e);
-                //connect refused
-                //connect timeout
-                //read timeout
-                //connect abort
-                //server disconnect connection EOFException
+                //connect refused,connect timeout,read timeout,connect abort,server disconnect,connection EOFException
                 close();
                 //retry psync in next loop.
                 logger.info("reconnect to redis-server. retry times:" + (i + 1));
-                try {
-                    Thread.sleep(configuration.getRetryTimeInterval());
-                } catch (InterruptedException e1) {
-                    Thread.currentThread().interrupt();
-                }
+                LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(configuration.getRetryTimeInterval()));
             }
         }
     }
 
-    private SyncMode trySync(final String reply) throws IOException {
+    protected SyncMode trySync(final String reply) throws IOException {
         logger.info(reply);
         if (reply.startsWith("FULLRESYNC")) {
             //sync rdb dump file
             parseDump(this);
             //after parsed dump file,cache master run id and offset so that next psync.
             String[] ary = reply.split(" ");
-            configuration.setMasterRunId(ary[1]);
-            configuration.setOffset(Long.parseLong(ary[2]));
+            configuration.setReplId(ary[1]);
+            configuration.setReplOffset(Long.parseLong(ary[2]));
             return SyncMode.PSYNC;
-        } else if (reply.equals("CONTINUE")) {
-            // do nothing
+        } else if (reply.startsWith("CONTINUE")) {
+            String[] ary = reply.split(" ");
+            //redis-4.0 compatible
+            String masterRunId = configuration.getReplId();
+            if (ary.length > 1 && masterRunId != null && !masterRunId.equals(ary[1])) configuration.setReplId(ary[1]);
             return SyncMode.PSYNC;
+        } else if (reply.startsWith("NOMASTERLINK") || reply.startsWith("LOADING")) {
+            return SyncMode.SYNC_LATER;
         } else {
             //server don't support psync
             logger.info("SYNC");
@@ -200,7 +179,7 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         }
     }
 
-    private void parseDump(final AbstractReplicator replicator) throws IOException {
+    protected void parseDump(final AbstractReplicator replicator) throws IOException {
         //sync dump
         String reply = (String) replyParser.parse(new BulkReplyHandler() {
             @Override
@@ -222,7 +201,16 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         throw new AssertionError("SYNC failed." + reply);
     }
 
-    private void auth(String password) throws IOException {
+    protected void establishConnection() throws IOException {
+        connect();
+        if (configuration.getAuthPassword() != null) auth(configuration.getAuthPassword());
+        sendSlavePort();
+        sendSlaveIp();
+        sendSlaveCapa("eof");
+        sendSlaveCapa("psync2");
+    }
+
+    protected void auth(String password) throws IOException {
         if (password != null) {
             logger.info("AUTH " + password);
             send("AUTH".getBytes(), password.getBytes());
@@ -233,7 +221,7 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         }
     }
 
-    private void sendSlavePort() throws IOException {
+    protected void sendSlavePort() throws IOException {
         //REPLCONF listening-prot ${port}
         logger.info("REPLCONF listening-port " + socket.getLocalPort());
         send("REPLCONF".getBytes(), "listening-port".getBytes(), String.valueOf(socket.getLocalPort()).getBytes());
@@ -243,7 +231,7 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         logger.warn("[REPLCONF listening-port " + socket.getLocalPort() + "] failed." + reply);
     }
 
-    private void sendSlaveIp() throws IOException {
+    protected void sendSlaveIp() throws IOException {
         //REPLCONF ip-address ${address}
         logger.info("REPLCONF ip-address " + socket.getLocalAddress().getHostAddress());
         send("REPLCONF".getBytes(), "ip-address".getBytes(), socket.getLocalAddress().getHostAddress().getBytes());
@@ -254,21 +242,37 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         logger.warn("[REPLCONF ip-address " + socket.getLocalAddress().getHostAddress() + "] failed." + reply);
     }
 
-    private void sendSlaveCapa() throws IOException {
+    protected void sendSlaveCapa(String cmd) throws IOException {
         //REPLCONF capa eof
-        logger.info("REPLCONF capa eof");
-        send("REPLCONF".getBytes(), "capa".getBytes(), "eof".getBytes());
+        logger.info("REPLCONF capa " + cmd);
+        send("REPLCONF".getBytes(), "capa".getBytes(), cmd.getBytes());
         final String reply = (String) reply();
         logger.info(reply);
         if (reply.equals("OK")) return;
-        logger.warn("[REPLCONF capa eof] failed." + reply);
+        logger.warn("[REPLCONF capa " + cmd + "] failed." + reply);
     }
 
-    public void send(byte[] command) throws IOException {
+    protected synchronized void heartBeat() {
+        heartBeat = new Timer("heart beat");
+        //bug fix. in this point closed by other thread. multi-thread issue
+        heartBeat.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    send("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
+                } catch (IOException e) {
+                    //NOP
+                }
+            }
+        }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod());
+        logger.info("heart beat started.");
+    }
+
+    protected void send(byte[] command) throws IOException {
         send(command, new byte[0][]);
     }
 
-    public void send(byte[] command, final byte[]... args) throws IOException {
+    protected void send(byte[] command, final byte[]... args) throws IOException {
         outputStream.write(STAR);
         outputStream.write(String.valueOf(args.length + 1).getBytes());
         outputStream.writeCrLf();
@@ -287,15 +291,15 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         outputStream.flush();
     }
 
-    public Object reply() throws IOException {
+    protected Object reply() throws IOException {
         return replyParser.parse();
     }
 
-    public Object reply(BulkReplyHandler handler) throws IOException {
+    protected Object reply(BulkReplyHandler handler) throws IOException {
         return replyParser.parse(handler);
     }
 
-    private void connect() throws IOException {
+    protected void connect() throws IOException {
         if (!connected.compareAndSet(false, true)) return;
         socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
         outputStream = new RedisOutputStream(socket.getOutputStream());
@@ -338,5 +342,5 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         doRdbRawByteListener(rawBytes);
     }
 
-    private enum SyncMode {SYNC, PSYNC}
+    protected enum SyncMode {SYNC, PSYNC, SYNC_LATER}
 }

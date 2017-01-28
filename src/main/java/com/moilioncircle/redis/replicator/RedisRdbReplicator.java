@@ -49,7 +49,7 @@ public class RedisRdbReplicator extends AbstractReplicator implements RawByteLis
         }
     }
 
-    private void doOpen() throws IOException {
+    protected void doOpen() throws IOException {
         RdbParser parser = new RdbParser(inputStream, this);
         parser.addRawByteListener(this);
         parser.parse();

@@ -35,9 +35,8 @@ import java.util.Arrays;
  */
 public class RedisAofReplicator extends AbstractReplicator {
 
-    private static final Log logger = LogFactory.getLog(RedisAofReplicator.class);
-
-    private final ReplyParser replyParser;
+    protected static final Log logger = LogFactory.getLog(RedisAofReplicator.class);
+    protected final ReplyParser replyParser;
 
     public RedisAofReplicator(File file, Configuration configuration) throws FileNotFoundException {
         this(new FileInputStream(file), configuration);
@@ -61,7 +60,7 @@ public class RedisAofReplicator extends AbstractReplicator {
         }
     }
 
-    private void doOpen() throws IOException {
+    protected void doOpen() throws IOException {
         while (true) {
             Object obj = replyParser.parse();
 

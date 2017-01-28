@@ -182,7 +182,7 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 case REDIS_RDB_OPCODE_AUX:
                     String auxKey = rdbLoadEncodedStringObject().string;
                     String auxValue = rdbLoadEncodedStringObject().string;
-                    if (auxKey.startsWith("%")) {
+                    if (!auxKey.startsWith("%")) {
                         logger.info("RDB " + auxKey + ": " + auxValue);
                     } else {
                         logger.warn("Unrecognized RDB AUX field: " + auxKey + ",value: " + auxValue);

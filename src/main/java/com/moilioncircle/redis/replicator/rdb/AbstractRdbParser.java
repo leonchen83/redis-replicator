@@ -83,23 +83,21 @@ public abstract class AbstractRdbParser {
         int rawByte = in.read();
         int type = (rawByte & 0xc0) >> 6;
         int value;
-        switch (type) {
-            case REDIS_RDB_ENCVAL:
-                isencoded = true;
-                value = rawByte & 0x3f;
-                break;
-            case REDIS_RDB_6BITLEN:
-                value = rawByte & 0x3f;
-                break;
-            case REDIS_RDB_14BITLEN:
-                value = ((rawByte & 0x3F) << 8) | in.read();
-                break;
-            case REDIS_RDB_32BITLEN:
-                value = in.readInt(4, false);
-                break;
-            default:
-                throw new AssertionError("Un-except len-type:" + type);
-
+        if (type == REDIS_RDB_ENCVAL) {
+            isencoded = true;
+            value = rawByte & 0x3f;
+        } else if (type == REDIS_RDB_6BITLEN) {
+            value = rawByte & 0x3f;
+        } else if (type == REDIS_RDB_14BITLEN) {
+            value = ((rawByte & 0x3F) << 8) | in.read();
+        } else if (rawByte == REDIS_RDB_32BITLEN) {
+            value = in.readInt(4, false);
+        } else if (rawByte == REDIS_RDB_64BITLEN) {
+            //TODO
+            //value = in.readLong(8, false);
+            throw new AssertionError("Un-except len-type:" + type);
+        } else {
+            throw new AssertionError("Un-except len-type:" + type);
         }
         return new Len(value, isencoded);
     }
@@ -211,10 +209,15 @@ public abstract class AbstractRdbParser {
         }
     }
 
+    protected double rdbLoadBinaryDoubleValue() throws IOException {
+        return Double.longBitsToDouble(in.readLong(8));
+    }
+
     /**
      * @see #rdbLoadLen
      */
     protected static class Len {
+        //TODO
         public final int len;
         public final boolean isencoded;
 

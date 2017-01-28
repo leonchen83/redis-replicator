@@ -32,7 +32,8 @@ public class Constants {
      */
     public static final int REDIS_RDB_6BITLEN = 0;
     public static final int REDIS_RDB_14BITLEN = 1;
-    public static final int REDIS_RDB_32BITLEN = 2;
+    public static final int REDIS_RDB_32BITLEN = 0x80;
+    public static final int REDIS_RDB_64BITLEN = 0x81;
     public static final int REDIS_RDB_ENCVAL = 3;
 
     /**
@@ -51,6 +52,8 @@ public class Constants {
     public static final int REDIS_RDB_TYPE_SET = 2;
     public static final int REDIS_RDB_TYPE_ZSET = 3;
     public static final int REDIS_RDB_TYPE_HASH = 4;
+    public static final int REDIS_RDB_TYPE_ZSET_2 = 5;
+    public static final int REDIS_RDB_TYPE_MODULE = 6;
     public static final int REDIS_RDB_TYPE_HASH_ZIPMAP = 9;
     public static final int REDIS_RDB_TYPE_LIST_ZIPLIST = 10;
     public static final int REDIS_RDB_TYPE_SET_INTSET = 11;

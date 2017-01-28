@@ -205,7 +205,7 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 case REDIS_RDB_TYPE_LIST:
                 case REDIS_RDB_TYPE_SET:
                 case REDIS_RDB_TYPE_ZSET:
-//                case REDIS_RDB_TYPE_ZSET_2:
+                case REDIS_RDB_TYPE_ZSET_2:
                 case REDIS_RDB_TYPE_HASH:
                 case REDIS_RDB_TYPE_HASH_ZIPMAP:
                 case REDIS_RDB_TYPE_LIST_ZIPLIST:
@@ -213,7 +213,7 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 case REDIS_RDB_TYPE_ZSET_ZIPLIST:
                 case REDIS_RDB_TYPE_HASH_ZIPLIST:
                 case REDIS_RDB_TYPE_LIST_QUICKLIST:
-//                case REDIS_RDB_TYPE_MODULE:
+                case REDIS_RDB_TYPE_MODULE:
                     valueType = type;
                     key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);
@@ -304,6 +304,23 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 while (len > 0) {
                     String element = rdbLoadEncodedStringObject().string;
                     double score = rdbLoadDoubleValue();
+                    zset.add(new ZSetEntry(element, score));
+                    len--;
+                }
+                o3.setValueRdbType(rdbtype);
+                o3.setValue(zset);
+                return o3;
+            /*
+             * |    <len>     |       <content>       |        <score>       |
+             * | 1 or 5 bytes |    string contents    |    double content    |
+             */
+            case REDIS_RDB_TYPE_ZSET_2:
+                len = rdbLoadLen().len;
+                o3 = new KeyStringValueZSet();
+                zset = new LinkedHashSet<>();
+                while (len > 0) {
+                    String element = rdbLoadEncodedStringObject().string;
+                    double score = rdbLoadBinaryDoubleValue();
                     zset.add(new ZSetEntry(element, score));
                     len--;
                 }
@@ -471,6 +488,9 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 o14.setValueRdbType(rdbtype);
                 o14.setValue(byteList);
                 return o14;
+            case REDIS_RDB_TYPE_MODULE:
+                //TODO
+                throw new UnsupportedOperationException();
             default:
                 throw new AssertionError("Un-except value-type:" + rdbtype);
 

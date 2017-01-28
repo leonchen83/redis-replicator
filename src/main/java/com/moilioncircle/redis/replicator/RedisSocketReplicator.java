@@ -100,7 +100,7 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
                     //heart beat send REPLCONF ACK ${slave offset}
                     heartBeat();
                 } else if (syncMode == SyncMode.SYNC_LATER && connected.get()) {
-                    //SYNC LATER
+                    //sync later
                     i = 0;
                     close();
                     LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(configuration.getRetryTimeInterval()));

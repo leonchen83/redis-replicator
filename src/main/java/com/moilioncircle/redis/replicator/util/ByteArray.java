@@ -41,9 +41,9 @@ public class ByteArray implements Iterable<byte[]> {
         } else {
             int x = (int) (length / Integer.MAX_VALUE);
             int y = (int) (length % Integer.MAX_VALUE);
-            bytes = new byte[x + (y == 0 ? 0 : 1)][];
+            bytes = new byte[x + 1][];
             for (int i = 0; i < bytes.length; i++) {
-                if (i == bytes.length - 1 && y > 0) {
+                if (i == bytes.length - 1) {
                     bytes[i] = new byte[y];
                 } else {
                     bytes[i] = new byte[Integer.MAX_VALUE];

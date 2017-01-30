@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.AbstractReplicator;
+import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.ByteArrayInputStream;
@@ -41,11 +42,14 @@ import static com.moilioncircle.redis.replicator.Constants.*;
  *         [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
  * @since 2016/8/11
  */
-public class RdbParser extends AbstractRdbParser implements RawByteListener {
+public class RdbParser extends BaseRdbParser implements RawByteListener {
+
+    protected final AbstractReplicator replicator;
     private final List<RawByteListener> listeners = new CopyOnWriteArrayList<>();
 
     public RdbParser(RedisInputStream in, AbstractReplicator replicator) {
-        super(in, replicator);
+        super(in);
+        this.replicator = replicator;
     }
 
     public void addRawByteListener(RawByteListener listener) {
@@ -142,7 +146,7 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
         loop:
         while (true) {
             int type = in.read();
-            KeyValuePair kv = null;
+            Event event = null;
             switch (type) {
                 /*
                  * ----------------------------
@@ -156,11 +160,12 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                     int expiredSec = rdbLoadTime();
                     int valueType = in.read();
                     String key = rdbLoadEncodedStringObject().string;
-                    kv = rdbLoadObject(valueType);
+                    KeyValuePair kv = rdbLoadObject(valueType);
                     kv.setDb(db);
                     kv.setExpiredType(ExpiredType.SECOND);
                     kv.setExpiredValue((long) expiredSec);
                     kv.setKey(key);
+                    event = kv;
                     break;
                 /*
                  * ----------------------------
@@ -179,12 +184,14 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                     kv.setExpiredType(ExpiredType.MS);
                     kv.setExpiredValue(expiredMs);
                     kv.setKey(key);
+                    event = kv;
                     break;
                 case REDIS_RDB_OPCODE_AUX:
                     String auxKey = rdbLoadEncodedStringObject().string;
                     String auxValue = rdbLoadEncodedStringObject().string;
                     if (!auxKey.startsWith("%")) {
                         logger.info("RDB " + auxKey + ": " + auxValue);
+                        event = new AuxField(auxKey, auxValue);
                     } else {
                         logger.warn("Unrecognized RDB AUX field: " + auxKey + ",value: " + auxValue);
                     }
@@ -220,6 +227,7 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                     kv = rdbLoadObject(valueType);
                     kv.setDb(db);
                     kv.setKey(key);
+                    event = kv;
                     break;
                 /*
                  * ----------------------------
@@ -243,10 +251,10 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 default:
                     throw new AssertionError("Un-except value-type:" + type);
             }
-            if (kv == null) continue;
-            if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(kv);
+            if (event == null) continue;
+            if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(event);
             //submit event
-            this.replicator.submitEvent(kv);
+            this.replicator.submitEvent(event);
         }
         return checksum;
     }
@@ -313,11 +321,12 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 return o3;
             /*
              * |    <len>     |       <content>       |        <score>       |
-             * | 1 or 5 bytes |    string contents    |    double content    |
+             * | 1 or 5 bytes |    string contents    |    binary double     |
              */
             case REDIS_RDB_TYPE_ZSET_2:
+                /* rdb version 8*/
                 len = rdbLoadLen().len;
-                o3 = new KeyStringValueZSet();
+                KeyStringValueZSet o5 = new KeyStringValueZSet();
                 zset = new LinkedHashSet<>();
                 while (len > 0) {
                     String element = rdbLoadEncodedStringObject().string;
@@ -325,9 +334,9 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                     zset.add(new ZSetEntry(element, score));
                     len--;
                 }
-                o3.setValueRdbType(rdbtype);
-                o3.setValue(zset);
-                return o3;
+                o5.setValueRdbType(rdbtype);
+                o5.setValue(zset);
+                return o5;
             /*
              * |    <len>     |       <content>       |
              * | 1 or 5 bytes |    string contents    |
@@ -354,24 +363,24 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueHash o9 = new KeyStringValueHash();
                 map = new LinkedHashMap<>();
-                int zmlen = AbstractRdbParser.LenHelper.zmlen(stream);
+                int zmlen = BaseRdbParser.LenHelper.zmlen(stream);
                 while (true) {
-                    int zmEleLen = AbstractRdbParser.LenHelper.zmElementLen(stream);
+                    int zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
                     if (zmEleLen == 255) {
                         o9.setValueRdbType(rdbtype);
                         o9.setValue(map);
                         return o9;
                     }
-                    String field = AbstractRdbParser.StringHelper.str(stream, zmEleLen);
-                    zmEleLen = AbstractRdbParser.LenHelper.zmElementLen(stream);
+                    String field = BaseRdbParser.StringHelper.str(stream, zmEleLen);
+                    zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
                     if (zmEleLen == 255) {
                         o9.setValueRdbType(rdbtype);
                         o9.setValue(map);
                         return o9;
                     }
-                    int free = AbstractRdbParser.LenHelper.free(stream);
-                    String value = AbstractRdbParser.StringHelper.str(stream, zmEleLen);
-                    AbstractRdbParser.StringHelper.skip(stream, free);
+                    int free = BaseRdbParser.LenHelper.free(stream);
+                    String value = BaseRdbParser.StringHelper.str(stream, zmEleLen);
+                    BaseRdbParser.StringHelper.skip(stream, free);
                     map.put(field, value);
                 }
             /*
@@ -383,8 +392,8 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueSet o11 = new KeyStringValueSet();
                 set = new LinkedHashSet<>();
-                int encoding = AbstractRdbParser.LenHelper.encoding(stream);
-                int lenOfContent = AbstractRdbParser.LenHelper.lenOfContent(stream);
+                int encoding = BaseRdbParser.LenHelper.encoding(stream);
+                int lenOfContent = BaseRdbParser.LenHelper.lenOfContent(stream);
                 for (int i = 0; i < lenOfContent; i++) {
                     switch (encoding) {
                         case 2:
@@ -412,13 +421,13 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueList<String> o10 = new KeyStringValueList<>();
                 list = new ArrayList<>();
-                int zlbytes = AbstractRdbParser.LenHelper.zlbytes(stream);
-                int zltail = AbstractRdbParser.LenHelper.zltail(stream);
-                int zllen = AbstractRdbParser.LenHelper.zllen(stream);
+                int zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
+                int zltail = BaseRdbParser.LenHelper.zltail(stream);
+                int zllen = BaseRdbParser.LenHelper.zllen(stream);
                 for (int i = 0; i < zllen; i++) {
-                    list.add(AbstractRdbParser.StringHelper.zipListEntry(stream));
+                    list.add(BaseRdbParser.StringHelper.zipListEntry(stream));
                 }
-                int zlend = AbstractRdbParser.LenHelper.zlend(stream);
+                int zlend = BaseRdbParser.LenHelper.zlend(stream);
                 if (zlend != 255) {
                     throw new AssertionError("zlend expected 255 but " + zlend);
                 }
@@ -434,17 +443,17 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueZSet o12 = new KeyStringValueZSet();
                 zset = new LinkedHashSet<>();
-                zlbytes = AbstractRdbParser.LenHelper.zlbytes(stream);
-                zltail = AbstractRdbParser.LenHelper.zltail(stream);
-                zllen = AbstractRdbParser.LenHelper.zllen(stream);
+                zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
+                zltail = BaseRdbParser.LenHelper.zltail(stream);
+                zllen = BaseRdbParser.LenHelper.zllen(stream);
                 while (zllen > 0) {
-                    String element = AbstractRdbParser.StringHelper.zipListEntry(stream);
+                    String element = BaseRdbParser.StringHelper.zipListEntry(stream);
                     zllen--;
-                    double score = Double.valueOf(AbstractRdbParser.StringHelper.zipListEntry(stream));
+                    double score = Double.valueOf(BaseRdbParser.StringHelper.zipListEntry(stream));
                     zllen--;
                     zset.add(new ZSetEntry(element, score));
                 }
-                zlend = AbstractRdbParser.LenHelper.zlend(stream);
+                zlend = BaseRdbParser.LenHelper.zlend(stream);
                 if (zlend != 255) {
                     throw new AssertionError("zlend expected 255 but " + zlend);
                 }
@@ -460,17 +469,17 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueHash o13 = new KeyStringValueHash();
                 map = new LinkedHashMap<>();
-                zlbytes = AbstractRdbParser.LenHelper.zlbytes(stream);
-                zltail = AbstractRdbParser.LenHelper.zltail(stream);
-                zllen = AbstractRdbParser.LenHelper.zllen(stream);
+                zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
+                zltail = BaseRdbParser.LenHelper.zltail(stream);
+                zllen = BaseRdbParser.LenHelper.zllen(stream);
                 while (zllen > 0) {
-                    String field = AbstractRdbParser.StringHelper.zipListEntry(stream);
+                    String field = BaseRdbParser.StringHelper.zipListEntry(stream);
                     zllen--;
-                    String value = AbstractRdbParser.StringHelper.zipListEntry(stream);
+                    String value = BaseRdbParser.StringHelper.zipListEntry(stream);
                     zllen--;
                     map.put(field, value);
                 }
-                zlend = AbstractRdbParser.LenHelper.zlend(stream);
+                zlend = BaseRdbParser.LenHelper.zlend(stream);
                 if (zlend != 255) {
                     throw new AssertionError("zlend expected 255 but " + zlend);
                 }
@@ -490,15 +499,22 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 o14.setValue(byteList);
                 return o14;
             case REDIS_RDB_TYPE_MODULE:
+                /* rdb version 8*/
                 //|6|6|6|6|6|6|6|6|6|10|
                 char[] c = new char[9];
                 long moduleid = rdbLoadLen().len;
+                keyStringValueModule o6 = new keyStringValueModule();
                 for (int i = 0; i < c.length; i++) {
                     c[i] = MODULE_SET[(int) (moduleid & 63)];
-                    moduleid >>= 6;
+                    moduleid >>>= 6;
                 }
                 String moduleName = new String(c);
                 int moduleVersion = (int) (moduleid & 1023);
+                //TODO
+                //Module module = getModule(moduleName,moduleVersion);
+                //o6.setValueRdbType(rdbtype);
+                //o6.setValue(module);
+                return o6;
             default:
                 throw new AssertionError("Un-except value-type:" + rdbtype);
 

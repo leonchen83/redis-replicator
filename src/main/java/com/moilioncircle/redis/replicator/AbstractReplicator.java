@@ -18,12 +18,14 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
+import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.io.IOException;
@@ -127,7 +129,7 @@ public abstract class AbstractReplicator implements Replicator {
         exceptionListeners.remove(listener);
     }
 
-    public void submitEvent(Object event) {
+    public void submitEvent(Event event) {
         try {
             if (event instanceof KeyValuePair<?>) {
                 KeyValuePair<?> kv = (KeyValuePair<?>) event;
@@ -141,8 +143,8 @@ public abstract class AbstractReplicator implements Replicator {
                 doPreFullSync();
             } else if (event instanceof PostFullSyncEvent) {
                 doPostFullSync(((PostFullSyncEvent) event).getChecksum());
-            } else {
-
+            } else if (event instanceof AuxField){
+                //TODO
             }
         } catch (Throwable e) {
             doExceptionListener(e, event);

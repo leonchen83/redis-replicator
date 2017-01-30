@@ -16,11 +16,11 @@
 
 package com.moilioncircle.redis.replicator.cmd;
 
-import java.io.Serializable;
+import com.moilioncircle.redis.replicator.event.Event;
 
 /**
  * Created by leon on 8/13/16.
  */
-public interface Command extends Serializable {
+public interface Command extends Event {
     CommandName name();
 }

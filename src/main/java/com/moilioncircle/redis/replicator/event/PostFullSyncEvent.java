@@ -16,12 +16,10 @@
 
 package com.moilioncircle.redis.replicator.event;
 
-import java.io.Serializable;
-
 /**
  * Created by leon on 8/25/16.
  */
-public class PostFullSyncEvent implements Serializable {
+public class PostFullSyncEvent implements Event {
     private final long checksum;
 
     public long getChecksum() {

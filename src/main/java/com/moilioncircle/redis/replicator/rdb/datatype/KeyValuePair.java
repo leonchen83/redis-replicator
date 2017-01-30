@@ -16,7 +16,8 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
-import java.io.Serializable;
+import com.moilioncircle.redis.replicator.event.Event;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +26,7 @@ import java.util.Set;
  * Created by leon on 8/13/16.
  */
 @SuppressWarnings("unchecked")
-public class KeyValuePair<T> implements Serializable {
+public class KeyValuePair<T> implements Event {
     protected DB db;
     protected int valueRdbType;
     protected ExpiredType expiredType = ExpiredType.NONE;

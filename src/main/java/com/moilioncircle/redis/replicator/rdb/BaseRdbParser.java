@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.util.ByteArray;
@@ -31,20 +30,13 @@ import static com.moilioncircle.redis.replicator.Constants.*;
 /**
  * Created by leon on 8/20/16.
  */
-public abstract class AbstractRdbParser {
+public class BaseRdbParser {
     protected static final Log logger = LogFactory.getLog(RdbParser.class);
 
     protected final RedisInputStream in;
 
-    protected final AbstractReplicator replicator;
-
-    public AbstractRdbParser(RedisInputStream in, AbstractReplicator replicator) {
+    public BaseRdbParser(RedisInputStream in) {
         this.in = in;
-        this.replicator = replicator;
-    }
-
-    protected long rdbLoad(int version) throws IOException, InterruptedException {
-        throw new UnsupportedOperationException("rdbLoad()");
     }
 
     /**
@@ -53,7 +45,7 @@ public abstract class AbstractRdbParser {
      * @return seconds
      * @throws IOException when read timeout
      */
-    protected int rdbLoadTime() throws IOException {
+    public int rdbLoadTime() throws IOException {
         return in.readInt(4);
     }
 
@@ -63,7 +55,7 @@ public abstract class AbstractRdbParser {
      * @return millisecond
      * @throws IOException when read timeout
      */
-    protected long rdbLoadMillisecondTime() throws IOException {
+    public long rdbLoadMillisecondTime() throws IOException {
         return in.readLong(8);
     }
 
@@ -79,7 +71,7 @@ public abstract class AbstractRdbParser {
      * @see #rdbLoadIntegerObject
      * @see #rdbLoadLzfStringObject
      */
-    protected Len rdbLoadLen() throws IOException {
+    public Len rdbLoadLen() throws IOException {
         boolean isencoded = false;
         int rawByte = in.read();
         int type = (rawByte & 0xc0) >> 6;
@@ -107,7 +99,7 @@ public abstract class AbstractRdbParser {
      * @return String rdb object
      * @throws IOException when read timeout
      */
-    protected Object rdbLoadIntegerObject(int enctype, boolean encode) throws IOException {
+    public Object rdbLoadIntegerObject(int enctype, boolean encode) throws IOException {
         byte[] value;
         switch (enctype) {
             case REDIS_RDB_ENC_INT8:
@@ -137,7 +129,7 @@ public abstract class AbstractRdbParser {
      * @throws IOException when read timeout
      * @see #rdbLoadLen
      */
-    protected Object rdbLoadLzfStringObject(boolean encode) throws IOException {
+    public Object rdbLoadLzfStringObject(boolean encode) throws IOException {
         long clen = rdbLoadLen().len;
         long len = rdbLoadLen().len;
         ByteArray inBytes = in.readBytes(clen);
@@ -157,7 +149,7 @@ public abstract class AbstractRdbParser {
      * @see #rdbLoadIntegerObject
      * @see #rdbLoadLzfStringObject
      */
-    protected Object rdbGenericLoadStringObject(boolean encode) throws IOException {
+    public Object rdbGenericLoadStringObject(boolean encode) throws IOException {
         Len lenObj = rdbLoadLen();
         long len = (int) lenObj.len;
         boolean isencoded = lenObj.isencoded;
@@ -181,7 +173,7 @@ public abstract class AbstractRdbParser {
      * @return byte[] rdb object with raw bytes
      * @throws IOException when read timeout
      */
-    protected ByteArray rdbLoadRawStringObject() throws IOException {
+    public ByteArray rdbLoadRawStringObject() throws IOException {
         return (ByteArray) rdbGenericLoadStringObject(false);
     }
 
@@ -189,11 +181,11 @@ public abstract class AbstractRdbParser {
      * @return EncodedString rdb object with UTF-8 string
      * @throws IOException when read timeout
      */
-    protected EncodedString rdbLoadEncodedStringObject() throws IOException {
+    public EncodedString rdbLoadEncodedStringObject() throws IOException {
         return (EncodedString) rdbGenericLoadStringObject(true);
     }
 
-    protected double rdbLoadDoubleValue() throws IOException {
+    public double rdbLoadDoubleValue() throws IOException {
         int len = in.read();
         switch (len) {
             case 255:
@@ -208,14 +200,14 @@ public abstract class AbstractRdbParser {
         }
     }
 
-    protected double rdbLoadBinaryDoubleValue() throws IOException {
+    public double rdbLoadBinaryDoubleValue() throws IOException {
         return Double.longBitsToDouble(in.readLong(8));
     }
 
     /**
      * @see #rdbLoadLen
      */
-    protected static class Len {
+    public static class Len {
         public final long len;
         public final boolean isencoded;
 
@@ -225,7 +217,7 @@ public abstract class AbstractRdbParser {
         }
     }
 
-    protected static class StringHelper {
+    public static class StringHelper {
         private StringHelper() {
         }
 
@@ -291,7 +283,7 @@ public abstract class AbstractRdbParser {
         }
     }
 
-    protected static class LenHelper {
+    public static class LenHelper {
         private LenHelper() {
         }
 
@@ -342,7 +334,7 @@ public abstract class AbstractRdbParser {
         }
     }
 
-    protected static class EncodedString {
+    public static class EncodedString {
         public final String string;
         public final byte[] rawBytes;
 

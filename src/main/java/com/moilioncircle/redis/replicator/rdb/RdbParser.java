@@ -493,10 +493,9 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                 //|6|6|6|6|6|6|6|6|6|10|
                 char[] c = new char[9];
                 long moduleid = rdbLoadLen().len;
-                long temp = moduleid;
                 for (int i = 0; i < c.length; i++) {
-                    c[i] = MODULE_SET[(int) (temp & 63)];
-                    temp >>= 6;
+                    c[i] = MODULE_SET[(int) (moduleid & 63)];
+                    moduleid >>= 6;
                 }
                 String moduleName = new String(c);
                 int moduleVersion = (int) (moduleid & 1023);

@@ -1,7 +1,6 @@
 package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 
 import java.io.IOException;
 

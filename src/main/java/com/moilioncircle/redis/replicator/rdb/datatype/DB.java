@@ -22,43 +22,43 @@ import java.io.Serializable;
  * Created by leon on 8/20/16.
  */
 public class DB implements Serializable {
-    private int dbNumber;
+    private long dbNumber;
     /* rdb version 7 */
-    private Integer dbsize = null;
+    private Long dbsize = null;
     /* rdb version 7 */
-    private Integer expires = null;
+    private Long expires = null;
 
-    public DB(int dbNumber) {
+    public DB(long dbNumber) {
         this.dbNumber = dbNumber;
     }
 
-    public DB(int dbNumber, int dbsize, int expires) {
+    public DB(long dbNumber, long dbsize, long expires) {
         this.dbNumber = dbNumber;
         this.dbsize = dbsize;
         this.expires = expires;
     }
 
-    public int getDbNumber() {
+    public long getDbNumber() {
         return dbNumber;
     }
 
-    public void setDbNumber(int dbNumber) {
+    public void setDbNumber(long dbNumber) {
         this.dbNumber = dbNumber;
     }
 
-    public Integer getDbsize() {
+    public Long getDbsize() {
         return dbsize;
     }
 
-    public void setDbsize(Integer dbsize) {
+    public void setDbsize(Long dbsize) {
         this.dbsize = dbsize;
     }
 
-    public Integer getExpires() {
+    public Long getExpires() {
         return expires;
     }
 
-    public void setExpires(Integer expires) {
+    public void setExpires(Long expires) {
         this.expires = expires;
     }
 

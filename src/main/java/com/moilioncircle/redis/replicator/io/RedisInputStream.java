@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.io;
 
 import com.moilioncircle.redis.replicator.Constants;
+import com.moilioncircle.redis.replicator.util.ByteArray;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -96,9 +97,9 @@ public class RedisInputStream extends InputStream {
         return total;
     }
 
-    public byte[] readBytes(int len) throws IOException {
-        byte[] bytes = new byte[len];
-        read(bytes, 0, len);
+    public ByteArray readBytes(long len) throws IOException {
+        ByteArray bytes = new ByteArray(len);
+        this.read(bytes, 0, len);
         if (mark) markLen += len;
         return bytes;
     }
@@ -170,7 +171,7 @@ public class RedisInputStream extends InputStream {
     }
 
     public String readString(int len, Charset charset) throws IOException {
-        byte[] original = readBytes(len);
+        byte[] original = readBytes(len).first();
         return new String(original, charset);
     }
 
@@ -183,24 +184,25 @@ public class RedisInputStream extends InputStream {
         return b & 0xff;
     }
 
-    @Override
-    public int read(byte[] bytes, int offset, int len) throws IOException {
-        int total = len;
-        int index = offset;
+    public long read(ByteArray bytes, long offset, long len) throws IOException {
+        long total = len;
+        long index = offset;
         while (total > 0) {
             int available = tail - head;
             if (available >= total) {
-                System.arraycopy(buf, head, bytes, index, total);
+                ByteArray.arraycopy(new ByteArray(buf), head, bytes, index, total);
                 head += total;
                 break;
             } else {
-                System.arraycopy(buf, head, bytes, index, available);
+                ByteArray.arraycopy(new ByteArray(buf), head, bytes, index, available);
                 index += available;
                 total -= available;
                 fill();
             }
         }
-        notify(bytes);
+        for (byte[] b : bytes) {
+            notify(b);
+        }
         return len;
     }
 

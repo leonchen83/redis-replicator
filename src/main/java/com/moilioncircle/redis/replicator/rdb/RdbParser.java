@@ -19,11 +19,12 @@ package com.moilioncircle.redis.replicator.rdb;
 import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
+import com.moilioncircle.redis.replicator.io.ByteArrayInputStream;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
+import com.moilioncircle.redis.replicator.util.ByteArray;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -189,8 +190,8 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                     }
                     break;
                 case REDIS_RDB_OPCODE_RESIZEDB:
-                    int dbsize = rdbLoadLen().len;
-                    int expiresSize = rdbLoadLen().len;
+                    long dbsize = rdbLoadLen().len;
+                    long expiresSize = rdbLoadLen().len;
                     if (db != null) db.setDbsize(dbsize);
                     if (db != null) db.setExpires(expiresSize);
                     break;
@@ -226,7 +227,7 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
                  * ----------------------------
                  */
                 case REDIS_RDB_OPCODE_SELECTDB:
-                    int dbNumber = rdbLoadLen().len;
+                    long dbNumber = rdbLoadLen().len;
                     db = new DB(dbNumber);
                     break;
                 /*
@@ -268,7 +269,7 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
              * | 1 or 5 bytes |    string contents    |
              */
             case REDIS_RDB_TYPE_LIST:
-                int len = rdbLoadLen().len;
+                long len = rdbLoadLen().len;
                 KeyStringValueList<String> o1 = new KeyStringValueList<>();
                 List<String> list = new ArrayList<>();
                 for (int i = 0; i < len; i++) {
@@ -349,7 +350,7 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
              * | 1 byte | 1 or 5 byte | content |1 or 5 byte | 1 byte | content | 1 byte |
              */
             case REDIS_RDB_TYPE_HASH_ZIPMAP:
-                byte[] aux = rdbLoadRawStringObject();
+                ByteArray aux = rdbLoadRawStringObject();
                 RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueHash o9 = new KeyStringValueHash();
                 map = new LinkedHashMap<>();
@@ -479,18 +480,26 @@ public class RdbParser extends AbstractRdbParser implements RawByteListener {
             /* rdb version 7*/
             case REDIS_RDB_TYPE_LIST_QUICKLIST:
                 len = rdbLoadLen().len;
-                KeyStringValueList<byte[]> o14 = new KeyStringValueList<>();
-                List<byte[]> byteList = new ArrayList<>();
+                KeyStringValueList<ByteArray> o14 = new KeyStringValueList<>();
+                List<ByteArray> byteList = new ArrayList<>();
                 for (int i = 0; i < len; i++) {
-                    byte[] element = rdbLoadRawStringObject();
+                    ByteArray element = rdbLoadRawStringObject();
                     byteList.add(element);
                 }
                 o14.setValueRdbType(rdbtype);
                 o14.setValue(byteList);
                 return o14;
             case REDIS_RDB_TYPE_MODULE:
-                //TODO
-                throw new UnsupportedOperationException();
+                //|6|6|6|6|6|6|6|6|6|10|
+                char[] c = new char[9];
+                long moduleid = rdbLoadLen().len;
+                long temp = moduleid;
+                for (int i = 0; i < c.length; i++) {
+                    c[i] = MODULE_SET[(int) (temp & 63)];
+                    temp >>= 6;
+                }
+                String moduleName = new String(c);
+                int moduleVersion = (int) (moduleid & 1023);
             default:
                 throw new AssertionError("Un-except value-type:" + rdbtype);
 

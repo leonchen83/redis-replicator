@@ -1,238 +1,222 @@
-/*
- * Copyright 2016 leon chen
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.moilioncircle.redis.replicator.util;
 
 /**
- * @author leon.chen
- * @since 2016/8/11
+ * Created by leon on 1/29/17.
  */
 public class Lzf {
 
     /*
      * see [https://github.com/ning/compress/blob/master/src/main/java/com/ning/compress/lzf/impl/VanillaChunkDecoder.java]
      */
-    public static byte[] decode(byte[] bytes, int len) {
-        byte[] out = new byte[len];
+    public static ByteArray decode(ByteArray bytes, long len) {
+        ByteArray out = new ByteArray(len);
         decode(bytes, 0, out, 0, len);
         return out;
     }
 
-    private static void decode(byte[] in, int inPos, byte[] out, int outPos, int outEnd) {
+    private static void decode(ByteArray in, long inPos, ByteArray out, long outPos, long outEnd) {
         do {
-            int ctrl = in[inPos++] & 255;
+            int ctrl = in.get(inPos++) & 255;
             if (ctrl < 1 << 5) {
                 switch (ctrl) {
                     case 31:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 30:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 29:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 28:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 27:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 26:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 25:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 24:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 23:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 22:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 21:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 20:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 19:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 18:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 17:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 16:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 15:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 14:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 13:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 12:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 11:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 10:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 9:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 8:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 7:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 6:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 5:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 4:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 3:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 2:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 1:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                     case 0:
-                        out[outPos++] = in[inPos++];
+                        out.set(outPos++, in.get(inPos++));
                 }
                 continue;
             }
 
-            int len = ctrl >> 5;
+            long len = ctrl >> 5;
             ctrl = -((ctrl & 0x1f) << 8) - 1;
             if (len < 7) {
-                ctrl -= in[inPos++] & 255;
-                out[outPos] = out[outPos++ + ctrl];
-                out[outPos] = out[outPos++ + ctrl];
-                switch (len) {
+                ctrl -= in.get(inPos++) & 255;
+                out.set(outPos, out.get(outPos++ + ctrl));
+                out.set(outPos, out.get(outPos++ + ctrl));
+                switch ((int) len) {
                     case 6:
-                        out[outPos] = out[outPos++ + ctrl];
+                        out.set(outPos, out.get(outPos++ + ctrl));
                     case 5:
-                        out[outPos] = out[outPos++ + ctrl];
+                        out.set(outPos, out.get(outPos++ + ctrl));
                     case 4:
-                        out[outPos] = out[outPos++ + ctrl];
+                        out.set(outPos, out.get(outPos++ + ctrl));
                     case 3:
-                        out[outPos] = out[outPos++ + ctrl];
+                        out.set(outPos, out.get(outPos++ + ctrl));
                     case 2:
-                        out[outPos] = out[outPos++ + ctrl];
+                        out.set(outPos, out.get(outPos++ + ctrl));
                     case 1:
-                        out[outPos] = out[outPos++ + ctrl];
+                        out.set(outPos, out.get(outPos++ + ctrl));
                 }
                 continue;
             }
 
-            len = in[inPos++] & 255;
-            ctrl -= in[inPos++] & 255;
+            len = in.get(inPos++) & 255;
+            ctrl -= in.get(inPos++) & 255;
 
             if ((ctrl + len) < -9) {
                 len += 9;
                 if (len <= 32) {
-                    int inPos1 = outPos + ctrl;
-                    int outPos1 = outPos;
-                    switch (len - 1) {
+                    long inPos1 = outPos + ctrl;
+                    long outPos1 = outPos;
+                    switch ((int) len - 1) {
                         case 31:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 30:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 29:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 28:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 27:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 26:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 25:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 24:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 23:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 22:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 21:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 20:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 19:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 18:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 17:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 16:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 15:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 14:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 13:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 12:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 11:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 10:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 9:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 8:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 7:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 6:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 5:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 4:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 3:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 2:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 1:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                         case 0:
-                            out[outPos1++] = out[inPos1++];
+                            out.set(outPos1++, out.get(inPos1++));
                     }
                 } else {
-                    System.arraycopy(out, outPos + ctrl, out, outPos, len);
+                    ByteArray.arraycopy(out, outPos + ctrl, out, outPos, len);
                 }
                 outPos += len;
                 continue;
             }
-
-            out[outPos] = out[outPos++ + ctrl];
-            out[outPos] = out[outPos++ + ctrl];
-            out[outPos] = out[outPos++ + ctrl];
-            out[outPos] = out[outPos++ + ctrl];
-            out[outPos] = out[outPos++ + ctrl];
-            out[outPos] = out[outPos++ + ctrl];
-            out[outPos] = out[outPos++ + ctrl];
-            out[outPos] = out[outPos++ + ctrl];
-            out[outPos] = out[outPos++ + ctrl];
+            out.set(outPos, out.get(outPos++ + ctrl));
+            out.set(outPos, out.get(outPos++ + ctrl));
+            out.set(outPos, out.get(outPos++ + ctrl));
+            out.set(outPos, out.get(outPos++ + ctrl));
+            out.set(outPos, out.get(outPos++ + ctrl));
+            out.set(outPos, out.get(outPos++ + ctrl));
+            out.set(outPos, out.get(outPos++ + ctrl));
+            out.set(outPos, out.get(outPos++ + ctrl));
+            out.set(outPos, out.get(outPos++ + ctrl));
 
             len += outPos;
-            final int end = len - 3;
+            final long end = len - 3;
             while (outPos < end) {
-                out[outPos] = out[outPos++ + ctrl];
-                out[outPos] = out[outPos++ + ctrl];
-                out[outPos] = out[outPos++ + ctrl];
-                out[outPos] = out[outPos++ + ctrl];
+                out.set(outPos, out.get(outPos++ + ctrl));
+                out.set(outPos, out.get(outPos++ + ctrl));
+                out.set(outPos, out.get(outPos++ + ctrl));
+                out.set(outPos, out.get(outPos++ + ctrl));
             }
-            switch (len - outPos) {
-                case 3:
-                    out[outPos] = out[outPos++ + ctrl];
-                case 2:
-                    out[outPos] = out[outPos++ + ctrl];
-                case 1:
-                    out[outPos] = out[outPos++ + ctrl];
+            if (len - outPos == 3) {
+                out.set(outPos, out.get(outPos++ + ctrl));
+                out.set(outPos, out.get(outPos++ + ctrl));
+                out.set(outPos, out.get(outPos++ + ctrl));
+            } else if (len - outPos == 2) {
+                out.set(outPos, out.get(outPos++ + ctrl));
+                out.set(outPos, out.get(outPos++ + ctrl));
+            } else if (len - outPos == 1) {
+                out.set(outPos, out.get(outPos++ + ctrl));
             }
         } while (outPos < outEnd);
 
@@ -240,5 +224,4 @@ public class Lzf {
             throw new AssertionError("Corrupt data: overrun in decompress, input offset " + inPos + ", output offset " + outPos);
         }
     }
-
 }

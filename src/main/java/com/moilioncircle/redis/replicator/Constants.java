@@ -24,6 +24,8 @@ import java.nio.charset.Charset;
  */
 public class Constants {
 
+    public static final char[] MODULE_SET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".toCharArray();
+
     public static final Charset CHARSET = Charset.forName("UTF-8");
     public static final String EMPTY = "";
 

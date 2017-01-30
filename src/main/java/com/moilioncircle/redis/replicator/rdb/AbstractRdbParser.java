@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.rdb;
 import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.Lzf;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -82,7 +83,7 @@ public abstract class AbstractRdbParser {
         boolean isencoded = false;
         int rawByte = in.read();
         int type = (rawByte & 0xc0) >> 6;
-        int value;
+        long value;
         if (type == REDIS_RDB_ENCVAL) {
             isencoded = true;
             value = rawByte & 0x3f;
@@ -93,9 +94,7 @@ public abstract class AbstractRdbParser {
         } else if (rawByte == REDIS_RDB_32BITLEN) {
             value = in.readInt(4, false);
         } else if (rawByte == REDIS_RDB_64BITLEN) {
-            //TODO
-            //value = in.readLong(8, false);
-            throw new AssertionError("Un-except len-type:" + type);
+            value = in.readLong(8, false);
         } else {
             throw new AssertionError("Un-except len-type:" + type);
         }
@@ -112,13 +111,13 @@ public abstract class AbstractRdbParser {
         byte[] value;
         switch (enctype) {
             case REDIS_RDB_ENC_INT8:
-                value = in.readBytes(1);
+                value = in.readBytes(1).first();
                 break;
             case REDIS_RDB_ENC_INT16:
-                value = in.readBytes(2);
+                value = in.readBytes(2).first();
                 break;
             case REDIS_RDB_ENC_INT32:
-                value = in.readBytes(4);
+                value = in.readBytes(4).first();
                 break;
             default:
                 value = new byte[]{0x00};
@@ -139,11 +138,11 @@ public abstract class AbstractRdbParser {
      * @see #rdbLoadLen
      */
     protected Object rdbLoadLzfStringObject(boolean encode) throws IOException {
-        int clen = rdbLoadLen().len;
-        int len = rdbLoadLen().len;
-        byte[] inBytes = in.readBytes(clen);
-        byte[] outBytes = Lzf.decode(inBytes, len);
-        return encode ? new EncodedString(new String(outBytes, Constants.CHARSET), outBytes) : outBytes;
+        long clen = rdbLoadLen().len;
+        long len = rdbLoadLen().len;
+        ByteArray inBytes = in.readBytes(clen);
+        ByteArray outBytes = Lzf.decode(inBytes, len);
+        return encode ? new EncodedString(new String(outBytes.first(), Constants.CHARSET), outBytes.first()) : outBytes;
     }
 
     /**
@@ -160,14 +159,14 @@ public abstract class AbstractRdbParser {
      */
     protected Object rdbGenericLoadStringObject(boolean encode) throws IOException {
         Len lenObj = rdbLoadLen();
-        int len = lenObj.len;
+        long len = (int) lenObj.len;
         boolean isencoded = lenObj.isencoded;
         if (isencoded) {
-            switch (len) {
+            switch ((int) len) {
                 case REDIS_RDB_ENC_INT8:
                 case REDIS_RDB_ENC_INT16:
                 case REDIS_RDB_ENC_INT32:
-                    return rdbLoadIntegerObject(len, encode);
+                    return rdbLoadIntegerObject((int) len, encode);
                 case REDIS_RDB_ENC_LZF:
                     return rdbLoadLzfStringObject(encode);
                 default:
@@ -175,15 +174,15 @@ public abstract class AbstractRdbParser {
             }
         }
         byte[] bytes;
-        return encode ? new EncodedString(new String(bytes = in.readBytes(len), Constants.CHARSET), bytes) : in.readBytes(len);
+        return encode ? new EncodedString(new String(bytes = in.readBytes(len).first(), Constants.CHARSET), bytes) : in.readBytes(len);
     }
 
     /**
      * @return byte[] rdb object with raw bytes
      * @throws IOException when read timeout
      */
-    protected byte[] rdbLoadRawStringObject() throws IOException {
-        return (byte[]) rdbGenericLoadStringObject(false);
+    protected ByteArray rdbLoadRawStringObject() throws IOException {
+        return (ByteArray) rdbGenericLoadStringObject(false);
     }
 
     /**
@@ -204,7 +203,7 @@ public abstract class AbstractRdbParser {
             case 253:
                 return Double.NaN;
             default:
-                byte[] bytes = in.readBytes(len);
+                byte[] bytes = in.readBytes(len).first();
                 return Double.valueOf(new String(bytes));
         }
     }
@@ -217,11 +216,10 @@ public abstract class AbstractRdbParser {
      * @see #rdbLoadLen
      */
     protected static class Len {
-        //TODO
-        public final int len;
+        public final long len;
         public final boolean isencoded;
 
-        private Len(int len, boolean isencoded) {
+        private Len(long len, boolean isencoded) {
             this.len = len;
             this.isencoded = isencoded;
         }

@@ -8,5 +8,5 @@ public interface Module {
 
     int moduleVersion();
 
-    <T> T loadFromRdb();
+    <T> T moduleValue();
 }

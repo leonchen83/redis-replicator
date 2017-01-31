@@ -1,6 +1,8 @@
 package com.moilioncircle.redis.replicator.rdb;
 
+import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.util.ByteArray;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -31,13 +33,13 @@ public class RdbLoadModuleParser {
     }
 
     public String loadString() throws IOException {
-        byte[] bytes = parser.rdbLoadRawStringObject().first();
-        return new String(bytes);
+        ByteArray bytes = (ByteArray) parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_NONE);
+        return new String(bytes.first(), Constants.CHARSET);
     }
 
     public String loadStringBuffer() throws IOException {
-        //TODO
-        return loadString();
+        ByteArray bytes = (ByteArray) parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_PLAIN);
+        return new String(bytes.first(), Constants.CHARSET);
     }
 
     public double loadDouble() throws IOException {

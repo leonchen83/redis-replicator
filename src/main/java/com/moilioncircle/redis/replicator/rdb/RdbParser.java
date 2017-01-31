@@ -156,7 +156,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                  * $encoded-value              # The value. Encoding depends on $value-type
                  * ----------------------------
                  */
-                case REDIS_RDB_OPCODE_EXPIRETIME:
+                case RDB_OPCODE_EXPIRETIME:
                     int expiredSec = rdbLoadTime();
                     int valueType = in.read();
                     String key = rdbLoadEncodedStringObject().string;
@@ -175,7 +175,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                  * $encoded-value              # The value. Encoding depends on $value-type
                  * ----------------------------
                  */
-                case REDIS_RDB_OPCODE_EXPIRETIME_MS:
+                case RDB_OPCODE_EXPIRETIME_MS:
                     long expiredMs = rdbLoadMillisecondTime();
                     valueType = in.read();
                     key = rdbLoadEncodedStringObject().string;
@@ -186,7 +186,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                     kv.setKey(key);
                     event = kv;
                     break;
-                case REDIS_RDB_OPCODE_AUX:
+                case RDB_OPCODE_AUX:
                     String auxKey = rdbLoadEncodedStringObject().string;
                     String auxValue = rdbLoadEncodedStringObject().string;
                     if (!auxKey.startsWith("%")) {
@@ -196,7 +196,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                         logger.warn("Unrecognized RDB AUX field: " + auxKey + ",value: " + auxValue);
                     }
                     break;
-                case REDIS_RDB_OPCODE_RESIZEDB:
+                case RDB_OPCODE_RESIZEDB:
                     long dbsize = rdbLoadLen().len;
                     long expiresSize = rdbLoadLen().len;
                     if (db != null) db.setDbsize(dbsize);
@@ -209,19 +209,19 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                  * $encoded-value
                  * ----------------------------
                  */
-                case REDIS_RDB_TYPE_STRING:
-                case REDIS_RDB_TYPE_LIST:
-                case REDIS_RDB_TYPE_SET:
-                case REDIS_RDB_TYPE_ZSET:
-                case REDIS_RDB_TYPE_ZSET_2:
-                case REDIS_RDB_TYPE_HASH:
-                case REDIS_RDB_TYPE_HASH_ZIPMAP:
-                case REDIS_RDB_TYPE_LIST_ZIPLIST:
-                case REDIS_RDB_TYPE_SET_INTSET:
-                case REDIS_RDB_TYPE_ZSET_ZIPLIST:
-                case REDIS_RDB_TYPE_HASH_ZIPLIST:
-                case REDIS_RDB_TYPE_LIST_QUICKLIST:
-                case REDIS_RDB_TYPE_MODULE:
+                case RDB_TYPE_STRING:
+                case RDB_TYPE_LIST:
+                case RDB_TYPE_SET:
+                case RDB_TYPE_ZSET:
+                case RDB_TYPE_ZSET_2:
+                case RDB_TYPE_HASH:
+                case RDB_TYPE_HASH_ZIPMAP:
+                case RDB_TYPE_LIST_ZIPLIST:
+                case RDB_TYPE_SET_INTSET:
+                case RDB_TYPE_ZSET_ZIPLIST:
+                case RDB_TYPE_HASH_ZIPLIST:
+                case RDB_TYPE_LIST_QUICKLIST:
+                case RDB_TYPE_MODULE:
                     valueType = type;
                     key = rdbLoadEncodedStringObject().string;
                     kv = rdbLoadObject(valueType);
@@ -234,7 +234,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                  * FE $length-encoding         # Previous db ends, next db starts. Database number read using length encoding.
                  * ----------------------------
                  */
-                case REDIS_RDB_OPCODE_SELECTDB:
+                case RDB_OPCODE_SELECTDB:
                     long dbNumber = rdbLoadLen().len;
                     db = new DB(dbNumber);
                     break;
@@ -245,7 +245,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                  * 8 byte checksum             ## CRC 64 checksum of the entire file.
                  * ----------------------------
                  */
-                case REDIS_RDB_OPCODE_EOF:
+                case RDB_OPCODE_EOF:
                     if (version >= 5) checksum = in.readLong(8);
                     break loop;
                 default:
@@ -265,7 +265,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |       <content>       |
              * |    string contents    |
              */
-            case REDIS_RDB_TYPE_STRING:
+            case RDB_TYPE_STRING:
                 KeyStringValueString o0 = new KeyStringValueString();
                 EncodedString val = rdbLoadEncodedStringObject();
                 o0.setValueRdbType(rdbtype);
@@ -276,7 +276,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |    <len>     |       <content>       |
              * | 1 or 5 bytes |    string contents    |
              */
-            case REDIS_RDB_TYPE_LIST:
+            case RDB_TYPE_LIST:
                 long len = rdbLoadLen().len;
                 KeyStringValueList<String> o1 = new KeyStringValueList<>();
                 List<String> list = new ArrayList<>();
@@ -291,7 +291,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |    <len>     |       <content>       |
              * | 1 or 5 bytes |    string contents    |
              */
-            case REDIS_RDB_TYPE_SET:
+            case RDB_TYPE_SET:
                 len = rdbLoadLen().len;
                 KeyStringValueSet o2 = new KeyStringValueSet();
                 Set<String> set = new LinkedHashSet<>();
@@ -306,7 +306,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |    <len>     |       <content>       |        <score>       |
              * | 1 or 5 bytes |    string contents    |    double content    |
              */
-            case REDIS_RDB_TYPE_ZSET:
+            case RDB_TYPE_ZSET:
                 len = rdbLoadLen().len;
                 KeyStringValueZSet o3 = new KeyStringValueZSet();
                 Set<ZSetEntry> zset = new LinkedHashSet<>();
@@ -323,7 +323,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |    <len>     |       <content>       |        <score>       |
              * | 1 or 5 bytes |    string contents    |    binary double     |
              */
-            case REDIS_RDB_TYPE_ZSET_2:
+            case RDB_TYPE_ZSET_2:
                 /* rdb version 8*/
                 len = rdbLoadLen().len;
                 KeyStringValueZSet o5 = new KeyStringValueZSet();
@@ -341,7 +341,7 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |    <len>     |       <content>       |
              * | 1 or 5 bytes |    string contents    |
              */
-            case REDIS_RDB_TYPE_HASH:
+            case RDB_TYPE_HASH:
                 len = rdbLoadLen().len;
                 KeyStringValueHash o4 = new KeyStringValueHash();
                 Map<String, String> map = new LinkedHashMap<>();
@@ -358,8 +358,8 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |<zmlen> |   <len>     |"foo"    |    <len>   | <free> |   "bar" |<zmend> |
              * | 1 byte | 1 or 5 byte | content |1 or 5 byte | 1 byte | content | 1 byte |
              */
-            case REDIS_RDB_TYPE_HASH_ZIPMAP:
-                ByteArray aux = rdbLoadRawStringObject();
+            case RDB_TYPE_HASH_ZIPMAP:
+                ByteArray aux = rdbLoadPlainStringObject();
                 RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueHash o9 = new KeyStringValueHash();
                 map = new LinkedHashMap<>();
@@ -387,8 +387,8 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |<encoding>| <length-of-contents>|              <contents>                           |
              * | 4 bytes  |            4 bytes  | 2 bytes lement| 4 bytes element | 8 bytes element |
              */
-            case REDIS_RDB_TYPE_SET_INTSET:
-                aux = rdbLoadRawStringObject();
+            case RDB_TYPE_SET_INTSET:
+                aux = rdbLoadPlainStringObject();
                 stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueSet o11 = new KeyStringValueSet();
                 set = new LinkedHashSet<>();
@@ -416,8 +416,8 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
              * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
              */
-            case REDIS_RDB_TYPE_LIST_ZIPLIST:
-                aux = rdbLoadRawStringObject();
+            case RDB_TYPE_LIST_ZIPLIST:
+                aux = rdbLoadPlainStringObject();
                 stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueList<String> o10 = new KeyStringValueList<>();
                 list = new ArrayList<>();
@@ -438,8 +438,8 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
              * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
              */
-            case REDIS_RDB_TYPE_ZSET_ZIPLIST:
-                aux = rdbLoadRawStringObject();
+            case RDB_TYPE_ZSET_ZIPLIST:
+                aux = rdbLoadPlainStringObject();
                 stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueZSet o12 = new KeyStringValueZSet();
                 zset = new LinkedHashSet<>();
@@ -464,8 +464,8 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
              * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
              * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
              */
-            case REDIS_RDB_TYPE_HASH_ZIPLIST:
-                aux = rdbLoadRawStringObject();
+            case RDB_TYPE_HASH_ZIPLIST:
+                aux = rdbLoadPlainStringObject();
                 stream = new RedisInputStream(new ByteArrayInputStream(aux));
                 KeyStringValueHash o13 = new KeyStringValueHash();
                 map = new LinkedHashMap<>();
@@ -487,18 +487,18 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                 o13.setValue(map);
                 return o13;
             /* rdb version 7*/
-            case REDIS_RDB_TYPE_LIST_QUICKLIST:
+            case RDB_TYPE_LIST_QUICKLIST:
                 len = rdbLoadLen().len;
                 KeyStringValueList<ByteArray> o14 = new KeyStringValueList<>();
                 List<ByteArray> byteList = new ArrayList<>();
                 for (int i = 0; i < len; i++) {
-                    ByteArray element = rdbLoadRawStringObject();
+                    ByteArray element = (ByteArray) rdbGenericLoadStringObject(RDB_LOAD_NONE);
                     byteList.add(element);
                 }
                 o14.setValueRdbType(rdbtype);
                 o14.setValue(byteList);
                 return o14;
-            case REDIS_RDB_TYPE_MODULE:
+            case RDB_TYPE_MODULE:
                 /* rdb version 8*/
                 //|6|6|6|6|6|6|6|6|6|10|
                 char[] c = new char[9];

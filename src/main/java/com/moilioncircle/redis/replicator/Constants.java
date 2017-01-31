@@ -29,41 +29,43 @@ public class Constants {
     public static final Charset CHARSET = Charset.forName("UTF-8");
     public static final String EMPTY = "";
 
+    public static final int RDB_LOAD_NONE = 0;
+    public static final int RDB_LOAD_ENC = 1 << 0;
+    public static final int RDB_LOAD_PLAIN = 1 << 1;
+
     /**
      * len type
      */
-    public static final int REDIS_RDB_6BITLEN = 0;
-    public static final int REDIS_RDB_14BITLEN = 1;
-    public static final int REDIS_RDB_32BITLEN = 0x80;
-    public static final int REDIS_RDB_64BITLEN = 0x81;
-    public static final int REDIS_RDB_ENCVAL = 3;
+    public static final int RDB_ENCVAL = 3;
+    public static final int RDB_6BITLEN = 0;
+    public static final int RDB_14BITLEN = 1;
+    public static final int RDB_32BITLEN = 0x80;
+    public static final int RDB_64BITLEN = 0x81;
 
     /**
      * string encoding
      */
-    public static final int REDIS_RDB_ENC_INT8 = 0;
-    public static final int REDIS_RDB_ENC_INT16 = 1;
-    public static final int REDIS_RDB_ENC_INT32 = 2;
-    public static final int REDIS_RDB_ENC_LZF = 3;
+    public static final int RDB_ENC_INT8 = 0;
+    public static final int RDB_ENC_INT16 = 1;
+    public static final int RDB_ENC_INT32 = 2;
+    public static final int RDB_ENC_LZF = 3;
 
     /**
      * rdb object encoding
      */
-    public static final int REDIS_RDB_TYPE_STRING = 0;
-    public static final int REDIS_RDB_TYPE_LIST = 1;
-    public static final int REDIS_RDB_TYPE_SET = 2;
-    public static final int REDIS_RDB_TYPE_ZSET = 3;
-    public static final int REDIS_RDB_TYPE_HASH = 4;
-    public static final int REDIS_RDB_TYPE_ZSET_2 = 5;
-    public static final int REDIS_RDB_TYPE_MODULE = 6;
-    public static final int REDIS_RDB_TYPE_HASH_ZIPMAP = 9;
-    public static final int REDIS_RDB_TYPE_LIST_ZIPLIST = 10;
-    public static final int REDIS_RDB_TYPE_SET_INTSET = 11;
-    public static final int REDIS_RDB_TYPE_ZSET_ZIPLIST = 12;
-    public static final int REDIS_RDB_TYPE_HASH_ZIPLIST = 13;
-    /* rdb version 7 start */
-    public static final int REDIS_RDB_TYPE_LIST_QUICKLIST = 14;
-    /* rdb version 7 end */
+    public static final int RDB_TYPE_STRING = 0;
+    public static final int RDB_TYPE_LIST = 1;
+    public static final int RDB_TYPE_SET = 2;
+    public static final int RDB_TYPE_ZSET = 3;
+    public static final int RDB_TYPE_HASH = 4;
+    public static final int RDB_TYPE_ZSET_2 = 5;
+    public static final int RDB_TYPE_MODULE = 6;
+    public static final int RDB_TYPE_HASH_ZIPMAP = 9;
+    public static final int RDB_TYPE_LIST_ZIPLIST = 10;
+    public static final int RDB_TYPE_SET_INTSET = 11;
+    public static final int RDB_TYPE_ZSET_ZIPLIST = 12;
+    public static final int RDB_TYPE_HASH_ZIPLIST = 13;
+    public static final int RDB_TYPE_LIST_QUICKLIST = 14;
 
     /**
      * zip entry
@@ -77,14 +79,12 @@ public class Constants {
     /**
      * rdb protocol
      */
-    /* rdb version 7 start */
-    public static final int REDIS_RDB_OPCODE_AUX = 0xfa; /*250*/
-    public static final int REDIS_RDB_OPCODE_RESIZEDB = 0xfb; /*251*/
-    /* rdb version 7 end */
-    public static final int REDIS_RDB_OPCODE_EXPIRETIME_MS = 0xfc;/* 252 */
-    public static final int REDIS_RDB_OPCODE_EXPIRETIME = 0xfd; /* 253 */
-    public static final int REDIS_RDB_OPCODE_SELECTDB = 0xfe; /* 254 */
-    public static final int REDIS_RDB_OPCODE_EOF = 0xff; /* 255 */
+    public static final int RDB_OPCODE_AUX = 0xfa; /*250*/
+    public static final int RDB_OPCODE_RESIZEDB = 0xfb; /*251*/
+    public static final int RDB_OPCODE_EXPIRETIME_MS = 0xfc;/* 252 */
+    public static final int RDB_OPCODE_EXPIRETIME = 0xfd; /* 253 */
+    public static final int RDB_OPCODE_SELECTDB = 0xfe; /* 254 */
+    public static final int RDB_OPCODE_EOF = 0xff; /* 255 */
 
     /**
      * transfer protocol

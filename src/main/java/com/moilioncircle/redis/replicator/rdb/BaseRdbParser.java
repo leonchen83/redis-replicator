@@ -76,16 +76,16 @@ public class BaseRdbParser {
         int rawByte = in.read();
         int type = (rawByte & 0xc0) >> 6;
         long value;
-        if (type == REDIS_RDB_ENCVAL) {
+        if (type == RDB_ENCVAL) {
             isencoded = true;
             value = rawByte & 0x3f;
-        } else if (type == REDIS_RDB_6BITLEN) {
+        } else if (type == RDB_6BITLEN) {
             value = rawByte & 0x3f;
-        } else if (type == REDIS_RDB_14BITLEN) {
+        } else if (type == RDB_14BITLEN) {
             value = ((rawByte & 0x3F) << 8) | in.read();
-        } else if (rawByte == REDIS_RDB_32BITLEN) {
+        } else if (rawByte == RDB_32BITLEN) {
             value = in.readInt(4, false);
-        } else if (rawByte == REDIS_RDB_64BITLEN) {
+        } else if (rawByte == RDB_64BITLEN) {
             value = in.readLong(8, false);
         } else {
             throw new AssertionError("Un-except len-type:" + type);
@@ -95,27 +95,35 @@ public class BaseRdbParser {
 
     /**
      * @param enctype 0,1,2
-     * @param encode  true: encoded string.false:raw bytes
+     * @param flags  RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
      * @return String rdb object
      * @throws IOException when read timeout
      */
-    public Object rdbLoadIntegerObject(int enctype, boolean encode) throws IOException {
-        ByteArray value;
+    public Object rdbLoadIntegerObject(int enctype, int flags) throws IOException {
+        boolean plain = (flags & RDB_LOAD_PLAIN) != 0;
+        boolean encode = (flags & RDB_LOAD_ENC) != 0;
+        byte[] value;
         switch (enctype) {
-            case REDIS_RDB_ENC_INT8:
-                value = in.readBytes(1);
+            case RDB_ENC_INT8:
+                value = in.readBytes(1).first();
                 break;
-            case REDIS_RDB_ENC_INT16:
-                value = in.readBytes(2);
+            case RDB_ENC_INT16:
+                value = in.readBytes(2).first();
                 break;
-            case REDIS_RDB_ENC_INT32:
-                value = in.readBytes(4);
+            case RDB_ENC_INT32:
+                value = in.readBytes(4).first();
                 break;
             default:
-                value = new ByteArray(new byte[]{0x00});
+                value = new byte[]{0x00};
                 break;
         }
-        return encode ? new EncodedString(String.valueOf(in.readInt(value.first())), value.first()) : value;
+        if (plain) {
+            return new ByteArray(value);
+        } else if (encode) {
+            return new EncodedString(String.valueOf(in.readInt(value)), new ByteArray(value));
+        } else {
+            return new ByteArray(value);
+        }
     }
 
     /**
@@ -124,17 +132,24 @@ public class BaseRdbParser {
      * |lzf flag|clen:1 or 2 or 5 bytes|len:1 or 2 or 5 bytes |       lzf compressed bytes           |
      * |11xxxxxx|xxxxxxxx|....|xxxxxxxx|xxxxxxxx|....|xxxxxxxx|xxxxxxxx|xxxxxxxx|............xxxxxxxx|
      *
-     * @param encode true: encoded string.false:raw bytes
+     * @param flags RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
      * @return String rdb object
      * @throws IOException when read timeout
      * @see #rdbLoadLen
      */
-    public Object rdbLoadLzfStringObject(boolean encode) throws IOException {
+    public Object rdbLoadLzfStringObject(int flags) throws IOException {
+        boolean plain = (flags & RDB_LOAD_PLAIN) != 0;
+        boolean encode = (flags & RDB_LOAD_ENC) != 0;
         long clen = rdbLoadLen().len;
         long len = rdbLoadLen().len;
-        ByteArray inBytes = in.readBytes(clen);
-        ByteArray outBytes = Lzf.decode(inBytes, len);
-        return encode ? new EncodedString(new String(outBytes.first(), Constants.CHARSET), outBytes.first()) : outBytes;
+        if (plain) {
+            return Lzf.decode(in.readBytes(clen), len);
+        } else if (encode) {
+            ByteArray bytes = Lzf.decode(in.readBytes(clen), len);
+            return new EncodedString(new String(bytes.first(), Constants.CHARSET), bytes);
+        } else {
+            return Lzf.decode(in.readBytes(clen), len);
+        }
     }
 
     /**
@@ -143,38 +158,47 @@ public class BaseRdbParser {
      * 3.|11xxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| remaining 6bit is 2, then an 32 bit integer follows
      * 4.|11xxxxxx| remaining 6bit is 3,then lzf compressed string follows
      *
-     * @param encode true: encoded string.false:raw bytes
+     * @param flags RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
      * @return String rdb object
      * @throws IOException when read timeout
      * @see #rdbLoadIntegerObject
      * @see #rdbLoadLzfStringObject
      */
-    public Object rdbGenericLoadStringObject(boolean encode) throws IOException {
+    public Object rdbGenericLoadStringObject(int flags) throws IOException {
+        boolean plain = (flags & RDB_LOAD_PLAIN) != 0;
+        boolean encode = (flags & RDB_LOAD_ENC) != 0;
         Len lenObj = rdbLoadLen();
         long len = (int) lenObj.len;
         boolean isencoded = lenObj.isencoded;
         if (isencoded) {
             switch ((int) len) {
-                case REDIS_RDB_ENC_INT8:
-                case REDIS_RDB_ENC_INT16:
-                case REDIS_RDB_ENC_INT32:
-                    return rdbLoadIntegerObject((int) len, encode);
-                case REDIS_RDB_ENC_LZF:
-                    return rdbLoadLzfStringObject(encode);
+                case RDB_ENC_INT8:
+                case RDB_ENC_INT16:
+                case RDB_ENC_INT32:
+                    return rdbLoadIntegerObject((int) len, flags);
+                case RDB_ENC_LZF:
+                    return rdbLoadLzfStringObject(flags);
                 default:
                     throw new AssertionError("Unknown RdbParser encoding type:" + len);
             }
         }
-        ByteArray bytes = in.readBytes(len);
-        return encode ? new EncodedString(new String(bytes.first(), Constants.CHARSET), bytes.first()) : bytes;
+
+        if (plain) {
+            return in.readBytes(len);
+        } else if (encode) {
+            ByteArray bytes = in.readBytes(len);
+            return new EncodedString(new String(bytes.first(), Constants.CHARSET), bytes);
+        } else {
+            return in.readBytes(len);
+        }
     }
 
     /**
-     * @return byte[] rdb object with raw bytes
+     * @return InputStream rdb object with raw bytes
      * @throws IOException when read timeout
      */
-    public ByteArray rdbLoadRawStringObject() throws IOException {
-        return (ByteArray) rdbGenericLoadStringObject(false);
+    public ByteArray rdbLoadPlainStringObject() throws IOException {
+        return (ByteArray) rdbGenericLoadStringObject(RDB_LOAD_PLAIN);
     }
 
     /**
@@ -182,7 +206,7 @@ public class BaseRdbParser {
      * @throws IOException when read timeout
      */
     public EncodedString rdbLoadEncodedStringObject() throws IOException {
-        return (EncodedString) rdbGenericLoadStringObject(true);
+        return (EncodedString) rdbGenericLoadStringObject(RDB_LOAD_ENC);
     }
 
     public double rdbLoadDoubleValue() throws IOException {
@@ -337,10 +361,12 @@ public class BaseRdbParser {
     public static class EncodedString {
         public final String string;
         public final byte[] rawBytes;
+        public final ByteArray bytes;
 
-        public EncodedString(String string, byte[] rawBytes) {
+        public EncodedString(String string, ByteArray bytes) {
+            this.bytes = bytes;
             this.string = string;
-            this.rawBytes = rawBytes;
+            this.rawBytes = bytes.first();
         }
     }
 }

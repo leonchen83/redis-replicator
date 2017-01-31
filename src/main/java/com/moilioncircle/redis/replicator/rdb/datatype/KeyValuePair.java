@@ -97,42 +97,42 @@ public class KeyValuePair<T> implements Event {
     }
 
     /**
-     * @return REDIS_RDB_TYPE_STRING
+     * @return RDB_TYPE_STRING
      */
     public String getValueAsString() {
         return (String) value;
     }
 
     /**
-     * @return REDIS_RDB_TYPE_HASH, REDIS_RDB_TYPE_HASH_ZIPMAP, REDIS_RDB_TYPE_HASH_ZIPLIST
+     * @return RDB_TYPE_HASH, RDB_TYPE_HASH_ZIPMAP, RDB_TYPE_HASH_ZIPLIST
      */
     public Map<String, String> getValueAsHash() {
         return (Map<String, String>) value;
     }
 
     /**
-     * @return REDIS_RDB_TYPE_SET, REDIS_RDB_TYPE_SET_INTSET
+     * @return RDB_TYPE_SET, RDB_TYPE_SET_INTSET
      */
     public Set<String> getValueAsSet() {
         return (Set<String>) value;
     }
 
     /**
-     * @return REDIS_RDB_TYPE_ZSET, REDIS_RDB_TYPE_ZSET_ZIPLIST
+     * @return RDB_TYPE_ZSET, RDB_TYPE_ZSET_ZIPLIST
      */
     public Set<ZSetEntry> getValueAsZSet() {
         return (Set<ZSetEntry>) value;
     }
 
     /**
-     * @return REDIS_RDB_TYPE_LIST, REDIS_RDB_TYPE_LIST_ZIPLIST
+     * @return RDB_TYPE_LIST, RDB_TYPE_LIST_ZIPLIST
      */
     public List<String> getValueAsStringList() {
         return (List<String>) value;
     }
 
     /**
-     * @return REDIS_RDB_TYPE_LIST_QUICKLIST
+     * @return RDB_TYPE_LIST_QUICKLIST
      */
     public List<byte[]> getValueAsByteArrayList() {
         return (List<byte[]>) value;

@@ -100,22 +100,22 @@ public class BaseRdbParser {
      * @throws IOException when read timeout
      */
     public Object rdbLoadIntegerObject(int enctype, boolean encode) throws IOException {
-        byte[] value;
+        ByteArray value;
         switch (enctype) {
             case REDIS_RDB_ENC_INT8:
-                value = in.readBytes(1).first();
+                value = in.readBytes(1);
                 break;
             case REDIS_RDB_ENC_INT16:
-                value = in.readBytes(2).first();
+                value = in.readBytes(2);
                 break;
             case REDIS_RDB_ENC_INT32:
-                value = in.readBytes(4).first();
+                value = in.readBytes(4);
                 break;
             default:
-                value = new byte[]{0x00};
+                value = new ByteArray(new byte[]{0x00});
                 break;
         }
-        return encode ? new EncodedString(String.valueOf(in.readInt(value)), value) : value;
+        return encode ? new EncodedString(String.valueOf(in.readInt(value.first())), value.first()) : value;
     }
 
     /**
@@ -165,8 +165,8 @@ public class BaseRdbParser {
                     throw new AssertionError("Unknown RdbParser encoding type:" + len);
             }
         }
-        byte[] bytes;
-        return encode ? new EncodedString(new String(bytes = in.readBytes(len).first(), Constants.CHARSET), bytes) : in.readBytes(len);
+        ByteArray bytes = in.readBytes(len);
+        return encode ? new EncodedString(new String(bytes.first(), Constants.CHARSET), bytes.first()) : bytes;
     }
 
     /**

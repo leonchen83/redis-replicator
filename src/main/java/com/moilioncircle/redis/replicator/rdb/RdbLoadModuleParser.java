@@ -3,13 +3,15 @@ package com.moilioncircle.redis.replicator.rdb;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 /**
  * Created by Administrator on 2017/1/31.
  */
 public class RdbLoadModuleParser {
-    private RedisInputStream in;
-    private BaseRdbParser parser;
+
+    private final RedisInputStream in;
+    private final BaseRdbParser parser;
 
     public RdbLoadModuleParser(RedisInputStream in) {
         this.in = in;
@@ -24,13 +26,12 @@ public class RdbLoadModuleParser {
         return parser.rdbLoadLen().len;
     }
 
-    public long loadUnSigned() throws IOException {
-        //TODO
-        return loadSigned() & 0xFFFFFFFFFFFFFFFFL;
+    public BigInteger loadUnSigned() throws IOException {
+        return BigInteger.valueOf(loadSigned() & 0xFFFFFFFFFFFFFFFFL);
     }
 
     public String loadString() throws IOException {
-        byte[] bytes = (byte[])parser.rdbGenericLoadStringObject(false);
+        byte[] bytes = parser.rdbLoadRawStringObject().first();
         return new String(bytes);
     }
 

@@ -30,15 +30,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by leon on 8/9/16.
  */
 public class RedisInputStream extends InputStream {
-    private int head = 0;
-    private int tail = 0;
-    private long total = 0;
-    private long markLen = 0;
-    private boolean mark = false;
-    private final InputStream in;
-    private final List<RawByteListener> listeners = new CopyOnWriteArrayList<>();
-
-    private final byte[] buf;
+    protected int head = 0;
+    protected int tail = 0;
+    protected long total = 0;
+    protected long markLen = 0;
+    protected final byte[] buf;
+    protected boolean mark = false;
+    protected final InputStream in;
+    protected final List<RawByteListener> listeners = new CopyOnWriteArrayList<>();
 
     public RedisInputStream(final InputStream in) {
         this(in, 8192);
@@ -57,7 +56,7 @@ public class RedisInputStream extends InputStream {
         this.listeners.remove(listener);
     }
 
-    private void notify(byte... bytes) {
+    protected void notify(byte... bytes) {
         for (RawByteListener listener : listeners) {
             listener.handle(bytes);
         }
@@ -232,7 +231,7 @@ public class RedisInputStream extends InputStream {
         in.close();
     }
 
-    private void fill() throws IOException {
+    protected void fill() throws IOException {
         tail = in.read(buf, 0, buf.length);
         if (tail == -1) throw new EOFException("end of file.");
         total += tail;

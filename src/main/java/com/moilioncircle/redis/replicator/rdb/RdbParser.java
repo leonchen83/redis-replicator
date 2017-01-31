@@ -510,9 +510,9 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
                 }
                 String moduleName = new String(c);
                 int moduleVersion = (int) (moduleid & 1023);
-                ModuleHandler handler = lookupModuleHandler(moduleName,moduleVersion);
+                ModuleParser<? extends Module> parser = lookupModuleParser(moduleName, moduleVersion);
                 o6.setValueRdbType(rdbtype);
-                o6.setValue(handler.rdbLoad(in));
+                o6.setValue(parser.parse(in));
                 return o6;
             default:
                 throw new AssertionError("Un-except value-type:" + rdbtype);
@@ -520,9 +520,8 @@ public class RdbParser extends BaseRdbParser implements RawByteListener {
         }
     }
 
-    private ModuleHandler lookupModuleHandler(String moduleName, int moduleVersion) {
-        //TODO
-        return null;
+    private ModuleParser<? extends Module> lookupModuleParser(String moduleName, int moduleVersion) {
+        return replicator.getModuleParser(moduleName, moduleVersion);
     }
 }
 

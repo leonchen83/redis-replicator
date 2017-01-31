@@ -22,8 +22,11 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
+import com.moilioncircle.redis.replicator.rdb.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -94,32 +97,57 @@ public class RedisAofReplicator extends AbstractReplicator {
     }
 
     @Override
-    public void addRdbFilter(RdbFilter filter) {
+    public ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeRdbFilter(RdbFilter filter) {
+    public <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addRdbListener(RdbListener listener) {
+    public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeRdbListener(RdbListener listener) {
+    public boolean addRdbFilter(RdbFilter filter) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addRdbRawByteListener(RawByteListener listener) {
+    public boolean removeRdbFilter(RdbFilter filter) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeRdbRawByteListener(RawByteListener listener) {
+    public boolean addRdbListener(RdbListener listener) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeRdbListener(RdbListener listener) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean addAuxFieldListener(AuxFieldListener listener) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeAuxFieldListener(AuxFieldListener listener) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean addRdbRawByteListener(RawByteListener listener) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean removeRdbRawByteListener(RawByteListener listener) {
         throw new UnsupportedOperationException();
     }
 }

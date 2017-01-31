@@ -16,10 +16,11 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.*;
-import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.rdb.ModuleParser;
+import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -27,41 +28,32 @@ import java.io.IOException;
 /**
  * Created by leon on 8/13/16.
  */
-public interface Replicator extends Closeable {
-
-    void addRdbFilter(RdbFilter filter);
-
-    void removeRdbFilter(RdbFilter filter);
-
-    void addRdbListener(RdbListener listener);
-
-    void removeRdbListener(RdbListener listener);
-
-    void addRdbRawByteListener(RawByteListener listener);
-
-    void removeRdbRawByteListener(RawByteListener listener);
-
+public interface Replicator extends Closeable, ReplicatorListener {
+    /*
+     * Command
+     */
     void builtInCommandParserRegister();
+
+    CommandParser<? extends Command> getCommandParser(CommandName command);
 
     <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser);
 
-    <T extends Command> void removeCommandParser(CommandName command, CommandParser<T> parser);
+    CommandParser<? extends Command> removeCommandParser(CommandName command);
 
-    void addCommandFilter(CommandFilter filter);
 
-    void removeCommandFilter(CommandFilter filter);
+    /*
+     * Module
+     */
+    ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion);
 
-    void addCommandListener(CommandListener listener);
+    <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser);
 
-    void removeCommandListener(CommandListener listener);
+    ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion);
 
-    void addCloseListener(CloseListener listener);
-
-    void removeCloseListener(CloseListener listener);
-
-    void addExceptionListener(ExceptionListener listener);
-
-    void removeExceptionListener(ExceptionListener listener);
+    /*
+     * Rdb
+     */
+    void builtInRdbParserRegister();
 
     boolean verbose();
 

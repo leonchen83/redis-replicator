@@ -16,38 +16,38 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
-import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.ModuleKey;
+import com.moilioncircle.redis.replicator.rdb.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by leon on 8/13/16.
  */
-public abstract class AbstractReplicator implements Replicator {
+public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
     protected RedisInputStream inputStream;
-    protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
-    protected final List<CommandFilter> filters = new CopyOnWriteArrayList<>();
-    protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
-    protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
-    protected final List<CommandListener> commandListeners = new CopyOnWriteArrayList<>();
-    protected final List<RawByteListener> rawByteListeners = new CopyOnWriteArrayList<>();
-    protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
+
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
+    protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
+
+    @Override
+    public CommandParser<? extends Command> getCommandParser(CommandName command) {
+        return commands.get(command);
+    }
 
     @Override
     public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
@@ -55,162 +55,56 @@ public abstract class AbstractReplicator implements Replicator {
     }
 
     @Override
-    public <T extends Command> void removeCommandParser(CommandName command, CommandParser<T> parser) {
-        commands.remove(command);
+    public CommandParser<? extends Command> removeCommandParser(CommandName command) {
+        return commands.remove(command);
     }
 
     @Override
-    public void addCommandFilter(CommandFilter filter) {
-        filters.add(filter);
+    public ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion) {
+        return modules.get(ModuleKey.key(moduleName, moduleVersion));
     }
 
     @Override
-    public void removeCommandFilter(CommandFilter filter) {
-        filters.remove(filter);
+    public <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser) {
+        modules.put(ModuleKey.key(moduleName, moduleVersion), parser);
     }
 
     @Override
-    public void addCommandListener(CommandListener listener) {
-        commandListeners.add(listener);
-    }
-
-    @Override
-    public void removeCommandListener(CommandListener listener) {
-        commandListeners.remove(listener);
-    }
-
-    @Override
-    public void addRdbFilter(RdbFilter filter) {
-        rdbFilters.add(filter);
-    }
-
-    @Override
-    public void removeRdbFilter(RdbFilter filter) {
-        rdbFilters.remove(filter);
-    }
-
-    @Override
-    public void addRdbListener(RdbListener listener) {
-        rdbListeners.add(listener);
-    }
-
-    @Override
-    public void removeRdbListener(RdbListener listener) {
-        rdbListeners.remove(listener);
-    }
-
-    @Override
-    public void addRdbRawByteListener(RawByteListener listener) {
-        this.rawByteListeners.add(listener);
-    }
-
-    @Override
-    public void removeRdbRawByteListener(RawByteListener listener) {
-        this.rawByteListeners.remove(listener);
-    }
-
-    @Override
-    public void addCloseListener(CloseListener listener) {
-        closeListeners.add(listener);
-    }
-
-    @Override
-    public void removeCloseListener(CloseListener listener) {
-        closeListeners.remove(listener);
-    }
-
-    @Override
-    public void addExceptionListener(ExceptionListener listener) {
-        exceptionListeners.add(listener);
-    }
-
-    @Override
-    public void removeExceptionListener(ExceptionListener listener) {
-        exceptionListeners.remove(listener);
+    public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
+        return modules.remove(ModuleKey.key(moduleName, moduleVersion));
     }
 
     public void submitEvent(Event event) {
         try {
             if (event instanceof KeyValuePair<?>) {
                 KeyValuePair<?> kv = (KeyValuePair<?>) event;
-                if (!doRdbFilter(kv)) return;
-                doRdbHandler(kv);
+                if (!doRdbFilter(this, kv)) return;
+                doRdbListener(this, kv);
             } else if (event instanceof Command) {
                 Command command = (Command) event;
-                if (!doCommandFilter(command)) return;
-                doCommandHandler(command);
+                if (!doCommandFilter(this, command)) return;
+                doCommandListener(this, command);
             } else if (event instanceof PreFullSyncEvent) {
-                doPreFullSync();
+                doPreFullSync(this);
             } else if (event instanceof PostFullSyncEvent) {
-                doPostFullSync(((PostFullSyncEvent) event).getChecksum());
-            } else if (event instanceof AuxField){
-                //TODO
+                doPostFullSync(this, ((PostFullSyncEvent) event).getChecksum());
+            } else if (event instanceof AuxField) {
+                doAuxFieldListener(this, (AuxField) event);
             }
         } catch (Throwable e) {
-            doExceptionListener(e, event);
-        }
-
-    }
-
-    protected void doCommandHandler(Command command) {
-        for (CommandListener listener : commandListeners) {
-            listener.handle(this, command);
-        }
-    }
-
-    protected boolean doCommandFilter(Command command) {
-        for (CommandFilter filter : filters) {
-            if (!filter.accept(command)) return false;
-        }
-        return true;
-    }
-
-    protected void doRdbHandler(KeyValuePair<?> kv) {
-        for (RdbListener listener : rdbListeners) {
-            listener.handle(this, kv);
-        }
-    }
-
-    protected boolean doRdbFilter(KeyValuePair<?> kv) {
-        for (RdbFilter filter : rdbFilters) {
-            if (!filter.accept(kv)) return false;
-        }
-        return true;
-    }
-
-    protected void doPreFullSync() {
-        for (RdbListener listener : rdbListeners) {
-            listener.preFullSync(this);
-        }
-    }
-
-    protected void doPostFullSync(final long checksum) {
-        for (RdbListener listener : rdbListeners) {
-            listener.postFullSync(this, checksum);
-        }
-    }
-
-    protected void doCloseListener() {
-        for (CloseListener listener : closeListeners) {
-            listener.handle(this);
-        }
-    }
-
-    protected void doExceptionListener(Throwable throwable, Object event) {
-        for (ExceptionListener listener : exceptionListeners) {
-            listener.handle(this, throwable, event);
-        }
-    }
-
-    protected void doRdbRawByteListener(byte... bytes) {
-        for (RawByteListener listener : rawByteListeners) {
-            listener.handle(bytes);
+            doExceptionListener(this, e, event);
         }
     }
 
     @Override
     public boolean verbose() {
         return configuration != null && configuration.isVerbose();
+    }
+
+
+    @Override
+    public void builtInRdbParserRegister() {
+        //TODO
     }
 
     @Override
@@ -285,6 +179,6 @@ public abstract class AbstractReplicator implements Replicator {
         if (inputStream != null) try {
             inputStream.close();
         } catch (IOException ignore) { /*NOP*/ }
-        doCloseListener();
+        doCloseListener(this);
     }
 }

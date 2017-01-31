@@ -74,7 +74,7 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
             doOpen();
         } finally {
             close();
-            doCloseListener();
+            doCloseListener(this);
         }
     }
 
@@ -339,7 +339,7 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
 
     @Override
     public void handle(byte... rawBytes) {
-        doRdbRawByteListener(rawBytes);
+        doRdbRawByteListener(this, rawBytes);
     }
 
     protected enum SyncMode {SYNC, PSYNC, SYNC_LATER}

@@ -61,22 +61,27 @@ public class RedisRdbReplicator extends AbstractReplicator implements RawByteLis
     }
 
     @Override
-    public void addCommandFilter(CommandFilter filter) {
+    public boolean addCommandFilter(CommandFilter filter) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeCommandFilter(CommandFilter filter) {
+    public boolean removeCommandFilter(CommandFilter filter) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addCommandListener(CommandListener listener) {
+    public boolean addCommandListener(CommandListener listener) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeCommandListener(CommandListener listener) {
+    public boolean removeCommandListener(CommandListener listener) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public CommandParser<? extends Command> getCommandParser(CommandName command) {
         throw new UnsupportedOperationException();
     }
 
@@ -86,7 +91,7 @@ public class RedisRdbReplicator extends AbstractReplicator implements RawByteLis
     }
 
     @Override
-    public <T extends Command> void removeCommandParser(CommandName command, CommandParser<T> parser) {
+    public CommandParser<? extends Command> removeCommandParser(CommandName command) {
         throw new UnsupportedOperationException();
     }
 
@@ -97,6 +102,6 @@ public class RedisRdbReplicator extends AbstractReplicator implements RawByteLis
 
     @Override
     public void handle(byte... rawBytes) {
-        doRdbRawByteListener(rawBytes);
+        doRdbRawByteListener(this, rawBytes);
     }
 }

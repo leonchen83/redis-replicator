@@ -18,8 +18,11 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
+import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
+import com.moilioncircle.redis.replicator.rdb.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,33 +56,43 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public void addRdbFilter(RdbFilter filter) {
-        replicator.addRdbFilter(filter);
+    public boolean addRdbFilter(RdbFilter filter) {
+        return replicator.addRdbFilter(filter);
     }
 
     @Override
-    public void removeRdbFilter(RdbFilter filter) {
-        replicator.removeRdbFilter(filter);
+    public boolean removeRdbFilter(RdbFilter filter) {
+        return replicator.removeRdbFilter(filter);
     }
 
     @Override
-    public void addRdbListener(RdbListener listener) {
-        replicator.addRdbListener(listener);
+    public boolean addRdbListener(RdbListener listener) {
+        return replicator.addRdbListener(listener);
     }
 
     @Override
-    public void removeRdbListener(RdbListener listener) {
-        replicator.removeRdbListener(listener);
+    public boolean removeRdbListener(RdbListener listener) {
+        return replicator.removeRdbListener(listener);
     }
 
     @Override
-    public void addRdbRawByteListener(RawByteListener listener) {
-        replicator.addRdbRawByteListener(listener);
+    public boolean addAuxFieldListener(AuxFieldListener listener) {
+        return replicator.addAuxFieldListener(listener);
     }
 
     @Override
-    public void removeRdbRawByteListener(RawByteListener listener) {
-        replicator.removeRdbRawByteListener(listener);
+    public boolean removeAuxFieldListener(AuxFieldListener listener) {
+        return replicator.removeAuxFieldListener(listener);
+    }
+
+    @Override
+    public boolean addRdbRawByteListener(RawByteListener listener) {
+        return replicator.addRdbRawByteListener(listener);
+    }
+
+    @Override
+    public boolean removeRdbRawByteListener(RawByteListener listener) {
+        return replicator.removeRdbRawByteListener(listener);
     }
 
     @Override
@@ -88,53 +101,78 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
+    public CommandParser<? extends Command> getCommandParser(CommandName command) {
+        return replicator.getCommandParser(command);
+    }
+
+    @Override
     public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
         replicator.addCommandParser(command, parser);
     }
 
     @Override
-    public <T extends Command> void removeCommandParser(CommandName command, CommandParser<T> parser) {
-        replicator.removeCommandParser(command, parser);
+    public CommandParser<? extends Command> removeCommandParser(CommandName command) {
+        return replicator.removeCommandParser(command);
     }
 
     @Override
-    public void addCommandFilter(CommandFilter filter) {
-        replicator.addCommandFilter(filter);
+    public ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion) {
+        return replicator.getModuleParser(moduleName, moduleVersion);
     }
 
     @Override
-    public void removeCommandFilter(CommandFilter filter) {
-        replicator.removeCommandFilter(filter);
+    public <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser) {
+        replicator.addModuleParser(moduleName, moduleVersion, parser);
     }
 
     @Override
-    public void addCommandListener(CommandListener listener) {
-        replicator.addCommandListener(listener);
+    public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
+        return replicator.removeModuleParser(moduleName, moduleVersion);
     }
 
     @Override
-    public void removeCommandListener(CommandListener listener) {
-        replicator.removeCommandListener(listener);
+    public void builtInRdbParserRegister() {
+        replicator.builtInRdbParserRegister();
     }
 
     @Override
-    public void addCloseListener(CloseListener listener) {
-        replicator.addCloseListener(listener);
+    public boolean addCommandFilter(CommandFilter filter) {
+        return replicator.addCommandFilter(filter);
     }
 
     @Override
-    public void removeCloseListener(CloseListener listener) {
-        replicator.removeCloseListener(listener);
+    public boolean removeCommandFilter(CommandFilter filter) {
+        return replicator.removeCommandFilter(filter);
     }
 
     @Override
-    public void addExceptionListener(ExceptionListener listener) {
-        replicator.addExceptionListener(listener);
+    public boolean addCommandListener(CommandListener listener) {
+        return replicator.addCommandListener(listener);
     }
 
     @Override
-    public void removeExceptionListener(ExceptionListener listener) {
-        replicator.removeExceptionListener(listener);
+    public boolean removeCommandListener(CommandListener listener) {
+        return replicator.removeCommandListener(listener);
+    }
+
+    @Override
+    public boolean addCloseListener(CloseListener listener) {
+        return replicator.addCloseListener(listener);
+    }
+
+    @Override
+    public boolean removeCloseListener(CloseListener listener) {
+        return replicator.removeCloseListener(listener);
+    }
+
+    @Override
+    public boolean addExceptionListener(ExceptionListener listener) {
+        return replicator.addExceptionListener(listener);
+    }
+
+    @Override
+    public boolean removeExceptionListener(ExceptionListener listener) {
+        return replicator.removeExceptionListener(listener);
     }
 
     @Override

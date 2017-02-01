@@ -24,13 +24,13 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.DefaultRdbEntityVisitor;
-import com.moilioncircle.redis.replicator.rdb.ModuleKey;
-import com.moilioncircle.redis.replicator.rdb.ModuleParser;
-import com.moilioncircle.redis.replicator.rdb.RdbEntityVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.entity.DefaultRdbEntityVisitor;
+import com.moilioncircle.redis.replicator.rdb.entity.RdbEntityVisitor;
+import com.moilioncircle.redis.replicator.rdb.module.ModuleKey;
+import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 
 import java.io.IOException;
 import java.util.Map;

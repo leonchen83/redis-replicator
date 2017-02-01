@@ -19,9 +19,9 @@ package com.moilioncircle.redis.replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.rdb.ModuleParser;
-import com.moilioncircle.redis.replicator.rdb.RdbEntityVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.entity.RdbEntityVisitor;
+import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 
 import java.io.Closeable;
 import java.io.IOException;

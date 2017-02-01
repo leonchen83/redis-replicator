@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.rdb;
+package com.moilioncircle.redis.replicator.rdb.module;
 
 /**
  * Created by leon on 2017/1/31.

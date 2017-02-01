@@ -23,6 +23,7 @@ import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.entity.RdbEntityVisitor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

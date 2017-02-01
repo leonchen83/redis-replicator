@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.rdb;
+package com.moilioncircle.redis.replicator.rdb.entity;
 
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.ByteArrayInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
+import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

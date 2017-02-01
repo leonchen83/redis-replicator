@@ -1,4 +1,4 @@
-package com.moilioncircle.redis.replicator.rdb;
+package com.moilioncircle.redis.replicator.rdb.entity;
 
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;

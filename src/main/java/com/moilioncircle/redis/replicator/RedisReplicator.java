@@ -18,8 +18,12 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.*;
+import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
+import com.moilioncircle.redis.replicator.rdb.RdbFilter;
+import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.entity.RdbEntityVisitor;
+import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,7 +34,7 @@ import java.io.InputStream;
  * Created by leon on 8/13/16.
  */
 public class RedisReplicator implements Replicator {
-    private final Replicator replicator;
+    protected final Replicator replicator;
 
     public RedisReplicator(File file, Configuration configuration) throws FileNotFoundException {
         this(file, configuration, true);

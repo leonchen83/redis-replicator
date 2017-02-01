@@ -3,7 +3,7 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
 import com.moilioncircle.redis.replicator.event.Event;
 
 /**
- * Created by Administrator on 2017/1/30.
+ * Created by leon on 2017/1/30.
  */
 public class AuxField implements Event {
 

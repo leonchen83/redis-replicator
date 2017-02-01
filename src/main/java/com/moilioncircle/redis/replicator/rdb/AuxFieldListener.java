@@ -20,7 +20,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 
 /**
- * Created by Administrator on 2017/1/31.
+ * Created by leon on 2017/1/31.
  */
 public interface AuxFieldListener {
     void handle(Replicator replicator, AuxField auxField);

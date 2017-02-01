@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by Administrator on 2017/1/31.
+ * Created by leon on 2017/1/31.
  */
 public class AbstractReplicatorListener implements ReplicatorListener {
     protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();

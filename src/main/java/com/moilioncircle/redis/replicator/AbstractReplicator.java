@@ -24,8 +24,10 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.DefaultRdbEntityVisitor;
 import com.moilioncircle.redis.replicator.rdb.ModuleKey;
 import com.moilioncircle.redis.replicator.rdb.ModuleParser;
+import com.moilioncircle.redis.replicator.rdb.RdbEntityVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
@@ -40,9 +42,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
     protected RedisInputStream inputStream;
-
-    protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
+    protected RdbEntityVisitor rdbEntityVisitor = new DefaultRdbEntityVisitor(this);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
+    protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
 
     @Override
     public CommandParser<? extends Command> getCommandParser(CommandName command) {
@@ -101,10 +103,14 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         return configuration != null && configuration.isVerbose();
     }
 
+    @Override
+    public void setRdbEntityVisitor(RdbEntityVisitor rdbEntityVisitor) {
+        this.rdbEntityVisitor = rdbEntityVisitor;
+    }
 
     @Override
-    public void builtInRdbParserRegister() {
-        //TODO
+    public RdbEntityVisitor getRdbEntityVisitor() {
+        return this.rdbEntityVisitor;
     }
 
     @Override

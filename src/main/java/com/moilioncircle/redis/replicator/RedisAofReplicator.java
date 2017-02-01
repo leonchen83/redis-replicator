@@ -22,10 +22,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.ModuleParser;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.*;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -108,6 +105,16 @@ public class RedisAofReplicator extends AbstractReplicator {
 
     @Override
     public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setRdbEntityVisitor(RdbEntityVisitor rdbEntityVisitor) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RdbEntityVisitor getRdbEntityVisitor() {
         throw new UnsupportedOperationException();
     }
 

@@ -20,7 +20,7 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 
 /**
- * Created by Administrator on 2017/1/31.
+ * Created by leon on 2017/1/31.
  */
 public interface ModuleParser<T extends Module> {
     T parse(RedisInputStream in);

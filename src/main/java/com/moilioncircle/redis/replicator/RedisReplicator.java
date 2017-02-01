@@ -18,10 +18,7 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.ModuleParser;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.*;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 
 import java.io.File;
@@ -131,8 +128,13 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public void builtInRdbParserRegister() {
-        replicator.builtInRdbParserRegister();
+    public void setRdbEntityVisitor(RdbEntityVisitor rdbEntityVisitor) {
+        replicator.setRdbEntityVisitor(rdbEntityVisitor);
+    }
+
+    @Override
+    public RdbEntityVisitor getRdbEntityVisitor() {
+        return replicator.getRdbEntityVisitor();
     }
 
     @Override

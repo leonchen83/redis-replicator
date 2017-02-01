@@ -29,10 +29,6 @@ public class Constants {
     public static final Charset CHARSET = Charset.forName("UTF-8");
     public static final String EMPTY = "";
 
-    public static final int RDB_LOAD_NONE = 0;
-    public static final int RDB_LOAD_ENC = 1 << 0;
-    public static final int RDB_LOAD_PLAIN = 1 << 1;
-
     /**
      * len type
      */
@@ -43,12 +39,29 @@ public class Constants {
     public static final int RDB_64BITLEN = 0x81;
 
     /**
+     * string type
+     */
+    public static final int RDB_LOAD_NONE = 0;
+    public static final int RDB_LOAD_ENC = 1 << 0;
+    public static final int RDB_LOAD_PLAIN = 1 << 1;
+
+    /**
      * string encoding
      */
     public static final int RDB_ENC_INT8 = 0;
     public static final int RDB_ENC_INT16 = 1;
     public static final int RDB_ENC_INT32 = 2;
     public static final int RDB_ENC_LZF = 3;
+
+    /**
+     * rdb protocol
+     */
+    public static final int RDB_OPCODE_AUX = 0xfa; /*250*/
+    public static final int RDB_OPCODE_RESIZEDB = 0xfb; /*251*/
+    public static final int RDB_OPCODE_EXPIRETIME_MS = 0xfc;/* 252 */
+    public static final int RDB_OPCODE_EXPIRETIME = 0xfd; /* 253 */
+    public static final int RDB_OPCODE_SELECTDB = 0xfe; /* 254 */
+    public static final int RDB_OPCODE_EOF = 0xff; /* 255 */
 
     /**
      * rdb object encoding
@@ -75,16 +88,6 @@ public class Constants {
     public static final int ZIP_INT_24B = 0xc0 | 3 << 4; /* 11110000*/
     public static final int ZIP_INT_32B = 0xc0 | 1 << 4; /* 11010000*/
     public static final int ZIP_INT_64B = 0xc0 | 2 << 4; /* 11100000*/
-
-    /**
-     * rdb protocol
-     */
-    public static final int RDB_OPCODE_AUX = 0xfa; /*250*/
-    public static final int RDB_OPCODE_RESIZEDB = 0xfb; /*251*/
-    public static final int RDB_OPCODE_EXPIRETIME_MS = 0xfc;/* 252 */
-    public static final int RDB_OPCODE_EXPIRETIME = 0xfd; /* 253 */
-    public static final int RDB_OPCODE_SELECTDB = 0xfe; /* 254 */
-    public static final int RDB_OPCODE_EOF = 0xff; /* 255 */
 
     /**
      * transfer protocol

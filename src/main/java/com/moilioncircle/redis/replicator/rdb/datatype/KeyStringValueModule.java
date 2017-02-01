@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.event;
-
-import java.io.Serializable;
+package com.moilioncircle.redis.replicator.rdb.datatype;
 
 /**
- * Created by leon on 2017/1/30.
+ * Created by leon on 2017/1/31.
  */
-public interface Event extends Serializable {
+public class KeyStringValueModule extends KeyValuePair<Module> {
 }

@@ -25,8 +25,8 @@ public class ByteArray implements Iterable<byte[]> {
     public static final long MIN_VALUE = 0L;
     public static final long MAX_VALUE = 4611686014132420609L; //Integer.MAX_VALUE * Integer.MAX_VALUE
 
-    private byte[][] bytes;
-    private final long length;
+    protected byte[][] bytes;
+    protected final long length;
 
     public ByteArray(byte[] bytes) {
         this.length = bytes.length;
@@ -96,8 +96,8 @@ public class ByteArray implements Iterable<byte[]> {
         assert length == 0;
     }
 
-    private class Iter implements Iterator<byte[]> {
-        int index = 0;
+    protected class Iter implements Iterator<byte[]> {
+        protected int index = 0;
 
         @Override
         public boolean hasNext() {

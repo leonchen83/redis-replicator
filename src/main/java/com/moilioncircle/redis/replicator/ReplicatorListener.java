@@ -24,9 +24,12 @@ import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 
 /**
- * Created by Administrator on 2017/1/31.
+ * Created by leon on 2017/1/31.
  */
 public interface ReplicatorListener {
+    /*
+     * Rdb
+     */
     boolean addRdbFilter(RdbFilter filter);
 
     boolean removeRdbFilter(RdbFilter filter);
@@ -43,6 +46,9 @@ public interface ReplicatorListener {
 
     boolean removeRdbRawByteListener(RawByteListener listener);
 
+    /*
+     * Command
+     */
     boolean addCommandFilter(CommandFilter filter);
 
     boolean removeCommandFilter(CommandFilter filter);
@@ -51,10 +57,16 @@ public interface ReplicatorListener {
 
     boolean removeCommandListener(CommandListener listener);
 
+    /*
+     * Close
+     */
     boolean addCloseListener(CloseListener listener);
 
     boolean removeCloseListener(CloseListener listener);
 
+    /*
+     * Exception
+     */
     boolean addExceptionListener(ExceptionListener listener);
 
     boolean removeExceptionListener(ExceptionListener listener);

@@ -20,8 +20,6 @@ import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.Lzf;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 
@@ -31,8 +29,6 @@ import static com.moilioncircle.redis.replicator.Constants.*;
  * Created by leon on 8/20/16.
  */
 public class BaseRdbParser {
-    protected static final Log logger = LogFactory.getLog(RdbParser.class);
-
     protected final RedisInputStream in;
 
     public BaseRdbParser(RedisInputStream in) {

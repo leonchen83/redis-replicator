@@ -28,7 +28,7 @@ import java.net.*;
  */
 public class RedisSocketFactory extends SocketFactory {
 
-    private final Configuration configuration;
+    protected final Configuration configuration;
 
     public RedisSocketFactory(Configuration configuration) {
         this.configuration = configuration;

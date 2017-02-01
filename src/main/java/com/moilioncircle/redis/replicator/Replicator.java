@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.rdb.ModuleParser;
+import com.moilioncircle.redis.replicator.rdb.RdbEntityVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 
 import java.io.Closeable;
@@ -40,7 +41,6 @@ public interface Replicator extends Closeable, ReplicatorListener {
 
     CommandParser<? extends Command> removeCommandParser(CommandName command);
 
-
     /*
      * Module
      */
@@ -53,8 +53,13 @@ public interface Replicator extends Closeable, ReplicatorListener {
     /*
      * Rdb
      */
-    void builtInRdbParserRegister();
+    void setRdbEntityVisitor(RdbEntityVisitor rdbEntityVisitor);
 
+    RdbEntityVisitor getRdbEntityVisitor();
+
+    /*
+     *
+     */
     boolean verbose();
 
     void open() throws IOException;

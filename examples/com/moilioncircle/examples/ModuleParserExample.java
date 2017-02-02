@@ -52,7 +52,7 @@ public class ModuleParserExample {
         @Override
         public HelloTypeModule parse(RedisInputStream in) throws IOException {
             DefaultRdbModuleParser parser = new DefaultRdbModuleParser(in);
-            int elements = parser.loadUnSigned().intValue();
+            int elements = (int) parser.loadUnSigned();
             long[] ary = new long[elements];
             int i = 0;
             while (elements-- > 0) {

@@ -26,8 +26,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.FlushDBCommand;
 public class FlushDBParser implements CommandParser<FlushDBCommand> {
     @Override
     public FlushDBCommand parse(CommandName cmdName, Object[] params) {
-        //TODO ASYNC option
-        return new FlushDBCommand();
+        Boolean isAsync = null;
+        if (params != null && params.length == 1 && ((String) params[0]).equalsIgnoreCase("ASYNC")) {
+            isAsync = true;
+        }
+        return new FlushDBCommand(isAsync);
     }
 
 }

@@ -173,6 +173,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("BITFIELD"), new BitFieldParser());
         addCommandParser(CommandName.name("SETBIT"), new SetBitParser());
         addCommandParser(CommandName.name("SREM"), new SRemParser());
+        addCommandParser(CommandName.name("UNLINK"), new UnLinkParser());
     }
 
     protected void doClose() throws IOException {

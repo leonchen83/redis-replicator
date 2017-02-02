@@ -26,8 +26,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.FlushAllCommand;
 public class FlushAllParser implements CommandParser<FlushAllCommand> {
     @Override
     public FlushAllCommand parse(CommandName cmdName, Object[] params) {
-        //TODO ASYNC option
-        return new FlushAllCommand();
+        Boolean isAsync = null;
+        if (params != null && params.length == 1 && ((String) params[0]).equalsIgnoreCase("ASYNC")) {
+            isAsync = true;
+        }
+        return new FlushAllCommand(isAsync);
     }
 
 }

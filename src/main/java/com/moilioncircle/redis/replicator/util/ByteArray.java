@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -94,6 +95,15 @@ public class ByteArray implements Iterable<byte[]> {
             length -= min;
         }
         assert length == 0;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (byte[] b : bytes) {
+            builder.append(Arrays.toString(b));
+        }
+        return builder.toString();
     }
 
     protected class Iter implements Iterator<byte[]> {

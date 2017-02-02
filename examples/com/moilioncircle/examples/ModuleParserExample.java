@@ -23,7 +23,7 @@ import java.util.Arrays;
  */
 public class ModuleParserExample {
     public static void main(String[] args) throws IOException {
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6381, Configuration.defaultSetting());
+        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
         replicator.addRdbListener(new RdbListener.Adaptor() {

@@ -11,12 +11,12 @@ import java.math.BigInteger;
 /**
  * Created by leon on 2017/1/31.
  */
-public class RdbLoadModuleParser {
+public class DefaultRdbModuleParser {
 
     private final RedisInputStream in;
     private final BaseRdbParser parser;
 
-    public RdbLoadModuleParser(RedisInputStream in) {
+    public DefaultRdbModuleParser(RedisInputStream in) {
         this.in = in;
         this.parser = new BaseRdbParser(in);
     }

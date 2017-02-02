@@ -19,9 +19,11 @@ package com.moilioncircle.redis.replicator.rdb.module;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 
+import java.io.IOException;
+
 /**
  * Created by leon on 2017/1/31.
  */
 public interface ModuleParser<T extends Module> {
-    T parse(RedisInputStream in);
+    T parse(RedisInputStream in) throws IOException;
 }

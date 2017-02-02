@@ -23,6 +23,4 @@ public interface Module {
     String moduleName();
 
     int moduleVersion();
-
-    <T> T moduleValue();
 }

@@ -490,8 +490,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
         char[] c = new char[9];
         long moduleid = parser.rdbLoadLen().len;
         for (int i = 0; i < c.length; i++) {
-            c[i] = MODULE_SET[(int) (moduleid & 63)];
-            moduleid >>>= 6;
+            c[i] = MODULE_SET[(int) (moduleid >>> (10 + (c.length - 1 - i) * 6) & 63)];
         }
         String moduleName = new String(c);
         int moduleVersion = (int) (moduleid & 1023);

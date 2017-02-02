@@ -2,7 +2,7 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.cmd.impl.SetParser;
+import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,7 +44,7 @@ public class RedisAofReplicatorTest {
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
-                if (command instanceof SetParser.SetCommand && ((SetParser.SetCommand) command).getKey().startsWith("test_")) {
+                if (command instanceof SetCommand && ((SetCommand) command).getKey().startsWith("test_")) {
                     acc.incrementAndGet();
                 }
             }

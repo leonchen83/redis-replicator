@@ -53,11 +53,6 @@ public class CommandParserExample {
                         ", value='" + value + '\'' +
                         '}';
             }
-
-            @Override
-            public CommandName name() {
-                return CommandName.name("APPEND");
-            }
         }
     }
 }

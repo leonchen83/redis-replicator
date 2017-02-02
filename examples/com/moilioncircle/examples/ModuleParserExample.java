@@ -79,16 +79,6 @@ public class ModuleParserExample {
                     "value=" + Arrays.toString(value) +
                     '}';
         }
-
-        @Override
-        public String moduleName() {
-            return "hellotype";
-        }
-
-        @Override
-        public int moduleVersion() {
-            return 0;
-        }
     }
 
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
@@ -125,9 +115,5 @@ public class ModuleParserExample {
                     '}';
         }
 
-        @Override
-        public CommandName name() {
-            return CommandName.name("hellotype.insert");
-        }
     }
 }

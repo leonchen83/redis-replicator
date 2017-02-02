@@ -68,8 +68,8 @@ public class RedisSocketReplicatorTest extends TestCase {
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        if (command instanceof SetParser.SetCommand) {
-                            SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
+                        if (command instanceof SetCommand) {
+                            SetCommand setCommand = (SetCommand) command;
                             assertEquals("abc", setCommand.getKey());
                             assertEquals("bcd", setCommand.getValue());
                             ref.compareAndSet(null, "ok");
@@ -130,8 +130,8 @@ public class RedisSocketReplicatorTest extends TestCase {
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        if (command instanceof ZInterStoreParser.ZInterStoreCommand) {
-                            ZInterStoreParser.ZInterStoreCommand zInterStoreCommand = (ZInterStoreParser.ZInterStoreCommand) command;
+                        if (command instanceof ZInterStoreCommand) {
+                            ZInterStoreCommand zInterStoreCommand = (ZInterStoreCommand) command;
                             assertEquals("out", zInterStoreCommand.getDestination());
                             assertEquals(2, zInterStoreCommand.getNumkeys());
                             assertEquals("zset1", zInterStoreCommand.getKeys()[0]);
@@ -197,8 +197,8 @@ public class RedisSocketReplicatorTest extends TestCase {
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        if (command instanceof ZUnionStoreParser.ZUnionStoreCommand) {
-                            ZUnionStoreParser.ZUnionStoreCommand zInterStoreCommand = (ZUnionStoreParser.ZUnionStoreCommand) command;
+                        if (command instanceof ZUnionStoreCommand) {
+                            ZUnionStoreCommand zInterStoreCommand = (ZUnionStoreCommand) command;
                             assertEquals("out1", zInterStoreCommand.getDestination());
                             assertEquals(2, zInterStoreCommand.getNumkeys());
                             assertEquals("zset3", zInterStoreCommand.getKeys()[0]);
@@ -275,13 +275,13 @@ public class RedisSocketReplicatorTest extends TestCase {
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        if (command instanceof SetParser.SetCommand) {
-                            SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
+                        if (command instanceof SetCommand) {
+                            SetCommand setCommand = (SetCommand) command;
                             assertEquals("abc", setCommand.getKey());
                             assertEquals("bcd", setCommand.getValue());
                             ref.compareAndSet(null, "1");
-                        } else if (command instanceof ZAddParser.ZAddCommand) {
-                            ZAddParser.ZAddCommand zaddCommand = (ZAddParser.ZAddCommand) command;
+                        } else if (command instanceof ZAddCommand) {
+                            ZAddCommand zaddCommand = (ZAddCommand) command;
                             assertEquals("zzlist", zaddCommand.getKey());
                             assertEquals(1.5, zaddCommand.getZSetEntries()[0].getScore());
                             assertEquals("member", zaddCommand.getZSetEntries()[0].getElement());
@@ -335,8 +335,8 @@ public class RedisSocketReplicatorTest extends TestCase {
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        if (command instanceof SetParser.SetCommand) {
-                            SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
+                        if (command instanceof SetCommand) {
+                            SetCommand setCommand = (SetCommand) command;
                             assertEquals("abc", setCommand.getKey());
                             assertEquals("bcd", setCommand.getValue());
                             ref.compareAndSet(null, "ok");

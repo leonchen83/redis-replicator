@@ -20,7 +20,4 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  * Created by leon on 2017/1/31.
  */
 public interface Module {
-    String moduleName();
-
-    int moduleVersion();
 }

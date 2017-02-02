@@ -1,6 +1,5 @@
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import junit.framework.TestCase;
@@ -43,12 +42,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 //        } finally {
 //            jedis.close();
 //        }
-//        replicator.addRdbFilter(new RdbFilter() {
-//            @Override
-//            public boolean accept(KeyValuePair<?> kv) {
-//                return kv.getKey().equals("ssl");
-//            }
-//        });
 //        replicator.addRdbListener(new RdbListener() {
 //            @Override
 //            public void preFullSync(Replicator replicator) {
@@ -56,7 +49,7 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 //
 //            @Override
 //            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-//                acc.incrementAndGet();
+//                if(kv.getKey().equals("ssl")) acc.incrementAndGet();
 //            }
 //
 //            @Override
@@ -102,12 +95,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 //        } finally {
 //            jedis.close();
 //        }
-//        replicator.addRdbFilter(new RdbFilter() {
-//            @Override
-//            public boolean accept(KeyValuePair<?> kv) {
-//                return kv.getKey().equals("ssl1");
-//            }
-//        });
 //        replicator.addRdbListener(new RdbListener() {
 //            @Override
 //            public void preFullSync(Replicator replicator) {
@@ -115,7 +102,7 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 //
 //            @Override
 //            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-//                acc.incrementAndGet();
+//                if(kv.getKey().equals("ssl1")) acc.incrementAndGet();
 //            }
 //
 //            @Override
@@ -160,12 +147,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
         } finally {
             jedis.close();
         }
-        replicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getKey().equals("ssl2");
-            }
-        });
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -173,7 +154,7 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
+                if (kv.getKey().equals("ssl2")) acc.incrementAndGet();
             }
 
             @Override
@@ -218,12 +199,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
         } finally {
             jedis.close();
         }
-        replicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getKey().equals("ssl3");
-            }
-        });
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -232,8 +207,10 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-                acc.incrementAndGet();
+                if (kv.getKey().equals("ssl3")) {
+                    System.out.println(kv);
+                    acc.incrementAndGet();
+                }
             }
 
             @Override
@@ -282,12 +259,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
         } finally {
             jedis.close();
         }
-        replicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getKey().equals("ssl4");
-            }
-        });
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -295,7 +266,7 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
+                if (kv.getKey().equals("ssl4")) acc.incrementAndGet();
             }
 
             @Override

@@ -17,11 +17,8 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandFilter;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import junit.framework.TestCase;
@@ -68,19 +65,15 @@ public class RedisSocketReplicatorTest extends TestCase {
                         jedis.close();
                     }
                 });
-                replicator.addCommandFilter(new CommandFilter() {
-                    @Override
-                    public boolean accept(Command command) {
-                        return command.name().equals(CommandName.name("SET"));
-                    }
-                });
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
-                        assertEquals("abc", setCommand.getKey());
-                        assertEquals("bcd", setCommand.getValue());
-                        ref.compareAndSet(null, "ok");
+                        if (command instanceof SetParser.SetCommand) {
+                            SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
+                            assertEquals("abc", setCommand.getKey());
+                            assertEquals("bcd", setCommand.getValue());
+                            ref.compareAndSet(null, "ok");
+                        }
                     }
                 });
                 replicator.addCloseListener(new CloseListener() {
@@ -134,24 +127,20 @@ public class RedisSocketReplicatorTest extends TestCase {
                         jedis.close();
                     }
                 });
-                replicator.addCommandFilter(new CommandFilter() {
-                    @Override
-                    public boolean accept(Command command) {
-                        return command.name().equals(CommandName.name("ZINTERSTORE"));
-                    }
-                });
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        ZInterStoreParser.ZInterStoreCommand zInterStoreCommand = (ZInterStoreParser.ZInterStoreCommand) command;
-                        assertEquals("out", zInterStoreCommand.getDestination());
-                        assertEquals(2, zInterStoreCommand.getNumkeys());
-                        assertEquals("zset1", zInterStoreCommand.getKeys()[0]);
-                        assertEquals("zset2", zInterStoreCommand.getKeys()[1]);
-                        assertEquals(2.0, zInterStoreCommand.getWeights()[0]);
-                        assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
-                        assertEquals(AggregateType.MIN, zInterStoreCommand.getAggregateType());
-                        ref.compareAndSet(null, "ok");
+                        if (command instanceof ZInterStoreParser.ZInterStoreCommand) {
+                            ZInterStoreParser.ZInterStoreCommand zInterStoreCommand = (ZInterStoreParser.ZInterStoreCommand) command;
+                            assertEquals("out", zInterStoreCommand.getDestination());
+                            assertEquals(2, zInterStoreCommand.getNumkeys());
+                            assertEquals("zset1", zInterStoreCommand.getKeys()[0]);
+                            assertEquals("zset2", zInterStoreCommand.getKeys()[1]);
+                            assertEquals(2.0, zInterStoreCommand.getWeights()[0]);
+                            assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
+                            assertEquals(AggregateType.MIN, zInterStoreCommand.getAggregateType());
+                            ref.compareAndSet(null, "ok");
+                        }
                     }
                 });
                 replicator.addCloseListener(new CloseListener() {
@@ -205,24 +194,20 @@ public class RedisSocketReplicatorTest extends TestCase {
                         jedis.close();
                     }
                 });
-                replicator.addCommandFilter(new CommandFilter() {
-                    @Override
-                    public boolean accept(Command command) {
-                        return command.name().equals(CommandName.name("ZUNIONSTORE"));
-                    }
-                });
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        ZUnionStoreParser.ZUnionStoreCommand zInterStoreCommand = (ZUnionStoreParser.ZUnionStoreCommand) command;
-                        assertEquals("out1", zInterStoreCommand.getDestination());
-                        assertEquals(2, zInterStoreCommand.getNumkeys());
-                        assertEquals("zset3", zInterStoreCommand.getKeys()[0]);
-                        assertEquals("zset4", zInterStoreCommand.getKeys()[1]);
-                        assertEquals(2.0, zInterStoreCommand.getWeights()[0]);
-                        assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
-                        assertEquals(AggregateType.SUM, zInterStoreCommand.getAggregateType());
-                        ref.compareAndSet(null, "ok");
+                        if (command instanceof ZUnionStoreParser.ZUnionStoreCommand) {
+                            ZUnionStoreParser.ZUnionStoreCommand zInterStoreCommand = (ZUnionStoreParser.ZUnionStoreCommand) command;
+                            assertEquals("out1", zInterStoreCommand.getDestination());
+                            assertEquals(2, zInterStoreCommand.getNumkeys());
+                            assertEquals("zset3", zInterStoreCommand.getKeys()[0]);
+                            assertEquals("zset4", zInterStoreCommand.getKeys()[1]);
+                            assertEquals(2.0, zInterStoreCommand.getWeights()[0]);
+                            assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
+                            assertEquals(AggregateType.SUM, zInterStoreCommand.getAggregateType());
+                            ref.compareAndSet(null, "ok");
+                        }
                     }
                 });
                 replicator.addCloseListener(new CloseListener() {
@@ -287,22 +272,15 @@ public class RedisSocketReplicatorTest extends TestCase {
                         jedis.close();
                     }
                 });
-                replicator.addCommandFilter(new CommandFilter() {
-                    @Override
-                    public boolean accept(Command command) {
-                        return command.name().equals(CommandName.name("SET"))
-                                || command.name().equals(CommandName.name("ZADD"));
-                    }
-                });
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        if (command.name().equals(CommandName.name("SET"))) {
+                        if (command instanceof SetParser.SetCommand) {
                             SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
                             assertEquals("abc", setCommand.getKey());
                             assertEquals("bcd", setCommand.getValue());
                             ref.compareAndSet(null, "1");
-                        } else if (command.name().equals(CommandName.name("ZADD"))) {
+                        } else if (command instanceof ZAddParser.ZAddCommand) {
                             ZAddParser.ZAddCommand zaddCommand = (ZAddParser.ZAddCommand) command;
                             assertEquals("zzlist", zaddCommand.getKey());
                             assertEquals(1.5, zaddCommand.getZSetEntries()[0].getScore());
@@ -354,19 +332,15 @@ public class RedisSocketReplicatorTest extends TestCase {
                         jedis.close();
                     }
                 });
-                replicator.addCommandFilter(new CommandFilter() {
-                    @Override
-                    public boolean accept(Command command) {
-                        return command.name().equals(CommandName.name("SET"));
-                    }
-                });
                 replicator.addCommandListener(new CommandListener() {
                     @Override
                     public void handle(Replicator replicator, Command command) {
-                        SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
-                        assertEquals("abc", setCommand.getKey());
-                        assertEquals("bcd", setCommand.getValue());
-                        ref.compareAndSet(null, "ok");
+                        if (command instanceof SetParser.SetCommand) {
+                            SetParser.SetCommand setCommand = (SetParser.SetCommand) command;
+                            assertEquals("abc", setCommand.getKey());
+                            assertEquals("bcd", setCommand.getValue());
+                            ref.compareAndSet(null, "ok");
+                        }
                     }
                 });
                 replicator.addCloseListener(new CloseListener() {
@@ -452,12 +426,6 @@ public class RedisSocketReplicatorTest extends TestCase {
                 "127.0.0.1", 6379,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        redisReplicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getKey().startsWith("test_");
-            }
-        });
         redisReplicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -465,12 +433,14 @@ public class RedisSocketReplicatorTest extends TestCase {
 
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (kv.getKey().startsWith("test_")) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    acc.incrementAndGet();
                 }
-                acc.incrementAndGet();
             }
 
             @Override

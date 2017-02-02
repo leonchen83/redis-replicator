@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
@@ -54,16 +56,6 @@ public class RedisReplicator implements Replicator {
 
     public RedisReplicator(String host, int port, Configuration configuration) {
         replicator = new RedisSocketReplicator(host, port, configuration);
-    }
-
-    @Override
-    public boolean addRdbFilter(RdbFilter filter) {
-        return replicator.addRdbFilter(filter);
-    }
-
-    @Override
-    public boolean removeRdbFilter(RdbFilter filter) {
-        return replicator.removeRdbFilter(filter);
     }
 
     @Override
@@ -137,16 +129,6 @@ public class RedisReplicator implements Replicator {
 
     public RdbVisitor getRdbVisitor() {
         return replicator.getRdbVisitor();
-    }
-
-    @Override
-    public boolean addCommandFilter(CommandFilter filter) {
-        return replicator.addCommandFilter(filter);
-    }
-
-    @Override
-    public boolean removeCommandFilter(CommandFilter filter) {
-        return replicator.removeCommandFilter(filter);
     }
 
     @Override

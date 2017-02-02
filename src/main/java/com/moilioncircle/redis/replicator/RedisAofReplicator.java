@@ -23,7 +23,6 @@ import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
@@ -119,16 +118,6 @@ public class RedisAofReplicator extends AbstractReplicator {
 
     @Override
     public RdbVisitor getRdbVisitor() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean addRdbFilter(RdbFilter filter) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean removeRdbFilter(RdbFilter filter) {
         throw new UnsupportedOperationException();
     }
 

@@ -113,10 +113,10 @@ public class RdbParser implements RawByteListener {
          * ----------------------------
          */
         in.addRawByteListener(this);
+        this.replicator.submitEvent(new PreFullSyncEvent());
         try {
             rdbVisitor.applyMagic(in);
             int version = rdbVisitor.applyVersion(in);
-            this.replicator.submitEvent(new PreFullSyncEvent());
             DB db = null;
             long checksum;
             /*

@@ -1,7 +1,6 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandFilter;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.impl.SetParser;
 import org.junit.Test;
@@ -42,16 +41,12 @@ public class RedisAofReplicatorTest {
                 RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly2.aof"),
                 Configuration.defaultSetting(), false);
         final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandFilter(new CommandFilter() {
-            @Override
-            public boolean accept(Command command) {
-                return command instanceof SetParser.SetCommand && ((SetParser.SetCommand) command).getKey().startsWith("test_");
-            }
-        });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
-                acc.incrementAndGet();
+                if (command instanceof SetParser.SetCommand && ((SetParser.SetCommand) command).getKey().startsWith("test_")) {
+                    acc.incrementAndGet();
+                }
             }
         });
         replicator.addCloseListener(new CloseListener() {

@@ -1,6 +1,5 @@
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
@@ -141,12 +140,6 @@ public class RedisRdbReplicatorTest {
                 RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        redisReplicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getValueRdbType() == 0;
-            }
-        });
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -156,7 +149,9 @@ public class RedisRdbReplicatorTest {
 
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
+                if (kv.getValueRdbType() == 0) {
+                    acc.incrementAndGet();
+                }
             }
 
             @Override

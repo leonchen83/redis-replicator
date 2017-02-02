@@ -79,13 +79,9 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     public void submitEvent(Event event) {
         try {
             if (event instanceof KeyValuePair<?>) {
-                KeyValuePair<?> kv = (KeyValuePair<?>) event;
-                if (!doRdbFilter(this, kv)) return;
-                doRdbListener(this, kv);
+                doRdbListener(this, (KeyValuePair<?>) event);
             } else if (event instanceof Command) {
-                Command command = (Command) event;
-                if (!doCommandFilter(this, command)) return;
-                doCommandListener(this, command);
+                doCommandListener(this, (Command) event);
             } else if (event instanceof PreFullSyncEvent) {
                 doPreFullSync(this);
             } else if (event instanceof PostFullSyncEvent) {

@@ -16,7 +16,10 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
@@ -58,16 +61,6 @@ public class RedisRdbReplicator extends AbstractReplicator implements RawByteLis
     @Override
     public void close() throws IOException {
         doClose();
-    }
-
-    @Override
-    public boolean addCommandFilter(CommandFilter filter) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean removeCommandFilter(CommandFilter filter) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

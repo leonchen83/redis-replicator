@@ -17,11 +17,9 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandFilter;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
@@ -33,24 +31,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by leon on 2017/1/31.
  */
 public class AbstractReplicatorListener implements ReplicatorListener {
-    protected final List<RdbFilter> rdbFilters = new CopyOnWriteArrayList<>();
-    protected final List<CommandFilter> filters = new CopyOnWriteArrayList<>();
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
     protected final List<AuxFieldListener> auxFieldListeners = new CopyOnWriteArrayList<>();
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
     protected final List<CommandListener> commandListeners = new CopyOnWriteArrayList<>();
     protected final List<RawByteListener> rawByteListeners = new CopyOnWriteArrayList<>();
     protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
-
-    @Override
-    public boolean addCommandFilter(CommandFilter filter) {
-        return filters.add(filter);
-    }
-
-    @Override
-    public boolean removeCommandFilter(CommandFilter filter) {
-        return filters.remove(filter);
-    }
 
     @Override
     public boolean addCommandListener(CommandListener listener) {
@@ -60,16 +46,6 @@ public class AbstractReplicatorListener implements ReplicatorListener {
     @Override
     public boolean removeCommandListener(CommandListener listener) {
         return commandListeners.remove(listener);
-    }
-
-    @Override
-    public boolean addRdbFilter(RdbFilter filter) {
-        return rdbFilters.add(filter);
-    }
-
-    @Override
-    public boolean removeRdbFilter(RdbFilter filter) {
-        return rdbFilters.remove(filter);
     }
 
     @Override
@@ -128,13 +104,6 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         }
     }
 
-    protected boolean doCommandFilter(Replicator replicator, Command command) {
-        for (CommandFilter filter : filters) {
-            if (!filter.accept(command)) return false;
-        }
-        return true;
-    }
-
     protected void doRdbListener(Replicator replicator, KeyValuePair<?> kv) {
         for (RdbListener listener : rdbListeners) {
             listener.handle(replicator, kv);
@@ -145,13 +114,6 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         for (AuxFieldListener listener : auxFieldListeners) {
             listener.handle(replicator, auxField);
         }
-    }
-
-    protected boolean doRdbFilter(Replicator replicator, KeyValuePair<?> kv) {
-        for (RdbFilter filter : rdbFilters) {
-            if (!filter.accept(kv)) return false;
-        }
-        return true;
     }
 
     protected void doPreFullSync(Replicator replicator) {

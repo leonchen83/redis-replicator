@@ -4,14 +4,16 @@ import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 /**
  * Created by leon on 2017/1/31.
  */
 public class DefaultRdbModuleParser {
+    protected static final Log logger = LogFactory.getLog(DefaultRdbModuleParser.class);
 
     private final RedisInputStream in;
     private final BaseRdbParser parser;
@@ -29,8 +31,9 @@ public class DefaultRdbModuleParser {
         return parser.rdbLoadLen().len;
     }
 
-    public BigInteger loadUnSigned() throws IOException {
-        return BigInteger.valueOf(loadSigned() & 0xFFFFFFFFFFFFFFFFL);
+    public long loadUnSigned() throws IOException {
+        logger.warn("Un-support [loadUnSigned]. using [loadSigned] instead");
+        return loadSigned();
     }
 
     public String loadString() throws IOException {

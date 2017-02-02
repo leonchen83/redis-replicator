@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.moilioncircle.redis.replicator.io;
 
 import org.apache.commons.logging.Log;
@@ -52,7 +53,7 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
     private final Condition bufferNotEmpty = this.lock.newCondition();
 
 
-    /**
+    /*
      *
      */
     public AsyncBufferedInputStream(InputStream is) {
@@ -74,7 +75,7 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
         this.worker.start();
     }
 
-    /**
+    /*
      *
      */
     public void run() {
@@ -108,7 +109,7 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
         }
     }
 
-    /**
+    /*
      *
      */
     @Override
@@ -195,7 +196,7 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
         }
     }
 
-    /**
+    /*
      *
      */
     private final class ByteRingBuffer {
@@ -205,14 +206,14 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
         private int tail; // Read
         private final byte[] buffer;
 
-        /**
+        /*
          *
          */
         public ByteRingBuffer(int capacity) {
             this.buffer = new byte[capacity];
         }
 
-        /**
+        /*
          *
          */
         public int size() {
@@ -227,7 +228,7 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
             return this.size == this.buffer.length;
         }
 
-        /**
+        /*
          *
          */
         public int read() {

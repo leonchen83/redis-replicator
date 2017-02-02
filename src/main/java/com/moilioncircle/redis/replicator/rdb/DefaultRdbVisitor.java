@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.rdb.entity;
+package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.ByteArrayInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
@@ -36,13 +35,13 @@ import static com.moilioncircle.redis.replicator.Constants.*;
 /**
  * Created by leon on 2/1/17.
  */
-public class DefaultRdbEntityVisitor implements RdbEntityVisitor {
+public class DefaultRdbVisitor implements RdbVisitor {
 
-    protected static final Log logger = LogFactory.getLog(DefaultRdbEntityVisitor.class);
+    protected static final Log logger = LogFactory.getLog(DefaultRdbVisitor.class);
 
     protected final Replicator replicator;
 
-    public DefaultRdbEntityVisitor(final Replicator replicator) {
+    public DefaultRdbVisitor(final Replicator replicator) {
         this.replicator = replicator;
     }
 
@@ -78,8 +77,7 @@ public class DefaultRdbEntityVisitor implements RdbEntityVisitor {
          */
         BaseRdbParser parser = new BaseRdbParser(in);
         long dbNumber = parser.rdbLoadLen().len;
-        DB db = new DB(dbNumber);
-        return db;
+        return new DB(dbNumber);
     }
 
     @Override
@@ -117,7 +115,7 @@ public class DefaultRdbEntityVisitor implements RdbEntityVisitor {
          */
         BaseRdbParser parser = new BaseRdbParser(in);
         int expiredSec = parser.rdbLoadTime();
-        int valueType = in.read();
+        int valueType = applyType(in);
         KeyValuePair kv = rdbLoadObject(in, db, valueType, version);
         kv.setExpiredType(ExpiredType.SECOND);
         kv.setExpiredValue((long) expiredSec);
@@ -136,7 +134,7 @@ public class DefaultRdbEntityVisitor implements RdbEntityVisitor {
          */
         BaseRdbParser parser = new BaseRdbParser(in);
         long expiredMs = parser.rdbLoadMillisecondTime();
-        int valueType = in.read();
+        int valueType = applyType(in);
         KeyValuePair kv = rdbLoadObject(in, db, valueType, version);
         kv.setExpiredType(ExpiredType.MS);
         kv.setExpiredValue(expiredMs);

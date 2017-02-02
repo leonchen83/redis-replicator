@@ -19,8 +19,8 @@ package com.moilioncircle.redis.replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
-import com.moilioncircle.redis.replicator.rdb.entity.RdbEntityVisitor;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 
 import java.io.Closeable;
@@ -53,9 +53,9 @@ public interface Replicator extends Closeable, ReplicatorListener {
     /*
      * Rdb
      */
-    void setRdbEntityVisitor(RdbEntityVisitor rdbEntityVisitor);
+    void setRdbVisitor(RdbVisitor rdbVisitor);
 
-    RdbEntityVisitor getRdbEntityVisitor();
+    RdbVisitor getRdbVisitor();
 
     /*
      *

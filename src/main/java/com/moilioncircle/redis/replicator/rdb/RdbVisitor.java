@@ -1,4 +1,4 @@
-package com.moilioncircle.redis.replicator.rdb.entity;
+package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
@@ -9,7 +9,7 @@ import java.io.IOException;
 /**
  * Created by leon on 2/1/17.
  */
-public interface RdbEntityVisitor {
+public interface RdbVisitor {
     /*
      * rdb prefix
      */

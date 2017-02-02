@@ -25,8 +25,8 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbFilter;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
-import com.moilioncircle.redis.replicator.rdb.entity.RdbEntityVisitor;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,7 +58,7 @@ public class RedisAofReplicator extends AbstractReplicator {
     public void open() throws IOException {
         try {
             doOpen();
-        } catch (EOFException e) {
+        } catch (EOFException ignore) {
         } finally {
             close();
         }
@@ -113,12 +113,12 @@ public class RedisAofReplicator extends AbstractReplicator {
     }
 
     @Override
-    public void setRdbEntityVisitor(RdbEntityVisitor rdbEntityVisitor) {
+    public void setRdbVisitor(RdbVisitor rdbVisitor) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public RdbEntityVisitor getRdbEntityVisitor() {
+    public RdbVisitor getRdbVisitor() {
         throw new UnsupportedOperationException();
     }
 

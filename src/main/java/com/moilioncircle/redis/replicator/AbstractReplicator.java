@@ -24,11 +24,11 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
-import com.moilioncircle.redis.replicator.rdb.entity.DefaultRdbEntityVisitor;
-import com.moilioncircle.redis.replicator.rdb.entity.RdbEntityVisitor;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleKey;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 
@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
     protected RedisInputStream inputStream;
-    protected RdbEntityVisitor rdbEntityVisitor = new DefaultRdbEntityVisitor(this);
+    protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
 
@@ -103,14 +103,12 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         return configuration != null && configuration.isVerbose();
     }
 
-    @Override
-    public void setRdbEntityVisitor(RdbEntityVisitor rdbEntityVisitor) {
-        this.rdbEntityVisitor = rdbEntityVisitor;
+    public void setRdbVisitor(RdbVisitor rdbVisitor) {
+        this.rdbVisitor = rdbVisitor;
     }
 
-    @Override
-    public RdbEntityVisitor getRdbEntityVisitor() {
-        return this.rdbEntityVisitor;
+    public RdbVisitor getRdbVisitor() {
+        return this.rdbVisitor;
     }
 
     @Override

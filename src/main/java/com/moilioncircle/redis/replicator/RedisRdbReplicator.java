@@ -43,7 +43,7 @@ public class RedisRdbReplicator extends AbstractReplicator implements RawByteLis
     public void open() throws IOException {
         try {
             doOpen();
-        } catch (EOFException e) {
+        } catch (EOFException ignore) {
         } finally {
             close();
         }

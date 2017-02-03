@@ -160,7 +160,7 @@ public class RdbParser {
                     event = rdbVisitor.applyModule(in, db, version);
                     break;
                 default:
-                    throw new AssertionError("Un-except value-type:" + type);
+                    throw new AssertionError("Un-except value-type:" + type + ", please check your ModuleParser");
             }
             if (event == null) continue;
             if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(event);

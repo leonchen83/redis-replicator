@@ -357,6 +357,9 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
     }
 ```
+#Write your own rdb parser
+* implements `RdbVisitor`  
+* register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 
 #Built-in Command Parser  
 

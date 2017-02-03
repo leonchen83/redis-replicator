@@ -19,36 +19,17 @@ It also can sync redis data to your local cache or to database.
 ##QQ Group 
   
 **479688557**  
-
-##Current Stable Version  
-  
-```java
-<dependency>
-    <groupId>com.moilioncircle</groupId>
-    <artifactId>redis-replicator</artifactId>
-    <version>1.0.18</version>
-</dependency>
-```  
   
 #Requirements  
 jdk 1.7+  
-redis 2.4+  
+redis 2.4 - 4.0-rc2  
 
 #Install from source code  
   
 ```
 clean install package -Dmaven.test.skip=true
 ```  
-  
-#Flow Chart  
-![Alt text](https://raw.githubusercontent.com/leonchen83/redis-replicator/master/docs/redis-replicator-flow-chart.png)  
-  
-#Class Chart  
-![Alt text](https://raw.githubusercontent.com/leonchen83/redis-replicator/master/docs/redis-replicator-class-chart.png)  
-  
-#All Classes Chart
-![Alt text](https://raw.githubusercontent.com/leonchen83/redis-replicator/master/docs/redis-replicator-all-classes-chart.png)  
-  
+
 #Usage  
   
 ##Socket  
@@ -74,12 +55,6 @@ clean install package -Dmaven.test.skip=true
 
 ```java  
         Replicator replicator = new RedisReplicator(new File("dump.rdb"), Configuration.defaultSetting());
-        replicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getKey().startsWith("SESSION");
-            }
-        });
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -94,12 +69,6 @@ clean install package -Dmaven.test.skip=true
 
 ```java  
         Replicator replicator = new RedisReplicator(new File("appendonly.aof"), Configuration.defaultSetting(), false);
-        replicator.addCommandFilter(new CommandFilter() {
-            @Override
-            public boolean accept(Command command) {
-                return command instanceof SetParser.SetCommand && ((SetParser.SetCommand)command).getKey().startsWith("test_");
-            }
-        });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
@@ -111,16 +80,9 @@ clean install package -Dmaven.test.skip=true
 
 #Command Extension  
   
-* **write a command parser.**  
+* **write a command**  
 ```java  
-public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
-
-    @Override
-    public AppendCommand parse(CommandName cmdName, Object[] params) {
-        return new AppendCommand((String) params[0], (String) params[1]);
-    }
-
-    public static class AppendCommand implements Command {
+    public class AppendCommand implements Command {
         private final String key;
         private final String value;
 
@@ -144,13 +106,19 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
                     ", value='" + value + '\'' +
                     '}';
         }
+    }
+```
+
+* **write a command parser.**  
+```java
+    public class AppendParser implements CommandParser<AppendCommand> {
 
         @Override
-        public CommandName name() {
-            return CommandName.name("APPEND");
+        public AppendCommand parse(CommandName cmdName, Object[] params) {
+            return new AppendCommand((String) params[0], (String) params[1]);
         }
     }
-}
+
 ```
   
 * **register this parser.**  
@@ -161,83 +129,41 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
   
 * **handle event about this command.**  
 ```java
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if(command instanceof AppendParser.AppendCommand){
-                    AppendParser.AppendCommand appendCommand = (AppendParser.AppendCommand)command;
-                    //your code here
-                }
+    replicator.addCommandListener(new CommandListener() {
+        @Override
+        public void handle(Replicator replicator, Command command) {
+            if(command instanceof AppendCommand){
+                AppendCommand appendCommand = (AppendCommand)command;
+                //your code here
             }
-        });
+        }
+    });
 ```  
 
 #Built-in Parser  
-  
-**PING**  
-**APPEND**  
-**SET**  
-**SETEX**  
-**MSET**  
-**DEL**  
-**SADD**  
-**HMSET**  
-**HSET**  
-**LSET**  
-**EXPIRE**  
-**EXPIREAT**  
-**GETSET**  
-**HSETNX**  
-**MSETNX**  
-**PSETEX**  
-**SETNX**  
-**SETRANGE**  
-**HDEL**  
-**HKEYS**  
-**HVALS**  
-**LPOP**  
-**LPUSH**  
-**LPUSHX**  
-**LRem**  
-**RPOP**  
-**RPUSH**  
-**RPUSHX**  
-**ZREM**  
-**RENAME**  
-**INCR**  
-**DECR**  
-**INCRBY**  
-**PERSIST**  
-**SELECT**  
-**FLUSHALL**  
-**FLUSHDB**  
-**HINCRBY**  
-**ZINCRBY**  
-**MOVE**  
-**SMOVE**  
-**PFADD**  
-**PFCOUNT**  
-**PFMERGE**  
-**SDIFFSTORE**  
-**SINTERSTORE**  
-**SUNIONSTORE**  
-**ZADD**  
-**ZINTERSTORE**  
-**ZUNIONSTORE**  
-**BRPOPLPUSH**  
-**LINSERT**  
-**RENAMENX**  
-**RESTORE**  
-**PEXPIRE**  
-**PEXPIREAT**  
-**GEOADD**  
-**EVAL**  
-**SCRIPT**  
-**PUBLISH**  
-**BITOP**  
-**BITFIELD**  
-**SETBIT**  
-**SREM** **(special thanks to Adrian Yao)**  
+| ---------- | ------------ | ---------------|  
+|  **PING**  |  **APPEND**  |  **SET**       |  
+|  **SETEX** |  **MSET**    |  **DEL**       |  
+|  **SADD**  |  **HMSET**   |  **HSET**      |  
+|  **LSET**  |  **EXPIRE**  |  **EXPIREAT**  |  
+| **GETSET** | **HSETNX**   |  **MSETNX**    |  
+| **PSETEX** | **SETNX**    |  **SETRANGE**  |  
+| **HDEL**   | **HKEYS**    |  **HVALS**     |  
+| **LPOP**   |  **LPUSH**   | **LPUSHX**     |  
+| **LRem**   | **RPOP**     |  **RPUSH**     |  
+| **RPUSHX** |  **ZREM**    |  **RENAME**    |  
+| **INCR**   |  **DECR**    |  **INCRBY**    |  
+|**PERSIST** |  **SELECT**  | **FLUSHALL**   |  
+|**FLUSHDB** |  **HINCRBY** | **ZINCRBY**    |  
+| **MOVE**   |  **SMOVE**   |  **PFADD**     |  
+|**PFCOUNT** |  **PFMERGE** | **SDIFFSTORE** |  
+|**RENAMENX**| **PEXPIREAT**|**SINTERSTORE** |  
+|**ZADD**    | **BITFIELD** |**SUNIONSTORE** |  
+|**RESTORE** | **LINSERT**  |**ZINTERSTORE** |  
+|**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |  
+|**EVAL**    |  **SCRIPT**  |**BRPOPLPUSH**  |  
+|**PUBLISH** |  **BITOP**   |**SETBIT**      |  
+|**SREM**    |  **UNLINK**  |                |  
   
 ##EOFException
   
@@ -253,7 +179,7 @@ public class AppendParser implements CommandParser<AppendParser.AppendCommand> {
 * set log level to **debug**
 * if you are using log4j2,add logger below:
 
-```java
+```xml
     <Logger name="com.moilioncircle" level="debug">
         <AppenderRef ref="YourAppender"/>
     </Logger>
@@ -327,12 +253,6 @@ default `Configuration.getReadTimeout()` is 30 seconds
   
 ```java
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
-        replicator.addRdbFilter(new RdbFilter() {
-            @Override
-            public boolean accept(KeyValuePair<?> kv) {
-                return kv.getValueRdbType() == 0;
-            }
-        });
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

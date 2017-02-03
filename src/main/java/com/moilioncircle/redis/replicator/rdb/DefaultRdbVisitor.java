@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.util.*;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
@@ -49,7 +48,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
     public String applyMagic(RedisInputStream in) throws IOException {
         String magicString = BaseRdbParser.StringHelper.str(in, 5);//REDIS
         if (!magicString.equals("REDIS")) {
-            throw new InvalidObjectException("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
+            throw new UnsupportedOperationException("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
         }
         return magicString;
     }
@@ -58,7 +57,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
     public int applyVersion(RedisInputStream in) throws IOException {
         int version = Integer.parseInt(BaseRdbParser.StringHelper.str(in, 4));
         if (version < 2 || version > 8) {
-            throw new InvalidObjectException(String.valueOf("Can't handle RDB format version " + version));
+            throw new UnsupportedOperationException(String.valueOf("Can't handle RDB format version " + version));
         }
         return version;
     }
@@ -495,6 +494,8 @@ public class DefaultRdbVisitor implements RdbVisitor {
         String moduleName = new String(c);
         int moduleVersion = (int) (moduleid & 1023);
         ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
+        if (moduleParser == null)
+            throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
         o6.setValueRdbType(RDB_TYPE_MODULE);
         o6.setValue(moduleParser.parse(in));
         o6.setDb(db);

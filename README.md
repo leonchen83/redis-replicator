@@ -78,6 +78,111 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```  
 
+#Backup remote rdb snapshot
+```java
+        final FileOutputStream out = new FileOutputStream(new File("./dump.rdb"));
+        final RawByteListener rawByteListener = new RawByteListener() {
+            @Override
+            public void handle(byte... rawBytes) {
+                try {
+                    out.write(rawBytes);
+                } catch (IOException ignore) {
+                }
+            }
+        };
+
+        //save rdb from remote server
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+                replicator.addRdbRawByteListener(rawByteListener);
+            }
+
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+                replicator.removeRdbRawByteListener(rawByteListener);
+                try {
+                    out.close();
+                    replicator.close();
+                } catch (IOException ignore) {
+                }
+            }
+        });
+        replicator.open();
+
+        //check rdb file
+        replicator = new RedisReplicator(new File("./dump.rdb"), Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+            }
+        });
+        replicator.open();
+```
+
+#Backup remote commands
+```java
+        final FileOutputStream out = new FileOutputStream(new File("./appendonly.aof"));
+        final RawByteListener rawByteListener = new RawByteListener() {
+            @Override
+            public void handle(byte... rawBytes) {
+                try {
+                    out.write(rawBytes);
+                } catch (IOException ignore) {
+                }
+            }
+        };
+
+        //save 1000 records commands
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+                replicator.addRdbRawByteListener(rawByteListener);
+            }
+        });
+
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                if (acc.incrementAndGet() == 1000) {
+                    try {
+                        out.close();
+                        replicator.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        replicator.open();
+
+        //check aof file
+        replicator = new RedisReplicator(new File("./appendonly.aof"), Configuration.defaultSetting(), false);
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                System.out.println(command);
+            }
+        });
+        replicator.open();
+```
+
 #Command Extension  
   
 * **write a command**  
@@ -140,7 +245,120 @@ clean install package -Dmaven.test.skip=true
     });
 ```  
 
-#Built-in Parser  
+#Module Extension  
+* compile redis test modules  
+```java
+    $cd /path/to/redis-4.0-rc2/src/modules
+    $make
+```
+* open comment in redis.conf  
+
+```java
+    loadmodule /path/to/redis-4.0-rc2/src/modules/hellotype.so
+```
+* write a module parser  
+```java
+    public class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
+
+        @Override
+        public HelloTypeModule parse(RedisInputStream in) throws IOException {
+            DefaultRdbModuleParser parser = new DefaultRdbModuleParser(in);
+            int elements = (int) parser.loadUnSigned();
+            long[] ary = new long[elements];
+            int i = 0;
+            while (elements-- > 0) {
+                ary[i++] = parser.loadSigned();
+            }
+            return new HelloTypeModule(ary);
+        }
+    }
+
+    public class HelloTypeModule implements Module {
+        private final long[] value;
+
+        public HelloTypeModule(long[] value) {
+            this.value = value;
+        }
+
+        public long[] getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return "HelloTypeModule{" +
+                    "value=" + Arrays.toString(value) +
+                    '}';
+        }
+    }
+```
+* write a command parser  
+```java
+    public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
+        @Override
+        public HelloTypeCommand parse(CommandName cmdName, Object[] params) {
+            String key = (String) params[0];
+            long value = Long.parseLong((String) params[1]);
+            return new HelloTypeCommand(key, value);
+        }
+    }
+
+    public class HelloTypeCommand implements Command {
+        private final String key;
+        private final long value;
+
+        public long getValue() {
+            return value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public HelloTypeCommand(String key, long value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "HelloTypeCommand{" +
+                    "key='" + key + '\'' +
+                    ", value=" + value +
+                    '}';
+        }
+
+    }
+```
+* register this module parser and command parser and handle event  
+```java
+    public static void main(String[] args) throws IOException {
+        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
+        replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
+        replicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                if (kv instanceof KeyStringValueModule) {
+                    System.out.println(kv);
+                }
+            }
+        });
+
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                if (command instanceof HelloTypeCommand) {
+                    System.out.println(command);
+                }
+            }
+        });
+
+        replicator.open();
+    }
+```
+
+#Built-in Command Parser  
 
 |**commands**|**commands**  |  **commands**  |**commands**|**commands**  | **commands**   |
 | ---------- | ------------ | ---------------| ---------- | ------------ | ---------------|    

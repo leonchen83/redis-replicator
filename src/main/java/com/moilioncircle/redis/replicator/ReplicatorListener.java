@@ -24,7 +24,7 @@ import com.moilioncircle.redis.replicator.rdb.RdbListener;
 /**
  * Created by leon on 2017/1/31.
  */
-public interface ReplicatorListener {
+public interface ReplicatorListener extends RawByteListener {
     /*
      * Rdb
      */

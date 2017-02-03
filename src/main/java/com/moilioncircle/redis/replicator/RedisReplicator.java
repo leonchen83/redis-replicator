@@ -175,4 +175,9 @@ public class RedisReplicator implements Replicator {
     public void close() throws IOException {
         replicator.close();
     }
+
+    @Override
+    public void handle(byte... rawBytes) {
+        replicator.handle(rawBytes);
+    }
 }

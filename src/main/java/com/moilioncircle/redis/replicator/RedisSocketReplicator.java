@@ -18,7 +18,6 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
-import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
@@ -41,7 +40,7 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
 /**
  * Created by leon on 8/9/16.
  */
-public class RedisSocketReplicator extends AbstractReplicator implements RawByteListener {
+public class RedisSocketReplicator extends AbstractReplicator {
 
     protected static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
 
@@ -190,7 +189,6 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
                     in.skip(len);
                 } else {
                     RdbParser parser = new RdbParser(in, replicator);
-                    parser.addRawByteListener(RedisSocketReplicator.this);
                     parser.parse();
                 }
                 return "OK";
@@ -304,6 +302,7 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
         outputStream = new RedisOutputStream(socket.getOutputStream());
         inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream()) : socket.getInputStream(), configuration.getBufferSize());
+        inputStream.addRawByteListener(this);
         replyParser = new ReplyParser(inputStream);
     }
 
@@ -320,6 +319,7 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
         }
 
         try {
+            inputStream.removeRawByteListener(this);
             if (inputStream != null) inputStream.close();
         } catch (IOException e) {
             //NOP
@@ -335,11 +335,6 @@ public class RedisSocketReplicator extends AbstractReplicator implements RawByte
             //NOP
         }
         logger.info("channel closed");
-    }
-
-    @Override
-    public void handle(byte... rawBytes) {
-        doRdbRawByteListener(this, rawBytes);
     }
 
     protected enum SyncMode {SYNC, PSYNC, SYNC_LATER}

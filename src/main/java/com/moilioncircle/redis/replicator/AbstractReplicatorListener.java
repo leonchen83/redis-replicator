@@ -98,6 +98,11 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         return exceptionListeners.remove(listener);
     }
 
+    @Override
+    public void handle(byte... rawBytes) {
+        doRdbRawByteListener(rawBytes);
+    }
+
     protected void doCommandListener(Replicator replicator, Command command) {
         for (CommandListener listener : commandListeners) {
             listener.handle(replicator, command);
@@ -140,7 +145,7 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         }
     }
 
-    protected void doRdbRawByteListener(Replicator replicator, byte... bytes) {
+    protected void doRdbRawByteListener(byte... bytes) {
         for (RawByteListener listener : rawByteListeners) {
             listener.handle(bytes);
         }

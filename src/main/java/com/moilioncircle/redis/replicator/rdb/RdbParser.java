@@ -20,15 +20,12 @@ import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
-import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
 
@@ -42,37 +39,17 @@ import static com.moilioncircle.redis.replicator.Constants.*;
  *         [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
  * @since 2016/8/11
  */
-public class RdbParser implements RawByteListener {
+public class RdbParser {
 
     protected final RedisInputStream in;
     protected RdbVisitor rdbVisitor;
     protected final AbstractReplicator replicator;
     protected static final Log logger = LogFactory.getLog(RdbParser.class);
-    protected final List<RawByteListener> listeners = new CopyOnWriteArrayList<>();
 
     public RdbParser(RedisInputStream in, AbstractReplicator replicator) {
         this.in = in;
         this.replicator = replicator;
         this.rdbVisitor = this.replicator.getRdbVisitor();
-    }
-
-    public void addRawByteListener(RawByteListener listener) {
-        this.listeners.add(listener);
-    }
-
-    public void removeRawByteListener(RawByteListener listener) {
-        this.listeners.remove(listener);
-    }
-
-    protected void notify(byte... bytes) {
-        for (RawByteListener listener : listeners) {
-            listener.handle(bytes);
-        }
-    }
-
-    @Override
-    public void handle(byte... rawBytes) {
-        notify(rawBytes);
     }
 
     /**
@@ -112,90 +89,85 @@ public class RdbParser implements RawByteListener {
          * 30 30 30 33                 # RDB Version Number in big endian. In this case, version = 0003 = 3
          * ----------------------------
          */
-        in.addRawByteListener(this);
         this.replicator.submitEvent(new PreFullSyncEvent());
-        try {
-            rdbVisitor.applyMagic(in);
-            int version = rdbVisitor.applyVersion(in);
-            DB db = null;
-            long checksum;
-            /*
-             * rdb
-             */
-            loop:
-            while (true) {
-                int type = rdbVisitor.applyType(in);
-                Event event = null;
-                switch (type) {
-                    case RDB_OPCODE_EXPIRETIME:
-                        event = rdbVisitor.applyExpireTime(in, db, version);
-                        break;
-                    case RDB_OPCODE_EXPIRETIME_MS:
-                        event = rdbVisitor.applyExpireTimeMs(in, db, version);
-                        break;
-                    case RDB_OPCODE_AUX:
-                        event = rdbVisitor.applyAux(in, version);
-                        break;
-                    case RDB_OPCODE_RESIZEDB:
-                        rdbVisitor.applyResizeDB(in, db, version);
-                        break;
-                    case RDB_OPCODE_SELECTDB:
-                        db = rdbVisitor.applySelectDB(in, version);
-                        break;
-                    case RDB_OPCODE_EOF:
-                        checksum = rdbVisitor.applyEof(in, version);
-                        break loop;
-                    case RDB_TYPE_STRING:
-                        event = rdbVisitor.applyString(in, db, version);
-                        break;
-                    case RDB_TYPE_LIST:
-                        event = rdbVisitor.applyList(in, db, version);
-                        break;
-                    case RDB_TYPE_SET:
-                        event = rdbVisitor.applySet(in, db, version);
-                        break;
-                    case RDB_TYPE_ZSET:
-                        event = rdbVisitor.applyZSet(in, db, version);
-                        break;
-                    case RDB_TYPE_ZSET_2:
-                        event = rdbVisitor.applyZSet2(in, db, version);
-                        break;
-                    case RDB_TYPE_HASH:
-                        event = rdbVisitor.applyHash(in, db, version);
-                        break;
-                    case RDB_TYPE_HASH_ZIPMAP:
-                        event = rdbVisitor.applyHashZipMap(in, db, version);
-                        break;
-                    case RDB_TYPE_LIST_ZIPLIST:
-                        event = rdbVisitor.applyListZipList(in, db, version);
-                        break;
-                    case RDB_TYPE_SET_INTSET:
-                        event = rdbVisitor.applySetIntSet(in, db, version);
-                        break;
-                    case RDB_TYPE_ZSET_ZIPLIST:
-                        event = rdbVisitor.applyZSetZipList(in, db, version);
-                        break;
-                    case RDB_TYPE_HASH_ZIPLIST:
-                        event = rdbVisitor.applyHashZipList(in, db, version);
-                        break;
-                    case RDB_TYPE_LIST_QUICKLIST:
-                        event = rdbVisitor.applyListQuickList(in, db, version);
-                        break;
-                    case RDB_TYPE_MODULE:
-                        event = rdbVisitor.applyModule(in, db, version);
-                        break;
-                    default:
-                        throw new AssertionError("Un-except value-type:" + type);
-                }
-                if (event == null) continue;
-                if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(event);
-                this.replicator.submitEvent(event);
+        rdbVisitor.applyMagic(in);
+        int version = rdbVisitor.applyVersion(in);
+        DB db = null;
+        long checksum;
+        /*
+         * rdb
+         */
+        loop:
+        while (true) {
+            int type = rdbVisitor.applyType(in);
+            Event event = null;
+            switch (type) {
+                case RDB_OPCODE_EXPIRETIME:
+                    event = rdbVisitor.applyExpireTime(in, db, version);
+                    break;
+                case RDB_OPCODE_EXPIRETIME_MS:
+                    event = rdbVisitor.applyExpireTimeMs(in, db, version);
+                    break;
+                case RDB_OPCODE_AUX:
+                    event = rdbVisitor.applyAux(in, version);
+                    break;
+                case RDB_OPCODE_RESIZEDB:
+                    rdbVisitor.applyResizeDB(in, db, version);
+                    break;
+                case RDB_OPCODE_SELECTDB:
+                    db = rdbVisitor.applySelectDB(in, version);
+                    break;
+                case RDB_OPCODE_EOF:
+                    checksum = rdbVisitor.applyEof(in, version);
+                    break loop;
+                case RDB_TYPE_STRING:
+                    event = rdbVisitor.applyString(in, db, version);
+                    break;
+                case RDB_TYPE_LIST:
+                    event = rdbVisitor.applyList(in, db, version);
+                    break;
+                case RDB_TYPE_SET:
+                    event = rdbVisitor.applySet(in, db, version);
+                    break;
+                case RDB_TYPE_ZSET:
+                    event = rdbVisitor.applyZSet(in, db, version);
+                    break;
+                case RDB_TYPE_ZSET_2:
+                    event = rdbVisitor.applyZSet2(in, db, version);
+                    break;
+                case RDB_TYPE_HASH:
+                    event = rdbVisitor.applyHash(in, db, version);
+                    break;
+                case RDB_TYPE_HASH_ZIPMAP:
+                    event = rdbVisitor.applyHashZipMap(in, db, version);
+                    break;
+                case RDB_TYPE_LIST_ZIPLIST:
+                    event = rdbVisitor.applyListZipList(in, db, version);
+                    break;
+                case RDB_TYPE_SET_INTSET:
+                    event = rdbVisitor.applySetIntSet(in, db, version);
+                    break;
+                case RDB_TYPE_ZSET_ZIPLIST:
+                    event = rdbVisitor.applyZSetZipList(in, db, version);
+                    break;
+                case RDB_TYPE_HASH_ZIPLIST:
+                    event = rdbVisitor.applyHashZipList(in, db, version);
+                    break;
+                case RDB_TYPE_LIST_QUICKLIST:
+                    event = rdbVisitor.applyListQuickList(in, db, version);
+                    break;
+                case RDB_TYPE_MODULE:
+                    event = rdbVisitor.applyModule(in, db, version);
+                    break;
+                default:
+                    throw new AssertionError("Un-except value-type:" + type);
             }
-            this.replicator.submitEvent(new PostFullSyncEvent(checksum));
-            return in.total();
-        } finally {
-            in.removeRawByteListener(this);
+            if (event == null) continue;
+            if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(event);
+            this.replicator.submitEvent(event);
         }
+        this.replicator.submitEvent(new PostFullSyncEvent(checksum));
+        return in.total();
     }
 }
 

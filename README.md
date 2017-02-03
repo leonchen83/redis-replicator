@@ -141,6 +141,7 @@ clean install package -Dmaven.test.skip=true
 ```  
 
 #Built-in Parser  
+|            |              |                |
 | ---------- | ------------ | ---------------|  
 |  **PING**  |  **APPEND**  |  **SET**       |  
 |  **SETEX** |  **MSET**    |  **DEL**       |  

@@ -141,30 +141,20 @@ clean install package -Dmaven.test.skip=true
 ```  
 
 #Built-in Parser  
-|            |              |                |
-| ---------- | ------------ | ---------------|  
-|  **PING**  |  **APPEND**  |  **SET**       |  
-|  **SETEX** |  **MSET**    |  **DEL**       |  
-|  **SADD**  |  **HMSET**   |  **HSET**      |  
-|  **LSET**  |  **EXPIRE**  |  **EXPIREAT**  |  
-| **GETSET** | **HSETNX**   |  **MSETNX**    |  
-| **PSETEX** | **SETNX**    |  **SETRANGE**  |  
-| **HDEL**   | **HKEYS**    |  **HVALS**     |  
-| **LPOP**   |  **LPUSH**   | **LPUSHX**     |  
-| **LRem**   | **RPOP**     |  **RPUSH**     |  
-| **RPUSHX** |  **ZREM**    |  **RENAME**    |  
-| **INCR**   |  **DECR**    |  **INCRBY**    |  
-|**PERSIST** |  **SELECT**  | **FLUSHALL**   |  
-|**FLUSHDB** |  **HINCRBY** | **ZINCRBY**    |  
-| **MOVE**   |  **SMOVE**   |  **PFADD**     |  
-|**PFCOUNT** |  **PFMERGE** | **SDIFFSTORE** |  
-|**RENAMENX**| **PEXPIREAT**|**SINTERSTORE** |  
-|**ZADD**    | **BITFIELD** |**SUNIONSTORE** |  
-|**RESTORE** | **LINSERT**  |**ZINTERSTORE** |  
-|**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |  
-|**EVAL**    |  **SCRIPT**  |**BRPOPLPUSH**  |  
-|**PUBLISH** |  **BITOP**   |**SETBIT**      |  
-|**SREM**    |  **UNLINK**  |                |  
+
+|**commands**|**commands**  |  **commands**  |**commands**|**commands**  | **commands**   |
+| ---------- | ------------ | ---------------| ---------- | ------------ | ---------------|    
+|  **PING**  |  **APPEND**  |  **SET**       |  **SETEX** |  **MSET**    |  **DEL**       |  
+|  **SADD**  |  **HMSET**   |  **HSET**      |  **LSET**  |  **EXPIRE**  |  **EXPIREAT**  |  
+| **GETSET** | **HSETNX**   |  **MSETNX**    | **PSETEX** | **SETNX**    |  **SETRANGE**  |  
+| **HDEL**   | **HKEYS**    |  **HVALS**     | **LPOP**   |  **LPUSH**   | **LPUSHX**     |  
+| **LRem**   | **RPOP**     |  **RPUSH**     | **RPUSHX** |  **ZREM**    |  **RENAME**    |  
+| **INCR**   |  **DECR**    |  **INCRBY**    |**PERSIST** |  **SELECT**  | **FLUSHALL**   |  
+|**FLUSHDB** |  **HINCRBY** | **ZINCRBY**    | **MOVE**   |  **SMOVE**   |  **PFADD**     |  
+|**PFCOUNT** |  **PFMERGE** | **SDIFFSTORE** |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE** |  
+|**ZADD**    | **BITFIELD** |**SUNIONSTORE** |**RESTORE** | **LINSERT**  |**ZINTERSTORE** |  
+|**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**BRPOPLPUSH**  |  
+|**PUBLISH** |  **BITOP**   |**SETBIT**      |**SREM**    |  **UNLINK**  |                |  
   
 ##EOFException
   

@@ -319,8 +319,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
 
         try {
-            inputStream.removeRawByteListener(this);
-            if (inputStream != null) inputStream.close();
+            if (inputStream != null) {
+                inputStream.removeRawByteListener(this);
+                inputStream.close();
+            }
         } catch (IOException e) {
             //NOP
         }

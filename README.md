@@ -35,6 +35,7 @@ Table of Contents
       * [Avoid Full Sync](#avoid-full-sync)
       * [FullSyncEvent](#fullsyncevent)
       * [Handle Raw Bytes](#handle-raw-bytes)
+   * [Contributors](#Contributors)
    * [References](#references)
 
 #Redis-replicator  
@@ -518,6 +519,10 @@ default `Configuration.getReadTimeout()` is 30 seconds
         });
         replicator.open();
 ```  
+
+#Contributors  
+* Leon Chen  
+* Adrian Yao  
   
 #References  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

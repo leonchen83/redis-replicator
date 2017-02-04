@@ -35,6 +35,7 @@ Table of Contents
       * [避免全量同步](#避免全量同步)
       * [FullSyncEvent事件](#fullsyncevent事件)
       * [处理原始字节数组](#处理原始字节数组)
+   * [贡献者](#贡献者)
    * [相关引用](#相关引用)
 
 
@@ -518,6 +519,10 @@ maven-3.2.3以上
         });
         replicator.open();
 ```  
+  
+#贡献者  
+* Leon Chen  
+* Adrian Yao  
   
 #相关引用  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

@@ -5,7 +5,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import java.util.Arrays;
 
 /**
- * Created by leon on 2/2/17.
+ * Created by Adrian Yao on 2/2/17.
  */
 public class SRemCommand implements Command {
 

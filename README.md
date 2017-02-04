@@ -1,4 +1,5 @@
-Table of Contents [中文说明](https://github.com/leonchen83/redis-replicator/blob/master/README.zh_CN.md)
+
+Table of Contents([中文说明](https://github.com/leonchen83/redis-replicator/blob/master/README.zh_CN.md))  
 =================
 
    * [Redis-replicator](#redis-replicator)

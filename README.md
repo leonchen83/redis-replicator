@@ -78,8 +78,10 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```  
 
-#Backup remote rdb snapshot
-```java
+#Backup remote rdb snapshot  
+
+```java  
+
         final FileOutputStream out = new FileOutputStream(new File("./dump.rdb"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
@@ -126,8 +128,10 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```
 
-#Backup remote commands
-```java
+#Backup remote commands  
+
+```java  
+
         final FileOutputStream out = new FileOutputStream(new File("./appendonly.aof"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
@@ -208,7 +212,8 @@ clean install package -Dmaven.test.skip=true
 ```
 
 * **write a command parser.**  
-```java
+```java  
+
     public class YourAppendParser implements CommandParser<YourAppendCommand> {
 
         @Override
@@ -226,7 +231,7 @@ clean install package -Dmaven.test.skip=true
 ```
   
 * **handle event about this command.**  
-```java
+```java  
     replicator.addCommandListener(new CommandListener() {
         @Override
         public void handle(Replicator replicator, Command command) {
@@ -240,17 +245,17 @@ clean install package -Dmaven.test.skip=true
 
 #Module Extension  
 * compile redis test modules  
-```java
+```java  
     $cd /path/to/redis-4.0-rc2/src/modules
     $make
 ```
 * open comment in redis.conf  
 
-```java
+```java  
     loadmodule /path/to/redis-4.0-rc2/src/modules/hellotype.so
 ```
 * write a module parser  
-```java
+```java  
     public class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
 
         @Override
@@ -286,7 +291,7 @@ clean install package -Dmaven.test.skip=true
     }
 ```
 * write a command parser  
-```java
+```java  
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
@@ -324,7 +329,8 @@ clean install package -Dmaven.test.skip=true
     }
 ```
 * register this module parser and command parser and handle event  
-```java
+
+```java  
     public static void main(String[] args) throws IOException {
         RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
@@ -374,7 +380,7 @@ clean install package -Dmaven.test.skip=true
   
 * adjust redis server setting below.more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
   
-```java
+```java  
     client-output-buffer-limit slave 0 0 0
 ```  
 **WARNNING: this setting may run out of memory of redis server in some cases.**  
@@ -384,19 +390,19 @@ clean install package -Dmaven.test.skip=true
 * set log level to **debug**
 * if you are using log4j2,add logger below:
 
-```xml
+```xml  
     <Logger name="com.moilioncircle" level="debug">
         <AppenderRef ref="YourAppender"/>
     </Logger>
 ```
   
-```java
+```java  
     Configuration.defaultSetting().setVerbose(true);
 ```
   
 ##SSL connection  
   
-```java
+```java  
     System.setProperty("javax.net.ssl.trustStore", "/path/to/truststore");
     System.setProperty("javax.net.ssl.trustStorePassword", "password");
     System.setProperty("javax.net.ssl.trustStoreType", "your_type");
@@ -409,7 +415,7 @@ clean install package -Dmaven.test.skip=true
   
 ##Auth  
   
-```java
+```java  
     Configuration.defaultSetting().setAuthPassword("foobared");
 ```  
 
@@ -417,7 +423,7 @@ clean install package -Dmaven.test.skip=true
   
 * adjust redis server setting below  
   
-```java
+```java  
     repl-backlog-size
     repl-backlog-ttl
     repl-ping-slave-period
@@ -427,7 +433,7 @@ default `Configuration.getReadTimeout()` is 30 seconds
   
 ##FullSyncEvent  
   
-```java
+```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         final long start = System.currentTimeMillis();
         final AtomicInteger acc = new AtomicInteger(0);
@@ -456,7 +462,7 @@ default `Configuration.getReadTimeout()` is 30 seconds
   
 * when kv.getValueRdbType() == 0, you can get the raw bytes of value. In some cases(eg. HyperLogLog),this is very useful.  
   
-```java
+```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

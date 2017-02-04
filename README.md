@@ -1,5 +1,45 @@
-# Redis-replicator  
+Table of Contents
+=================
 
+   * [Redis-replicator](#redis-replicator)
+      * [Brief introduction](#brief-introduction)
+      * [QQ Group](#qq-group)
+      * [Contract author](#contract-author)
+   * [Install](#install)
+      * [Requirements](#requirements)
+      * [Install from source code](#install-from-source-code)
+   * [Simple usage](#simple-usage)
+      * [Replication via socket](#replication-via-socket)
+      * [Read Rdb file](#read-rdb-file)
+      * [Read Aof file](#read-aof-file)
+      * [Backup remote rdb snapshot](#backup-remote-rdb-snapshot)
+      * [Backup remote commands](#backup-remote-commands)
+   * [Advanced topics](#advanced-topics)
+      * [Command Extension](#command-extension)
+         * [write a command](#write-a-command)
+         * [write a command parser](#write-a-command-parser)
+         * [register this parser](#register-this-parser)
+         * [handle command event](#handle-command-event)
+      * [Module Extension](#module-extension)
+         * [compile redis test modules](#compile-redis-test-modules)
+         * [open comment in redis.conf](#open-comment-in-redisconf)
+         * [write a module parser](#write-a-module-parser)
+         * [write a command parser](#write-a-command-parser-1)
+         * [register this module parser and command parser and handle event](#register-this-module-parser-and-command-parser-and-handle-event)
+      * [Write your own rdb parser](#write-your-own-rdb-parser)
+      * [Built-in Command Parser](#built-in-command-parser)
+      * [EOFException](#eofexception)
+      * [Trace Event log](#trace-event-log)
+      * [SSL connection](#ssl-connection)
+      * [Auth](#auth)
+      * [Avoid Full Sync](#avoid-full-sync)
+      * [FullSyncEvent](#fullsyncevent)
+      * [Handle Raw Bytes](#handle-raw-bytes)
+   * [References](#references)
+
+#Redis-replicator  
+
+##Brief introduction
 [![Join the chat at https://gitter.im/leonchen83/redis-replicator](https://badges.gitter.im/leonchen83/redis-replicator.svg)](https://gitter.im/leonchen83/redis-replicator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/leonchen83/redis-replicator.svg?branch=master)](https://travis-ci.org/leonchen83/redis-replicator)
 [![Coverage Status](https://coveralls.io/repos/github/leonchen83/redis-replicator/badge.svg?branch=master)](https://coveralls.io/github/leonchen83/redis-replicator?branch=master)
@@ -10,29 +50,30 @@
 Redis Replicator is a redis RDB and Command parser written in java.  
 It can parse,filter,broadcast the RDB and Command events in a real time manner.  
 It also can sync redis data to your local cache or to database.  
-  
-##Online Coding  
-[![Livecoding viewers](https://tools.livecoding.tv/badge/viewersSmall/921/leonchen83)](https://www.livecoding.tv/leonchen83)
-[![Livecoding fans](https://tools.livecoding.tv/badge/followersSmall/106/leonchen83)](https://www.livecoding.tv/leonchen83)
-[![Livecoding.scheduled](https://tools.livecoding.tv/badge/nextStreamSmall/no/leonchen83)](https://www.livecoding.tv/leonchen83)  
-  
-##QQ Group 
+
+##QQ Group  
   
 **479688557**  
+
+##Contract author
+
+**chen.bao.yi@qq.com**
   
-#Requirements  
+#Install  
+##Requirements  
 jdk 1.7+  
 redis 2.4 - 4.0-rc2  
+maven-3.2.3 or newer  
 
-#Install from source code  
+##Install from source code  
   
 ```
-clean install package -Dmaven.test.skip=true
+    $mvn clean install package -Dmaven.test.skip=true
 ```  
 
-#Usage  
+#Simple usage  
   
-##Socket  
+##Replication via socket  
   
 ```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -51,7 +92,7 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```
 
-##Rdb file  
+##Read Rdb file  
 
 ```java  
         Replicator replicator = new RedisReplicator(new File("dump.rdb"), Configuration.defaultSetting());
@@ -65,7 +106,7 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```  
 
-##Aof file  
+##Read Aof file  
 
 ```java  
         Replicator replicator = new RedisReplicator(new File("appendonly.aof"), Configuration.defaultSetting(), false);
@@ -78,7 +119,7 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```  
 
-#Backup remote rdb snapshot  
+##Backup remote rdb snapshot  
 
 ```java  
 
@@ -128,7 +169,7 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```
 
-#Backup remote commands  
+##Backup remote commands  
 
 ```java  
 
@@ -187,9 +228,11 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
 ```
 
-#Command Extension  
+#Advanced topics  
+
+##Command Extension  
   
-* **write a command**  
+###write a command  
 ```java  
     public static class YourAppendCommand implements Command {
         public final String key;
@@ -211,7 +254,7 @@ clean install package -Dmaven.test.skip=true
     }
 ```
 
-* **write a command parser.**  
+###write a command parser  
 ```java  
 
     public class YourAppendParser implements CommandParser<YourAppendCommand> {
@@ -224,13 +267,13 @@ clean install package -Dmaven.test.skip=true
 
 ```
   
-* **register this parser.**  
+###register this parser  
 ```java  
     Replicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
     replicator.addCommandParser(CommandName.name("APPEND"),new YourAppendParser());
 ```
   
-* **handle event about this command.**  
+###handle command event  
 ```java  
     replicator.addCommandListener(new CommandListener() {
         @Override
@@ -243,18 +286,18 @@ clean install package -Dmaven.test.skip=true
     });
 ```  
 
-#Module Extension  
-* compile redis test modules  
+##Module Extension  
+###compile redis test modules  
 ```java  
     $cd /path/to/redis-4.0-rc2/src/modules
     $make
 ```
-* open comment in redis.conf  
+###open comment in redis.conf  
 
 ```java  
     loadmodule /path/to/redis-4.0-rc2/src/modules/hellotype.so
 ```
-* write a module parser  
+###write a module parser  
 ```java  
     public class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
 
@@ -290,7 +333,7 @@ clean install package -Dmaven.test.skip=true
         }
     }
 ```
-* write a command parser  
+###write a command parser  
 ```java  
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
@@ -328,7 +371,7 @@ clean install package -Dmaven.test.skip=true
 
     }
 ```
-* register this module parser and command parser and handle event  
+###register this module parser and command parser and handle event  
 
 ```java  
     public static void main(String[] args) throws IOException {
@@ -356,11 +399,11 @@ clean install package -Dmaven.test.skip=true
         replicator.open();
     }
 ```
-#Write your own rdb parser
+##Write your own rdb parser  
 * implements `RdbVisitor`  
 * register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 
-#Built-in Command Parser  
+##Built-in Command Parser  
 
 |**commands**|**commands**  |  **commands**  |**commands**|**commands**  | **commands**   |
 | ---------- | ------------ | ---------------| ---------- | ------------ | ---------------|    

@@ -279,7 +279,7 @@ maven-3.2.3以上
     replicator.addCommandListener(new CommandListener() {
         @Override
         public void handle(Replicator replicator, Command command) {
-            if(command instanceof AppendCommand){
+            if(command instanceof YourAppendCommand){
                 YourAppendCommand appendCommand = (YourAppendCommand)command;
                 //your code gots here
             }

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.MoveCommand;
 
@@ -25,10 +24,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.MoveCommand;
  */
 public class MoveParser implements CommandParser<MoveCommand> {
     @Override
-    public MoveCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        int db = Integer.parseInt((String) params[idx++]);
+    public MoveCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        int db = Integer.parseInt((String) command[idx++]);
         return new MoveCommand(key, db);
     }
 

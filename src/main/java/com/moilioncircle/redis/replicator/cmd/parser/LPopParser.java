@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.LPopCommand;
 
@@ -25,8 +24,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.LPopCommand;
  */
 public class LPopParser implements CommandParser<LPopCommand> {
     @Override
-    public LPopCommand parse(CommandName cmdName, Object[] params) {
-        String key = (String) params[0];
+    public LPopCommand parse(Object[] command) {
+        String key = (String) command[1];
         return new LPopCommand(key);
     }
 

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.HIncrByCommand;
 
@@ -26,11 +25,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.HIncrByCommand;
 public class HIncrByParser implements CommandParser<HIncrByCommand> {
 
     @Override
-    public HIncrByCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        String field = (String) params[idx++];
-        int increment = Integer.parseInt((String) params[idx++]);
+    public HIncrByCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        String field = (String) command[idx++];
+        int increment = Integer.parseInt((String) command[idx++]);
         return new HIncrByCommand(key, field, increment);
     }
 

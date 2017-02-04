@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PSetExCommand;
 
@@ -25,11 +24,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.PSetExCommand;
  */
 public class PSetExParser implements CommandParser<PSetExCommand> {
     @Override
-    public PSetExCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        long ex = Long.parseLong((String) params[idx++]);
-        String value = (String) params[idx++];
+    public PSetExCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        long ex = Long.parseLong((String) command[idx++]);
+        String value = (String) command[idx++];
         return new PSetExCommand(key, ex, value);
     }
 

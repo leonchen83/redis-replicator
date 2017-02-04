@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PFMergeCommand;
 
@@ -25,12 +24,12 @@ import com.moilioncircle.redis.replicator.cmd.impl.PFMergeCommand;
  */
 public class PFMergeParser implements CommandParser<PFMergeCommand> {
     @Override
-    public PFMergeCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String destkey = (String) params[idx++];
-        String[] sourcekeys = new String[params.length - 1];
-        for (int i = idx, j = 0; i < params.length; i++, j++) {
-            sourcekeys[j] = (String) params[idx];
+    public PFMergeCommand parse(Object[] command) {
+        int idx = 1;
+        String destkey = (String) command[idx++];
+        String[] sourcekeys = new String[command.length - 2];
+        for (int i = idx, j = 0; i < command.length; i++, j++) {
+            sourcekeys[j] = (String) command[i];
         }
         return new PFMergeCommand(destkey, sourcekeys);
     }

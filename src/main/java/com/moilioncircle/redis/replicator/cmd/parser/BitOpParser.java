@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.BitOpCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.Op;
@@ -26,14 +25,14 @@ import com.moilioncircle.redis.replicator.cmd.impl.Op;
  */
 public class BitOpParser implements CommandParser<BitOpCommand> {
     @Override
-    public BitOpCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String strOp = (String) params[idx++];
+    public BitOpCommand parse(Object[] command) {
+        int idx = 1;
+        String strOp = (String) command[idx++];
         Op op = Op.valueOf(strOp.toUpperCase());
-        String destKey = (String) params[idx++];
-        String[] keys = new String[params.length - 2];
-        for (int i = idx, j = 0; i < params.length; i++, j++) {
-            keys[j] = (String) params[idx];
+        String destKey = (String) command[idx++];
+        String[] keys = new String[command.length - 3];
+        for (int i = idx, j = 0; i < command.length; i++, j++) {
+            keys[j] = (String) command[i];
         }
         return new BitOpCommand(op, destKey, keys);
     }

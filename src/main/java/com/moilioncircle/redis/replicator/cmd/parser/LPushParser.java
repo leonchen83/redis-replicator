@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.LPushCommand;
 
@@ -27,12 +26,12 @@ public class LPushParser implements CommandParser<LPushCommand> {
 
 
     @Override
-    public LPushCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0, newIdx = 0;
-        String key = (String) params[idx++];
-        String[] values = new String[params.length - 1];
-        while (idx < params.length) {
-            values[newIdx++] = (String) params[idx++];
+    public LPushCommand parse(Object[] command) {
+        int idx = 1, newIdx = 0;
+        String key = (String) command[idx++];
+        String[] values = new String[command.length - 2];
+        while (idx < command.length) {
+            values[newIdx++] = (String) command[idx++];
         }
         return new LPushCommand(key, values);
     }

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
 
@@ -29,28 +28,28 @@ import java.util.List;
 public class BitFieldParser implements CommandParser<BitFieldCommand> {
 
     @Override
-    public BitFieldCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
+    public BitFieldCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
         List<Statement> list = new ArrayList<>();
-        if (idx < params.length) {
+        if (idx < command.length) {
             String token;
             do {
-                idx = parseStatement(idx, params, list);
-                if (idx >= params.length) break;
-                token = (String) params[idx];
+                idx = parseStatement(idx, command, list);
+                if (idx >= command.length) break;
+                token = (String) command[idx];
             }
             while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
         }
         List<OverFlow> overFlowList = null;
-        if (idx < params.length) {
+        if (idx < command.length) {
             overFlowList = new ArrayList<>();
             do {
                 OverFlow overFlow = new OverFlow();
-                idx = parseOverFlow(idx, params, overFlow);
+                idx = parseOverFlow(idx, command, overFlow);
                 overFlowList.add(overFlow);
-                if (idx >= params.length) break;
-            } while (((String) params[idx]).equalsIgnoreCase("OVERFLOW"));
+                if (idx >= command.length) break;
+            } while (((String) command[idx]).equalsIgnoreCase("OVERFLOW"));
         }
 
         return new BitFieldCommand(key, list, overFlowList);

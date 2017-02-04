@@ -49,8 +49,8 @@ public class CommandParserExample {
     public static class YourAppendParser implements CommandParser<YourAppendParser.YourAppendCommand> {
 
         @Override
-        public YourAppendCommand parse(CommandName cmdName, Object[] params) {
-            return new YourAppendCommand((String) params[0], (String) params[1]);
+        public YourAppendCommand parse(Object[] command) {
+            return new YourAppendCommand((String) command[1], (String) command[2]);
         }
 
         public static class YourAppendCommand implements Command {

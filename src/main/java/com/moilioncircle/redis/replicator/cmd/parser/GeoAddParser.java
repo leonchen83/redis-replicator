@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.Geo;
 import com.moilioncircle.redis.replicator.cmd.impl.GeoAddCommand;
@@ -29,14 +28,14 @@ import java.util.List;
  */
 public class GeoAddParser implements CommandParser<GeoAddCommand> {
     @Override
-    public GeoAddCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
+    public GeoAddCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
         List<Geo> list = new ArrayList<>();
-        while (idx < params.length) {
-            double longitude = Double.parseDouble((String) params[idx++]);
-            double latitude = Double.parseDouble((String) params[idx++]);
-            String member = (String) params[idx++];
+        while (idx < command.length) {
+            double longitude = Double.parseDouble((String) command[idx++]);
+            double latitude = Double.parseDouble((String) command[idx++]);
+            String member = (String) command[idx++];
             list.add(new Geo(member, longitude, latitude));
         }
         Geo[] geos = new Geo[list.size()];

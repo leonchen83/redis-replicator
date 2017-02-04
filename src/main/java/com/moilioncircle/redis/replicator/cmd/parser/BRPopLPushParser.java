@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.BRPopLPushCommand;
 
@@ -25,11 +24,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.BRPopLPushCommand;
  */
 public class BRPopLPushParser implements CommandParser<BRPopLPushCommand> {
     @Override
-    public BRPopLPushCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String source = (String) params[idx++];
-        String destination = (String) params[idx++];
-        int timeout = Integer.parseInt((String) params[idx++]);
+    public BRPopLPushCommand parse(Object[] command) {
+        int idx = 1;
+        String source = (String) command[idx++];
+        String destination = (String) command[idx++];
+        int timeout = Integer.parseInt((String) command[idx++]);
         return new BRPopLPushCommand(source, destination, timeout);
     }
 

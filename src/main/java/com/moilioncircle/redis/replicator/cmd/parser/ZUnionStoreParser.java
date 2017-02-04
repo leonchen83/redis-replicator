@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
@@ -26,27 +25,27 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
  */
 public class ZUnionStoreParser implements CommandParser<ZUnionStoreCommand> {
     @Override
-    public ZUnionStoreCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
+    public ZUnionStoreCommand parse(Object[] command) {
+        int idx = 1;
         AggregateType aggregateType = null;
-        String destination = (String) params[idx++];
-        int numkeys = Integer.parseInt((String) params[idx++]);
+        String destination = (String) command[idx++];
+        int numkeys = Integer.parseInt((String) command[idx++]);
         String[] keys = new String[numkeys];
         for (int i = 0; i < numkeys; i++) {
-            keys[i] = (String) params[idx++];
+            keys[i] = (String) command[idx++];
         }
         double[] weights = null;
-        while (idx < params.length) {
-            String param = (String) params[idx];
+        while (idx < command.length) {
+            String param = (String) command[idx];
             if (param.equalsIgnoreCase("WEIGHTS")) {
                 idx++;
                 weights = new double[numkeys];
                 for (int i = 0; i < numkeys; i++) {
-                    weights[i] = Double.parseDouble((String) params[idx++]);
+                    weights[i] = Double.parseDouble((String) command[idx++]);
                 }
             } else if (param.equalsIgnoreCase("AGGREGATE")) {
                 idx++;
-                String next = (String) params[idx++];
+                String next = (String) command[idx++];
                 if (next.equalsIgnoreCase("SUM")) {
                     aggregateType = AggregateType.SUM;
                 } else if (next.equalsIgnoreCase("MIN")) {

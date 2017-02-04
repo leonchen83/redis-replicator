@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.RenameCommand;
 
@@ -25,10 +24,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.RenameCommand;
  */
 public class RenameParser implements CommandParser<RenameCommand> {
     @Override
-    public RenameCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        String newKey = (String) params[idx++];
+    public RenameCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        String newKey = (String) command[idx++];
         return new RenameCommand(key, newKey);
     }
 

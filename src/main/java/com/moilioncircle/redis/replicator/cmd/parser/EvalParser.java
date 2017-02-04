@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.EvalCommand;
 
@@ -28,17 +27,17 @@ import java.util.List;
  */
 public class EvalParser implements CommandParser<EvalCommand> {
     @Override
-    public EvalCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String script = (String) params[idx++];
-        int numkeys = Integer.parseInt((String) params[idx++]);
+    public EvalCommand parse(Object[] command) {
+        int idx = 1;
+        String script = (String) command[idx++];
+        int numkeys = Integer.parseInt((String) command[idx++]);
         String[] keys = new String[numkeys];
         for (int i = 0; i < numkeys; i++) {
-            keys[i] = (String) params[idx++];
+            keys[i] = (String) command[idx++];
         }
         List<String> list = new ArrayList<>();
-        while (idx < params.length) {
-            list.add((String) params[idx++]);
+        while (idx < command.length) {
+            list.add((String) command[idx++]);
         }
         String[] args = new String[list.size()];
         list.toArray(args);

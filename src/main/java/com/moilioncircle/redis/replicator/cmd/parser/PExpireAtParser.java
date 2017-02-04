@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PExpireAtCommand;
 
@@ -25,10 +24,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.PExpireAtCommand;
  */
 public class PExpireAtParser implements CommandParser<PExpireAtCommand> {
     @Override
-    public PExpireAtCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        long ex = Long.parseLong((String) params[idx++]);
+    public PExpireAtCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        long ex = Long.parseLong((String) command[idx++]);
         return new PExpireAtCommand(key, ex);
     }
 

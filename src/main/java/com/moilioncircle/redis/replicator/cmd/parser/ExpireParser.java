@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
 
@@ -25,10 +24,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
  */
 public class ExpireParser implements CommandParser<ExpireCommand> {
     @Override
-    public ExpireCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        int ex = Integer.parseInt((String) params[idx++]);
+    public ExpireCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        int ex = Integer.parseInt((String) command[idx++]);
         return new ExpireCommand(key, ex);
     }
 

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SMoveCommand;
 
@@ -26,11 +25,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.SMoveCommand;
 public class SMoveParser implements CommandParser<SMoveCommand> {
 
     @Override
-    public SMoveCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String source = (String) params[idx++];
-        String destination = (String) params[idx++];
-        String member = (String) params[idx++];
+    public SMoveCommand parse(Object[] command) {
+        int idx = 1;
+        String source = (String) command[idx++];
+        String destination = (String) command[idx++];
+        String member = (String) command[idx++];
         return new SMoveCommand(source, destination, member);
     }
 

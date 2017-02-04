@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PublishCommand;
 
@@ -25,10 +24,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.PublishCommand;
  */
 public class PublishParser implements CommandParser<PublishCommand> {
     @Override
-    public PublishCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String channel = (String) params[idx++];
-        String message = (String) params[idx++];
+    public PublishCommand parse(Object[] command) {
+        int idx = 1;
+        String channel = (String) command[idx++];
+        String message = (String) command[idx++];
         return new PublishCommand(channel, message);
     }
 

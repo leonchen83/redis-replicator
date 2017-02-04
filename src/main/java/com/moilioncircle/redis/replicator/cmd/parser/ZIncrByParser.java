@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZIncrByCommand;
 
@@ -26,11 +25,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZIncrByCommand;
 public class ZIncrByParser implements CommandParser<ZIncrByCommand> {
 
     @Override
-    public ZIncrByCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        int increment = Integer.parseInt((String) params[idx++]);
-        String member = (String) params[idx++];
+    public ZIncrByCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        int increment = Integer.parseInt((String) command[idx++]);
+        String member = (String) command[idx++];
         return new ZIncrByCommand(key, increment, member);
     }
 

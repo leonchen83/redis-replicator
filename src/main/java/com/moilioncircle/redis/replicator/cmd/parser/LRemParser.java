@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.LRemCommand;
 
@@ -26,11 +25,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.LRemCommand;
  */
 public class LRemParser implements CommandParser<LRemCommand> {
     @Override
-    public LRemCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        int index = Integer.parseInt((String) params[idx++]);
-        String value = (String) params[idx++];
+    public LRemCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        int index = Integer.parseInt((String) command[idx++]);
+        String value = (String) command[idx++];
         return new LRemCommand(key, index, value);
     }
 

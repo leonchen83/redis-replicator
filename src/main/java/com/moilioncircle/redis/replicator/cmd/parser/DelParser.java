@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.DelCommand;
 
@@ -25,10 +24,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.DelCommand;
  */
 public class DelParser implements CommandParser<DelCommand> {
     @Override
-    public DelCommand parse(CommandName cmdName, Object[] params) {
-        String[] keys = new String[params.length];
-        for (int i = 0; i < params.length; i++) {
-            keys[i] = (String) params[i];
+    public DelCommand parse(Object[] command) {
+        int idx = 1;
+        String[] keys = new String[command.length - 1];
+        for (int i = idx, j = 0; i < command.length; i++, j++) {
+            keys[j] = (String) command[i];
         }
         return new DelCommand(keys);
     }

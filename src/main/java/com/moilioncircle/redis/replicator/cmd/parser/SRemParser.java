@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SRemCommand;
 
@@ -26,12 +25,12 @@ import com.moilioncircle.redis.replicator.cmd.impl.SRemCommand;
 public class SRemParser implements CommandParser<SRemCommand> {
 
     @Override
-    public SRemCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        final String key = (String) params[idx++];
-        final String[] members = new String[params.length - 1];
-        for (int i = idx, j = 0; i < params.length; i++, j++) {
-            members[j] = (String) params[idx];
+    public SRemCommand parse(Object[] command) {
+        int idx = 1;
+        final String key = (String) command[idx++];
+        final String[] members = new String[command.length - 2];
+        for (int i = idx, j = 0; i < command.length; i++, j++) {
+            members[j] = (String) command[i];
         }
         return new SRemCommand(key, members);
     }

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemCommand;
 
@@ -27,12 +26,12 @@ public class ZRemParser implements CommandParser<ZRemCommand> {
 
 
     @Override
-    public ZRemCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0, newIdx = 0;
-        String key = (String) params[idx++];
-        String[] members = new String[params.length - 1];
-        while (idx < params.length) {
-            members[newIdx++] = (String) params[idx++];
+    public ZRemCommand parse(Object[] command) {
+        int idx = 1, newIdx = 0;
+        String key = (String) command[idx++];
+        String[] members = new String[command.length - 2];
+        while (idx < command.length) {
+            members[newIdx++] = (String) command[idx++];
         }
         return new ZRemCommand(key, members);
     }

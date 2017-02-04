@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PersistCommand;
 
@@ -25,8 +24,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.PersistCommand;
  */
 public class PersistParser implements CommandParser<PersistCommand> {
     @Override
-    public PersistCommand parse(CommandName cmdName, Object[] params) {
-        String key = (String) params[0];
+    public PersistCommand parse(Object[] command) {
+        String key = (String) command[1];
         return new PersistCommand(key);
     }
 

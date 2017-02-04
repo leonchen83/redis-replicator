@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
 
@@ -25,8 +24,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
  */
 public class SelectParser implements CommandParser<SelectCommand> {
     @Override
-    public SelectCommand parse(CommandName cmdName, Object[] params) {
-        int index = Integer.parseInt((String) params[0]);
+    public SelectCommand parse(Object[] command) {
+        int index = Integer.parseInt((String) command[1]);
         return new SelectCommand(index);
     }
 

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.RestoreCommand;
 
@@ -25,13 +24,13 @@ import com.moilioncircle.redis.replicator.cmd.impl.RestoreCommand;
  */
 public class RestoreParser implements CommandParser<RestoreCommand> {
     @Override
-    public RestoreCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
+    public RestoreCommand parse(Object[] command) {
+        int idx = 1;
         Boolean isReplace = null;
-        String key = (String) params[idx++];
-        int ttl = Integer.parseInt((String) params[idx++]);
-        String serializedValue = (String) params[idx++];
-        if (idx < params.length && ((String) params[idx++]).equalsIgnoreCase("REPLACE")) {
+        String key = (String) command[idx++];
+        int ttl = Integer.parseInt((String) command[idx++]);
+        String serializedValue = (String) command[idx++];
+        if (idx < command.length && ((String) command[idx++]).equalsIgnoreCase("REPLACE")) {
             isReplace = true;
         }
         return new RestoreCommand(key, ttl, serializedValue, isReplace);

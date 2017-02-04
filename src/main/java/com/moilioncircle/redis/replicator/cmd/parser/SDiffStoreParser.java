@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SDiffStoreCommand;
 
@@ -25,12 +24,12 @@ import com.moilioncircle.redis.replicator.cmd.impl.SDiffStoreCommand;
  */
 public class SDiffStoreParser implements CommandParser<SDiffStoreCommand> {
     @Override
-    public SDiffStoreCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String destination = (String) params[idx++];
-        String[] keys = new String[params.length - 1];
-        for (int i = idx, j = 0; i < params.length; i++, j++) {
-            keys[j] = (String) params[idx];
+    public SDiffStoreCommand parse(Object[] command) {
+        int idx = 1;
+        String destination = (String) command[idx++];
+        String[] keys = new String[command.length - 2];
+        for (int i = idx, j = 0; i < command.length; i++, j++) {
+            keys[j] = (String) command[i];
         }
         return new SDiffStoreCommand(destination, keys);
     }

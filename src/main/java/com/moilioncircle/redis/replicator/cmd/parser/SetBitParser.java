@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SetBitCommand;
 
@@ -25,11 +24,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetBitCommand;
  */
 public class SetBitParser implements CommandParser<SetBitCommand> {
     @Override
-    public SetBitCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        int offset = Integer.parseInt((String) params[idx++]);
-        int value = Integer.parseInt((String) params[idx++]);
+    public SetBitCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        int offset = Integer.parseInt((String) command[idx++]);
+        int value = Integer.parseInt((String) command[idx++]);
         return new SetBitCommand(key, offset, value);
     }
 

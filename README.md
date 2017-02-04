@@ -187,40 +187,33 @@ clean install package -Dmaven.test.skip=true
   
 * **write a command**  
 ```java  
-    public class AppendCommand implements Command {
-        private final String key;
-        private final String value;
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-        
-        public AppendCommand(String key, String value) {
+    public static class YourAppendCommand implements Command {
+        public final String key;
+        public final String value;
+    
+        public YourAppendCommand(String key, String value) {
             this.key = key;
             this.value = value;
         }
-
+    
         @Override
         public String toString() {
-            return "AppendCommand{" +
-                    "key='" + key + '\'' +
-                    ", value='" + value + '\'' +
-                    '}';
+            return "YourAppendCommand{" +
+                "key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+            }
         }
     }
 ```
 
 * **write a command parser.**  
 ```java
-    public class AppendParser implements CommandParser<AppendCommand> {
+    public class YourAppendParser implements CommandParser<YourAppendCommand> {
 
         @Override
-        public AppendCommand parse(CommandName cmdName, Object[] params) {
-            return new AppendCommand((String) params[0], (String) params[1]);
+        public YourAppendCommand parse(Object[] command) {
+            return new YourAppendCommand((String) command[1], (String) command[2]);
         }
     }
 
@@ -229,7 +222,7 @@ clean install package -Dmaven.test.skip=true
 * **register this parser.**  
 ```java  
     Replicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
-    replicator.addCommandParser(CommandName.name("APPEND"),new AppendParser());
+    replicator.addCommandParser(CommandName.name("APPEND"),new YourAppendParser());
 ```
   
 * **handle event about this command.**  
@@ -238,8 +231,8 @@ clean install package -Dmaven.test.skip=true
         @Override
         public void handle(Replicator replicator, Command command) {
             if(command instanceof AppendCommand){
-                AppendCommand appendCommand = (AppendCommand)command;
-                //your code here
+                YourAppendCommand appendCommand = (YourAppendCommand)command;
+                //your code gots here
             }
         }
     });
@@ -296,9 +289,9 @@ clean install package -Dmaven.test.skip=true
 ```java
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
-        public HelloTypeCommand parse(CommandName cmdName, Object[] params) {
-            String key = (String) params[0];
-            long value = Long.parseLong((String) params[1]);
+        public HelloTypeCommand parse(Object[] command) {
+            String key = (String) command[1];
+            long value = Long.parseLong((String) command[2]);
             return new HelloTypeCommand(key, value);
         }
     }
@@ -368,14 +361,14 @@ clean install package -Dmaven.test.skip=true
 |  **PING**  |  **APPEND**  |  **SET**       |  **SETEX** |  **MSET**    |  **DEL**       |  
 |  **SADD**  |  **HMSET**   |  **HSET**      |  **LSET**  |  **EXPIRE**  |  **EXPIREAT**  |  
 | **GETSET** | **HSETNX**   |  **MSETNX**    | **PSETEX** | **SETNX**    |  **SETRANGE**  |  
-| **HDEL**   | **HKEYS**    |  **HVALS**     | **LPOP**   |  **LPUSH**   | **LPUSHX**     |  
+| **HDEL**   | **UNLINK**   |  **SREM**      | **LPOP**   |  **LPUSH**   | **LPUSHX**     |  
 | **LRem**   | **RPOP**     |  **RPUSH**     | **RPUSHX** |  **ZREM**    |  **RENAME**    |  
 | **INCR**   |  **DECR**    |  **INCRBY**    |**PERSIST** |  **SELECT**  | **FLUSHALL**   |  
 |**FLUSHDB** |  **HINCRBY** | **ZINCRBY**    | **MOVE**   |  **SMOVE**   |  **PFADD**     |  
 |**PFCOUNT** |  **PFMERGE** | **SDIFFSTORE** |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE** |  
 |**ZADD**    | **BITFIELD** |**SUNIONSTORE** |**RESTORE** | **LINSERT**  |**ZINTERSTORE** |  
 |**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**BRPOPLPUSH**  |  
-|**PUBLISH** |  **BITOP**   |**SETBIT**      |**SREM**    |  **UNLINK**  |                |  
+|**PUBLISH** |  **BITOP**   |**SETBIT**      |            |              |                |  
   
 ##EOFException
   

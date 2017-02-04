@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SetNxCommand;
 
@@ -25,10 +24,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetNxCommand;
  */
 public class SetNxParser implements CommandParser<SetNxCommand> {
     @Override
-    public SetNxCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        String value = (String) params[idx++];
+    public SetNxCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        String value = (String) command[idx++];
         return new SetNxCommand(key, value);
     }
 

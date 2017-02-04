@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PFCountCommand;
 
@@ -25,10 +24,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.PFCountCommand;
  */
 public class PFCountParser implements CommandParser<PFCountCommand> {
     @Override
-    public PFCountCommand parse(CommandName cmdName, Object[] params) {
-        String[] keys = new String[params.length];
-        for (int i = 0; i < params.length; i++) {
-            keys[i] = (String) params[i];
+    public PFCountCommand parse(Object[] command) {
+        String[] keys = new String[command.length - 1];
+        for (int i = 1, j = 0; i < command.length; i++, j++) {
+            keys[j] = (String) command[i];
         }
         return new PFCountCommand(keys);
     }

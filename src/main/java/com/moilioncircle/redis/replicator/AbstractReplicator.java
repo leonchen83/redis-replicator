@@ -128,8 +128,6 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("SETNX"), new SetNxParser());
         addCommandParser(CommandName.name("SETRANGE"), new SetRangeParser());
         addCommandParser(CommandName.name("HDEL"), new HDelParser());
-        addCommandParser(CommandName.name("HKEYS"), new HKeysParser());
-        addCommandParser(CommandName.name("HVALS"), new HValsParser());
         addCommandParser(CommandName.name("LPOP"), new LPopParser());
         addCommandParser(CommandName.name("LPUSH"), new LPushParser());
         addCommandParser(CommandName.name("LPUSHX"), new LPushXParser());

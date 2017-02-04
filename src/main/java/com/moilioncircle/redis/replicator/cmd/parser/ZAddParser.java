@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
@@ -31,14 +30,14 @@ import java.util.List;
 public class ZAddParser implements CommandParser<ZAddCommand> {
 
     @Override
-    public ZAddCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
+    public ZAddCommand parse(Object[] command) {
+        int idx = 1;
         Boolean isCh = null, isIncr = null;
         ExistType existType = ExistType.NONE;
         List<ZSetEntry> list = new ArrayList<>();
-        String key = (String) params[idx++];
-        while (idx < params.length) {
-            String param = (String) params[idx];
+        String key = (String) command[idx++];
+        while (idx < command.length) {
+            String param = (String) command[idx];
             if (param.equalsIgnoreCase("NX")) {
                 existType = ExistType.NX;
             } else if (param.equalsIgnoreCase("XX")) {
@@ -50,7 +49,7 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
             } else {
                 double score = Double.parseDouble(param);
                 idx++;
-                String member = (String) params[idx];
+                String member = (String) command[idx];
                 list.add(new ZSetEntry(member, score));
             }
             idx++;

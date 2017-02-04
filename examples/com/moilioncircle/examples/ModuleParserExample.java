@@ -99,9 +99,9 @@ public class ModuleParserExample {
 
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
-        public HelloTypeCommand parse(CommandName cmdName, Object[] params) {
-            String key = (String) params[0];
-            long value = Long.parseLong((String) params[1]);
+        public HelloTypeCommand parse(Object[] command) {
+            String key = (String) command[1];
+            long value = Long.parseLong((String) command[2]);
             return new HelloTypeCommand(key, value);
         }
     }

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ScriptCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ScriptFlushCommand;
@@ -27,11 +26,11 @@ import com.moilioncircle.redis.replicator.cmd.impl.ScriptLoadCommand;
  */
 public class ScriptParser implements CommandParser<ScriptCommand> {
     @Override
-    public ScriptCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String keyWord = (String) params[idx++];
+    public ScriptCommand parse(Object[] command) {
+        int idx = 1;
+        String keyWord = (String) command[idx++];
         if (keyWord.equalsIgnoreCase("LOAD")) {
-            String script = (String) params[idx++];
+            String script = (String) command[idx++];
             return new ScriptLoadCommand(script);
         } else if (keyWord.equalsIgnoreCase("FLUSH")) {
             return new ScriptFlushCommand();

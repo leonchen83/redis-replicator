@@ -20,5 +20,5 @@ package com.moilioncircle.redis.replicator.cmd;
  * Created by leon on 8/13/16.
  */
 public interface CommandParser<T extends Command> {
-    T parse(CommandName cmdName, Object[] params);
+    T parse(Object[] command);
 }

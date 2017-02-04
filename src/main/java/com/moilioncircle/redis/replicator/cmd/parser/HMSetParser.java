@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.HMSetCommand;
 
@@ -29,13 +28,13 @@ import java.util.Map;
 public class HMSetParser implements CommandParser<HMSetCommand> {
 
     @Override
-    public HMSetCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
+    public HMSetCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
         Map<String, String> fields = new LinkedHashMap<>();
-        while (idx < params.length) {
-            String field = (String) params[idx++];
-            String value = idx == params.length ? null : (String) params[idx++];
+        while (idx < command.length) {
+            String field = (String) command[idx++];
+            String value = idx == command.length ? null : (String) command[idx++];
             fields.put(field, value);
         }
         return new HMSetCommand(key, fields);

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.LInsertCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LInsertType;
@@ -26,18 +25,18 @@ import com.moilioncircle.redis.replicator.cmd.impl.LInsertType;
  */
 public class LInsertParser implements CommandParser<LInsertCommand> {
     @Override
-    public LInsertCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
+    public LInsertCommand parse(Object[] command) {
+        int idx = 1;
         LInsertType lInsertType = null;
-        String key = (String) params[idx++];
-        String keyWord = (String) params[idx++];
+        String key = (String) command[idx++];
+        String keyWord = (String) command[idx++];
         if (keyWord.equalsIgnoreCase("BEFORE")) {
             lInsertType = LInsertType.BEFORE;
         } else if (keyWord.equalsIgnoreCase("AFTER")) {
             lInsertType = LInsertType.AFTER;
         }
-        String pivot = (String) params[idx++];
-        String value = (String) params[idx++];
+        String pivot = (String) command[idx++];
+        String value = (String) command[idx++];
         return new LInsertCommand(key, lInsertType, pivot, value);
     }
 

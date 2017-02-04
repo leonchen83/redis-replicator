@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.HDelCommand;
 
@@ -25,12 +24,12 @@ import com.moilioncircle.redis.replicator.cmd.impl.HDelCommand;
  */
 public class HDelParser implements CommandParser<HDelCommand> {
     @Override
-    public HDelCommand parse(CommandName cmdName, Object[] params) {
-        int idx = 0;
-        String key = (String) params[idx++];
-        String[] fields = new String[params.length - 1];
-        for (int i = idx, j = 0; i < params.length; i++, j++) {
-            fields[j] = (String) params[idx];
+    public HDelCommand parse(Object[] command) {
+        int idx = 1;
+        String key = (String) command[idx++];
+        String[] fields = new String[command.length - 2];
+        for (int i = idx, j = 0; i < command.length; i++, j++) {
+            fields[j] = (String) command[i];
         }
         return new HDelCommand(key, fields);
     }

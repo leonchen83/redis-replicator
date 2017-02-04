@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.MSetNxCommand;
 
@@ -28,13 +27,13 @@ import java.util.Map;
  */
 public class MSetNxParser implements CommandParser<MSetNxCommand> {
     @Override
-    public MSetNxCommand parse(CommandName cmdName, Object[] params) {
-        if (params == null) return new MSetNxCommand(null);
-        int idx = 0;
+    public MSetNxCommand parse(Object[] command) {
+        if (command.length == 1) return new MSetNxCommand(null);
+        int idx = 1;
         Map<String, String> kv = new LinkedHashMap<>();
-        while (idx < params.length) {
-            String key = (String) params[idx++];
-            String value = idx == params.length ? null : (String) params[idx++];
+        while (idx < command.length) {
+            String key = (String) command[idx++];
+            String value = idx == command.length ? null : (String) command[idx++];
             kv.put(key, value);
         }
         return new MSetNxCommand(kv);

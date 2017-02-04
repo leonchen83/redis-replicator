@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
@@ -27,15 +26,15 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 public class SetParser implements CommandParser<SetCommand> {
 
     @Override
-    public SetCommand parse(CommandName cmdName, Object[] params) {
-        String key = (String) params[0];
-        String value = (String) params[1];
-        int idx = 2;
+    public SetCommand parse(Object[] command) {
+        String key = (String) command[1];
+        String value = (String) command[2];
+        int idx = 3;
         ExistType existType = ExistType.NONE;
         Integer ex = null;
         Long px = null;
-        while (idx < params.length) {
-            String param = (String) params[idx++];
+        while (idx < command.length) {
+            String param = (String) command[idx++];
             if (param.equalsIgnoreCase("NX")) {
                 existType = ExistType.NX;
                 break;
@@ -43,10 +42,10 @@ public class SetParser implements CommandParser<SetCommand> {
                 existType = ExistType.XX;
                 break;
             } else if (param.equalsIgnoreCase("EX")) {
-                ex = Integer.valueOf((String) params[idx++]);
+                ex = Integer.valueOf((String) command[idx++]);
                 break;
             } else if (param.equalsIgnoreCase("PX")) {
-                px = Long.valueOf((String) params[idx++]);
+                px = Long.valueOf((String) command[idx++]);
                 break;
             }
         }

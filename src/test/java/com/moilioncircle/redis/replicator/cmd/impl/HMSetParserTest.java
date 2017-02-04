@@ -1,6 +1,5 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.parser.HMSetParser;
 import org.junit.Test;
 
@@ -15,14 +14,14 @@ public class HMSetParserTest {
     public void testParse() throws Exception {
         {
             HMSetParser hmSetParser = new HMSetParser();
-            HMSetCommand command = hmSetParser.parse(CommandName.name("HMSET"), new Object[]{"key", "field", "value"});
+            HMSetCommand command = hmSetParser.parse(new Object[]{"hmset", "key", "field", "value"});
             assertEquals("key", command.getKey());
             assertEquals(1, command.getFields().size());
         }
 
         {
             HMSetParser hmSetParser = new HMSetParser();
-            HMSetCommand command = hmSetParser.parse(CommandName.name("HMSET"), new Object[]{"key", "field", "value", "field1", "value1"});
+            HMSetCommand command = hmSetParser.parse(new Object[]{"hmset", "key", "field", "value", "field1", "value1"});
             assertEquals("key", command.getKey());
             assertEquals(2, command.getFields().size());
         }

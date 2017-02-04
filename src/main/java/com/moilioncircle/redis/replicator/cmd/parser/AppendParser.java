@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
 
@@ -26,8 +25,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
 public class AppendParser implements CommandParser<AppendCommand> {
 
     @Override
-    public AppendCommand parse(CommandName cmdName, Object[] params) {
-        return new AppendCommand((String) params[0], (String) params[1]);
+    public AppendCommand parse(Object[] command) {
+        return new AppendCommand((String) command[1], (String) command[2]);
     }
 
 }

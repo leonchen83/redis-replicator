@@ -1,6 +1,5 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.parser.BitFieldParser;
 import org.junit.Test;
 
@@ -15,8 +14,8 @@ public class BitFieldParserTest {
     public void testParse() throws Exception {
         {
             BitFieldParser parser = new BitFieldParser();
-            BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
-                    new Object[]{"mykey", "overflow", "sat"});
+            BitFieldCommand command = parser.parse(
+                    new Object[]{"bitfield", "mykey", "overflow", "sat"});
             assertEquals("mykey", command.getKey());
             assertEquals(0, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
@@ -26,8 +25,8 @@ public class BitFieldParserTest {
         //
         {
             BitFieldParser parser = new BitFieldParser();
-            BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
-                    new Object[]{"mykey", "incrby", "i5", "100", "1", "overflow", "sat"});
+            BitFieldCommand command = parser.parse(
+                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "overflow", "sat"});
             assertEquals("mykey", command.getKey());
             assertEquals(1, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
@@ -36,8 +35,8 @@ public class BitFieldParserTest {
         //
         {
             BitFieldParser parser = new BitFieldParser();
-            BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
-                    new Object[]{"mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "sat"});
+            BitFieldCommand command = parser.parse(
+                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "sat"});
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
@@ -46,8 +45,8 @@ public class BitFieldParserTest {
         //
         {
             BitFieldParser parser = new BitFieldParser();
-            BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
-                    new Object[]{"mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
+            BitFieldCommand command = parser.parse(
+                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
@@ -55,8 +54,8 @@ public class BitFieldParserTest {
 
         {
             BitFieldParser parser = new BitFieldParser();
-            BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
-                    new Object[]{"mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
+            BitFieldCommand command = parser.parse(
+                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(3, command.getOverFlows().size());
@@ -65,8 +64,8 @@ public class BitFieldParserTest {
 
         {
             BitFieldParser parser = new BitFieldParser();
-            BitFieldCommand command = parser.parse(CommandName.name("BITFIELD"),
-                    new Object[]{"mykey", "incrby", "i5", "100", "1", "get", "i8", "10", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
+            BitFieldCommand command = parser.parse(
+                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "get", "i8", "10", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(3, command.getOverFlows().size());

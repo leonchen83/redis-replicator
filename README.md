@@ -503,7 +503,7 @@ default `Configuration.getReadTimeout()` is 30 seconds
   
 ##Handle Raw Bytes  
   
-* when kv.getValueRdbType() == 0, you can get the raw bytes of value. In some cases(eg. HyperLogLog),this is very useful.  
+* when kv.getValueRdbType() == 0, you can get the raw bytes of value. In some cases(e.g. HyperLogLog),this is very useful.  
   
 ```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());

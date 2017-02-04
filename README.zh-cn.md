@@ -1,4 +1,4 @@
-Table of Contents
+内容索引
 =================
 
    * [Redis-replicator](#redis-replicator)

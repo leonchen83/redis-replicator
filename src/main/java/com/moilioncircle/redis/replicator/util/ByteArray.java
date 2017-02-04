@@ -26,33 +26,6 @@ public class ByteArray implements Iterable<byte[]> {
     public static final long MIN_VALUE = 0L;
     public static final long MAX_VALUE = 4611686014132420609L; //Integer.MAX_VALUE * Integer.MAX_VALUE
 
-    protected byte[][] bytes;
-    protected final long length;
-
-    public ByteArray(byte[] bytes) {
-        this.length = bytes.length;
-        this.bytes = new byte[1][bytes.length];
-        this.bytes[0] = bytes;
-    }
-
-    public ByteArray(long length) {
-        this.length = length;
-        if (length > MAX_VALUE) {
-            throw new IllegalArgumentException(String.valueOf(length));
-        } else {
-            int x = (int) (length / Integer.MAX_VALUE);
-            int y = (int) (length % Integer.MAX_VALUE);
-            bytes = new byte[x + 1][];
-            for (int i = 0; i < bytes.length; i++) {
-                if (i == bytes.length - 1) {
-                    bytes[i] = new byte[y];
-                } else {
-                    bytes[i] = new byte[Integer.MAX_VALUE];
-                }
-            }
-    public static final long MIN_VALUE = 0L;
-    public static final long MAX_VALUE = 4611686014132420609L; //Integer.MAX_VALUE * Integer.MAX_VALUE
-
     protected final long length;
     protected byte[] smallBytes;
     protected byte[][] largeBytes;

@@ -465,13 +465,26 @@ public class DefaultRdbVisitor implements RdbVisitor {
     @Override
     public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueList<ByteArray> o14 = new KeyStringValueList<>();
+        KeyStringValueList<String> o14 = new KeyStringValueList<>();
         String key = parser.rdbLoadEncodedStringObject().string;
         long len = parser.rdbLoadLen().len;
-        List<ByteArray> byteList = new ArrayList<>();
+        List<String> byteList = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             ByteArray element = (ByteArray) parser.rdbGenericLoadStringObject(RDB_LOAD_NONE);
-            byteList.add(element);
+            RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(element));
+
+            List<String> list = new ArrayList<>();
+            int zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
+            int zltail = BaseRdbParser.LenHelper.zltail(stream);
+            int zllen = BaseRdbParser.LenHelper.zllen(stream);
+            for (int j = 0; j < zllen; j++) {
+                list.add(BaseRdbParser.StringHelper.zipListEntry(stream));
+            }
+            int zlend = BaseRdbParser.LenHelper.zlend(stream);
+            if (zlend != 255) {
+                throw new AssertionError("zlend expected 255 but " + zlend);
+            }
+            byteList.addAll(list);
         }
         o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
         o14.setValue(byteList);

@@ -197,4 +197,32 @@ public class RedisRdbReplicatorTest {
         redisReplicator.open();
     }
 
+    @Test
+    public void testFileV8() throws IOException, InterruptedException {
+        Replicator redisReplicator = new RedisReplicator(
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV8.rdb"),
+                Configuration.defaultSetting());
+        final AtomicInteger acc = new AtomicInteger(0);
+        redisReplicator.addRdbListener(new RdbListener.Adaptor() {
+
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                acc.incrementAndGet();
+            }
+
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+                super.postFullSync(replicator, checksum);
+            }
+        });
+        redisReplicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testFileV8");
+                assertEquals(92499, acc.get());
+            }
+        });
+        redisReplicator.open();
+    }
+
 }

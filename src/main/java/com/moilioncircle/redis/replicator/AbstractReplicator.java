@@ -140,6 +140,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("INCR"), new IncrParser());
         addCommandParser(CommandName.name("DECR"), new DecrParser());
         addCommandParser(CommandName.name("INCRBY"), new IncrByParser());
+        addCommandParser(CommandName.name("DECRBY"), new DecrByParser());
         addCommandParser(CommandName.name("PERSIST"), new PersistParser());
         addCommandParser(CommandName.name("SELECT"), new SelectParser());
         addCommandParser(CommandName.name("FLUSHALL"), new FlushAllParser());

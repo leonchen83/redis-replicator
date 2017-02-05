@@ -194,7 +194,7 @@ maven-3.2.3 or newer
         replicator.open();
 
         //check rdb file
-        replicator = new RedisReplicator(new File("./dump.rdb"), Configuration.defaultSetting());
+        replicator = new RedisReplicator(new File("./dump.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -253,7 +253,7 @@ maven-3.2.3 or newer
         replicator.open();
 
         //check aof file
-        replicator = new RedisReplicator(new File("./appendonly.aof"), Configuration.defaultSetting(), false);
+        replicator = new RedisReplicator(new File("./appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {

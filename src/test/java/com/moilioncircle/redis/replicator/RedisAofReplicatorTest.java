@@ -16,8 +16,8 @@ public class RedisAofReplicatorTest {
     @Test
     public void open() throws Exception {
         Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"),
-                Configuration.defaultSetting(), false);
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"), FileType.AOF,
+                Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addCommandListener(new CommandListener() {
             @Override
@@ -38,8 +38,8 @@ public class RedisAofReplicatorTest {
     @Test
     public void open2() throws Exception {
         Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly2.aof"),
-                Configuration.defaultSetting(), false);
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly2.aof"), FileType.AOF,
+                Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addCommandListener(new CommandListener() {
             @Override
@@ -62,8 +62,8 @@ public class RedisAofReplicatorTest {
     @Test
     public void open3() throws Exception {
         Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly3.aof"),
-                Configuration.defaultSetting(), false);
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly3.aof"), FileType.AOF,
+                Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addCommandListener(new CommandListener() {
             @Override

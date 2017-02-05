@@ -12,6 +12,10 @@
       * [通过socket同步](#通过socket同步)
       * [读取并解析rdb文件](#读取并解析rdb文件)
       * [读取并解析aof文件](#读取并解析aof文件)
+      * [读取混合格式文件](#读取混合格式文件)
+         * [redis混合文件格式](#redis混合文件格式)
+         * [redis混合文件格式配置](#redis混合文件格式配置)
+         * [应用Replicator读取混合格式文件](#应用replicator读取混合格式文件)
       * [备份远程redis的rdb文件](#备份远程redis的rdb文件)
       * [备份远程redis的实时命令](#备份远程redis的实时命令)
    * [高级主题](#高级主题)
@@ -37,7 +41,6 @@
       * [处理原始字节数组](#处理原始字节数组)
    * [贡献者](#贡献者)
    * [相关引用](#相关引用)
-
 
 #Redis-replicator  
 
@@ -96,7 +99,7 @@ maven-3.2.3以上
 ##读取并解析rdb文件  
 
 ```java  
-        Replicator replicator = new RedisReplicator(new File("dump.rdb"), Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator(new File("dump.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -110,7 +113,7 @@ maven-3.2.3以上
 ##读取并解析aof文件  
 
 ```java  
-        Replicator replicator = new RedisReplicator(new File("appendonly.aof"), Configuration.defaultSetting(), false);
+        Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
@@ -119,6 +122,36 @@ maven-3.2.3以上
         });
         replicator.open();
 ```  
+
+##读取混合格式文件  
+###redis混合文件格式  
+```java  
+    [RDB file][AOF tail]
+```
+###redis混合文件格式配置  
+```java  
+    aof-use-rdb-preamble yes
+```
+###应用Replicator读取混合格式文件 
+```java  
+        final Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+            }
+        });
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                System.out.println(command);
+            }
+        });
+
+        replicator.open();
+```
+
 
 ##备份远程redis的rdb文件  
 

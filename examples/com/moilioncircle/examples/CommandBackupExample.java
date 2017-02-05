@@ -17,6 +17,7 @@
 package com.moilioncircle.examples;
 
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
@@ -80,7 +81,7 @@ public class CommandBackupExample {
         replicator.open();
 
         //check aof file
-        replicator = new RedisReplicator(new File("./appendonly.aof"), Configuration.defaultSetting(), false);
+        replicator = new RedisReplicator(new File("./appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {

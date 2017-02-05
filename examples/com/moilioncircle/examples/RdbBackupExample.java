@@ -17,6 +17,7 @@
 package com.moilioncircle.examples;
 
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
@@ -69,7 +70,7 @@ public class RdbBackupExample {
         replicator.open();
 
         //check rdb file
-        replicator = new RedisReplicator(new File("./dump.rdb"), Configuration.defaultSetting());
+        replicator = new RedisReplicator(new File("./dump.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

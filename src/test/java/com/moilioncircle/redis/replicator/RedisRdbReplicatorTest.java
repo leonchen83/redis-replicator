@@ -18,7 +18,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testChecksumV7() throws IOException, InterruptedException {
         Replicator redisReplicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong atomicChecksum = new AtomicLong(0);
@@ -48,7 +48,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testChecksumV6() throws IOException, InterruptedException {
         Replicator redisReplicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong atomicChecksum = new AtomicLong(0);
@@ -80,7 +80,7 @@ public class RedisRdbReplicatorTest {
     public void testCloseListener1() throws IOException, InterruptedException {
         final AtomicInteger acc = new AtomicInteger(0);
         Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addCloseListener(new CloseListener() {
             @Override
@@ -96,7 +96,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFileV7() throws IOException, InterruptedException {
         Replicator redisReplicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
@@ -137,7 +137,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFilter() throws IOException, InterruptedException {
         Replicator redisReplicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
@@ -172,7 +172,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFileV6() throws IOException, InterruptedException {
         Replicator redisReplicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"),
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
@@ -200,7 +200,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFileV8() throws IOException, InterruptedException {
         Replicator redisReplicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV8.rdb"),
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV8.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {

@@ -17,6 +17,7 @@
 package com.moilioncircle.examples;
 
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -31,7 +32,7 @@ import java.io.IOException;
 public class RdbFileExample {
     public static void main(String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(
-                new File("dumpV7.rdb"),
+                new File("dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

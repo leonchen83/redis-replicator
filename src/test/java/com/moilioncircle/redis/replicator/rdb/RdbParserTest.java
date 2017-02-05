@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
@@ -165,7 +166,7 @@ public class RdbParserTest {
         try {
             Replicator replicator = new RedisReplicator(RdbParserTest.class.
                     getClassLoader().getResourceAsStream(filename)
-                    , Configuration.defaultSetting());
+                    , FileType.RDB, Configuration.defaultSetting());
             replicator.addRdbListener(new RdbListener.Adaptor() {
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {

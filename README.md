@@ -13,6 +13,10 @@ Table of Contents([中文说明](https://github.com/leonchen83/redis-replicator/
       * [Replication via socket](#replication-via-socket)
       * [Read Rdb file](#read-rdb-file)
       * [Read Aof file](#read-aof-file)
+      * [Read Mixed file](#read-mixed-file)
+         * [Mixed File format](#mixed-file-format)
+         * [Mixed File redis configuration](#mixed-file-redis-configuration)
+         * [Using Replicator Read Mixed file](#using-replicator-read-mixed-file)
       * [Backup remote rdb snapshot](#backup-remote-rdb-snapshot)
       * [Backup remote commands](#backup-remote-commands)
    * [Advanced topics](#advanced-topics)
@@ -36,7 +40,7 @@ Table of Contents([中文说明](https://github.com/leonchen83/redis-replicator/
       * [Avoid Full Sync](#avoid-full-sync)
       * [FullSyncEvent](#fullsyncevent)
       * [Handle Raw Bytes](#handle-raw-bytes)
-   * [Contributors](#Contributors)
+   * [Contributors](#contributors)
    * [References](#references)
 
 #Redis-replicator  
@@ -97,7 +101,7 @@ maven-3.2.3 or newer
 ##Read Rdb file  
 
 ```java  
-        Replicator replicator = new RedisReplicator(new File("dump.rdb"), Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator(new File("dump.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -111,7 +115,7 @@ maven-3.2.3 or newer
 ##Read Aof file  
 
 ```java  
-        Replicator replicator = new RedisReplicator(new File("appendonly.aof"), Configuration.defaultSetting(), false);
+        Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
@@ -120,6 +124,35 @@ maven-3.2.3 or newer
         });
         replicator.open();
 ```  
+
+##Read Mixed file  
+###Mixed File format  
+```java  
+    [RDB file][AOF tail]
+```
+###Mixed File redis configuration  
+```java  
+    aof-use-rdb-preamble yes
+```
+###Using Replicator Read Mixed file 
+```java  
+        final Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+            }
+        });
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                System.out.println(command);
+            }
+        });
+
+        replicator.open();
+```
 
 ##Backup remote rdb snapshot  
 

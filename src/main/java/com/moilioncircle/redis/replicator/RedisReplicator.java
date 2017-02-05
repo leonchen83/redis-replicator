@@ -38,24 +38,40 @@ import java.io.InputStream;
 public class RedisReplicator implements Replicator {
     protected final Replicator replicator;
 
-    public RedisReplicator(File file, Configuration configuration) throws FileNotFoundException {
-        this(file, configuration, true);
+    public RedisReplicator(File file, FileType fileType, Configuration configuration) throws FileNotFoundException {
+        switch (fileType) {
+            case AOF:
+                this.replicator = new RedisAofReplicator(file, configuration);
+                break;
+            case RDB:
+                this.replicator = new RedisRdbReplicator(file, configuration);
+                break;
+            case MIXED:
+                this.replicator = new RedisMixReplicator(file, configuration);
+                break;
+            default:
+                throw new UnsupportedOperationException(fileType.toString());
+        }
     }
 
-    public RedisReplicator(InputStream in, Configuration configuration) {
-        this(in, configuration, true);
-    }
-
-    public RedisReplicator(File file, Configuration configuration, boolean rdb) throws FileNotFoundException {
-        replicator = rdb ? new RedisRdbReplicator(file, configuration) : new RedisAofReplicator(file, configuration);
-    }
-
-    public RedisReplicator(InputStream in, Configuration configuration, boolean rdb) {
-        replicator = rdb ? new RedisRdbReplicator(in, configuration) : new RedisAofReplicator(in, configuration);
+    public RedisReplicator(InputStream in, FileType fileType, Configuration configuration) {
+        switch (fileType) {
+            case AOF:
+                this.replicator = new RedisAofReplicator(in, configuration);
+                break;
+            case RDB:
+                this.replicator = new RedisRdbReplicator(in, configuration);
+                break;
+            case MIXED:
+                this.replicator = new RedisMixReplicator(in, configuration);
+                break;
+            default:
+                throw new UnsupportedOperationException(fileType.toString());
+        }
     }
 
     public RedisReplicator(String host, int port, Configuration configuration) {
-        replicator = new RedisSocketReplicator(host, port, configuration);
+        this.replicator = new RedisSocketReplicator(host, port, configuration);
     }
 
     @Override

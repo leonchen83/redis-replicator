@@ -371,8 +371,8 @@ public class DefaultRdbVisitor implements RdbVisitor {
 
         Set<String> set = new LinkedHashSet<>();
         int encoding = BaseRdbParser.LenHelper.encoding(stream);
-        int lenOfContent = BaseRdbParser.LenHelper.lenOfContent(stream);
-        for (int i = 0; i < lenOfContent; i++) {
+        long lenOfContent = BaseRdbParser.LenHelper.lenOfContent(stream);
+        for (long i = 0; i < lenOfContent; i++) {
             switch (encoding) {
                 case 2:
                     set.add(String.valueOf(stream.readInt(2)));

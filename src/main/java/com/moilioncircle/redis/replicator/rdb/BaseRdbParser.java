@@ -349,8 +349,8 @@ public class BaseRdbParser {
             return in.readInt(4);
         }
 
-        public static int lenOfContent(RedisInputStream in) throws IOException {
-            return in.readInt(4);
+        public static long lenOfContent(RedisInputStream in) throws IOException {
+            return in.readUInt(4);
         }
     }
 

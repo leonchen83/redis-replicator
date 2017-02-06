@@ -179,7 +179,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
          * | 1 or 5 bytes |    string contents    |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueList<String> o1 = new KeyStringValueList<>();
+        KeyStringValueList o1 = new KeyStringValueList();
         String key = parser.rdbLoadEncodedStringObject().string;
         long len = parser.rdbLoadLen().len;
         List<String> list = new ArrayList<>();
@@ -334,7 +334,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueList<String> o10 = new KeyStringValueList<>();
+        KeyStringValueList o10 = new KeyStringValueList();
         String key = parser.rdbLoadEncodedStringObject().string;
         ByteArray aux = parser.rdbLoadPlainStringObject();
         RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
@@ -465,7 +465,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
     @Override
     public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueList<String> o14 = new KeyStringValueList<>();
+        KeyStringValueList o14 = new KeyStringValueList();
         String key = parser.rdbLoadEncodedStringObject().string;
         long len = parser.rdbLoadLen().len;
         List<String> byteList = new ArrayList<>();

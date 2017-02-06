@@ -21,5 +21,5 @@ import java.util.List;
 /**
  * Created by leon on 8/13/16.
  */
-public class KeyStringValueList<T> extends KeyValuePair<List<T>> {
+public class KeyStringValueList extends KeyValuePair<List<String>> {
 }

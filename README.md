@@ -4,42 +4,42 @@ Table of Contents([中文说明](https://github.com/leonchen83/redis-replicator/
 
    * [Redis-replicator](#redis-replicator)
       * [Brief introduction](#brief-introduction)
-      * [QQ Group](#qq-group)
+      * [QQ group](#qq-group)
       * [Contract author](#contract-author)
    * [Install](#install)
       * [Requirements](#requirements)
       * [Install from source code](#install-from-source-code)
    * [Simple usage](#simple-usage)
       * [Replication via socket](#replication-via-socket)
-      * [Read Rdb file](#read-rdb-file)
-      * [Read Aof file](#read-aof-file)
-      * [Read Mixed file](#read-mixed-file)
-         * [Mixed File format](#mixed-file-format)
-         * [Mixed File redis configuration](#mixed-file-redis-configuration)
-         * [Using Replicator Read Mixed file](#using-replicator-read-mixed-file)
+      * [Read rdb file](#read-rdb-file)
+      * [Read aof file](#read-aof-file)
+      * [Read mixed file](#read-mixed-file)
+         * [Mixed file format](#mixed-file-format)
+         * [Mixed file redis configuration](#mixed-file-redis-configuration)
+         * [Using replicator read mixed file](#using-replicator-read-mixed-file)
       * [Backup remote rdb snapshot](#backup-remote-rdb-snapshot)
       * [Backup remote commands](#backup-remote-commands)
    * [Advanced topics](#advanced-topics)
-      * [Command Extension](#command-extension)
-         * [write a command](#write-a-command)
-         * [write a command parser](#write-a-command-parser)
-         * [register this parser](#register-this-parser)
-         * [handle command event](#handle-command-event)
-      * [Module Extension](#module-extension)
-         * [compile redis test modules](#compile-redis-test-modules)
-         * [open comment in redis.conf](#open-comment-in-redisconf)
-         * [write a module parser](#write-a-module-parser)
-         * [write a command parser](#write-a-command-parser-1)
-         * [register this module parser and command parser and handle event](#register-this-module-parser-and-command-parser-and-handle-event)
+      * [Command extension](#command-extension)
+         * [Write a command](#write-a-command)
+         * [Write a command parser](#write-a-command-parser)
+         * [Register this parser](#register-this-parser)
+         * [Handle command event](#handle-command-event)
+      * [Module extension](#module-extension)
+         * [Compile redis test modules](#compile-redis-test-modules)
+         * [Open comment in redis.conf](#open-comment-in-redisconf)
+         * [Write a module parser](#write-a-module-parser)
+         * [Write a command parser](#write-a-command-parser-1)
+         * [Register this module parser and command parser and handle event](#register-this-module-parser-and-command-parser-and-handle-event)
       * [Write your own rdb parser](#write-your-own-rdb-parser)
-      * [Built-in Command Parser](#built-in-command-parser)
+      * [Built-in command parser](#built-in-command-parser)
       * [EOFException](#eofexception)
-      * [Trace Event log](#trace-event-log)
+      * [Trace event log](#trace-event-log)
       * [SSL connection](#ssl-connection)
       * [Auth](#auth)
-      * [Avoid Full Sync](#avoid-full-sync)
+      * [Avoid full sync](#avoid-full-sync)
       * [FullSyncEvent](#fullsyncevent)
-      * [Handle Raw Bytes](#handle-raw-bytes)
+      * [Handle raw bytes](#handle-raw-bytes)
    * [Contributors](#contributors)
    * [References](#references)
 
@@ -53,11 +53,11 @@ Table of Contents([中文说明](https://github.com/leonchen83/redis-replicator/
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.moilioncircle/redis-replicator/badge.svg)](http://www.javadoc.io/doc/com.moilioncircle/redis-replicator)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)  
   
-Redis Replicator is a redis RDB and Command parser written in java.  
-It can parse,filter,broadcast the RDB and Command events in a real time manner.  
+Redis Replicator is a redis rdb and command parser written in java.  
+It can parse,filter,broadcast the rdb and command events in a real time manner.  
 It also can sync redis data to your local cache or to database.  
 
-##QQ Group  
+##QQ group  
   
 **479688557**  
 
@@ -98,7 +98,7 @@ maven-3.2.3 or newer
         replicator.open();
 ```
 
-##Read Rdb file  
+##Read rdb file  
 
 ```java  
         Replicator replicator = new RedisReplicator(new File("dump.rdb"), FileType.RDB, Configuration.defaultSetting());
@@ -112,7 +112,7 @@ maven-3.2.3 or newer
         replicator.open();
 ```  
 
-##Read Aof file  
+##Read aof file  
 
 ```java  
         Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
@@ -125,16 +125,16 @@ maven-3.2.3 or newer
         replicator.open();
 ```  
 
-##Read Mixed file  
-###Mixed File format  
+##Read mixed file  
+###Mixed file format  
 ```java  
     [RDB file][AOF tail]
 ```
-###Mixed File redis configuration  
+###Mixed file redis configuration  
 ```java  
     aof-use-rdb-preamble yes
 ```
-###Using Replicator Read Mixed file 
+###Using replicator read mixed file 
 ```java  
         final Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
@@ -265,9 +265,9 @@ maven-3.2.3 or newer
 
 #Advanced topics  
 
-##Command Extension  
+##Command extension  
   
-###write a command  
+###Write a command  
 ```java  
     public static class YourAppendCommand implements Command {
         public final String key;
@@ -289,7 +289,7 @@ maven-3.2.3 or newer
     }
 ```
 
-###write a command parser  
+###Write a command parser  
 ```java  
 
     public class YourAppendParser implements CommandParser<YourAppendCommand> {
@@ -302,13 +302,13 @@ maven-3.2.3 or newer
 
 ```
   
-###register this parser  
+###Register this parser  
 ```java  
     Replicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
     replicator.addCommandParser(CommandName.name("APPEND"),new YourAppendParser());
 ```
   
-###handle command event  
+###Handle command event  
 ```java  
     replicator.addCommandListener(new CommandListener() {
         @Override
@@ -321,18 +321,18 @@ maven-3.2.3 or newer
     });
 ```  
 
-##Module Extension  
-###compile redis test modules  
+##Module extension  
+###Compile redis test modules  
 ```java  
     $cd /path/to/redis-4.0-rc2/src/modules
     $make
 ```
-###open comment in redis.conf  
+###Open comment in redis.conf  
 
 ```java  
     loadmodule /path/to/redis-4.0-rc2/src/modules/hellotype.so
 ```
-###write a module parser  
+###Write a module parser  
 ```java  
     public class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
 
@@ -368,7 +368,7 @@ maven-3.2.3 or newer
         }
     }
 ```
-###write a command parser  
+###Write a command parser  
 ```java  
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
@@ -406,7 +406,7 @@ maven-3.2.3 or newer
 
     }
 ```
-###register this module parser and command parser and handle event  
+###Register this module parser and command parser and handle event  
 
 ```java  
     public static void main(String[] args) throws IOException {
@@ -438,7 +438,7 @@ maven-3.2.3 or newer
 * implements `RdbVisitor`  
 * register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 
-##Built-in Command Parser  
+##Built-in command parser  
 
 |**commands**|**commands**  |  **commands**  |**commands**|**commands**  | **commands**   |
 | ---------- | ------------ | ---------------| ---------- | ------------ | ---------------|    
@@ -463,7 +463,7 @@ maven-3.2.3 or newer
 ```  
 **WARNNING: this setting may run out of memory of redis server in some cases.**  
   
-##Trace Event log  
+##Trace event log  
   
 * set log level to **debug**
 * if you are using log4j2,add logger below:
@@ -497,7 +497,7 @@ maven-3.2.3 or newer
     Configuration.defaultSetting().setAuthPassword("foobared");
 ```  
 
-##Avoid Full Sync  
+##Avoid full sync  
   
 * adjust redis server setting below  
   
@@ -536,7 +536,7 @@ default `Configuration.getReadTimeout()` is 30 seconds
         replicator.open();
 ```  
   
-##Handle Raw Bytes  
+##Handle raw bytes  
   
 * when kv.getValueRdbType() == 0, you can get the raw bytes of value. In some cases(e.g. HyperLogLog),this is very useful.  
   

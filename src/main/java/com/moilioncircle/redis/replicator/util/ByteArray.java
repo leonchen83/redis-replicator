@@ -23,8 +23,12 @@ import java.util.Iterator;
  * Created by leon on 1/29/17.
  */
 public class ByteArray implements Iterable<byte[]> {
+
+    protected static final int BITS = 30;
+    protected static final int MAGIC = 1 << BITS;
+
     public static final long MIN_VALUE = 0L;
-    public static final long MAX_VALUE = 4611686014132420609L; //Integer.MAX_VALUE * Integer.MAX_VALUE
+    public static final long MAX_VALUE = 2305843007066210304L; //(Integer.MAX_VALUE - 1) * MAGIC
 
     protected final long length;
     protected byte[] smallBytes;
@@ -37,19 +41,19 @@ public class ByteArray implements Iterable<byte[]> {
 
     public ByteArray(long length) {
         this.length = length;
-        if (length > MAX_VALUE) {
+        if (length > MAX_VALUE || length < 0) {
             throw new IllegalArgumentException(String.valueOf(length));
         } else if (length <= Integer.MAX_VALUE) {
             this.smallBytes = new byte[(int) length];
         } else {
-            int x = (int) (length / Integer.MAX_VALUE);
-            int y = (int) (length % Integer.MAX_VALUE);
+            int x = (int) (length >> BITS);
+            int y = (int) (length & (MAGIC - 1));
             largeBytes = new byte[x + 1][];
             for (int i = 0; i < largeBytes.length; i++) {
                 if (i == largeBytes.length - 1) {
                     largeBytes[i] = new byte[y];
                 } else {
-                    largeBytes[i] = new byte[Integer.MAX_VALUE];
+                    largeBytes[i] = new byte[MAGIC];
                 }
             }
         }
@@ -60,15 +64,15 @@ public class ByteArray implements Iterable<byte[]> {
             smallBytes[(int) idx] = value;
             return;
         }
-        int x = (int) (idx / Integer.MAX_VALUE);
-        int y = (int) (idx % Integer.MAX_VALUE);
+        int x = (int) (idx >> BITS);
+        int y = (int) (idx & (MAGIC - 1));
         largeBytes[x][y] = value;
     }
 
     public byte get(long idx) {
         if (idx < Integer.MAX_VALUE) return smallBytes[(int) idx];
-        int x = (int) (idx / Integer.MAX_VALUE);
-        int y = (int) (idx % Integer.MAX_VALUE);
+        int x = (int) (idx >> BITS);
+        int y = (int) (idx & (MAGIC - 1));
         return largeBytes[x][y];
     }
 
@@ -94,12 +98,12 @@ public class ByteArray implements Iterable<byte[]> {
             return;
         }
         while (length > 0) {
-            int x1 = (int) (srcPos / Integer.MAX_VALUE);
-            int y1 = (int) (srcPos % Integer.MAX_VALUE);
-            int x2 = (int) (destPos / Integer.MAX_VALUE);
-            int y2 = (int) (destPos % Integer.MAX_VALUE);
-            int min = Math.min(Integer.MAX_VALUE - y1, Integer.MAX_VALUE - y2);
-            if (length <= Integer.MAX_VALUE) min = Math.min(min, (int) length);
+            int x1 = (int) (srcPos >> BITS);
+            int y1 = (int) (srcPos & (MAGIC - 1));
+            int x2 = (int) (destPos >> BITS);
+            int y2 = (int) (destPos & (MAGIC - 1));
+            int min = Math.min(MAGIC - y1, MAGIC - y2);
+            if (length <= MAGIC) min = Math.min(min, (int) length);
             System.arraycopy(src.largeBytes[x1], y1, dest.largeBytes[x2], y2, min);
             srcPos += min;
             destPos += min;

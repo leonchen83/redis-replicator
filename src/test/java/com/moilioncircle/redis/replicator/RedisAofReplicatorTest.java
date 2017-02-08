@@ -81,4 +81,27 @@ public class RedisAofReplicatorTest {
         replicator.open();
     }
 
+    @Test
+    public void open4() throws Exception {
+        Replicator replicator = new RedisReplicator(
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), FileType.AOF,
+                Configuration.defaultSetting());
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                System.out.println(command);
+                acc.incrementAndGet();
+            }
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close open4");
+                assertEquals(68, acc.get());
+            }
+        });
+        replicator.open();
+    }
+
 }

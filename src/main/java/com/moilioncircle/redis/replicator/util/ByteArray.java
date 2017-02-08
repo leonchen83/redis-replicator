@@ -115,11 +115,7 @@ public class ByteArray implements Iterable<byte[]> {
     @Override
     public String toString() {
         if (smallBytes != null) return Arrays.toString(smallBytes);
-        StringBuilder builder = new StringBuilder();
-        for (byte[] b : largeBytes) {
-            builder.append(Arrays.toString(b));
-        }
-        return builder.toString();
+        throw new UnsupportedOperationException("too large bytes. length:" + length);
     }
 
     protected class Iter implements Iterator<byte[]> {

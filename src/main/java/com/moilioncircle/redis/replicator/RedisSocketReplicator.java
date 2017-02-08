@@ -30,9 +30,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.LockSupport;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
@@ -102,7 +100,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     //sync later
                     i = 0;
                     close();
-                    LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(configuration.getRetryTimeInterval()));
+                    try {
+                        Thread.sleep(configuration.getRetryTimeInterval());
+                    } catch (InterruptedException interrupt) {
+                        Thread.currentThread().interrupt();
+                    }
                     continue;
                 }
                 //sync command
@@ -143,7 +145,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 close();
                 //retry psync in next loop.
                 logger.info("reconnect to redis-server. retry times:" + (i + 1));
-                LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(configuration.getRetryTimeInterval()));
+                try {
+                    Thread.sleep(configuration.getRetryTimeInterval());
+                } catch (InterruptedException interrupt) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
@@ -248,7 +254,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     protected synchronized void heartBeat() {
-        heartBeat = new Timer("heart beat");
+        heartBeat = new Timer("heart beat", true);
         //bug fix. in this point closed by other thread. multi-thread issue
         heartBeat.schedule(new TimerTask() {
             @Override

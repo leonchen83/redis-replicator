@@ -36,15 +36,23 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
         ExistType existType = ExistType.NONE;
         List<ZSetEntry> list = new ArrayList<>();
         String key = (String) command[idx++];
+        boolean et = false;
         while (idx < command.length) {
             String param = (String) command[idx];
-            if (param.equalsIgnoreCase("NX")) {
+            if (!et && param.equalsIgnoreCase("NX")) {
                 existType = ExistType.NX;
-            } else if (param.equalsIgnoreCase("XX")) {
+                et = true;
+                idx++;
+                continue;
+            } else if (!et && param.equalsIgnoreCase("XX")) {
                 existType = ExistType.XX;
-            } else if (param.equalsIgnoreCase("CH")) {
+                et = true;
+                idx++;
+                continue;
+            }
+            if (isCh == null && param.equalsIgnoreCase("CH")) {
                 isCh = true;
-            } else if (param.equalsIgnoreCase("INCR")) {
+            } else if (isIncr == null && param.equalsIgnoreCase("INCR")) {
                 isIncr = true;
             } else {
                 double score = Double.parseDouble(param);

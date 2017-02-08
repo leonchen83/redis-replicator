@@ -1,6 +1,8 @@
 package com.moilioncircle.redis.replicator;
 
+import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
@@ -203,6 +205,14 @@ public class RedisRdbReplicatorTest {
                 RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV8.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
+        final AtomicInteger acc1 = new AtomicInteger(0);
+        redisReplicator.addAuxFieldListener(new AuxFieldListener() {
+            @Override
+            public void handle(Replicator replicator, AuxField auxField) {
+                System.out.println(auxField);
+                acc1.incrementAndGet();
+            }
+        });
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
 
             @Override
@@ -220,6 +230,7 @@ public class RedisRdbReplicatorTest {
             public void handle(Replicator replicator) {
                 System.out.println("close testFileV8");
                 assertEquals(92499, acc.get());
+                assertEquals(72, acc1.get());
             }
         });
         redisReplicator.open();

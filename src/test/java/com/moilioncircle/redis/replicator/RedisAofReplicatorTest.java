@@ -98,7 +98,7 @@ public class RedisAofReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close open4");
-                assertEquals(68, acc.get());
+                assertEquals(71, acc.get());
             }
         });
         replicator.open();

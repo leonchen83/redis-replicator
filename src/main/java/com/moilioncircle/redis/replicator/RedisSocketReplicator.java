@@ -248,7 +248,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     protected synchronized void heartBeat() {
-        heartBeat = new Timer("heart beat");
+        heartBeat = new Timer("heart beat", true);
         //bug fix. in this point closed by other thread. multi-thread issue
         heartBeat.schedule(new TimerTask() {
             @Override

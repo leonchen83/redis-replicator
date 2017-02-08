@@ -230,7 +230,7 @@ public class RedisRdbReplicatorTest {
             public void handle(Replicator replicator) {
                 System.out.println("close testFileV8");
                 assertEquals(92499, acc.get());
-                assertEquals(72, acc1.get());
+                assertEquals(7, acc1.get());
             }
         });
         redisReplicator.open();

@@ -29,20 +29,31 @@ public class ByteArray implements Iterable<byte[]> {
     public static final long MIN_VALUE = 0L;
     public static final long MAX_VALUE = 2305843007066210304L; //(Integer.MAX_VALUE - 1) * MAGIC
 
+    protected final int cap;
     protected final long length;
     protected byte[] smallBytes;
     protected byte[][] largeBytes;
 
     public ByteArray(byte[] smallBytes) {
+        this(smallBytes, Integer.MAX_VALUE);
+    }
+
+    public ByteArray(long length) {
+        this(length, Integer.MAX_VALUE);
+    }
+
+    public ByteArray(byte[] smallBytes, int cap) {
+        this.cap = cap;
         this.length = smallBytes.length;
         this.smallBytes = smallBytes;
     }
 
-    public ByteArray(long length) {
+    public ByteArray(long length, int cap) {
+        this.cap = cap;
         this.length = length;
         if (length > MAX_VALUE || length < 0) {
             throw new IllegalArgumentException(String.valueOf(length));
-        } else if (length <= Integer.MAX_VALUE) {
+        } else if (length <= cap) {
             this.smallBytes = new byte[(int) length];
         } else {
             int x = (int) (length >> BITS);
@@ -59,7 +70,7 @@ public class ByteArray implements Iterable<byte[]> {
     }
 
     public void set(long idx, byte value) {
-        if (idx < Integer.MAX_VALUE) {
+        if (smallBytes != null) {
             smallBytes[(int) idx] = value;
             return;
         }
@@ -69,7 +80,7 @@ public class ByteArray implements Iterable<byte[]> {
     }
 
     public byte get(long idx) {
-        if (idx < Integer.MAX_VALUE) return smallBytes[(int) idx];
+        if (smallBytes != null) return smallBytes[(int) idx];
         int x = (int) (idx >> BITS);
         int y = (int) (idx & (MAGIC - 1));
         return largeBytes[x][y];
@@ -80,7 +91,8 @@ public class ByteArray implements Iterable<byte[]> {
     }
 
     public byte[] first() {
-        return this.iterator().next();
+        Iterator<byte[]> it = this.iterator();
+        return it.hasNext() ? it.next() : null;
     }
 
     @Override
@@ -92,7 +104,7 @@ public class ByteArray implements Iterable<byte[]> {
         if (srcPos + length > src.length || destPos + length > dest.length) {
             throw new IndexOutOfBoundsException();
         }
-        if (srcPos + length <= Integer.MAX_VALUE && destPos + length <= Integer.MAX_VALUE) {
+        if (srcPos + length <= src.cap && destPos + length <= dest.cap) {
             System.arraycopy(src.smallBytes, (int) srcPos, dest.smallBytes, (int) destPos, (int) length);
             return;
         }

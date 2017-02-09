@@ -9,6 +9,9 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,10 +22,10 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class PsyncTest {
 
-    //@Test
+    @Test
     public void psync() throws IOException {
 
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6380, Configuration.defaultSetting().setAuthPassword("test").setConnectionTimeout(2000));
+        Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, Configuration.defaultSetting().setAuthPassword("test").setConnectionTimeout(2000));
         final AtomicBoolean flag = new AtomicBoolean(false);
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -55,7 +58,21 @@ public class PsyncTest {
                     if (acc.get() == 200) {
                         //close current process port;
                         //that will auto trigger psync command
-                        //TODO how to get the current process port and kill that port using java?
+                        try {
+                            ((TestRedisSocketReplicator)replicator).getOutputStream().close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            ((TestRedisSocketReplicator)replicator).getInputStream().close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            ((TestRedisSocketReplicator)replicator).getSocket().close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     if (acc.get() == 1000) {
                         try {
@@ -91,6 +108,25 @@ public class PsyncTest {
                 }
             }
             jedis.close();
+        }
+    }
+
+    private static class TestRedisSocketReplicator extends RedisSocketReplicator {
+
+        public TestRedisSocketReplicator(String host, int port, Configuration configuration) {
+            super(host, port, configuration);
+        }
+
+        public Socket getSocket(){
+            return super.socket;
+        }
+
+        public InputStream getInputStream(){
+            return super.inputStream;
+        }
+
+        public OutputStream getOutputStream(){
+            return super.outputStream;
         }
     }
 

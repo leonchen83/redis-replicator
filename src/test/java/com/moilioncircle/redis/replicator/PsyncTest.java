@@ -3,7 +3,9 @@ package com.moilioncircle.redis.replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
@@ -12,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,6 +37,13 @@ public class PsyncTest {
                 setAsyncCachedBytes(0).
                 setHeartBeatPeriod(200));
         final AtomicBoolean flag = new AtomicBoolean(false);
+        final Set<AuxField> set = new LinkedHashSet<>();
+        replicator.addAuxFieldListener(new AuxFieldListener() {
+            @Override
+            public void handle(Replicator replicator, AuxField auxField) {
+                set.add(auxField);
+            }
+        });
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -80,6 +91,9 @@ public class PsyncTest {
             @Override
             public void handle(Replicator replicator) {
                 assertEquals(1000, acc.get());
+                for (AuxField auxField : set) {
+                    System.out.println(auxField.getAuxKey() + "=" + auxField.getAuxValue());
+                }
             }
         });
         replicator.open();

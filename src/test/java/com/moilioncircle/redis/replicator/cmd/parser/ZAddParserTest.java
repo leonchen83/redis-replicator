@@ -20,6 +20,7 @@ public class ZAddParserTest {
         assertEquals(Boolean.TRUE, cmd.getIncr());
         assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
+        System.out.println(cmd);
 
         cmd = parser.parse("zadd abc 1 b".split(" "));
         assertEquals("abc", cmd.getKey());
@@ -28,6 +29,7 @@ public class ZAddParserTest {
         assertEquals(null, cmd.getIncr());
         assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
+        System.out.println(cmd);
 
         cmd = parser.parse("zadd abc xx 1 b".split(" "));
         assertEquals("abc", cmd.getKey());
@@ -36,6 +38,7 @@ public class ZAddParserTest {
         assertEquals(null, cmd.getIncr());
         assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
+        System.out.println(cmd);
 
         cmd = parser.parse("zadd abc incr 1 b".split(" "));
         assertEquals("abc", cmd.getKey());
@@ -44,6 +47,7 @@ public class ZAddParserTest {
         assertEquals(Boolean.TRUE, cmd.getIncr());
         assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
+        System.out.println(cmd);
     }
 
 }

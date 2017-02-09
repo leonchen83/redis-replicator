@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.util;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -110,12 +109,6 @@ public class ByteArray implements Iterable<byte[]> {
             length -= min;
         }
         assert length == 0;
-    }
-
-    @Override
-    public String toString() {
-        if (smallBytes != null) return Arrays.toString(smallBytes);
-        throw new UnsupportedOperationException("too large bytes. length:" + length);
     }
 
     protected class Iter implements Iterator<byte[]> {

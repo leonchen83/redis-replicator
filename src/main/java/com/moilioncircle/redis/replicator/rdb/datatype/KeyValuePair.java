@@ -118,24 +118,24 @@ public class KeyValuePair<T> implements Event {
     }
 
     /**
-     * @return RDB_TYPE_ZSET, RDB_TYPE_ZSET_ZIPLIST
+     * @return RDB_TYPE_ZSET, RDB_TYPE_ZSET_2, RDB_TYPE_ZSET_ZIPLIST
      */
     public Set<ZSetEntry> getValueAsZSet() {
         return (Set<ZSetEntry>) value;
     }
 
     /**
-     * @return RDB_TYPE_LIST, RDB_TYPE_LIST_ZIPLIST
+     * @return RDB_TYPE_LIST, RDB_TYPE_LIST_ZIPLIST, RDB_TYPE_LIST_QUICKLIST
      */
     public List<String> getValueAsStringList() {
         return (List<String>) value;
     }
 
     /**
-     * @return RDB_TYPE_LIST_QUICKLIST
+     * @return RDB_TYPE_MODULE
      */
-    public List<byte[]> getValueAsByteArrayList() {
-        return (List<byte[]>) value;
+    public Module getValueAsModule() {
+        return (Module) value;
     }
 
     @Override

@@ -5,9 +5,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
@@ -32,8 +30,8 @@ public class PsyncTest {
 
         final Configuration configuration = Configuration.defaultSetting().
                 setAuthPassword("test").
-                setConnectionTimeout(1000).
-                setReadTimeout(1000).
+                setConnectionTimeout(3000).
+                setReadTimeout(3000).
                 setBufferSize(64).
                 setAsyncCachedBytes(0).
                 setHeartBeatPeriod(200).
@@ -43,7 +41,6 @@ public class PsyncTest {
                 setRetryTimeInterval(1000);
         System.out.println(configuration);
         Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
-        replicator.removeCommandParser(CommandName.name("PING"));
         final AtomicBoolean flag = new AtomicBoolean(false);
         final Set<AuxField> set = new LinkedHashSet<>();
         replicator.addAuxFieldListener(new AuxFieldListener() {
@@ -52,29 +49,16 @@ public class PsyncTest {
                 set.add(auxField);
             }
         });
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                if (flag.compareAndSet(false, true)) {
-                    Thread thread = new Thread(new JRun());
-                    thread.setDaemon(true);
-                    thread.start();
-                }
-            }
-        });
         final AtomicInteger acc = new AtomicInteger();
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
+                if (flag.compareAndSet(false, true)) {
+                    Thread thread = new Thread(new JRun());
+                    thread.setDaemon(true);
+                    thread.start();
+                    replicator.removeCommandParser(CommandName.name("PING"));
+                }
                 if (command instanceof SetCommand && ((SetCommand) command).getKey().startsWith("psync")) {
                     SetCommand setCommand = (SetCommand) command;
                     int num = Integer.parseInt(setCommand.getKey().split(" ")[1]);
@@ -138,7 +122,7 @@ public class PsyncTest {
             for (int i = 0; i < 1000; i++) {
                 jedis.set("psync " + i, "psync" + i);
                 try {
-                    Thread.sleep(5);
+                    Thread.sleep(20);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

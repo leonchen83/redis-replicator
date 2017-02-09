@@ -1,5 +1,6 @@
-package com.moilioncircle.redis.replicator.cmd.impl;
+package com.moilioncircle.redis.replicator.cmd.parser;
 
+import com.moilioncircle.redis.replicator.cmd.impl.HMSetCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.HMSetParser;
 import org.junit.Test;
 

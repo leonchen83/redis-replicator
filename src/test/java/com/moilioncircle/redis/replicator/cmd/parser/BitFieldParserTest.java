@@ -1,5 +1,6 @@
-package com.moilioncircle.redis.replicator.cmd.impl;
+package com.moilioncircle.redis.replicator.cmd.parser;
 
+import com.moilioncircle.redis.replicator.cmd.impl.BitFieldCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.BitFieldParser;
 import org.junit.Test;
 

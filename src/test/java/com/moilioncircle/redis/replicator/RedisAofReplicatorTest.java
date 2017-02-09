@@ -90,7 +90,6 @@ public class RedisAofReplicatorTest {
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
                 acc.incrementAndGet();
             }
         });

@@ -29,13 +29,19 @@ public class PsyncTest {
     @Test
     public void psync() throws IOException {
 
-        Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, Configuration.defaultSetting().
+        final Configuration configuration = Configuration.defaultSetting().
                 setAuthPassword("test").
                 setConnectionTimeout(1000).
                 setReadTimeout(1000).
                 setBufferSize(64).
                 setAsyncCachedBytes(0).
-                setHeartBeatPeriod(200));
+                setHeartBeatPeriod(200).
+                setReceiveBufferSize(0).
+                setSendBufferSize(0).
+                setDiscardRdbEvent(true).
+                setRetryTimeInterval(1000);
+        System.out.println(configuration);
+        Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
         final AtomicBoolean flag = new AtomicBoolean(false);
         final Set<AuxField> set = new LinkedHashSet<>();
         replicator.addAuxFieldListener(new AuxFieldListener() {
@@ -76,6 +82,9 @@ public class PsyncTest {
                         //close current process port;
                         //that will auto trigger psync command
                         close(replicator);
+                    }
+                    if (acc.get() == 980) {
+                        configuration.setVerbose(true);
                     }
                     if (acc.get() == 1000) {
                         try {

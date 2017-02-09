@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class AsyncBufferedInputStream extends InputStream implements Runnable {
     //
-    private static final Log LOGGER = LogFactory.getLog(AsyncBufferedInputStream.class);
+    private static final Log logger = LogFactory.getLog(AsyncBufferedInputStream.class);
 
     //
     private static final int DEFAULT_CAPACITY = 2 * 1024 * 1024;
@@ -97,13 +97,13 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
         } catch (IOException e) {
             this.exception = e;
         } catch (Exception e) {
-            LOGGER.error("failed to transfer data", e);
+            logger.error("failed to transfer data", e);
         } finally {
             if (!this.closed.get()) {
                 try {
                     close();
                 } catch (IOException e) {
-                    LOGGER.error("failed to close is", e);
+                    logger.error("failed to close is", e);
                 }
             }
         }
@@ -120,9 +120,7 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
     @Override
     public void close() throws IOException {
         //
-        if (!this.closed.compareAndSet(false, true)) {
-            return;
-        }
+        if (!this.closed.compareAndSet(false, true)) return;
 
         //
         try {

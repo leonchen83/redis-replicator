@@ -25,7 +25,13 @@ public class PsyncTest {
     @Test
     public void psync() throws IOException {
 
-        Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, Configuration.defaultSetting().setAuthPassword("test").setConnectionTimeout(2000));
+        Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, Configuration.defaultSetting().
+                setAuthPassword("test").
+                setConnectionTimeout(1000).
+                setReadTimeout(1000).
+                setBufferSize(64).
+                setAsyncCachedBytes(0).
+                setHeartBeatPeriod(200));
         final AtomicBoolean flag = new AtomicBoolean(false);
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -39,11 +45,10 @@ public class PsyncTest {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                if (!flag.get()) {
+                if (flag.compareAndSet(false, true)) {
                     Thread thread = new Thread(new JRun());
                     thread.setDaemon(true);
                     thread.start();
-                    flag.compareAndSet(false, true);
                 }
             }
         });
@@ -56,23 +61,10 @@ public class PsyncTest {
                     int num = Integer.parseInt(setCommand.getKey().split(" ")[1]);
                     acc.incrementAndGet();
                     if (acc.get() == 200) {
+                        System.out.println("close for psync");
                         //close current process port;
                         //that will auto trigger psync command
-                        try {
-                            ((TestRedisSocketReplicator)replicator).getOutputStream().close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            ((TestRedisSocketReplicator)replicator).getInputStream().close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        try {
-                            ((TestRedisSocketReplicator)replicator).getSocket().close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        close(replicator);
                     }
                     if (acc.get() == 1000) {
                         try {
@@ -93,21 +85,41 @@ public class PsyncTest {
         replicator.open();
     }
 
+    private static void close(Replicator replicator) {
+        try {
+            ((TestRedisSocketReplicator) replicator).getOutputStream().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            ((TestRedisSocketReplicator) replicator).getInputStream().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            ((TestRedisSocketReplicator) replicator).getSocket().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static class JRun implements Runnable {
 
         @Override
         public void run() {
+            System.out.println("start jedis insert");
             Jedis jedis = new Jedis("127.0.0.1", 6380);
             jedis.auth("test");
             for (int i = 0; i < 1000; i++) {
                 jedis.set("psync " + i, "psync" + i);
                 try {
-                    Thread.sleep(20);
+                    Thread.sleep(5);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
             jedis.close();
+            System.out.println("stop jedis insert");
         }
     }
 

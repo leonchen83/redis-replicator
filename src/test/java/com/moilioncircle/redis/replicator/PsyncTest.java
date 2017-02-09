@@ -2,6 +2,7 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -42,6 +43,7 @@ public class PsyncTest {
                 setRetryTimeInterval(1000);
         System.out.println(configuration);
         Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
+        replicator.removeCommandParser(CommandName.name("PING"));
         final AtomicBoolean flag = new AtomicBoolean(false);
         final Set<AuxField> set = new LinkedHashSet<>();
         replicator.addAuxFieldListener(new AuxFieldListener() {

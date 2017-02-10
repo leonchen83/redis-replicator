@@ -7,6 +7,7 @@
       * [联系作者](#联系作者)
    * [安装](#安装)
       * [安装前置条件](#安装前置条件)
+      * [Maven依赖](#maven依赖)
       * [安装源码到本地maven仓库](#安装源码到本地maven仓库)
    * [简要用法](#简要用法)
       * [通过socket同步](#通过socket同步)
@@ -69,6 +70,15 @@ Redis Replicator是一款rdb解析以及命令解析的工具. 此工具完整�
 jdk 1.7+  
 redis 2.4 - 4.0-rc2  
 maven-3.2.3以上  
+
+##Maven依赖  
+```java  
+    <dependency>
+        <groupId>com.moilioncircle</groupId>
+        <artifactId>redis-replicator</artifactId>
+        <version>2.0.0-rc2</version>
+    </dependency>
+```
 
 ##安装源码到本地maven仓库  
   

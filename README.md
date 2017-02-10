@@ -8,6 +8,7 @@ Table of Contents([中文说明](https://github.com/leonchen83/redis-replicator/
       * [Contract author](#contract-author)
    * [Install](#install)
       * [Requirements](#requirements)
+      * [Maven dependency](#maven-dependency)
       * [Install from source code](#install-from-source-code)
    * [Simple usage](#simple-usage)
       * [Replication via socket](#replication-via-socket)
@@ -71,6 +72,15 @@ The below I mentioned `Command` is only means `Write Command` in redis which exc
 jdk 1.7+  
 redis 2.4 - 4.0-rc2  
 maven-3.2.3 or newer  
+
+##Maven dependency  
+```java  
+    <dependency>
+        <groupId>com.moilioncircle</groupId>
+        <artifactId>redis-replicator</artifactId>
+        <version>2.0.0-rc2</version>
+    </dependency>
+```
 
 ##Install from source code  
   

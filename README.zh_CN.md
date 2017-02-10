@@ -54,6 +54,7 @@
   
 Redis Replicator是一款rdb解析以及命令解析的工具. 此工具完整实现了redis replication协议.  
 支持sync,psync,psync2等三种同步命令. 还支持远程rdb文件备份以及数据同步等功能.  
+此文中提到的 `命令` 特指redis中的写命令，不包括读命令(比如 `get`,`hmget`)  
 
 ##QQ讨论组  
   

@@ -56,6 +56,7 @@ Table of Contents([中文说明](https://github.com/leonchen83/redis-replicator/
 Redis Replicator is a redis rdb and command parser written in java.  
 It can parse,filter,broadcast the rdb and command events in a real time manner.  
 It also can sync redis data to your local cache or to database.  
+The below I mentioned `Command` is only means `Write Command` in redis which excludes `Read Command`(e.g. `get`,`hmget`)  
 
 ##QQ group  
   

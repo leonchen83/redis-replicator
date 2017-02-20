@@ -179,7 +179,7 @@ maven-3.2.3以上
             }
         };
 
-        //save rdb from remote server
+        //保存server端传来的rdb文件
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -203,7 +203,7 @@ maven-3.2.3以上
         });
         replicator.open();
 
-        //check rdb file
+        //检查写入的rdb文件
         replicator = new RedisReplicator(new File("./dump.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
@@ -229,7 +229,7 @@ maven-3.2.3以上
             }
         };
 
-        //save 1000 records commands
+        //保存1000条命令
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -262,7 +262,7 @@ maven-3.2.3以上
         });
         replicator.open();
 
-        //check aof file
+        //检查写入的aof文件
         replicator = new RedisReplicator(new File("./appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override
@@ -325,7 +325,7 @@ maven-3.2.3以上
         public void handle(Replicator replicator, Command command) {
             if(command instanceof YourAppendCommand){
                 YourAppendCommand appendCommand = (YourAppendCommand)command;
-                //your code gots here
+                //你的业务代码写在这
             }
         }
     });
@@ -495,7 +495,7 @@ maven-3.2.3以上
     System.setProperty("javax.net.ssl.trustStorePassword", "password");
     System.setProperty("javax.net.ssl.trustStoreType", "your_type");
     Configuration.defaultSetting().setSsl(true);
-    //optional setting
+    //可选设置
     Configuration.defaultSetting().setSslSocketFactory(sslSocketFactory);
     Configuration.defaultSetting().setSslParameters(sslParameters);
     Configuration.defaultSetting().setHostnameVerifier(hostnameVerifier);

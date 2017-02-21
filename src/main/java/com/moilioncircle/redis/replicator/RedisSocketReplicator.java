@@ -44,7 +44,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     protected Socket socket;
     protected final int port;
-    protected Timer heartBeat;
+    protected Timer heartbeat;
     protected final String host;
     protected ReplyParser replyParser;
     protected RedisOutputStream outputStream;
@@ -95,7 +95,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 //bug fix.
                 if (syncMode == SyncMode.PSYNC && connected.get()) {
                     //heart beat send REPLCONF ACK ${slave offset}
-                    heartBeat();
+                    heartbeat();
                 } else if (syncMode == SyncMode.SYNC_LATER && connected.get()) {
                     //sync later
                     i = 0;
@@ -132,7 +132,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         //submit event
                         this.submitEvent(parsedCommand);
                     } else {
-                        if (logger.isInfoEnabled()) logger.info("Redis reply:" + obj);
+                        if (logger.isInfoEnabled()) logger.info("redis reply:" + obj);
                     }
                 }
                 //connected = false
@@ -253,10 +253,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.warn("[REPLCONF capa " + cmd + "] failed." + reply);
     }
 
-    protected synchronized void heartBeat() {
-        heartBeat = new Timer("heart beat", true);
+    protected synchronized void heartbeat() {
+        heartbeat = new Timer("[heartbeat]", true);
         //bug fix. in this point closed by other thread. multi-thread issue
-        heartBeat.schedule(new TimerTask() {
+        heartbeat.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
@@ -266,7 +266,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
             }
         }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod());
-        logger.info("heart beat started.");
+        logger.info("heartbeat thread started.");
     }
 
     protected void send(byte[] command) throws IOException {
@@ -314,10 +314,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (!connected.compareAndSet(true, false)) return;
 
         synchronized (this) {
-            if (heartBeat != null) {
-                heartBeat.cancel();
-                heartBeat = null;
-                logger.info("heart beat canceled.");
+            if (heartbeat != null) {
+                heartbeat.cancel();
+                heartbeat = null;
+                logger.info("heartbeat thread canceled.");
             }
         }
 

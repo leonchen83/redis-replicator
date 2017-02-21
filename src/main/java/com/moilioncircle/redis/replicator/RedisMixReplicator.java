@@ -63,7 +63,7 @@ public class RedisMixReplicator extends AbstractReplicator {
                 //submit event
                 this.submitEvent(parsedCommand);
             } else {
-                logger.info("Redis reply:" + obj);
+                logger.info("redis reply:" + obj);
             }
         }
     }

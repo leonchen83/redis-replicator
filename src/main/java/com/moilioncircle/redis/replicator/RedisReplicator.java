@@ -139,10 +139,12 @@ public class RedisReplicator implements Replicator {
         return replicator.removeModuleParser(moduleName, moduleVersion);
     }
 
+    @Override
     public void setRdbVisitor(RdbVisitor rdbVisitor) {
         replicator.setRdbVisitor(rdbVisitor);
     }
 
+    @Override
     public RdbVisitor getRdbVisitor() {
         return replicator.getRdbVisitor();
     }

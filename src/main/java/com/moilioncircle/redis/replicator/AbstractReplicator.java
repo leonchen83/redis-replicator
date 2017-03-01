@@ -99,10 +99,12 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         return configuration != null && configuration.isVerbose();
     }
 
+    @Override
     public void setRdbVisitor(RdbVisitor rdbVisitor) {
         this.rdbVisitor = rdbVisitor;
     }
 
+    @Override
     public RdbVisitor getRdbVisitor() {
         return this.rdbVisitor;
     }

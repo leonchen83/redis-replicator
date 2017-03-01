@@ -32,10 +32,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class AbstractReplicatorListener implements ReplicatorListener {
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
-    protected final List<AuxFieldListener> auxFieldListeners = new CopyOnWriteArrayList<>();
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
     protected final List<CommandListener> commandListeners = new CopyOnWriteArrayList<>();
     protected final List<RawByteListener> rawByteListeners = new CopyOnWriteArrayList<>();
+    protected final List<AuxFieldListener> auxFieldListeners = new CopyOnWriteArrayList<>();
     protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
 
     @Override

@@ -132,7 +132,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         //submit event
                         this.submitEvent(parsedCommand);
                     } else {
-                        if (logger.isInfoEnabled()) logger.info("Redis reply:" + obj);
+                        logger.info("redis reply:" + obj);
                     }
                 }
                 //connected = false
@@ -188,7 +188,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             public String handle(long len, RedisInputStream in) throws IOException {
                 logger.info("RDB dump file size:" + len);
                 if (configuration.isDiscardRdbEvent()) {
-                    logger.info("Discard " + len + " bytes");
+                    logger.info("discard " + len + " bytes");
                     in.skip(len);
                 } else {
                     RdbParser parser = new RdbParser(in, replicator);

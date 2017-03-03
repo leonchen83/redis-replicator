@@ -48,7 +48,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
     public String applyMagic(RedisInputStream in) throws IOException {
         String magicString = BaseRdbParser.StringHelper.str(in, 5);//REDIS
         if (!magicString.equals("REDIS")) {
-            throw new UnsupportedOperationException("Can't read MAGIC STRING [REDIS] ,value:" + magicString);
+            throw new UnsupportedOperationException("can't read MAGIC STRING [REDIS] ,value:" + magicString);
         }
         return magicString;
     }
@@ -57,7 +57,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
     public int applyVersion(RedisInputStream in) throws IOException {
         int version = Integer.parseInt(BaseRdbParser.StringHelper.str(in, 4));
         if (version < 2 || version > 8) {
-            throw new UnsupportedOperationException(String.valueOf("Can't handle RDB format version " + version));
+            throw new UnsupportedOperationException(String.valueOf("can't handle RDB format version " + version));
         }
         return version;
     }
@@ -149,7 +149,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
             logger.info("RDB " + auxKey + ": " + auxValue);
             return new AuxField(auxKey, auxValue);
         } else {
-            logger.warn("Unrecognized RDB AUX field: " + auxKey + ",value: " + auxValue);
+            logger.warn("unrecognized RDB AUX field: " + auxKey + ",value: " + auxValue);
             return null;
         }
     }
@@ -384,7 +384,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
                     set.add(String.valueOf(stream.readLong(8)));
                     break;
                 default:
-                    throw new AssertionError("Expect encoding [2,4,8] but:" + encoding);
+                    throw new AssertionError("expect encoding [2,4,8] but:" + encoding);
             }
         }
         o11.setValueRdbType(RDB_TYPE_SET_INTSET);
@@ -556,7 +556,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
             case RDB_TYPE_MODULE:
                 return (KeyValuePair) applyModule(in, db, version);
             default:
-                throw new AssertionError("Un-except value-type:" + valueType);
+                throw new AssertionError("unexpected value type:" + valueType);
         }
     }
 }

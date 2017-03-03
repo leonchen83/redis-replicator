@@ -32,8 +32,8 @@ public interface BulkReplyHandler {
         public String handle(long len, RedisInputStream in) throws IOException {
             String reply = len == 0 ? Constants.EMPTY : in.readString((int) len);
             int c;
-            if ((c = in.read()) != '\r') throw new AssertionError("Expect '\\r' but :" + (char) c);
-            if ((c = in.read()) != '\n') throw new AssertionError("Expect '\\n' but :" + (char) c);
+            if ((c = in.read()) != '\r') throw new AssertionError("expect '\\r' but :" + (char) c);
+            if ((c = in.read()) != '\n') throw new AssertionError("expect '\\n' but :" + (char) c);
             //simple reply
             return reply;
         }

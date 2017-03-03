@@ -44,7 +44,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     protected Socket socket;
     protected final int port;
-    protected Timer heartBeat;
+    protected Timer heartbeat;
     protected final String host;
     protected ReplyParser replyParser;
     protected RedisOutputStream outputStream;
@@ -95,7 +95,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 //bug fix.
                 if (syncMode == SyncMode.PSYNC && connected.get()) {
                     //heart beat send REPLCONF ACK ${slave offset}
-                    heartBeat();
+                    heartbeat();
                 } else if (syncMode == SyncMode.SYNC_LATER && connected.get()) {
                     //sync later
                     i = 0;
@@ -188,7 +188,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             public String handle(long len, RedisInputStream in) throws IOException {
                 logger.info("RDB dump file size:" + len);
                 if (configuration.isDiscardRdbEvent()) {
-                    logger.info("discard " + len + " bytes");
+                    logger.info("Discard " + len + " bytes");
                     in.skip(len);
                 } else {
                     RdbParser parser = new RdbParser(in, replicator);
@@ -266,7 +266,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
             }
         }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod());
-        logger.info("heart beat started.");
+        logger.info("heartbeat thread started.");
     }
 
     protected void send(byte[] command) throws IOException {

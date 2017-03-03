@@ -143,7 +143,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
 
     private void accept(String actual, String expect) {
         if (actual.equalsIgnoreCase(expect)) return;
-        throw new AssertionError("Expect " + expect + " but actual " + actual);
+        throw new AssertionError("expect " + expect + " but actual " + actual);
     }
 
 }

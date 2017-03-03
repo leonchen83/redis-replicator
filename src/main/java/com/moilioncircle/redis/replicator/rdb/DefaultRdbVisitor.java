@@ -348,7 +348,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
         }
         int zlend = BaseRdbParser.LenHelper.zlend(stream);
         if (zlend != 255) {
-            throw new AssertionError("zlend expected 255 but " + zlend);
+            throw new AssertionError("zlend expect 255 but " + zlend);
         }
         o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
         o10.setValue(list);
@@ -419,7 +419,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
         }
         int zlend = BaseRdbParser.LenHelper.zlend(stream);
         if (zlend != 255) {
-            throw new AssertionError("zlend expected 255 but " + zlend);
+            throw new AssertionError("zlend expect 255 but " + zlend);
         }
         o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
         o12.setValue(zset);
@@ -453,7 +453,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
         }
         int zlend = BaseRdbParser.LenHelper.zlend(stream);
         if (zlend != 255) {
-            throw new AssertionError("zlend expected 255 but " + zlend);
+            throw new AssertionError("zlend expect 255 but " + zlend);
         }
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
         o13.setValue(map);
@@ -482,7 +482,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
             }
             int zlend = BaseRdbParser.LenHelper.zlend(stream);
             if (zlend != 255) {
-                throw new AssertionError("zlend expected 255 but " + zlend);
+                throw new AssertionError("zlend expect 255 but " + zlend);
             }
             byteList.addAll(list);
         }
@@ -556,7 +556,7 @@ public class DefaultRdbVisitor implements RdbVisitor {
             case RDB_TYPE_MODULE:
                 return (KeyValuePair) applyModule(in, db, version);
             default:
-                throw new AssertionError("unexpected value type:" + valueType);
+                throw new AssertionError("unexpected value-type:" + valueType);
         }
     }
 }

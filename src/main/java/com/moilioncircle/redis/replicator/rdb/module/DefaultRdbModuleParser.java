@@ -32,7 +32,7 @@ public class DefaultRdbModuleParser {
     }
 
     public long loadUnSigned() throws IOException {
-        logger.warn("Un-support [loadUnSigned]. using [loadSigned] instead");
+        logger.warn("unsupported [loadUnSigned]. using [loadSigned] instead");
         return loadSigned();
     }
 

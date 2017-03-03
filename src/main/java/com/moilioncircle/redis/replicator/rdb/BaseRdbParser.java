@@ -84,7 +84,7 @@ public class BaseRdbParser {
         } else if (rawByte == RDB_64BITLEN) {
             value = in.readLong(8, false);
         } else {
-            throw new AssertionError("Un-except len-type:" + type);
+            throw new AssertionError("unexpected len-type:" + type);
         }
         return new Len(value, isencoded);
     }
@@ -175,7 +175,7 @@ public class BaseRdbParser {
                 case RDB_ENC_LZF:
                     return rdbLoadLzfStringObject(flags);
                 default:
-                    throw new AssertionError("Unknown RdbParser encoding type:" + len);
+                    throw new AssertionError("unknown RdbParser encoding type:" + len);
             }
         }
 

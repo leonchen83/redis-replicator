@@ -188,7 +188,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             public String handle(long len, RedisInputStream in) throws IOException {
                 logger.info("RDB dump file size:" + len);
                 if (configuration.isDiscardRdbEvent()) {
-                    logger.info("Discard " + len + " bytes");
+                    logger.info("discard " + len + " bytes");
                     in.skip(len);
                 } else {
                     RdbParser parser = new RdbParser(in, replicator);
@@ -253,10 +253,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.warn("[REPLCONF capa " + cmd + "] failed." + reply);
     }
 
-    protected synchronized void heartBeat() {
-        heartBeat = new Timer("heart beat", true);
+    protected synchronized void heartbeat() {
+        heartbeat = new Timer("heartbeat", true);
         //bug fix. in this point closed by other thread. multi-thread issue
-        heartBeat.schedule(new TimerTask() {
+        heartbeat.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
@@ -314,10 +314,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (!connected.compareAndSet(true, false)) return;
 
         synchronized (this) {
-            if (heartBeat != null) {
-                heartBeat.cancel();
-                heartBeat = null;
-                logger.info("heart beat canceled.");
+            if (heartbeat != null) {
+                heartbeat.cancel();
+                heartbeat = null;
+                logger.info("heartbeat canceled.");
             }
         }
 

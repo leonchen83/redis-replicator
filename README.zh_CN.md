@@ -1,51 +1,52 @@
-内容索引
+内容索引([Table of Contents](https://github.com/leonchen83/redis-replicator/blob/master/README.md))  
 =================
 
-   * [Redis-replicator](#redis-replicator)
-      * [简介](#简介)
-      * [QQ讨论组](#qq讨论组)
-      * [联系作者](#联系作者)
-   * [安装](#安装)
-      * [安装前置条件](#安装前置条件)
-      * [Maven依赖](#maven依赖)
-      * [安装源码到本地maven仓库](#安装源码到本地maven仓库)
-   * [简要用法](#简要用法)
-      * [通过socket同步](#通过socket同步)
-      * [读取并解析rdb文件](#读取并解析rdb文件)
-      * [读取并解析aof文件](#读取并解析aof文件)
-      * [读取混合格式文件](#读取混合格式文件)
-         * [redis混合文件格式](#redis混合文件格式)
-         * [redis混合文件格式配置](#redis混合文件格式配置)
-         * [应用Replicator读取混合格式文件](#应用replicator读取混合格式文件)
-      * [备份远程redis的rdb文件](#备份远程redis的rdb文件)
-      * [备份远程redis的实时命令](#备份远程redis的实时命令)
-   * [高级主题](#高级主题)
-      * [命令扩展](#命令扩展)
-         * [首先写一个command类](#首先写一个command类)
-         * [然后写一个command parser](#然后写一个command-parser)
-         * [注册这个command parser到replicator](#注册这个command-parser到replicator)
-         * [处理这个注册的command事件](#处理这个注册的command事件)
-      * [Module扩展(redis-4.0及以上)](#module扩展redis-40及以上)
-         * [编译redis源码中的测试modules](#编译redis源码中的测试modules)
-         * [打开redis配置文件redis.conf中相关注释](#打开redis配置文件redisconf中相关注释)
-         * [写一个module parser](#写一个module-parser)
-         * [再写一个command parser](#再写一个command-parser)
-         * [注册module parser和command parser并处理相关事件](#注册module-parser和command-parser并处理相关事件)
-      * [编写你自己的rdb解析器](#编写你自己的rdb解析器)
-      * [内置的Command Parser](#内置的command-parser)
-      * [当出现EOFException](#当出现eofexception)
-      * [跟踪事件日志log](#跟踪事件日志log)
-      * [SSL安全链接](#ssl安全链接)
-      * [redis认证](#redis认证)
-      * [避免全量同步](#避免全量同步)
-      * [FullSyncEvent事件](#fullsyncevent事件)
-      * [处理原始字节数组](#处理原始字节数组)
-   * [贡献者](#贡献者)
-   * [相关引用](#相关引用)
+   * [1. Redis-replicator](#1-redis-replicator)
+      * [1.1. 简介](#11-简介)
+      * [1.2. QQ讨论组](#12-qq讨论组)
+      * [1.3. 联系作者](#13-联系作者)
+   * [2. 安装](#2-安装)
+      * [2.1. 安装前置条件](#21-安装前置条件)
+      * [2.2. Maven依赖](#22-maven依赖)
+      * [2.3. 安装源码到本地maven仓库](#23-安装源码到本地maven仓库)
+   * [3. 简要用法](#3-简要用法)
+      * [3.1. 通过socket同步](#31-通过socket同步)
+      * [3.2. 读取并解析rdb文件](#32-读取并解析rdb文件)
+      * [3.3. 读取并解析aof文件](#33-读取并解析aof文件)
+      * [3.4. 读取混合格式文件](#34-读取混合格式文件)
+         * [3.4.1. redis混合文件格式](#341-redis混合文件格式)
+         * [3.4.2. redis混合文件格式配置](#342-redis混合文件格式配置)
+         * [3.4.3. 应用Replicator读取混合格式文件](#343-应用replicator读取混合格式文件)
+      * [3.5. 备份远程redis的rdb文件](#35-备份远程redis的rdb文件)
+      * [3.6. 备份远程redis的实时命令](#36-备份远程redis的实时命令)
+   * [4. 高级主题](#4-高级主题)
+      * [4.1. 命令扩展](#41-命令扩展)
+         * [4.1.1. 首先写一个command类](#411-首先写一个command类)
+         * [4.1.2. 然后写一个command parser](#412-然后写一个command-parser)
+         * [4.1.3. 注册这个command parser到replicator](#413-注册这个command-parser到replicator)
+         * [4.1.4. 处理这个注册的command事件](#414-处理这个注册的command事件)
+      * [4.2. Module扩展(redis-4.0及以上)](#42-module扩展redis-40及以上)
+         * [4.2.1. 编译redis源码中的测试modules](#421-编译redis源码中的测试modules)
+         * [4.2.2. 打开redis配置文件redis.conf中相关注释](#422-打开redis配置文件redisconf中相关注释)
+         * [4.2.3. 写一个module parser](#423-写一个module-parser)
+         * [4.2.4. 再写一个command parser](#424-再写一个command-parser)
+         * [4.2.5. 注册module parser和command parser并处理相关事件](#425-注册module-parser和command-parser并处理相关事件)
+      * [4.3. 编写你自己的rdb解析器](#43-编写你自己的rdb解析器)
+   * [5. 其他主题](#5-其他主题)
+      * [5.1. 内置的Command Parser](#51-内置的command-parser)
+      * [5.2. 当出现EOFException](#52-当出现eofexception)
+      * [5.3. 跟踪事件日志log](#53-跟踪事件日志log)
+      * [5.4. SSL安全链接](#54-ssl安全链接)
+      * [5.5. redis认证](#55-redis认证)
+      * [5.6. 避免全量同步](#56-避免全量同步)
+      * [5.7. FullSyncEvent事件](#57-fullsyncevent事件)
+      * [5.8. 处理原始字节数组](#58-处理原始字节数组)
+   * [6. 贡献者](#6-贡献者)
+   * [7. 相关引用](#7-相关引用)
+  
+# 1. Redis-replicator  
 
-# Redis-replicator  
-
-## 简介
+## 1.1. 简介
 [![Join the chat at https://gitter.im/leonchen83/redis-replicator](https://badges.gitter.im/leonchen83/redis-replicator.svg)](https://gitter.im/leonchen83/redis-replicator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/leonchen83/redis-replicator.svg?branch=master)](https://travis-ci.org/leonchen83/redis-replicator)
 [![Coverage Status](https://coveralls.io/repos/github/leonchen83/redis-replicator/badge.svg?branch=master)](https://coveralls.io/github/leonchen83/redis-replicator?branch=master)
@@ -57,21 +58,21 @@ Redis Replicator是一款rdb解析以及命令解析的工具. 此工具完整�
 支持sync,psync,psync2等三种同步命令. 还支持远程rdb文件备份以及数据同步等功能.  
 此文中提到的 `命令` 特指redis中的写命令，不包括读命令(比如 `get`,`hmget`)  
 
-## QQ讨论组  
+## 1.2. QQ讨论组  
   
 **479688557**  
 
-## 联系作者
+## 1.3. 联系作者
 
 **chen.bao.yi@qq.com**
   
-# 安装  
-## 安装前置条件  
+# 2. 安装  
+## 2.1. 安装前置条件  
 jdk 1.7+  
 redis 2.4 - 4.0-rc2  
 maven-3.2.3以上  
 
-## Maven依赖  
+## 2.2. Maven依赖  
 ```java  
     <dependency>
         <groupId>com.moilioncircle</groupId>
@@ -80,15 +81,15 @@ maven-3.2.3以上
     </dependency>
 ```
 
-## 安装源码到本地maven仓库  
+## 2.3. 安装源码到本地maven仓库  
   
 ```
     $mvn clean install package -Dmaven.test.skip=true
 ```  
 
-# 简要用法  
+# 3. 简要用法  
   
-## 通过socket同步  
+## 3.1. 通过socket同步  
   
 ```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -107,7 +108,7 @@ maven-3.2.3以上
         replicator.open();
 ```
 
-## 读取并解析rdb文件  
+## 3.2. 读取并解析rdb文件  
 
 ```java  
         Replicator replicator = new RedisReplicator(new File("dump.rdb"), FileType.RDB, Configuration.defaultSetting());
@@ -121,7 +122,7 @@ maven-3.2.3以上
         replicator.open();
 ```  
 
-## 读取并解析aof文件  
+## 3.3. 读取并解析aof文件  
 
 ```java  
         Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
@@ -134,16 +135,16 @@ maven-3.2.3以上
         replicator.open();
 ```  
 
-## 读取混合格式文件  
-### redis混合文件格式  
+## 3.4. 读取混合格式文件  
+### 3.4.1. redis混合文件格式  
 ```java  
     [RDB file][AOF tail]
 ```
-### redis混合文件格式配置  
+### 3.4.2. redis混合文件格式配置  
 ```java  
     aof-use-rdb-preamble yes
 ```
-### 应用Replicator读取混合格式文件 
+### 3.4.3. 应用Replicator读取混合格式文件 
 ```java  
         final Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
@@ -164,7 +165,7 @@ maven-3.2.3以上
 ```
 
 
-## 备份远程redis的rdb文件  
+## 3.5. 备份远程redis的rdb文件  
 
 ```java  
 
@@ -214,7 +215,7 @@ maven-3.2.3以上
         replicator.open();
 ```
 
-## 备份远程redis的实时命令  
+## 3.6. 备份远程redis的实时命令  
 
 ```java  
 
@@ -273,11 +274,11 @@ maven-3.2.3以上
         replicator.open();
 ```
 
-# 高级主题  
+# 4. 高级主题  
 
-## 命令扩展  
+## 4.1. 命令扩展  
   
-### 首先写一个command类  
+### 4.1.1. 首先写一个command类  
 ```java  
     public static class YourAppendCommand implements Command {
         public final String key;
@@ -299,7 +300,7 @@ maven-3.2.3以上
     }
 ```
 
-### 然后写一个command parser  
+### 4.1.2. 然后写一个command parser  
 ```java  
 
     public class YourAppendParser implements CommandParser<YourAppendCommand> {
@@ -312,13 +313,13 @@ maven-3.2.3以上
 
 ```
   
-### 注册这个command parser到replicator  
+### 4.1.3. 注册这个command parser到replicator  
 ```java  
     Replicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
     replicator.addCommandParser(CommandName.name("APPEND"),new YourAppendParser());
 ```
   
-### 处理这个注册的command事件  
+### 4.1.4. 处理这个注册的command事件  
 ```java  
     replicator.addCommandListener(new CommandListener() {
         @Override
@@ -331,18 +332,18 @@ maven-3.2.3以上
     });
 ```  
 
-## Module扩展(redis-4.0及以上)  
-### 编译redis源码中的测试modules  
+## 4.2. Module扩展(redis-4.0及以上)  
+### 4.2.1. 编译redis源码中的测试modules  
 ```java  
     $cd /path/to/redis-4.0-rc2/src/modules
     $make
 ```
-### 打开redis配置文件redis.conf中相关注释  
+### 4.2.2. 打开redis配置文件redis.conf中相关注释  
 
 ```java  
     loadmodule /path/to/redis-4.0-rc2/src/modules/hellotype.so
 ```
-### 写一个module parser  
+### 4.2.3. 写一个module parser  
 ```java  
     public class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
 
@@ -378,7 +379,7 @@ maven-3.2.3以上
         }
     }
 ```
-### 再写一个command parser  
+### 4.2.4. 再写一个command parser  
 ```java  
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
@@ -416,7 +417,7 @@ maven-3.2.3以上
 
     }
 ```
-### 注册module parser和command parser并处理相关事件  
+### 4.2.5. 注册module parser和command parser并处理相关事件  
 
 ```java  
     public static void main(String[] args) throws IOException {
@@ -444,11 +445,13 @@ maven-3.2.3以上
         replicator.open();
     }
 ```
-## 编写你自己的rdb解析器  
+## 4.3. 编写你自己的rdb解析器  
 * 写一个类实现 `RdbVisitor`接口  
 * 通过`Replicator`的`setRdbVisitor`方法注册你自己的 `RdbVisitor`.  
 
-## 内置的Command Parser  
+# 5. 其他主题  
+  
+## 5.1. 内置的Command Parser  
 
 |  **命令**  |**命令**  |  **命令**  |**命令**|**命令**  | **命令**   |
 | ---------- | ------------ | ---------------| ---------- | ------------ | ---------------|    
@@ -464,7 +467,7 @@ maven-3.2.3以上
 |**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**BRPOPLPUSH**  |  
 |**PUBLISH** |  **BITOP**   |**SETBIT**      |            |              |                |  
   
-## 当出现EOFException
+## 5.2. 当出现EOFException
   
 * 调整redis server中的以下配置. 相关配置请参考 [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
   
@@ -473,7 +476,7 @@ maven-3.2.3以上
 ```  
 **警告: 这个配置可能会使redis-server中的内存溢出**  
   
-## 跟踪事件日志log  
+## 5.3. 跟踪事件日志log  
   
 * 日志级别调整成 **debug**
 * 如果你项目中使用log4j2,请加入如下Logger到配置文件:
@@ -488,7 +491,7 @@ maven-3.2.3以上
     Configuration.defaultSetting().setVerbose(true);
 ```
   
-## SSL安全链接  
+## 5.4. SSL安全链接  
   
 ```java  
     System.setProperty("javax.net.ssl.trustStore", "/path/to/truststore");
@@ -501,13 +504,13 @@ maven-3.2.3以上
     Configuration.defaultSetting().setHostnameVerifier(hostnameVerifier);
 ```
   
-## redis认证  
+## 5.5. redis认证  
   
 ```java  
     Configuration.defaultSetting().setAuthPassword("foobared");
 ```  
 
-## 避免全量同步  
+## 5.6. 避免全量同步  
   
 * 调整redis-server中的如下配置  
   
@@ -519,7 +522,7 @@ maven-3.2.3以上
 `repl-ping-slave-period` **必须** 小于 `Configuration.getReadTimeout()`  
 默认的 `Configuration.getReadTimeout()` 是30秒.
   
-## FullSyncEvent事件  
+## 5.7. FullSyncEvent事件  
   
 ```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -546,7 +549,7 @@ maven-3.2.3以上
         replicator.open();
 ```  
   
-## 处理原始字节数组  
+## 5.8. 处理原始字节数组  
   
 * 当kv.getValueRdbType() == 0时, 可以得到原始的字节数组. 在某些情况(比如HyperLogLog)下会很有用.  
   
@@ -564,11 +567,11 @@ maven-3.2.3以上
         replicator.open();
 ```  
   
-# 贡献者  
+# 6. 贡献者  
 * Leon Chen  
 * Adrian Yao  
   
-# 相关引用  
+# 7. 相关引用  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  
   * [Redis RDB File Format](https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format)  
   * [Redis Protocol specification](http://redis.io/topics/protocol)

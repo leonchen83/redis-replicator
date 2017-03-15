@@ -185,7 +185,7 @@ maven-3.2.3 or newer
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
-                replicator.addRdbRawByteListener(rawByteListener);
+                replicator.addRawByteListener(rawByteListener);
             }
 
             @Override
@@ -194,7 +194,7 @@ maven-3.2.3 or newer
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                replicator.removeRdbRawByteListener(rawByteListener);
+                replicator.removeRawByteListener(rawByteListener);
                 try {
                     out.close();
                     replicator.close();
@@ -243,7 +243,7 @@ maven-3.2.3 or newer
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                replicator.addRdbRawByteListener(rawByteListener);
+                replicator.addRawByteListener(rawByteListener);
             }
         });
 

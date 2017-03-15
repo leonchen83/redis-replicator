@@ -50,7 +50,7 @@ public class RdbBackupExample {
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
-                replicator.addRdbRawByteListener(rawByteListener);
+                replicator.addRawByteListener(rawByteListener);
             }
 
             @Override
@@ -59,7 +59,7 @@ public class RdbBackupExample {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                replicator.removeRdbRawByteListener(rawByteListener);
+                replicator.removeRawByteListener(rawByteListener);
                 try {
                     out.close();
                     replicator.close();

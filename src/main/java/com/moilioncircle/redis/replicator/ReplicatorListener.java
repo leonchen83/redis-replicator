@@ -36,9 +36,12 @@ public interface ReplicatorListener extends RawByteListener {
 
     boolean removeAuxFieldListener(AuxFieldListener listener);
 
-    boolean addRdbRawByteListener(RawByteListener listener);
+    /*
+     * Raw byte
+     */
+    boolean addRawByteListener(RawByteListener listener);
 
-    boolean removeRdbRawByteListener(RawByteListener listener);
+    boolean removeRawByteListener(RawByteListener listener);
 
     /*
      * Command

@@ -60,7 +60,7 @@ public class CommandBackupExample {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                replicator.addRdbRawByteListener(rawByteListener);
+                replicator.addRawByteListener(rawByteListener);
             }
         });
 

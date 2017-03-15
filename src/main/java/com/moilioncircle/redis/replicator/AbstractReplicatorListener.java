@@ -69,12 +69,12 @@ public class AbstractReplicatorListener implements ReplicatorListener {
     }
 
     @Override
-    public boolean addRdbRawByteListener(RawByteListener listener) {
+    public boolean addRawByteListener(RawByteListener listener) {
         return this.rawByteListeners.add(listener);
     }
 
     @Override
-    public boolean removeRdbRawByteListener(RawByteListener listener) {
+    public boolean removeRawByteListener(RawByteListener listener) {
         return this.rawByteListeners.remove(listener);
     }
 

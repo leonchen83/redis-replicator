@@ -95,13 +95,13 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public boolean addRdbRawByteListener(RawByteListener listener) {
-        return replicator.addRdbRawByteListener(listener);
+    public boolean addRawByteListener(RawByteListener listener) {
+        return replicator.addRawByteListener(listener);
     }
 
     @Override
-    public boolean removeRdbRawByteListener(RawByteListener listener) {
-        return replicator.removeRdbRawByteListener(listener);
+    public boolean removeRawByteListener(RawByteListener listener) {
+        return replicator.removeRawByteListener(listener);
     }
 
     @Override

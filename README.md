@@ -4,7 +4,7 @@ Table of Contents([中文说明](https://github.com/leonchen83/redis-replicator/
    * [1. Redis-replicator](#1-redis-replicator)
       * [1.1. Brief introduction](#11-brief-introduction)
       * [1.2. QQ group](#12-qq-group)
-      * [1.3.Contract author](#13contract-author)
+      * [1.3. Contract author](#13-contract-author)
    * [2. Install](#2-install)
       * [2.1. Requirements](#21-requirements)
       * [2.2. Maven dependency](#22-maven-dependency)
@@ -63,7 +63,7 @@ The below I mentioned `Command` is only means `Write Command` in redis which exc
   
 **479688557**  
 
-## 1.3.Contract author
+## 1.3. Contract author
 
 **chen.bao.yi@qq.com**
   

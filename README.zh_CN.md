@@ -1,4 +1,4 @@
-内容索引([Table of Contents](https://github.com/leonchen83/redis-replicator/blob/master/README.md))  
+内容索引([Table of Contents](./README.md))  
 =================
 
    * [1. Redis-replicator](#1-redis-replicator)

@@ -304,7 +304,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (!connected.compareAndSet(false, true)) return;
         socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
         outputStream = new RedisOutputStream(socket.getOutputStream());
-        inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream()) : socket.getInputStream(), configuration.getBufferSize());
+        inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream(), configuration.getAsyncCachedBytes()) : socket.getInputStream(), configuration.getBufferSize());
         inputStream.addRawByteListener(this);
         replyParser = new ReplyParser(inputStream);
     }

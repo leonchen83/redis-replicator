@@ -23,6 +23,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -216,9 +217,11 @@ public class RedisInputStream extends InputStream {
         while (total > 0) {
             int available = tail - head;
             if (available >= total) {
+                notify(Arrays.copyOfRange(buf, head, head + (int) total));
                 head += total;
                 break;
             } else {
+                notify(Arrays.copyOfRange(buf, head, tail));
                 total -= available;
                 fill();
             }

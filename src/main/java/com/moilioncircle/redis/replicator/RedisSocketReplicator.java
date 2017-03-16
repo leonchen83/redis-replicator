@@ -17,6 +17,8 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
@@ -189,7 +191,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 logger.info("RDB dump file size:" + len);
                 if (configuration.isDiscardRdbEvent()) {
                     logger.info("discard " + len + " bytes");
+                    replicator.submitEvent(new PreFullSyncEvent());
                     in.skip(len);
+                    replicator.submitEvent(new PostFullSyncEvent(0L));
                 } else {
                     RdbParser parser = new RdbParser(in, replicator);
                     parser.parse();

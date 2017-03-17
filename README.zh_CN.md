@@ -77,7 +77,7 @@ maven-3.2.3以上
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.0.0-rc2</version>
+        <version>2.0.0-rc3</version>
     </dependency>
 ```
 

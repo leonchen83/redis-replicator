@@ -43,6 +43,13 @@
             <name>leon.chen</name>
             <email>chen.bao.yi@gmail.com</email>
             <organization>moilioncircle</organization>
+            <organizationUrl>http://www.moilioncircle.com/</organizationUrl>
+        </developer>
+
+        <developer>
+            <name>Adrian Yao</name>
+            <email>adrianyaofly@gmail.com</email>
+            <organization>unstudy</organization>
         </developer>
     </developers>
 

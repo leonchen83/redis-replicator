@@ -16,8 +16,10 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
+import java.io.Serializable;
+
 /**
  * Created by leon on 2017/1/31.
  */
-public interface Module {
+public interface Module extends Serializable {
 }

@@ -7,8 +7,11 @@ import com.moilioncircle.redis.replicator.event.Event;
  */
 public class AuxField implements Event {
 
-    private final String auxKey;
-    private final String auxValue;
+    private String auxKey;
+    private String auxValue;
+
+    public AuxField() {
+    }
 
     public AuxField(String auxKey, String auxValue) {
         this.auxKey = auxKey;
@@ -21,6 +24,14 @@ public class AuxField implements Event {
 
     public String getAuxValue() {
         return auxValue;
+    }
+
+    public void setAuxKey(String auxKey) {
+        this.auxKey = auxKey;
+    }
+
+    public void setAuxValue(String auxValue) {
+        this.auxValue = auxValue;
     }
 
     @Override

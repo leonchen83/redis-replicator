@@ -23,8 +23,16 @@ import java.io.Serializable;
  * @since 2016/8/11
  */
 public class ZSetEntry implements Serializable {
-    private final String element;
-    private final double score;
+    private String element;
+    private double score;
+
+    public ZSetEntry() {
+    }
+
+    public ZSetEntry(String element, double score) {
+        this.element = element;
+        this.score = score;
+    }
 
     public String getElement() {
         return element;
@@ -34,8 +42,11 @@ public class ZSetEntry implements Serializable {
         return score;
     }
 
-    public ZSetEntry(String element, double score) {
+    public void setElement(String element) {
         this.element = element;
+    }
+
+    public void setScore(double score) {
         this.score = score;
     }
 

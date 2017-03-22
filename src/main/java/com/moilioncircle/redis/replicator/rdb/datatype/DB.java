@@ -28,6 +28,9 @@ public class DB implements Serializable {
     /* rdb version 7 */
     private Long expires = null;
 
+    public DB() {
+    }
+
     public DB(long dbNumber) {
         this.dbNumber = dbNumber;
     }

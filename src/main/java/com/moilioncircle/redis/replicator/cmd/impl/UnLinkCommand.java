@@ -8,13 +8,20 @@ import java.util.Arrays;
  * Created by leon on 2/2/17.
  */
 public class UnLinkCommand implements Command {
-    private final String[] keys;
+    private String[] keys;
+
+    public UnLinkCommand() {
+    }
+
+    public UnLinkCommand(String... keys) {
+        this.keys = keys;
+    }
 
     public String[] getKeys() {
         return keys;
     }
 
-    public UnLinkCommand(String... keys) {
+    public void setKeys(String[] keys) {
         this.keys = keys;
     }
 

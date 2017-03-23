@@ -8,20 +8,11 @@ import java.util.List;
  * Created by leon on 2/2/17.
  */
 public class BitFieldCommand implements Command {
-    private final String key;
-    private final List<Statement> statements;
-    private final List<OverFlow> overFlows;
+    private String key;
+    private List<Statement> statements;
+    private List<OverFlow> overFlows;
 
-    public String getKey() {
-        return key;
-    }
-
-    public List<Statement> getStatements() {
-        return statements;
-    }
-
-    public List<OverFlow> getOverFlows() {
-        return overFlows;
+    public BitFieldCommand() {
     }
 
     public BitFieldCommand(String key,
@@ -29,6 +20,30 @@ public class BitFieldCommand implements Command {
                            List<OverFlow> overFlows) {
         this.key = key;
         this.statements = statements;
+        this.overFlows = overFlows;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public List<Statement> getStatements() {
+        return statements;
+    }
+
+    public void setStatements(List<Statement> statements) {
+        this.statements = statements;
+    }
+
+    public List<OverFlow> getOverFlows() {
+        return overFlows;
+    }
+
+    public void setOverFlows(List<OverFlow> overFlows) {
         this.overFlows = overFlows;
     }
 

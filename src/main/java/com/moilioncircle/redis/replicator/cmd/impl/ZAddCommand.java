@@ -9,30 +9,13 @@ import java.util.Arrays;
  * Created by leon on 2/2/17.
  */
 public class ZAddCommand implements Command {
-    private final String key;
-    private final ExistType existType;
-    private final Boolean isCh;
-    private final Boolean isIncr;
-    private final ZSetEntry[] zSetEntries;
+    private String key;
+    private ExistType existType;
+    private Boolean isCh;
+    private Boolean isIncr;
+    private ZSetEntry[] zSetEntries;
 
-    public String getKey() {
-        return key;
-    }
-
-    public ExistType getExistType() {
-        return existType;
-    }
-
-    public Boolean getCh() {
-        return isCh;
-    }
-
-    public Boolean getIncr() {
-        return isIncr;
-    }
-
-    public ZSetEntry[] getZSetEntries() {
-        return zSetEntries;
+    public ZAddCommand() {
     }
 
     public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries) {
@@ -40,6 +23,50 @@ public class ZAddCommand implements Command {
         this.existType = existType;
         this.isCh = isCh;
         this.isIncr = isIncr;
+        this.zSetEntries = zSetEntries;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public ExistType getExistType() {
+        return existType;
+    }
+
+    public void setExistType(ExistType existType) {
+        this.existType = existType;
+    }
+
+    public Boolean getCh() {
+        return isCh;
+    }
+
+    public void setCh(Boolean ch) {
+        isCh = ch;
+    }
+
+    public Boolean getIncr() {
+        return isIncr;
+    }
+
+    public void setIncr(Boolean incr) {
+        isIncr = incr;
+    }
+
+    public ZSetEntry[] getZSetEntries() {
+        return zSetEntries;
+    }
+
+    public ZSetEntry[] getzSetEntries() {
+        return zSetEntries;
+    }
+
+    public void setzSetEntries(ZSetEntry[] zSetEntries) {
         this.zSetEntries = zSetEntries;
     }
 

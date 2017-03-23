@@ -6,13 +6,20 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * Created by leon on 2/2/17.
  */
 public class RPopCommand implements Command {
-    private final String key;
+    private String key;
+
+    public RPopCommand() {
+    }
+
+    public RPopCommand(String key) {
+        this.key = key;
+    }
 
     public String getKey() {
         return key;
     }
 
-    public RPopCommand(String key) {
+    public void setKey(String key) {
         this.key = key;
     }
 

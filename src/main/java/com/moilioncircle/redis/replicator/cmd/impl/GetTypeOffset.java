@@ -23,6 +23,14 @@ public class GetTypeOffset implements Statement {
     private String type;
     private String offset;
 
+    public GetTypeOffset() {
+    }
+
+    public GetTypeOffset(String type, String offset) {
+        this.type = type;
+        this.offset = offset;
+    }
+
     public String getType() {
         return type;
     }

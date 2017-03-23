@@ -8,19 +8,30 @@ import java.util.Map;
  * Created by leon on 2/2/17.
  */
 public class HMSetCommand implements Command {
-    private final String key;
-    private final Map<String, String> fields;
+    private String key;
+    private Map<String, String> fields;
+
+    public HMSetCommand() {
+    }
+
+    public HMSetCommand(String key, Map<String, String> fields) {
+        this.key = key;
+        this.fields = fields;
+    }
 
     public String getKey() {
         return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Map<String, String> getFields() {
         return fields;
     }
 
-    public HMSetCommand(String key, Map<String, String> fields) {
-        this.key = key;
+    public void setFields(Map<String, String> fields) {
         this.fields = fields;
     }
 

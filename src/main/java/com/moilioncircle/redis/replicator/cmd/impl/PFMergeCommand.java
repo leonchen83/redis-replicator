@@ -8,19 +8,30 @@ import java.util.Arrays;
  * Created by leon on 2/2/17.
  */
 public class PFMergeCommand implements Command {
-    private final String destkey;
-    private final String sourcekeys[];
+    private String destkey;
+    private String sourcekeys[];
+
+    public PFMergeCommand() {
+    }
+
+    public PFMergeCommand(String destkey, String... sourcekeys) {
+        this.destkey = destkey;
+        this.sourcekeys = sourcekeys;
+    }
 
     public String getDestkey() {
         return destkey;
+    }
+
+    public void setDestkey(String destkey) {
+        this.destkey = destkey;
     }
 
     public String[] getSourcekeys() {
         return sourcekeys;
     }
 
-    public PFMergeCommand(String destkey, String... sourcekeys) {
-        this.destkey = destkey;
+    public void setSourcekeys(String[] sourcekeys) {
         this.sourcekeys = sourcekeys;
     }
 

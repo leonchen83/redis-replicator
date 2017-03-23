@@ -24,6 +24,15 @@ public class SetTypeOffsetValue implements Statement {
     private String offset;
     private int value;
 
+    public SetTypeOffsetValue() {
+    }
+
+    public SetTypeOffsetValue(String type, String offset, int value) {
+        this.type = type;
+        this.offset = offset;
+        this.value = value;
+    }
+
     public String getType() {
         return type;
     }

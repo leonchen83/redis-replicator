@@ -6,13 +6,20 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * Created by leon on 2/2/17.
  */
 public class SelectCommand implements Command {
-    private final int index;
+    private int index;
+
+    public SelectCommand() {
+    }
+
+    public SelectCommand(int index) {
+        this.index = index;
+    }
 
     public int getIndex() {
         return index;
     }
 
-    public SelectCommand(int index) {
+    public void setIndex(int index) {
         this.index = index;
     }
 

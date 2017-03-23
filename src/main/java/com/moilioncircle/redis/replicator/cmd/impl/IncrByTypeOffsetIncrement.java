@@ -24,6 +24,15 @@ public class IncrByTypeOffsetIncrement implements Statement {
     private String offset;
     private int increment;
 
+    public IncrByTypeOffsetIncrement() {
+    }
+
+    public IncrByTypeOffsetIncrement(String type, String offset, int increment) {
+        this.type = type;
+        this.offset = offset;
+        this.increment = increment;
+    }
+
     public String getType() {
         return type;
     }

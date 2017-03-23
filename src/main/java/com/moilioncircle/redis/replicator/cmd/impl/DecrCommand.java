@@ -6,13 +6,20 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * Created by leon on 2/2/17.
  */
 public class DecrCommand implements Command {
-    private final String key;
+    private String key;
+
+    public DecrCommand() {
+    }
+
+    public DecrCommand(String key) {
+        this.key = key;
+    }
 
     public String getKey() {
         return key;
     }
 
-    public DecrCommand(String key) {
+    public void setKey(String key) {
         this.key = key;
     }
 

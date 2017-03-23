@@ -9,8 +9,11 @@ import java.util.Arrays;
  */
 public class SRemCommand implements Command {
 
-    private final String key;
-    private final String[] members;
+    private String key;
+    private String[] members;
+
+    public SRemCommand() {
+    }
 
     public SRemCommand(String key, String[] members) {
         this.key = key;
@@ -21,8 +24,16 @@ public class SRemCommand implements Command {
         return key;
     }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     public String[] getMembers() {
         return members;
+    }
+
+    public void setMembers(String[] members) {
+        this.members = members;
     }
 
     @Override

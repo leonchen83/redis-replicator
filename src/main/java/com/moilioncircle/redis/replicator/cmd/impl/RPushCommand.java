@@ -8,19 +8,30 @@ import java.util.Arrays;
  * Created by leon on 2/2/17.
  */
 public class RPushCommand implements Command {
-    private final String key;
-    private final String[] values;
+    private String key;
+    private String[] values;
+
+    public RPushCommand() {
+    }
+
+    public RPushCommand(String key, String... values) {
+        this.key = key;
+        this.values = values;
+    }
 
     public String getKey() {
         return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String[] getValues() {
         return values;
     }
 
-    public RPushCommand(String key, String... values) {
-        this.key = key;
+    public void setValues(String[] values) {
         this.values = values;
     }
 

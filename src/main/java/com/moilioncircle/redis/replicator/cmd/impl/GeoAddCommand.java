@@ -8,19 +8,30 @@ import java.util.Arrays;
  * Created by leon on 2/2/17.
  */
 public class GeoAddCommand implements Command {
-    private final String key;
-    private final Geo[] geos;
+    private String key;
+    private Geo[] geos;
+
+    public GeoAddCommand() {
+    }
+
+    public GeoAddCommand(String key, Geo[] geos) {
+        this.key = key;
+        this.geos = geos;
+    }
 
     public String getKey() {
         return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Geo[] getGeos() {
         return geos;
     }
 
-    public GeoAddCommand(String key, Geo[] geos) {
-        this.key = key;
+    public void setGeos(Geo[] geos) {
         this.geos = geos;
     }
 

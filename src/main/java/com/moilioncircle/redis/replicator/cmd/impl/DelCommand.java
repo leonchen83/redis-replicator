@@ -8,13 +8,20 @@ import java.util.Arrays;
  * Created by leon on 2/2/17.
  */
 public class DelCommand implements Command {
-    private final String[] keys;
+    private String[] keys;
+
+    public DelCommand() {
+    }
+
+    public DelCommand(String... keys) {
+        this.keys = keys;
+    }
 
     public String[] getKeys() {
         return keys;
     }
 
-    public DelCommand(String... keys) {
+    public void setKeys(String[] keys) {
         this.keys = keys;
     }
 

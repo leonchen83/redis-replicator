@@ -6,25 +6,12 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * Created by leon on 2/2/17.
  */
 public class RestoreCommand implements Command {
-    private final String key;
-    private final int ttl;
-    private final String serializedValue;
-    private final Boolean isReplace;
+    private String key;
+    private int ttl;
+    private String serializedValue;
+    private Boolean isReplace;
 
-    public String getKey() {
-        return key;
-    }
-
-    public int getTtl() {
-        return ttl;
-    }
-
-    public String getSerializedValue() {
-        return serializedValue;
-    }
-
-    public Boolean getReplace() {
-        return isReplace;
+    public RestoreCommand() {
     }
 
     public RestoreCommand(String key, int ttl, String serializedValue, Boolean isReplace) {
@@ -32,6 +19,38 @@ public class RestoreCommand implements Command {
         this.ttl = ttl;
         this.serializedValue = serializedValue;
         this.isReplace = isReplace;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public int getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(int ttl) {
+        this.ttl = ttl;
+    }
+
+    public String getSerializedValue() {
+        return serializedValue;
+    }
+
+    public void setSerializedValue(String serializedValue) {
+        this.serializedValue = serializedValue;
+    }
+
+    public Boolean getReplace() {
+        return isReplace;
+    }
+
+    public void setReplace(Boolean replace) {
+        isReplace = replace;
     }
 
     @Override

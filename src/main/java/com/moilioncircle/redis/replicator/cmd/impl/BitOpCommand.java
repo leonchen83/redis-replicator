@@ -8,25 +8,40 @@ import java.util.Arrays;
  * Created by leon on 2/2/17.
  */
 public class BitOpCommand implements Command {
-    private final Op op;
-    private final String destkey;
-    private final String keys[];
+    private Op op;
+    private String destkey;
+    private String keys[];
+
+    public BitOpCommand() {
+    }
+
+    public BitOpCommand(Op op, String destkey, String[] keys) {
+        this.op = op;
+        this.destkey = destkey;
+        this.keys = keys;
+    }
 
     public Op getOp() {
         return op;
+    }
+
+    public void setOp(Op op) {
+        this.op = op;
     }
 
     public String getDestkey() {
         return destkey;
     }
 
+    public void setDestkey(String destkey) {
+        this.destkey = destkey;
+    }
+
     public String[] getKeys() {
         return keys;
     }
 
-    public BitOpCommand(Op op, String destkey, String[] keys) {
-        this.op = op;
-        this.destkey = destkey;
+    public void setKeys(String[] keys) {
         this.keys = keys;
     }
 

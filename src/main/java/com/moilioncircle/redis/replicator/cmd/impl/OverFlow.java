@@ -26,6 +26,14 @@ public class OverFlow implements Serializable {
     private OverFlowType overFlowType;
     private List<Statement> statements;
 
+    public OverFlow() {
+    }
+
+    public OverFlow(OverFlowType overFlowType, List<Statement> statements) {
+        this.overFlowType = overFlowType;
+        this.statements = statements;
+    }
+
     public OverFlowType getOverFlowType() {
         return overFlowType;
     }

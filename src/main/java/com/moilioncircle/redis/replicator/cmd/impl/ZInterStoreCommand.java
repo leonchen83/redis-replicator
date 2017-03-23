@@ -8,30 +8,13 @@ import java.util.Arrays;
  * Created by leon on 2/2/17.
  */
 public class ZInterStoreCommand implements Command {
-    private final String destination;
-    private final int numkeys;
-    private final String[] keys;
-    private final double[] weights;
-    private final AggregateType aggregateType;
+    private String destination;
+    private int numkeys;
+    private String[] keys;
+    private double[] weights;
+    private AggregateType aggregateType;
 
-    public String getDestination() {
-        return destination;
-    }
-
-    public int getNumkeys() {
-        return numkeys;
-    }
-
-    public String[] getKeys() {
-        return keys;
-    }
-
-    public double[] getWeights() {
-        return weights;
-    }
-
-    public AggregateType getAggregateType() {
-        return aggregateType;
+    public ZInterStoreCommand() {
     }
 
     public ZInterStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType) {
@@ -39,6 +22,46 @@ public class ZInterStoreCommand implements Command {
         this.numkeys = numkeys;
         this.keys = keys;
         this.weights = weights;
+        this.aggregateType = aggregateType;
+    }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public int getNumkeys() {
+        return numkeys;
+    }
+
+    public void setNumkeys(int numkeys) {
+        this.numkeys = numkeys;
+    }
+
+    public String[] getKeys() {
+        return keys;
+    }
+
+    public void setKeys(String[] keys) {
+        this.keys = keys;
+    }
+
+    public double[] getWeights() {
+        return weights;
+    }
+
+    public void setWeights(double[] weights) {
+        this.weights = weights;
+    }
+
+    public AggregateType getAggregateType() {
+        return aggregateType;
+    }
+
+    public void setAggregateType(AggregateType aggregateType) {
         this.aggregateType = aggregateType;
     }
 

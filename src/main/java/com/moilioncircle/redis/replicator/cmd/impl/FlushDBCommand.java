@@ -6,7 +6,10 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * Created by leon on 2/2/17.
  */
 public class FlushDBCommand implements Command {
-    private final Boolean isAsync;
+    private Boolean isAsync;
+
+    public FlushDBCommand() {
+    }
 
     public FlushDBCommand(final Boolean isAsync) {
         this.isAsync = isAsync;
@@ -14,6 +17,14 @@ public class FlushDBCommand implements Command {
 
     public Boolean isAsync() {
         return isAsync;
+    }
+
+    public Boolean getAsync() {
+        return isAsync;
+    }
+
+    public void setAsync(Boolean async) {
+        isAsync = async;
     }
 
     @Override

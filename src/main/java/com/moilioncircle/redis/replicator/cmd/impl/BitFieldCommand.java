@@ -15,9 +15,7 @@ public class BitFieldCommand implements Command {
     public BitFieldCommand() {
     }
 
-    public BitFieldCommand(String key,
-                           List<Statement> statements,
-                           List<OverFlow> overFlows) {
+    public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows) {
         this.key = key;
         this.statements = statements;
         this.overFlows = overFlows;

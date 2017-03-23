@@ -1,5 +1,5 @@
 ### 2.1.0
-no api changes
+api enhancement. backward compatibility.
 
 ### 2.0.0-rc3  
 **api changes** :  

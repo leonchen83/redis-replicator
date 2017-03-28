@@ -100,7 +100,7 @@ public class AbstractReplicatorListener implements ReplicatorListener {
 
     @Override
     public void handle(byte... rawBytes) {
-        doRdbRawByteListener(rawBytes);
+        doRawByteListener(rawBytes);
     }
 
     protected void doCommandListener(Replicator replicator, Command command) {
@@ -145,7 +145,7 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         }
     }
 
-    protected void doRdbRawByteListener(byte... bytes) {
+    protected void doRawByteListener(byte... bytes) {
         for (RawByteListener listener : rawByteListeners) {
             listener.handle(bytes);
         }

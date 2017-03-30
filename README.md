@@ -326,7 +326,7 @@ maven-3.2.3 or newer
         public void handle(Replicator replicator, Command command) {
             if(command instanceof YourAppendCommand){
                 YourAppendCommand appendCommand = (YourAppendCommand)command;
-                //your code gots here
+                // your code goes here
             }
         }
     });

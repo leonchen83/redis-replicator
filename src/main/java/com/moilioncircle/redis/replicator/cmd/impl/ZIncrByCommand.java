@@ -7,13 +7,13 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class ZIncrByCommand implements Command {
     private String key;
-    private int increment;
+    private double increment;
     private String member;
 
     public ZIncrByCommand() {
     }
 
-    public ZIncrByCommand(String key, int increment, String member) {
+    public ZIncrByCommand(String key, double increment, String member) {
         this.key = key;
         this.increment = increment;
         this.member = member;
@@ -27,11 +27,11 @@ public class ZIncrByCommand implements Command {
         this.key = key;
     }
 
-    public int getIncrement() {
+    public double getIncrement() {
         return increment;
     }
 
-    public void setIncrement(int increment) {
+    public void setIncrement(double increment) {
         this.increment = increment;
     }
 

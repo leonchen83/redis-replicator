@@ -29,7 +29,7 @@ public class SetBitParser implements CommandParser<SetBitCommand> {
     public SetBitCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int offset = new BigDecimal((String) command[idx++]).intValueExact();
+        long offset = new BigDecimal((String) command[idx++]).longValueExact();
         int value = new BigDecimal((String) command[idx++]).intValueExact();
         return new SetBitCommand(key, offset, value);
     }

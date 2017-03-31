@@ -22,12 +22,12 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 public class IncrByTypeOffsetIncrement implements Statement {
     private String type;
     private String offset;
-    private int increment;
+    private long increment;
 
     public IncrByTypeOffsetIncrement() {
     }
 
-    public IncrByTypeOffsetIncrement(String type, String offset, int increment) {
+    public IncrByTypeOffsetIncrement(String type, String offset, long increment) {
         this.type = type;
         this.offset = offset;
         this.increment = increment;
@@ -49,11 +49,11 @@ public class IncrByTypeOffsetIncrement implements Statement {
         this.offset = offset;
     }
 
-    public int getIncrement() {
+    public long getIncrement() {
         return increment;
     }
 
-    public void setIncrement(int increment) {
+    public void setIncrement(long increment) {
         this.increment = increment;
     }
 

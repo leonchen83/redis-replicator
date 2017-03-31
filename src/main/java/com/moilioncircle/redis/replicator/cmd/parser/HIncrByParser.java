@@ -31,7 +31,7 @@ public class HIncrByParser implements CommandParser<HIncrByCommand> {
         int idx = 1;
         String key = (String) command[idx++];
         String field = (String) command[idx++];
-        int increment = new BigDecimal((String) command[idx++]).intValueExact();
+        long increment = new BigDecimal((String) command[idx++]).longValueExact();
         return new HIncrByCommand(key, field, increment);
     }
 

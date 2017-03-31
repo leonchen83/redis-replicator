@@ -29,8 +29,8 @@ public class IncrByParser implements CommandParser<IncrByCommand> {
     public IncrByCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int ex = new BigDecimal((String) command[idx++]).intValueExact();
-        return new IncrByCommand(key, ex);
+        long value = new BigDecimal((String) command[idx++]).longValueExact();
+        return new IncrByCommand(key, value);
     }
 
 }

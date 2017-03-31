@@ -7,12 +7,12 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class DecrByCommand implements Command {
     private String key;
-    private int value;
+    private long value;
 
     public DecrByCommand() {
     }
 
-    public DecrByCommand(String key, int value) {
+    public DecrByCommand(String key, long value) {
         this.key = key;
         this.value = value;
     }
@@ -25,11 +25,11 @@ public class DecrByCommand implements Command {
         this.key = key;
     }
 
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(long value) {
         this.value = value;
     }
 

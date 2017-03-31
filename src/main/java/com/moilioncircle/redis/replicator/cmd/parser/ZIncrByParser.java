@@ -19,8 +19,6 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZIncrByCommand;
 
-import java.math.BigDecimal;
-
 /**
  * Created by leon on 8/14/16.
  */
@@ -30,7 +28,7 @@ public class ZIncrByParser implements CommandParser<ZIncrByCommand> {
     public ZIncrByCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int increment = new BigDecimal((String) command[idx++]).intValueExact();
+        double increment = Double.parseDouble((String) command[idx++]);
         String member = (String) command[idx++];
         return new ZIncrByCommand(key, increment, member);
     }

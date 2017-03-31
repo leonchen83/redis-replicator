@@ -7,13 +7,13 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class SetBitCommand implements Command {
     private String key;
-    private int offset;
+    private long offset;
     private int value;
 
     public SetBitCommand() {
     }
 
-    public SetBitCommand(String key, int offset, int value) {
+    public SetBitCommand(String key, long offset, int value) {
         this.key = key;
         this.offset = offset;
         this.value = value;
@@ -27,11 +27,11 @@ public class SetBitCommand implements Command {
         this.key = key;
     }
 
-    public int getOffset() {
+    public long getOffset() {
         return offset;
     }
 
-    public void setOffset(int offset) {
+    public void setOffset(long offset) {
         this.offset = offset;
     }
 

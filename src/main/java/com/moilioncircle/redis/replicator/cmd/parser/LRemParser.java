@@ -30,7 +30,7 @@ public class LRemParser implements CommandParser<LRemCommand> {
     public LRemCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int index = new BigDecimal((String) command[idx++]).intValueExact();
+        long index = new BigDecimal((String) command[idx++]).longValueExact();
         String value = (String) command[idx++];
         return new LRemCommand(key, index, value);
     }

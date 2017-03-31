@@ -22,12 +22,12 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 public class SetTypeOffsetValue implements Statement {
     private String type;
     private String offset;
-    private int value;
+    private long value;
 
     public SetTypeOffsetValue() {
     }
 
-    public SetTypeOffsetValue(String type, String offset, int value) {
+    public SetTypeOffsetValue(String type, String offset, long value) {
         this.type = type;
         this.offset = offset;
         this.value = value;
@@ -49,11 +49,11 @@ public class SetTypeOffsetValue implements Statement {
         this.offset = offset;
     }
 
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(long value) {
         this.value = value;
     }
 

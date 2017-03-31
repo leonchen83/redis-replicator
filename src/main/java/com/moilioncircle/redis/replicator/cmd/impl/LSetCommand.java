@@ -7,13 +7,13 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class LSetCommand implements Command {
     private String key;
-    private int index;
+    private long index;
     private String value;
 
     public LSetCommand() {
     }
 
-    public LSetCommand(String key, int index, String value) {
+    public LSetCommand(String key, long index, String value) {
         this.key = key;
         this.index = index;
         this.value = value;
@@ -27,11 +27,11 @@ public class LSetCommand implements Command {
         this.key = key;
     }
 
-    public int getIndex() {
+    public long getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
+    public void setIndex(long index) {
         this.index = index;
     }
 

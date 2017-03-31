@@ -113,7 +113,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
         accept((String) params[idx++], "INCRBY");
         String type = (String) params[idx++];
         String offset = (String) params[idx++];
-        int increment = new BigDecimal((String) params[idx++]).intValueExact();
+        long increment = new BigDecimal((String) params[idx++]).longValueExact();
         incrByTypeOffsetIncrement.setType(type);
         incrByTypeOffsetIncrement.setOffset(offset);
         incrByTypeOffsetIncrement.setIncrement(increment);
@@ -125,7 +125,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
         accept((String) params[idx++], "SET");
         String type = (String) params[idx++];
         String offset = (String) params[idx++];
-        int value = new BigDecimal((String) params[idx++]).intValueExact();
+        long value = new BigDecimal((String) params[idx++]).longValueExact();
         setTypeOffsetValue.setType(type);
         setTypeOffsetValue.setOffset(offset);
         setTypeOffsetValue.setValue(value);

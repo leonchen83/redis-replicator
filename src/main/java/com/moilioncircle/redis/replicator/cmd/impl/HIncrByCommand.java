@@ -8,12 +8,12 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class HIncrByCommand implements Command {
     private String key;
     private String field;
-    private int increment;
+    private long increment;
 
     public HIncrByCommand() {
     }
 
-    public HIncrByCommand(String key, String field, int increment) {
+    public HIncrByCommand(String key, String field, long increment) {
         this.key = key;
         this.field = field;
         this.increment = increment;
@@ -35,11 +35,11 @@ public class HIncrByCommand implements Command {
         this.field = field;
     }
 
-    public int getIncrement() {
+    public long getIncrement() {
         return increment;
     }
 
-    public void setIncrement(int increment) {
+    public void setIncrement(long increment) {
         this.increment = increment;
     }
 

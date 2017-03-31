@@ -13,7 +13,7 @@ public class DecrByParser implements CommandParser<DecrByCommand> {
     public DecrByCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int ex = new BigDecimal((String) command[idx++]).intValueExact();
-        return new DecrByCommand(key, ex);
+        long value = new BigDecimal((String) command[idx++]).longValueExact();
+        return new DecrByCommand(key, value);
     }
 }

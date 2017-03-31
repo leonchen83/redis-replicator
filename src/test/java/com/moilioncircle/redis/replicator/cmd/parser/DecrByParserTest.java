@@ -3,7 +3,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Baoyi Chen on 2017/2/9.
@@ -45,7 +45,7 @@ public class DecrByParserTest {
             ZIncrByParser parser = new ZIncrByParser();
             ZIncrByCommand cmd = parser.parse("zincrby key 5 mem".split(" "));
             assertEquals("key",cmd.getKey());
-            assertEquals(5,cmd.getIncrement());
+            assertEquals(5,cmd.getIncrement(),0);
             assertEquals("mem",cmd.getMember());
             System.out.println(cmd);
         }

@@ -1,5 +1,24 @@
 ### 2.1.0
-api enhancement. backward compatibility.
+**api changes** :
+
+```java  
+RdbVisitor interface -> abstract  
+```
+
+**command changes** :  
+
+```java  
+ZIncrByCommand.increment int -> double  
+SetTypeOffsetValue.value int -> long  
+SetRangeCommand.index int -> long  
+SetBitCommand.offset int -> long  
+LSetCommand.index int -> long  
+LRemCommand.index int -> long  
+IncrByTypeOffsetIncrement.increment int -> long  
+IncrByCommand.value int -> long
+HIncrByCommand.increment int -> long
+DecrByCommand.value int -> long
+```
 
 ### 2.0.0-rc3  
 **api changes** :  

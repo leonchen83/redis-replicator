@@ -446,7 +446,7 @@ maven-3.2.3 or newer
     }
 ```
 ## 4.3. Write your own rdb parser  
-* implements `RdbVisitor`  
+* extends `RdbVisitor`  
 * register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 
 # 5. Other topics  

@@ -446,7 +446,7 @@ maven-3.2.3以上
     }
 ```
 ## 4.3. 编写你自己的rdb解析器  
-* 写一个类实现 `RdbVisitor`接口  
+* 写一个类继承 `RdbVisitor`抽象类  
 * 通过`Replicator`的`setRdbVisitor`方法注册你自己的 `RdbVisitor`.  
 
 # 5. 其他主题  

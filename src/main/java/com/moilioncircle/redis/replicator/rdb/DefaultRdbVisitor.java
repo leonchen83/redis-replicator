@@ -34,7 +34,7 @@ import static com.moilioncircle.redis.replicator.Constants.*;
 /**
  * Created by leon on 2/1/17.
  */
-public class DefaultRdbVisitor implements RdbVisitor {
+public class DefaultRdbVisitor extends RdbVisitor {
 
     protected static final Log logger = LogFactory.getLog(DefaultRdbVisitor.class);
 

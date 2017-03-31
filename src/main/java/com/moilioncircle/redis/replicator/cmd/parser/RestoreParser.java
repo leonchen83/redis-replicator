@@ -19,6 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.RestoreCommand;
 
+import java.math.BigDecimal;
+
 /**
  * Created by leon on 8/14/16.
  */
@@ -28,7 +30,7 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
         int idx = 1;
         Boolean isReplace = null;
         String key = (String) command[idx++];
-        int ttl = Integer.parseInt((String) command[idx++]);
+        int ttl = new BigDecimal((String) command[idx++]).intValueExact();
         String serializedValue = (String) command[idx++];
         if (idx < command.length && ((String) command[idx++]).equalsIgnoreCase("REPLACE")) {
             isReplace = true;

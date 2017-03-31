@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,7 +113,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
         accept((String) params[idx++], "INCRBY");
         String type = (String) params[idx++];
         String offset = (String) params[idx++];
-        int increment = Integer.parseInt((String) params[idx++]);
+        int increment = new BigDecimal((String) params[idx++]).intValueExact();
         incrByTypeOffsetIncrement.setType(type);
         incrByTypeOffsetIncrement.setOffset(offset);
         incrByTypeOffsetIncrement.setIncrement(increment);
@@ -124,7 +125,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
         accept((String) params[idx++], "SET");
         String type = (String) params[idx++];
         String offset = (String) params[idx++];
-        int value = Integer.parseInt((String) params[idx++]);
+        int value = new BigDecimal((String) params[idx++]).intValueExact();
         setTypeOffsetValue.setType(type);
         setTypeOffsetValue.setOffset(offset);
         setTypeOffsetValue.setValue(value);

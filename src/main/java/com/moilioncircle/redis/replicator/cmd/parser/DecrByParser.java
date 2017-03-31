@@ -3,6 +3,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.DecrByCommand;
 
+import java.math.BigDecimal;
+
 /**
  * Created by leon on 2/5/17.
  */
@@ -11,7 +13,7 @@ public class DecrByParser implements CommandParser<DecrByCommand> {
     public DecrByCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int ex = Integer.parseInt((String) command[idx++]);
+        int ex = new BigDecimal((String) command[idx++]).intValueExact();
         return new DecrByCommand(key, ex);
     }
 }

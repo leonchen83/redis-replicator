@@ -19,6 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SetBitCommand;
 
+import java.math.BigDecimal;
+
 /**
  * Created by leon on 8/14/16.
  */
@@ -27,8 +29,8 @@ public class SetBitParser implements CommandParser<SetBitCommand> {
     public SetBitCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int offset = Integer.parseInt((String) command[idx++]);
-        int value = Integer.parseInt((String) command[idx++]);
+        int offset = new BigDecimal((String) command[idx++]).intValueExact();
+        int value = new BigDecimal((String) command[idx++]).intValueExact();
         return new SetBitCommand(key, offset, value);
     }
 

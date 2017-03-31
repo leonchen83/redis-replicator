@@ -19,13 +19,15 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
 
+import java.math.BigDecimal;
+
 /**
  * Created by leon on 8/13/16.
  */
 public class SelectParser implements CommandParser<SelectCommand> {
     @Override
     public SelectCommand parse(Object[] command) {
-        int index = Integer.parseInt((String) command[1]);
+        int index = new BigDecimal((String) command[1]).intValueExact();
         return new SelectCommand(index);
     }
 

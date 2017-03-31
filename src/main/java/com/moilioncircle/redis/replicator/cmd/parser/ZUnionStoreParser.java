@@ -20,6 +20,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
 
+import java.math.BigDecimal;
+
 /**
  * Created by leon on 8/19/16.
  */
@@ -29,7 +31,7 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreCommand> {
         int idx = 1;
         AggregateType aggregateType = null;
         String destination = (String) command[idx++];
-        int numkeys = Integer.parseInt((String) command[idx++]);
+        int numkeys = new BigDecimal((String) command[idx++]).intValueExact();
         String[] keys = new String[numkeys];
         for (int i = 0; i < numkeys; i++) {
             keys[i] = (String) command[idx++];

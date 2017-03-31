@@ -19,6 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PSetExCommand;
 
+import java.math.BigDecimal;
+
 /**
  * Created by leon on 8/14/16.
  */
@@ -27,7 +29,7 @@ public class PSetExParser implements CommandParser<PSetExCommand> {
     public PSetExCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        long ex = Long.parseLong((String) command[idx++]);
+        long ex = new BigDecimal((String) command[idx++]).longValueExact();
         String value = (String) command[idx++];
         return new PSetExCommand(key, ex, value);
     }

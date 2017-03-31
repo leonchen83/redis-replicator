@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.EvalCommand;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class EvalParser implements CommandParser<EvalCommand> {
     public EvalCommand parse(Object[] command) {
         int idx = 1;
         String script = (String) command[idx++];
-        int numkeys = Integer.parseInt((String) command[idx++]);
+        int numkeys = new BigDecimal((String) command[idx++]).intValueExact();
         String[] keys = new String[numkeys];
         for (int i = 0; i < numkeys; i++) {
             keys[i] = (String) command[idx++];

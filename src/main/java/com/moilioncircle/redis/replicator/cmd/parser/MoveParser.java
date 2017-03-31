@@ -19,6 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.MoveCommand;
 
+import java.math.BigDecimal;
+
 /**
  * Created by leon on 8/14/16.
  */
@@ -27,7 +29,7 @@ public class MoveParser implements CommandParser<MoveCommand> {
     public MoveCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int db = Integer.parseInt((String) command[idx++]);
+        int db = new BigDecimal((String) command[idx++]).intValueExact();
         return new MoveCommand(key, db);
     }
 

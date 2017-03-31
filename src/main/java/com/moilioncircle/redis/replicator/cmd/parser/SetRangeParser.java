@@ -19,6 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SetRangeCommand;
 
+import java.math.BigDecimal;
+
 
 /**
  * Created by leon on 8/14/16.
@@ -28,7 +30,7 @@ public class SetRangeParser implements CommandParser<SetRangeCommand> {
     public SetRangeCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        int index = Integer.parseInt((String) command[idx++]);
+        int index = new BigDecimal((String) command[idx++]).intValueExact();
         String value = (String) command[idx++];
         return new SetRangeCommand(key, index, value);
     }

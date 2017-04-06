@@ -281,12 +281,20 @@ maven-3.2.3以上
 ### 4.1.1. 首先写一个command类  
 ```java  
     public static class YourAppendCommand implements Command {
-        public final String key;
-        public final String value;
+        private final String key;
+        private final String value;
     
         public YourAppendCommand(String key, String value) {
             this.key = key;
             this.value = value;
+        }
+                
+        public String getKey() {
+            return key;
+        }
+        
+        public String getValue() {
+            return value;
         }
     
         @Override
@@ -558,7 +566,7 @@ maven-3.2.3以上
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv.getValueRdbType() == 0) {
+                if (kv instanceof KeyStringValueString) {
                     KeyStringValueString ksvs = (KeyStringValueString) kv;
                     System.out.println(Arrays.toString(ksvs.getRawBytes()));
                 }

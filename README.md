@@ -56,8 +56,8 @@ Table of Contents([中文说明](./README.zh_CN.md))
   
 Redis Replicator is a redis rdb and command parser written in java.  
 It can parse,filter,broadcast the rdb and command events in a real time manner.  
-It also can sync redis data to your local cache or to database.  
-The below I mentioned `Command` is only means `Write Command` in redis which excludes `Read Command`(e.g. `get`,`hmget`)  
+It also can synchronize redis data to your local cache or to database.  
+The below I mentioned `Command` which means `Write Command` in redis and excludes `Read Command`(e.g. `get`,`hmget`)  
 
 ## 1.2. QQ group  
   
@@ -65,13 +65,13 @@ The below I mentioned `Command` is only means `Write Command` in redis which exc
 
 ## 1.3. Contract author
 
-**chen.bao.yi@qq.com**
+**chen.bao.yi@gmail.com**
   
 # 2. Install  
 ## 2.1. Requirements  
 jdk 1.7+  
 redis 2.4 - 4.0-rc2  
-maven-3.2.3 or newer  
+maven-3.2.3+  
 
 ## 2.2. Maven dependency  
 ```java  
@@ -281,12 +281,20 @@ maven-3.2.3 or newer
 ### 4.1.1. Write a command  
 ```java  
     public static class YourAppendCommand implements Command {
-        public final String key;
-        public final String value;
+        private final String key;
+        private final String value;
     
         public YourAppendCommand(String key, String value) {
             this.key = key;
             this.value = value;
+        }
+        
+        public String getKey() {
+            return key;
+        }
+        
+        public String getValue() {
+            return value;
         }
     
         @Override
@@ -558,7 +566,7 @@ default `Configuration.getReadTimeout()` is 30 seconds
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv.getValueRdbType() == 0) {
+                if (kv instanceof KeyStringValueString) {
                     KeyStringValueString ksvs = (KeyStringValueString) kv;
                     System.out.println(Arrays.toString(ksvs.getRawBytes()));
                 }

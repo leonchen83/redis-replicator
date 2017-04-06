@@ -70,8 +70,8 @@ The below I mentioned `Command` which means `Write Command` in redis and exclude
 # 2. Install  
 ## 2.1. Requirements  
 jdk 1.7+  
-redis 2.4 - 4.0-rc2  
 maven-3.2.3+  
+redis 2.4 - 4.0-rc2  
 
 ## 2.2. Maven dependency  
 ```java  

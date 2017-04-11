@@ -40,16 +40,21 @@
 
     <developers>
         <developer>
-            <name>leon.chen</name>
+            <name>Leon Chen</name>
             <email>chen.bao.yi@gmail.com</email>
             <organization>moilioncircle</organization>
             <organizationUrl>http://www.moilioncircle.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
         </developer>
 
         <developer>
             <name>Adrian Yao</name>
             <email>adrianyaofly@gmail.com</email>
             <organization>unstudy</organization>
+            <timezone>+8</timezone>
         </developer>
     </developers>
 
@@ -57,7 +62,7 @@
         <connection>scm:git:git@github.com:leonchen83/redis-replicator.git</connection>
         <url>scm:git:git@github.com:leonchen83/redis-replicator.git</url>
         <developerConnection>scm:git:git@github.com:leonchen83/redis-replicator.git</developerConnection>
-        <tag>1.0.0</tag>
+        <tag>2.1.0</tag>
     </scm>
 
     <issueManagement>

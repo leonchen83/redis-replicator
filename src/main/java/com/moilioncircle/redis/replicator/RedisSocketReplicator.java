@@ -94,7 +94,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 SyncMode syncMode = trySync(reply);
                 //bug fix.
                 if (syncMode == SyncMode.PSYNC && connected.get()) {
-                    //heart beat send REPLCONF ACK ${slave offset}
+                    //heartbeat send REPLCONF ACK ${slave offset}
                     heartbeat();
                 } else if (syncMode == SyncMode.SYNC_LATER && connected.get()) {
                     //sync later

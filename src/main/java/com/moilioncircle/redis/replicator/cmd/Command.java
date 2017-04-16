@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.cmd;
 import com.moilioncircle.redis.replicator.event.Event;
 
 /**
- * Created by leon on 8/13/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface Command extends Event {
 }

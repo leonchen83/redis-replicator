@@ -21,7 +21,8 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import java.util.List;
 
 /**
- * Created by leon on 2/2/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class BitFieldCommand implements Command {
     private String key;

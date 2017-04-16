@@ -17,7 +17,8 @@
 package com.moilioncircle.redis.replicator.cmd;
 
 /**
- * Created by leon on 8/23/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface OffsetHandler {
     void handle(long len);

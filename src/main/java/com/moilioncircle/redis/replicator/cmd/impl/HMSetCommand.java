@@ -21,7 +21,8 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import java.util.Map;
 
 /**
- * Created by leon on 2/2/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class HMSetCommand implements Command {
     private String key;

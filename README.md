@@ -473,7 +473,7 @@ redis 2.4 - 4.0-rc2
 |**PFCOUNT** |  **PFMERGE** | **SDIFFSTORE** |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE** |  
 |**ZADD**    | **BITFIELD** |**SUNIONSTORE** |**RESTORE** | **LINSERT**  |**ZINTERSTORE** |  
 |**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**BRPOPLPUSH**  |  
-|**PUBLISH** |  **BITOP**   |**SETBIT**      |            |              |                |  
+|**PUBLISH** |  **BITOP**   |**SETBIT**      | **SWAPDB** |              |                |  
   
 ## 5.2. EOFException
   

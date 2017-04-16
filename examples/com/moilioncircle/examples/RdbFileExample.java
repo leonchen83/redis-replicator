@@ -27,7 +27,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by leon on 10/8/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class RdbFileExample {
     public static void main(String[] args) throws IOException {

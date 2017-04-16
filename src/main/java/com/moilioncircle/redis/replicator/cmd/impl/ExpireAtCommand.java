@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 import com.moilioncircle.redis.replicator.cmd.Command;
 
 /**
- * Created by leon on 2/2/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ExpireAtCommand implements Command {
     private String key;

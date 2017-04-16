@@ -34,10 +34,10 @@ import static com.moilioncircle.redis.replicator.Constants.*;
  * rdb version 6
  * rdb version 7
  *
- * @author leon.chen
+ * @author Leon Chen
  *         [https://github.com/antirez/redis/blob/3.0/src/rdb.c]
  *         [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
- * @since 2016/8/11
+ * @since 2.1.0
  */
 public class RdbParser {
 

@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
 import java.util.Map;
 
 /**
- * Created by leon on 8/13/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class KeyStringValueHash extends KeyValuePair<Map<String, String>> {
 }

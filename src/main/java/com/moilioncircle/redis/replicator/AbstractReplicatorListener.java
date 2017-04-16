@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by leon on 2017/1/31.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class AbstractReplicatorListener implements ReplicatorListener {
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();

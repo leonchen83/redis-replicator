@@ -37,7 +37,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by leon on 8/13/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
@@ -175,6 +176,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("SETBIT"), new SetBitParser());
         addCommandParser(CommandName.name("SREM"), new SRemParser());
         addCommandParser(CommandName.name("UNLINK"), new UnLinkParser());
+        addCommandParser(CommandName.name("SWAPDB"), new SwapDBParser());
     }
 
     protected void doClose() throws IOException {

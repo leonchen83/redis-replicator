@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd.impl;
+package com.moilioncircle.redis.replicator.cmd.parser;
 
-import java.io.Serializable;
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.SwapDBCommand;
+
+import java.math.BigDecimal;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 2.1.1
  */
-public enum LInsertType implements Serializable {
-    BEFORE, AFTER
+public class SwapDBParser implements CommandParser<SwapDBCommand> {
+    @Override
+    public SwapDBCommand parse(Object[] command) {
+        int idx = 1;
+        int source = new BigDecimal((String) command[idx++]).intValueExact();
+        int target = new BigDecimal((String) command[idx++]).intValueExact();
+        return new SwapDBCommand(source, target);
+    }
 }

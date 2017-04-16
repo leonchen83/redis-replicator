@@ -22,7 +22,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.DecrByCommand;
 import java.math.BigDecimal;
 
 /**
- * Created by leon on 2/5/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class DecrByParser implements CommandParser<DecrByCommand> {
     @Override

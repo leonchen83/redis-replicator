@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.event;
 import java.io.Serializable;
 
 /**
- * Created by leon on 2017/1/30.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface Event extends Serializable {
 }

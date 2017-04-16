@@ -22,7 +22,8 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import java.io.IOException;
 
 /**
- * Created by leon on 8/13/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface BulkReplyHandler {
     String handle(long len, RedisInputStream in) throws IOException;

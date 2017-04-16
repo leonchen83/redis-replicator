@@ -21,7 +21,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.LInsertCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LInsertType;
 
 /**
- * Created by leon on 8/19/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class LInsertParser implements CommandParser<LInsertCommand> {
     @Override

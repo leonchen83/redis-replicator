@@ -32,7 +32,8 @@ import java.util.*;
 import static com.moilioncircle.redis.replicator.Constants.*;
 
 /**
- * Created by leon on 2/1/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class DefaultRdbVisitor extends RdbVisitor {
 

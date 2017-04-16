@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 import java.io.Serializable;
 
 /**
- * Created by leon on 10/7/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface Statement extends Serializable {
 

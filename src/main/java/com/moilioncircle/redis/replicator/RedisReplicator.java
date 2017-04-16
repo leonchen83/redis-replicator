@@ -33,7 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Created by leon on 8/13/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class RedisReplicator implements Replicator {
     protected final Replicator replicator;

@@ -29,7 +29,8 @@ import java.io.*;
 import java.util.Arrays;
 
 /**
- * Created by leon on 2/5/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class RedisMixReplicator extends AbstractReplicator {
     protected static final Log logger = LogFactory.getLog(RedisAofReplicator.class);

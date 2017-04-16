@@ -20,6 +20,10 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * @author Leon Chen
+ * @since 2.1.0
+ */
 public class RedisOutputStream extends OutputStream {
     private final OutputStream out;
 

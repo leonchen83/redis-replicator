@@ -30,9 +30,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *
  * @author Jingqi Xu
  * @author andyqzb
+ * @since 2.1.0
  */
 public final class AsyncBufferedInputStream extends InputStream implements Runnable {
     //

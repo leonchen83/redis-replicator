@@ -30,6 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static junit.framework.TestCase.assertEquals;
 
+/**
+ * @author Leon Chen
+ * @since 2.1.0
+ */
 public class RdbParserTest {
 
     @Test

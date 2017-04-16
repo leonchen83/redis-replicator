@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.net.*;
 
 /**
- * Created by leon on 1/24/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class RedisSocketFactory extends SocketFactory {
 

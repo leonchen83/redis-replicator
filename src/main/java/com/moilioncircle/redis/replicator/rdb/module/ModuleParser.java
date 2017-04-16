@@ -22,7 +22,8 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import java.io.IOException;
 
 /**
- * Created by leon on 2017/1/31.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface ModuleParser<T extends Module> {
     T parse(RedisInputStream in) throws IOException;

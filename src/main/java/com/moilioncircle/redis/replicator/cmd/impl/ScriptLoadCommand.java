@@ -17,7 +17,8 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
 /**
- * Created by leon on 2/2/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ScriptLoadCommand extends ScriptCommand {
     private String script;

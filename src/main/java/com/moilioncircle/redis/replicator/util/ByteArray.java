@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.util;
 import java.util.Iterator;
 
 /**
- * Created by leon on 1/29/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ByteArray implements Iterable<byte[]> {
 

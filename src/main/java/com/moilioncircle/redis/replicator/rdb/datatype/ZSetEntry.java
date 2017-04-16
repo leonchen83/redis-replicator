@@ -19,8 +19,8 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
 import java.io.Serializable;
 
 /**
- * @author leon.chen
- * @since 2016/8/11
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ZSetEntry implements Serializable {
     private String element;

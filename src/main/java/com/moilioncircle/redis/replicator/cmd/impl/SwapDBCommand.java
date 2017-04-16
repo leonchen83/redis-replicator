@@ -20,52 +20,42 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 2.1.1
  */
-public class LSetCommand implements Command {
-    private String key;
-    private long index;
-    private String value;
+public class SwapDBCommand implements Command {
+    private int source;
+    private int target;
 
-    public LSetCommand() {
+    public SwapDBCommand() {
+
     }
 
-    public LSetCommand(String key, long index, String value) {
-        this.key = key;
-        this.index = index;
-        this.value = value;
+    public SwapDBCommand(int source, int target) {
+        this.source = source;
+        this.target = target;
     }
 
-    public String getKey() {
-        return key;
+    public int getSource() {
+        return source;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setSource(int source) {
+        this.source = source;
     }
 
-    public long getIndex() {
-        return index;
+    public int getTarget() {
+        return target;
     }
 
-    public void setIndex(long index) {
-        this.index = index;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public void setTarget(int target) {
+        this.target = target;
     }
 
     @Override
     public String toString() {
-        return "LSetCommand{" +
-                "key='" + key + '\'' +
-                ", index=" + index +
-                ", value='" + value + '\'' +
+        return "SwapDBCommand{" +
+                "source=" + source +
+                ", target=" + target +
                 '}';
     }
 }

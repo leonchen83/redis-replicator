@@ -17,7 +17,8 @@
 package com.moilioncircle.redis.replicator;
 
 /**
- * Created by leon on 2/5/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public enum FileType {
     AOF, RDB, MIXED

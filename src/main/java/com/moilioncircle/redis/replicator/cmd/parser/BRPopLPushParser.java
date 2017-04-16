@@ -22,7 +22,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.BRPopLPushCommand;
 import java.math.BigDecimal;
 
 /**
- * Created by leon on 8/19/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class BRPopLPushParser implements CommandParser<BRPopLPushCommand> {
     @Override

@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Created by leon on 8/9/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class RedisInputStream extends InputStream {
     protected int head = 0;

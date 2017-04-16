@@ -26,7 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 
 /**
- * Created by leon on 2017/1/31.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class DefaultRdbModuleParser {
     protected static final Log logger = LogFactory.getLog(DefaultRdbModuleParser.class);

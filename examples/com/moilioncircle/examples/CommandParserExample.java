@@ -25,7 +25,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
 /**
- * Created by leon on 10/8/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class CommandParserExample {
     public static void main(String[] args) throws Exception {

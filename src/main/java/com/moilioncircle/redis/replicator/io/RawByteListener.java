@@ -17,7 +17,8 @@
 package com.moilioncircle.redis.replicator.io;
 
 /**
- * Created by leon on 1/26/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface RawByteListener {
     void handle(byte... rawBytes);

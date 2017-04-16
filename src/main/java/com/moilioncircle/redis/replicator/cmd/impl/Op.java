@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 import java.io.Serializable;
 
 /**
- * Created by leon on 2/2/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public enum Op implements Serializable {
     AND, OR, XOR, NOT

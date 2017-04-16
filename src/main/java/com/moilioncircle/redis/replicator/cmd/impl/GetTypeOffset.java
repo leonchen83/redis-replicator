@@ -17,7 +17,8 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
 /**
- * Created by leon on 10/7/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class GetTypeOffset implements Statement {
     private String type;

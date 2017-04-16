@@ -22,7 +22,8 @@ import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 
 /**
- * Created by leon on 2017/1/31.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface ReplicatorListener extends RawByteListener {
     /*

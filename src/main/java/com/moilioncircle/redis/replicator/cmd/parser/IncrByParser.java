@@ -22,7 +22,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.IncrByCommand;
 import java.math.BigDecimal;
 
 /**
- * Created by leon on 8/14/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class IncrByParser implements CommandParser<IncrByCommand> {
     @Override

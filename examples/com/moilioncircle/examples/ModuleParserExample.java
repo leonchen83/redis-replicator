@@ -35,7 +35,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * Created by leon on 2/2/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ModuleParserExample {
     public static void main(String[] args) throws IOException {

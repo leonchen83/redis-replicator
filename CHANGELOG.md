@@ -1,3 +1,12 @@
+### 2.1.1  
+**api changes** :  
+
+```java  
+add a new command : swapdb  
+RPushXCommand value -> values (redis 4.0 compatibility)
+LPushXCommand value -> values (redis 4.0 compatibility)
+```
+
 ### 2.1.0
 **api changes** :
 

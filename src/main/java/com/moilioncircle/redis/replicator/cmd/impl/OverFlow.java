@@ -20,7 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by leon on 10/7/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class OverFlow implements Serializable {
     private OverFlowType overFlowType;

@@ -26,7 +26,8 @@ import java.io.IOException;
 import static com.moilioncircle.redis.replicator.Constants.*;
 
 /**
- * Created by leon on 8/20/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class BaseRdbParser {
     protected final RedisInputStream in;

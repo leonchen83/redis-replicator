@@ -22,8 +22,8 @@ import javax.net.ssl.SSLSocketFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * @author leon.chen
- * @since 2016/8/15
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class Configuration {
 

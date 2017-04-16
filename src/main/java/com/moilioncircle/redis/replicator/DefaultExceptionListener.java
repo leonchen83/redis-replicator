@@ -20,7 +20,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Created by leon on 11/30/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class DefaultExceptionListener implements ExceptionListener {
     private static final Log logger = LogFactory.getLog(DefaultExceptionListener.class);

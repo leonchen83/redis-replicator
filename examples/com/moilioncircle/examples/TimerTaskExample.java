@@ -27,7 +27,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by leon on 10/8/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class TimerTaskExample {
     public static void main(String[] args) throws IOException {

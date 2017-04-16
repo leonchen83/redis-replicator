@@ -29,7 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created by leon on 2/3/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class RdbBackupExample {
     public static void main(String[] args) throws IOException {

@@ -23,7 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by leon on 8/13/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 @SuppressWarnings("unchecked")
 public class KeyValuePair<T> implements Event {

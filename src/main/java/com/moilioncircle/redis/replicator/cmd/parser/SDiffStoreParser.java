@@ -20,7 +20,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SDiffStoreCommand;
 
 /**
- * Created by leon on 8/14/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class SDiffStoreParser implements CommandParser<SDiffStoreCommand> {
     @Override

@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
 import com.moilioncircle.redis.replicator.event.Event;
 
 /**
- * Created by leon on 2017/1/30.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class AuxField implements Event {
 

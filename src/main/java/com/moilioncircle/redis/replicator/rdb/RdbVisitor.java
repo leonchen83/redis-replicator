@@ -23,7 +23,8 @@ import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import java.io.IOException;
 
 /**
- * Created by leon on 2/1/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public abstract class RdbVisitor {
     /*

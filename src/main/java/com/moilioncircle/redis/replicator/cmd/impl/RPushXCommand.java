@@ -18,19 +18,22 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
+import java.util.Arrays;
+
 /**
- * Created by leon on 2/2/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class RPushXCommand implements Command {
     private String key;
-    private String value;
+    private String[] values;
 
     public RPushXCommand() {
     }
 
-    public RPushXCommand(String key, String value) {
+    public RPushXCommand(String key, String[] values) {
         this.key = key;
-        this.value = value;
+        this.values = values;
     }
 
     public String getKey() {
@@ -41,19 +44,19 @@ public class RPushXCommand implements Command {
         this.key = key;
     }
 
-    public String getValue() {
-        return value;
+    public String[] getValues() {
+        return values;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setValues(String[] values) {
+        this.values = values;
     }
 
     @Override
     public String toString() {
         return "RPushXCommand{" +
                 "key='" + key + '\'' +
-                ", value='" + value + '\'' +
+                ", values=" + Arrays.toString(values) +
                 '}';
     }
 }

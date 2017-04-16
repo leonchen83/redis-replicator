@@ -20,7 +20,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PFCountCommand;
 
 /**
- * Created by leon on 8/14/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class PFCountParser implements CommandParser<PFCountCommand> {
     @Override

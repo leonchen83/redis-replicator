@@ -22,7 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Created by leon on 1/29/17.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ByteArrayInputStream extends InputStream {
 

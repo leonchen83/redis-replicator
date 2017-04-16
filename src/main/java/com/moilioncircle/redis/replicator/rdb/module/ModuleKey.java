@@ -17,7 +17,8 @@
 package com.moilioncircle.redis.replicator.rdb.module;
 
 /**
- * Created by leon on 2017/1/31.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ModuleKey {
     private final String moduleName;

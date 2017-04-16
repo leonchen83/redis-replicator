@@ -15,7 +15,9 @@
 package com.moilioncircle.redis.replicator.util;
 
 /**
- * Created by leon on 1/29/17.
+ * @author Ning
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class Lzf {
 

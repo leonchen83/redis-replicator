@@ -17,7 +17,8 @@
 package com.moilioncircle.redis.replicator.event;
 
 /**
- * Created by leon on 8/25/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class PostFullSyncEvent implements Event {
     private final long checksum;

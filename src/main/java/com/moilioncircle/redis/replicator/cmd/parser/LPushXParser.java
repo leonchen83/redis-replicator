@@ -20,16 +20,20 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.LPushXCommand;
 
 /**
- * Created by leon on 8/14/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class LPushXParser implements CommandParser<LPushXCommand> {
 
     @Override
     public LPushXCommand parse(Object[] command) {
-        int idx = 1;
+        int idx = 1, newIdx = 0;
         String key = (String) command[idx++];
-        String value = (String) command[idx++];
-        return new LPushXCommand(key, value);
+        String[] values = new String[command.length - 2];
+        while (idx < command.length) {
+            values[newIdx++] = (String) command[idx++];
+        }
+        return new LPushXCommand(key, values);
     }
 
 }

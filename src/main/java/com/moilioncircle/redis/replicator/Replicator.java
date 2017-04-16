@@ -27,7 +27,8 @@ import java.io.Closeable;
 import java.io.IOException;
 
 /**
- * Created by leon on 8/13/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public interface Replicator extends Closeable, ReplicatorListener {
     /*

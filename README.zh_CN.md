@@ -5,6 +5,7 @@
       * [1.1. 简介](#11-简介)
       * [1.2. QQ讨论组](#12-qq讨论组)
       * [1.3. 联系作者](#13-联系作者)
+      * [1.4. 兼容性声明](#14-兼容性声明)
    * [2. 安装](#2-安装)
       * [2.1. 安装前置条件](#21-安装前置条件)
       * [2.2. Maven依赖](#22-maven依赖)
@@ -62,9 +63,14 @@ Redis Replicator是一款rdb解析以及命令解析的工具. 此工具完整�
   
 **479688557**  
 
-## 1.3. 联系作者
+## 1.3. 联系作者  
 
 **chen.bao.yi@qq.com**
+
+## 1.4. 兼容性声明  
+
+**com.moilioncircle.redis.replicator.cmd.impl包下的文件;**  
+**由于要兼容redis变化,可能API会根据不同版本有不兼容的调整.**  
   
 # 2. 安装  
 ## 2.1. 安装前置条件  
@@ -473,7 +479,7 @@ redis 2.4 - 4.0-rc2
 |**PFCOUNT** |  **PFMERGE** | **SDIFFSTORE** |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE** |  
 |**ZADD**    | **BITFIELD** |**SUNIONSTORE** |**RESTORE** | **LINSERT**  |**ZINTERSTORE** |  
 |**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**BRPOPLPUSH**  |  
-|**PUBLISH** |  **BITOP**   |**SETBIT**      |            |              |                |  
+|**PUBLISH** |  **BITOP**   |**SETBIT**      | **SWAPDB** |              |                |  
   
 ## 5.2. 当出现EOFException
   

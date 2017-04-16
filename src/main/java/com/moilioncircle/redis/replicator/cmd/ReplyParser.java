@@ -24,7 +24,8 @@ import java.io.IOException;
 import static com.moilioncircle.redis.replicator.Constants.*;
 
 /**
- * Created by leon on 8/13/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ReplyParser {
     private final RedisInputStream in;

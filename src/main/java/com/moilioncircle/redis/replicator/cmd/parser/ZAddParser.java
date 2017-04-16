@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by leon on 8/19/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class ZAddParser implements CommandParser<ZAddCommand> {
 

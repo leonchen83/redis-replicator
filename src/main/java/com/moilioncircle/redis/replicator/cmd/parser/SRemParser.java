@@ -20,7 +20,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SRemCommand;
 
 /**
- * Created by Adrian Yao on 2016/12/9.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class SRemParser implements CommandParser<SRemCommand> {
 

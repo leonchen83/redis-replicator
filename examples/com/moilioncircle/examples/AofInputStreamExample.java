@@ -26,7 +26,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import java.io.IOException;
 
 /**
- * Created by leon on 10/8/16.
+ * @author Leon Chen
+ * @since 2.1.0
  */
 public class AofInputStreamExample {
     public static void main(String[] args) throws IOException {

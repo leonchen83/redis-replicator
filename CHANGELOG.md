@@ -2,7 +2,7 @@
 **api changes** :  
 
 ```java  
-add a new command : swapdb  
+add new commands : swapdb,zremrangebylex,zremrangebyrank,zremrangebyscore  
 RPushXCommand value -> values (redis 4.0 compatibility)
 LPushXCommand value -> values (redis 4.0 compatibility)
 ```

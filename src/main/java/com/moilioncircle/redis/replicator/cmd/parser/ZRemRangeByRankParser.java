@@ -17,7 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.SwapDBCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByRankCommand;
 
 import java.math.BigDecimal;
 
@@ -25,13 +25,14 @@ import java.math.BigDecimal;
  * @author Leon Chen
  * @since 2.1.1
  */
-public class SwapDBParser implements CommandParser<SwapDBCommand> {
+public class ZRemRangeByRankParser implements CommandParser<ZRemRangeByRankCommand> {
 
     @Override
-    public SwapDBCommand parse(Object[] command) {
+    public ZRemRangeByRankCommand parse(Object[] command) {
         int idx = 1;
-        int source = new BigDecimal((String) command[idx++]).intValueExact();
-        int target = new BigDecimal((String) command[idx++]).intValueExact();
-        return new SwapDBCommand(source, target);
+        String key = (String) command[idx++];
+        long start =new BigDecimal((String) command[idx++]).longValueExact();
+        long stop = new BigDecimal((String) command[idx++]).longValueExact();
+        return new ZRemRangeByRankCommand(key, start, stop);
     }
 }

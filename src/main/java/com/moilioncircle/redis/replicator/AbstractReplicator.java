@@ -38,8 +38,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
  * @version 2.1.1
+ * @since 2.1.0
  */
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
@@ -178,6 +178,9 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("SREM"), new SRemParser());
         addCommandParser(CommandName.name("UNLINK"), new UnLinkParser());
         addCommandParser(CommandName.name("SWAPDB"), new SwapDBParser());
+        addCommandParser(CommandName.name("ZREMRANGEBYSCORE"), new ZRemRangeByScoreParser());
+        addCommandParser(CommandName.name("ZREMRANGEBYRANK"), new ZRemRangeByRankParser());
+        addCommandParser(CommandName.name("ZREMRANGEBYLEX"), new ZRemRangeByLexParser());
     }
 
     protected void doClose() throws IOException {

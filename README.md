@@ -474,7 +474,7 @@ redis 2.4 - 4.0-rc2
 |**ZADD**    | **BITFIELD** |**SUNIONSTORE** |**RESTORE** | **LINSERT**  |**ZREMRANGEBYLEX**  |  
 |**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
 |**PUBLISH** |  **BITOP**   |**SETBIT**      | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
-|**RENAME**  |              |                |            |              |                    |  
+|**RENAME**  |  **MULTI**   |  **EXEC**      |            |              |                    |  
   
 ## 5.2. EOFException
   

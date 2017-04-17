@@ -178,6 +178,8 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("SREM"), new SRemParser());
         addCommandParser(CommandName.name("UNLINK"), new UnLinkParser());
         addCommandParser(CommandName.name("SWAPDB"), new SwapDBParser());
+        addCommandParser(CommandName.name("MULTI"), new MultiParser());
+        addCommandParser(CommandName.name("EXEC"), new ExecParser());
         addCommandParser(CommandName.name("ZREMRANGEBYSCORE"), new ZRemRangeByScoreParser());
         addCommandParser(CommandName.name("ZREMRANGEBYRANK"), new ZRemRangeByRankParser());
         addCommandParser(CommandName.name("ZREMRANGEBYLEX"), new ZRemRangeByLexParser());

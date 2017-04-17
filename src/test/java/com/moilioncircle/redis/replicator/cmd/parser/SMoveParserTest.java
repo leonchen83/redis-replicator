@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.impl.SMoveCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SwapDBCommand;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,6 +35,14 @@ public class SMoveParserTest {
         assertEquals("des", cmd.getDestination());
         assertEquals("field", cmd.getMember());
         System.out.println(cmd);
+
+        {
+            SwapDBParser parser1 = new SwapDBParser();
+            SwapDBCommand cmd1 = parser1.parse("swapdb 0 1".split(" "));
+            assertEquals(0,cmd1.getSource());
+            assertEquals(1,cmd1.getTarget());
+            System.out.println(cmd1);
+        }
     }
 
 }

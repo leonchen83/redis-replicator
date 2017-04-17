@@ -22,6 +22,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.LPushXCommand;
 /**
  * @author Leon Chen
  * @since 2.1.0
+ * @version 2.1.1
  */
 public class LPushXParser implements CommandParser<LPushXCommand> {
 

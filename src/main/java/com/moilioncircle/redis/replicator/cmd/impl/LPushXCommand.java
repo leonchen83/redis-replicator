@@ -23,6 +23,7 @@ import java.util.Arrays;
 /**
  * @author Leon Chen
  * @since 2.1.0
+ * @version 2.1.1
  */
 public class LPushXCommand implements Command {
     private String key;

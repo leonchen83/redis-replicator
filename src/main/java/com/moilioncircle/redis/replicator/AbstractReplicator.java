@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Leon Chen
  * @since 2.1.0
+ * @version 2.1.1
  */
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;

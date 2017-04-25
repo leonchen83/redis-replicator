@@ -43,6 +43,9 @@ Table of Contents([中文说明](./README.zh_CN.md))
       * [5.8. Handle raw bytes](#58-handle-raw-bytes)
    * [6. Contributors](#6-contributors)
    * [7. References](#7-references)
+   * [8. Supported by](#8-supported-by)
+      * [8.1. YourKit](#81-yourkit)
+      * [8.2. IntelliJ IDEA](#82-intellij-idea)
   
 # 1. Redis-replicator  
 
@@ -586,3 +589,19 @@ default `Configuration.getReadTimeout()` is 30 seconds
   * [Redis Protocol specification](http://redis.io/topics/protocol)
   * [Redis Replication](http://redis.io/topics/replication)
 
+# 8. Supported by  
+
+## 8.1. YourKit  
+
+![YourKit](https://www.yourkit.com/images/yklogo.png)  
+YourKit is kindly supporting this open source project with its full-featured Java Profiler.  
+YourKit, LLC is the creator of innovative and intelligent tools for profiling  
+Java and .NET applications. Take a look at YourKit's leading software products:  
+<a href="http://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and
+<a href="http://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.  
+
+## 8.2. IntelliJ IDEA  
+
+IntelliJ IDEA is a Java integrated development environment (IDE) for developing computer software.  
+It is developed by JetBrains (formerly known as IntelliJ), and is available as an Apache 2 Licensed community edition,  
+and in a proprietary commercial edition. Both can be used for commercial development.  

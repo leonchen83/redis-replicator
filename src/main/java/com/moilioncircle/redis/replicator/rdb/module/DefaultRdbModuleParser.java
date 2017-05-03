@@ -24,9 +24,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 /**
  * @author Leon Chen
+ * @version 2.1.2
  * @since 2.1.0
  */
 public class DefaultRdbModuleParser {
@@ -48,9 +50,18 @@ public class DefaultRdbModuleParser {
         return parser.rdbLoadLen().len;
     }
 
+    @Deprecated
     public long loadUnSigned() throws IOException {
-        logger.warn("unsupported [loadUnSigned]. using [loadSigned] instead");
         return loadSigned();
+    }
+
+    public BigInteger loadUnsigned() throws IOException {
+        byte[] ary = new byte[8];
+        long value = loadSigned();
+        for (int i = 0; i < 8; i++) {
+            ary[7 - i] = (byte) ((value >>> (i * 8)) & 0xFF);
+        }
+        return new BigInteger(1, ary);
     }
 
     public String loadString() throws IOException {

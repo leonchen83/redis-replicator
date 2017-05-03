@@ -52,14 +52,20 @@ public class DefaultRdbModuleParser {
 
     /**
      * @return signed long
-     * @throws IOException
+     * @throws IOException IOException
      * @deprecated cause typo and return signed long. Use {@link #loadUnsigned()} instead.
+     * @since 2.1.2
      */
     @Deprecated
     public long loadUnSigned() throws IOException {
         return loadSigned();
     }
 
+    /**
+     * @return unsigned long
+     * @throws IOException IOException
+     * @since 2.1.2
+     */
     public BigInteger loadUnsigned() throws IOException {
         byte[] ary = new byte[8];
         long value = loadSigned();

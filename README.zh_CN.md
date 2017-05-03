@@ -367,7 +367,7 @@ redis 2.4 - 4.0
         @Override
         public HelloTypeModule parse(RedisInputStream in) throws IOException {
             DefaultRdbModuleParser parser = new DefaultRdbModuleParser(in);
-            int elements = (int) parser.loadUnSigned();
+            int elements = parser.loadUnsigned().intValue();
             long[] ary = new long[elements];
             int i = 0;
             while (elements-- > 0) {

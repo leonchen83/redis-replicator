@@ -50,6 +50,11 @@ public class DefaultRdbModuleParser {
         return parser.rdbLoadLen().len;
     }
 
+    /**
+     * @return signed long
+     * @throws IOException
+     * @deprecated cause typo and return signed long. Use {@link #loadUnsigned()} instead.
+     */
     @Deprecated
     public long loadUnSigned() throws IOException {
         return loadSigned();

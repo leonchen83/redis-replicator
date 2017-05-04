@@ -1,8 +1,10 @@
 ### 2.1.2  
 
 ```java  
-DefaultRdbModuleParser.loadUnSigned deprecated. use DefaultRdbModuleParser.loadUnsigned instead  
+DefaultRdbModuleParser.loadUnSigned mark deprecated. use DefaultRdbModuleParser.loadUnsigned instead  
 fix compile warning  
+fix javadoc  
+fix log format  
 ```
 
 ### 2.1.1  

@@ -18,12 +18,10 @@ package com.moilioncircle.redis.replicator.util;
  * @author Ning
  * @author Leon Chen
  * @since 2.1.0
+ * @see <a href="https://github.com/ning/compress/blob/master/src/main/java/com/ning/compress/lzf/impl/VanillaChunkDecoder.java">VanillaChunkDecoder.java</a>
  */
 public class Lzf {
 
-    /*
-     * see [https://github.com/ning/compress/blob/master/src/main/java/com/ning/compress/lzf/impl/VanillaChunkDecoder.java]
-     */
     public static ByteArray decode(ByteArray bytes, long len) {
         ByteArray out = new ByteArray(len);
         decode(bytes, 0, out, 0, len);
@@ -237,7 +235,7 @@ public class Lzf {
         } while (outPos < outEnd);
 
         if (outPos != outEnd) {
-            throw new AssertionError("Corrupt data: overrun in decompress, input offset " + inPos + ", output offset " + outPos);
+            throw new AssertionError("corrupt data: overrun in decompress, input offset " + inPos + ", output offset " + outPos);
         }
     }
 }

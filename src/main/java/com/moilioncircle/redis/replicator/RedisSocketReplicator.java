@@ -63,7 +63,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     /**
      * PSYNC
-     *
+     * <p>
      * @throws IOException when read timeout or connect timeout
      */
     @Override
@@ -78,7 +78,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     /**
      * PSYNC
-     *
+     * <p>
      * @throws IOException when read timeout or connect timeout
      */
     protected void doOpen() throws IOException {
@@ -340,7 +340,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         } catch (IOException e) {
             //NOP
         }
-        logger.info("channel closed");
+        logger.info("socket closed");
     }
 
     protected enum SyncMode {SYNC, PSYNC, SYNC_LATER}

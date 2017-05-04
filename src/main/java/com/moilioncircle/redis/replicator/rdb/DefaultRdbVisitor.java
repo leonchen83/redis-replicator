@@ -557,7 +557,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             case RDB_TYPE_MODULE:
                 return (KeyValuePair) applyModule(in, db, version);
             default:
-                throw new AssertionError("unexpected value-type:" + valueType);
+                throw new AssertionError("unexpected value type:" + valueType);
         }
     }
 }

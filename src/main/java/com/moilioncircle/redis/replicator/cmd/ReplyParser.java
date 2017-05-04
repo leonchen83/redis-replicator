@@ -26,6 +26,7 @@ import static com.moilioncircle.redis.replicator.Constants.*;
 /**
  * @author Leon Chen
  * @since 2.1.0
+ * @see <a href="http://redis.io/topics/protocol">protocol</a>
  */
 public class ReplyParser {
     private final RedisInputStream in;
@@ -52,7 +53,7 @@ public class ReplyParser {
 
     /**
      * @param handler bulk string handler
-     * @return return Object[] or String or Long
+     * @return Object[] or String or Long
      * @throws IOException when read timeout
      */
     public Object parse(BulkReplyHandler handler) throws IOException {

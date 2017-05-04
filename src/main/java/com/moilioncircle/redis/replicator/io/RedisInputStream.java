@@ -237,7 +237,7 @@ public class RedisInputStream extends InputStream {
 
     protected void fill() throws IOException {
         tail = in.read(buf, 0, buf.length);
-        if (tail == -1) throw new EOFException("end of file or stream.");
+        if (tail == -1) throw new EOFException("end of file or end of stream.");
         total += tail;
         head = 0;
     }

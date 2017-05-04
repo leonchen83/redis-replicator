@@ -31,13 +31,11 @@ import static com.moilioncircle.redis.replicator.Constants.*;
 
 /**
  * Redis RDB format
- * rdb version 6
- * rdb version 7
- *
+ * <p>
  * @author Leon Chen
- *         [https://github.com/antirez/redis/blob/3.0/src/rdb.c]
- *         [https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format]
  * @since 2.1.0
+ * @see <a href="https://github.com/antirez/redis/blob/3.0/src/rdb.c">rdb.c</a>
+ * @see <a href="https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format">Redis-RDB-Dump-File-Format</a>
  */
 public class RdbParser {
 
@@ -54,30 +52,55 @@ public class RdbParser {
 
     /**
      * ----------------------------# RDB is a binary format. There are no new lines or spaces in the file.
+     * <p>
      * 52 45 44 49 53              # Magic String "REDIS"
+     * <p>
      * 30 30 30 33                 # RDB Version Number in big endian. In this case, version = 0003 = 3
+     * <p>
      * ----------------------------
+     * <p>
      * FE 00                       # FE = code that indicates database selector. db number = 00
+     * <p>
      * ----------------------------# Key-Value pair starts
+     * <p>
      * FD $unsigned int            # FD indicates "expiry time in seconds". After that, expiry time is read as a 4 byte unsigned int
+     * <p>
      * $value-type                 # 1 byte flag indicating the type of value - set, map, sorted set etc.
+     * <p>
      * $string-encoded-name         # The name, encoded as a redis string
+     * <p>
      * $encoded-value              # The value. Encoding depends on $value-type
+     * <p>
      * ----------------------------
+     * <p>
      * FC $unsigned long           # FC indicates "expiry time in ms". After that, expiry time is read as a 8 byte unsigned long
+     * <p>
      * $value-type                 # 1 byte flag indicating the type of value - set, map, sorted set etc.
+     * <p>
      * $string-encoded-name         # The name, encoded as a redis string
+     * <p>
      * $encoded-value              # The value. Encoding depends on $value-type
+     * <p>
      * ----------------------------
+     * <p>
      * $value-type                 # This name value pair doesn't have an expiry. $value_type guaranteed != to FD, FC, FE and FF
+     * <p>
      * $string-encoded-name
+     * <p>
      * $encoded-value
+     * <p>
      * ----------------------------
+     * <p>
      * FE $length-encoding         # Previous db ends, next db starts. Database number read using length encoding.
+     * <p>
      * ----------------------------
+     * <p>
      * ...                         # Key value pairs for this database, additonal database
+     * <p>
      * FF                          ## End of RDB file indicator
+     * <p>
      * 8 byte checksum             ## CRC 64 checksum of the entire file.
+     * <p>
      *
      * @return read bytes
      * @throws IOException when read timeout
@@ -160,7 +183,7 @@ public class RdbParser {
                     event = rdbVisitor.applyModule(in, db, version);
                     break;
                 default:
-                    throw new AssertionError("unexpected value-type:" + type + ", please check your ModuleParser");
+                    throw new AssertionError("unexpected value type:" + type + ", please check your self-defined ModuleParser");
             }
             if (event == null) continue;
             if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(event);

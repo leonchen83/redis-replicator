@@ -34,6 +34,7 @@ import static junit.framework.TestCase.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("unchecked")
 public class RdbParserTest {
 
     @Test

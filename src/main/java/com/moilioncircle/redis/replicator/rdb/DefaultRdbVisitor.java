@@ -16,6 +16,14 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import static com.moilioncircle.redis.replicator.Constants.*;
+
+import java.io.IOException;
+import java.util.*;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.ByteArrayInputStream;
@@ -23,13 +31,6 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.IOException;
-import java.util.*;
-
-import static com.moilioncircle.redis.replicator.Constants.*;
 
 /**
  * @author Leon Chen
@@ -147,10 +148,14 @@ public class DefaultRdbVisitor extends RdbVisitor {
         String auxKey = parser.rdbLoadEncodedStringObject().string;
         String auxValue = parser.rdbLoadEncodedStringObject().string;
         if (!auxKey.startsWith("%")) {
-            logger.info("RDB " + auxKey + ": " + auxValue);
+            if (logger.isInfoEnabled()) {
+                logger.info("RDB " + auxKey + ": " + auxValue);
+            }
             return new AuxField(auxKey, auxValue);
         } else {
-            logger.warn("unrecognized RDB AUX field: " + auxKey + ",value: " + auxValue);
+            if (logger.isWarnEnabled()) {
+                logger.warn("unrecognized RDB AUX field: " + auxKey + ", value: " + auxValue);
+            }
             return null;
         }
     }
@@ -508,8 +513,9 @@ public class DefaultRdbVisitor extends RdbVisitor {
         String moduleName = new String(c);
         int moduleVersion = (int) (moduleid & 1023);
         ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
-        if (moduleParser == null)
+        if (moduleParser == null) {
             throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
+        }
         o6.setValueRdbType(RDB_TYPE_MODULE);
         o6.setValue(moduleParser.parse(in));
         o6.setDb(db);

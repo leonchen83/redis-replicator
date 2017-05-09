@@ -40,20 +40,20 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
         boolean et = false;
         while (idx < command.length) {
             String param = (String) command[idx];
-            if (!et && param.equalsIgnoreCase("NX")) {
+            if (!et && "NX".equalsIgnoreCase(param)) {
                 existType = ExistType.NX;
                 et = true;
                 idx++;
                 continue;
-            } else if (!et && param.equalsIgnoreCase("XX")) {
+            } else if (!et && "XX".equalsIgnoreCase(param)) {
                 existType = ExistType.XX;
                 et = true;
                 idx++;
                 continue;
             }
-            if (isCh == null && param.equalsIgnoreCase("CH")) {
+            if (isCh == null && "CH".equalsIgnoreCase(param)) {
                 isCh = true;
-            } else if (isIncr == null && param.equalsIgnoreCase("INCR")) {
+            } else if (isIncr == null && "INCR".equalsIgnoreCase(param)) {
                 isIncr = true;
             } else {
                 double score = Double.parseDouble(param);

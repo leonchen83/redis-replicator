@@ -44,4 +44,11 @@ public class CommandName {
     public int hashCode() {
         return name.toUpperCase().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "CommandName{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

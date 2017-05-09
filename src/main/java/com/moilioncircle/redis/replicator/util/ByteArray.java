@@ -58,7 +58,7 @@ public class ByteArray implements Iterable<byte[]> {
         } else if (length <= cap) {
             this.smallBytes = new byte[(int) length];
         } else {
-            final int x = (int) (length >>> BITS);
+            final int x = (int) (length >> BITS);
             final int y = (int) (length & MASK);
             largeBytes = new byte[x + 1][];
             for (int i = 0; i < x; i++) {
@@ -73,14 +73,14 @@ public class ByteArray implements Iterable<byte[]> {
             smallBytes[(int) idx] = value;
             return;
         }
-        int x = (int) (idx >>> BITS);
+        int x = (int) (idx >> BITS);
         int y = (int) (idx & MASK);
         largeBytes[x][y] = value;
     }
 
     public byte get(long idx) {
         if (smallBytes != null) return smallBytes[(int) idx];
-        int x = (int) (idx >>> BITS);
+        int x = (int) (idx >> BITS);
         int y = (int) (idx & MASK);
         return largeBytes[x][y];
     }
@@ -108,9 +108,9 @@ public class ByteArray implements Iterable<byte[]> {
             return;
         }
         while (length > 0) {
-            int x1 = (int) (srcPos >>> BITS);
+            int x1 = (int) (srcPos >> BITS);
             int y1 = (int) (srcPos & MASK);
-            int x2 = (int) (destPos >>> BITS);
+            int x2 = (int) (destPos >> BITS);
             int y2 = (int) (destPos & MASK);
             int min = Math.min(MAGIC - y1, MAGIC - y2);
             if (length <= MAGIC) min = Math.min(min, (int) length);

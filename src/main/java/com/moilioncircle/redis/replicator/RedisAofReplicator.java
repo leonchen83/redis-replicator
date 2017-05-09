@@ -16,6 +16,12 @@
 
 package com.moilioncircle.redis.replicator;
 
+import java.io.*;
+import java.util.Arrays;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
@@ -26,11 +32,6 @@ import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import java.io.*;
-import java.util.Arrays;
 
 /**
  * @author Leon Chen
@@ -66,17 +67,21 @@ public class RedisAofReplicator extends AbstractReplicator {
 
     protected void doOpen() throws IOException {
         while (true) {
+            // got EOFException to break the loop
             Object obj = replyParser.parse();
 
             if (obj instanceof Object[]) {
-                if (configuration.isVerbose() && logger.isDebugEnabled())
+                if (configuration.isVerbose() && logger.isDebugEnabled()) {
                     logger.debug(Arrays.deepToString((Object[]) obj));
+                }
                 Object[] command = (Object[]) obj;
                 CommandName cmdName = CommandName.name((String) command[0]);
                 final CommandParser<? extends Command> operations;
                 //if command do not register. ignore
                 if ((operations = commands.get(cmdName)) == null) {
-                    logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString((Object[]) obj) + "]");
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString((Object[]) obj) + "]");
+                    }
                     continue;
                 }
                 //do command replyParser
@@ -84,7 +89,9 @@ public class RedisAofReplicator extends AbstractReplicator {
                 //submit event
                 this.submitEvent(parsedCommand);
             } else {
-                logger.info("redis reply:" + obj);
+                if (logger.isInfoEnabled()) {
+                    logger.info("redis reply:" + obj);
+                }
             }
         }
     }

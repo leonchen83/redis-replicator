@@ -40,20 +40,20 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreCommand> {
         double[] weights = null;
         while (idx < command.length) {
             String param = (String) command[idx];
-            if (param.equalsIgnoreCase("WEIGHTS")) {
+            if ("WEIGHTS".equalsIgnoreCase(param)) {
                 idx++;
                 weights = new double[numkeys];
                 for (int i = 0; i < numkeys; i++) {
                     weights[i] = Double.parseDouble((String) command[idx++]);
                 }
-            } else if (param.equalsIgnoreCase("AGGREGATE")) {
+            } else if ("AGGREGATE".equalsIgnoreCase(param)) {
                 idx++;
                 String next = (String) command[idx++];
-                if (next.equalsIgnoreCase("SUM")) {
+                if ("SUM".equalsIgnoreCase(next)) {
                     aggregateType = AggregateType.SUM;
-                } else if (next.equalsIgnoreCase("MIN")) {
+                } else if ("MIN".equalsIgnoreCase(next)) {
                     aggregateType = AggregateType.MIN;
-                } else if (next.equalsIgnoreCase("MAX")) {
+                } else if ("MAX".equalsIgnoreCase(next)) {
                     aggregateType = AggregateType.MAX;
                 }
             }

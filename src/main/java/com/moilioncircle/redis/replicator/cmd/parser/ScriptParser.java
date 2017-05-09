@@ -30,10 +30,10 @@ public class ScriptParser implements CommandParser<ScriptCommand> {
     public ScriptCommand parse(Object[] command) {
         int idx = 1;
         String keyWord = (String) command[idx++];
-        if (keyWord.equalsIgnoreCase("LOAD")) {
+        if ("LOAD".equalsIgnoreCase(keyWord)) {
             String script = (String) command[idx++];
             return new ScriptLoadCommand(script);
-        } else if (keyWord.equalsIgnoreCase("FLUSH")) {
+        } else if ("FLUSH".equalsIgnoreCase(keyWord)) {
             return new ScriptFlushCommand();
         }
         throw new AssertionError("SCRIPT " + keyWord);

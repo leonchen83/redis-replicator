@@ -37,17 +37,18 @@ public class SetParser implements CommandParser<SetCommand> {
         boolean et = false, st = false;
         while (idx < command.length) {
             String param = (String) command[idx++];
-            if (!et && param.equalsIgnoreCase("NX")) {
+            if (!et && "NX".equalsIgnoreCase(param)) {
                 existType = ExistType.NX;
                 et = true;
-            } else if (!et && param.equalsIgnoreCase("XX")) {
+            } else if (!et && "XX".equalsIgnoreCase(param)) {
                 existType = ExistType.XX;
                 et = true;
             }
-            if (!st && param.equalsIgnoreCase("EX")) {
+
+            if (!st && "EX".equalsIgnoreCase(param)) {
                 ex = Integer.valueOf((String) command[idx++]);
                 st = true;
-            } else if (!st && param.equalsIgnoreCase("PX")) {
+            } else if (!st && "PX".equalsIgnoreCase(param)) {
                 px = Long.valueOf((String) command[idx++]);
                 st = true;
             }

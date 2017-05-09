@@ -27,7 +27,7 @@ public class FlushAllParser implements CommandParser<FlushAllCommand> {
     @Override
     public FlushAllCommand parse(Object[] command) {
         Boolean isAsync = null;
-        if (command.length == 2 && ((String) command[1]).equalsIgnoreCase("ASYNC")) {
+        if (command.length == 2 && "ASYNC".equalsIgnoreCase((String) command[1])) {
             isAsync = true;
         }
         return new FlushAllCommand(isAsync);

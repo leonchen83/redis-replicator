@@ -16,12 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.*;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
 
 /**
  * @author Leon Chen
@@ -41,7 +41,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 if (idx >= command.length) break;
                 token = (String) command[idx];
             }
-            while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
+            while ("GET".equalsIgnoreCase(token) || "SET".equalsIgnoreCase(token) || "INCRBY".equalsIgnoreCase(token));
         }
         List<OverFlow> overFlowList = null;
         if (idx < command.length) {
@@ -51,7 +51,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 idx = parseOverFlow(idx, command, overFlow);
                 overFlowList.add(overFlow);
                 if (idx >= command.length) break;
-            } while (((String) command[idx]).equalsIgnoreCase("OVERFLOW"));
+            } while ("OVERFLOW".equalsIgnoreCase((String) command[idx]));
         }
 
         return new BitFieldCommand(key, list, overFlowList);
@@ -62,11 +62,11 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
         accept((String) params[idx++], "OVERFLOW");
         OverFlowType overFlowType = null;
         String keyWord = (String) params[idx++];
-        if (keyWord.equalsIgnoreCase("WRAP")) {
+        if ("WRAP".equalsIgnoreCase(keyWord)) {
             overFlowType = OverFlowType.WRAP;
-        } else if (keyWord.equalsIgnoreCase("SAT")) {
+        } else if ("SAT".equalsIgnoreCase(keyWord)) {
             overFlowType = OverFlowType.SAT;
-        } else if (keyWord.equalsIgnoreCase("FAIL")) {
+        } else if ("FAIL".equalsIgnoreCase(keyWord)) {
             overFlowType = OverFlowType.FAIL;
         } else {
             throw new AssertionError("parse [BITFIELD] command error." + keyWord);
@@ -79,7 +79,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 if (idx >= params.length) break;
                 token = (String) params[idx];
             }
-            while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
+            while ("GET".equalsIgnoreCase(token) || "SET".equalsIgnoreCase(token) || "INCRBY".equalsIgnoreCase(token));
         }
         overFlow.setOverFlowType(overFlowType);
         overFlow.setStatements(list);
@@ -90,15 +90,15 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
         int idx = i;
         String keyWord = (String) params[idx++];
         Statement statement = null;
-        if (keyWord.equalsIgnoreCase("GET")) {
+        if ("GET".equalsIgnoreCase(keyWord)) {
             GetTypeOffset getTypeOffset = new GetTypeOffset();
             idx = parseGet(idx - 1, params, getTypeOffset);
             statement = getTypeOffset;
-        } else if (keyWord.equalsIgnoreCase("SET")) {
+        } else if ("SET".equalsIgnoreCase(keyWord)) {
             SetTypeOffsetValue setTypeOffsetValue = new SetTypeOffsetValue();
             idx = parseSet(idx - 1, params, setTypeOffsetValue);
             statement = setTypeOffsetValue;
-        } else if (keyWord.equalsIgnoreCase("INCRBY")) {
+        } else if ("INCRBY".equalsIgnoreCase(keyWord)) {
             IncrByTypeOffsetIncrement incrByTypeOffsetIncrement = new IncrByTypeOffsetIncrement();
             idx = parseIncrBy(idx - 1, params, incrByTypeOffsetIncrement);
             statement = incrByTypeOffsetIncrement;

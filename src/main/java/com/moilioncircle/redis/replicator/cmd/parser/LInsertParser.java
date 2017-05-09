@@ -31,9 +31,9 @@ public class LInsertParser implements CommandParser<LInsertCommand> {
         LInsertType lInsertType = null;
         String key = (String) command[idx++];
         String keyWord = (String) command[idx++];
-        if (keyWord.equalsIgnoreCase("BEFORE")) {
+        if ("BEFORE".equalsIgnoreCase(keyWord)) {
             lInsertType = LInsertType.BEFORE;
-        } else if (keyWord.equalsIgnoreCase("AFTER")) {
+        } else if ("AFTER".equalsIgnoreCase(keyWord)) {
             lInsertType = LInsertType.AFTER;
         }
         String pivot = (String) command[idx++];

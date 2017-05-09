@@ -26,6 +26,7 @@ public class ByteArray implements Iterable<byte[]> {
 
     protected static final int BITS = 30;
     protected static final int MAGIC = 1 << BITS;
+    protected static final int MASK = MAGIC - 1;
 
     public static final long MIN_VALUE = 0L;
     public static final long MAX_VALUE = 2305843007066210304L; //(Integer.MAX_VALUE - 1) * MAGIC
@@ -57,16 +58,13 @@ public class ByteArray implements Iterable<byte[]> {
         } else if (length <= cap) {
             this.smallBytes = new byte[(int) length];
         } else {
-            int x = (int) (length >> BITS);
-            int y = (int) (length & (MAGIC - 1));
+            final int x = (int) (length >>> BITS);
+            final int y = (int) (length & MASK);
             largeBytes = new byte[x + 1][];
-            for (int i = 0; i < largeBytes.length; i++) {
-                if (i == largeBytes.length - 1) {
-                    largeBytes[i] = new byte[y];
-                } else {
-                    largeBytes[i] = new byte[MAGIC];
-                }
+            for (int i = 0; i < x; i++) {
+                largeBytes[i] = new byte[MAGIC];
             }
+            largeBytes[x] = new byte[y];
         }
     }
 
@@ -75,15 +73,15 @@ public class ByteArray implements Iterable<byte[]> {
             smallBytes[(int) idx] = value;
             return;
         }
-        int x = (int) (idx >> BITS);
-        int y = (int) (idx & (MAGIC - 1));
+        int x = (int) (idx >>> BITS);
+        int y = (int) (idx & MASK);
         largeBytes[x][y] = value;
     }
 
     public byte get(long idx) {
         if (smallBytes != null) return smallBytes[(int) idx];
-        int x = (int) (idx >> BITS);
-        int y = (int) (idx & (MAGIC - 1));
+        int x = (int) (idx >>> BITS);
+        int y = (int) (idx & MASK);
         return largeBytes[x][y];
     }
 
@@ -110,10 +108,10 @@ public class ByteArray implements Iterable<byte[]> {
             return;
         }
         while (length > 0) {
-            int x1 = (int) (srcPos >> BITS);
-            int y1 = (int) (srcPos & (MAGIC - 1));
-            int x2 = (int) (destPos >> BITS);
-            int y2 = (int) (destPos & (MAGIC - 1));
+            int x1 = (int) (srcPos >>> BITS);
+            int y1 = (int) (srcPos & MASK);
+            int x2 = (int) (destPos >>> BITS);
+            int y2 = (int) (destPos & MASK);
             int min = Math.min(MAGIC - y1, MAGIC - y2);
             if (length <= MAGIC) min = Math.min(min, (int) length);
             System.arraycopy(src.largeBytes[x1], y1, dest.largeBytes[x2], y2, min);

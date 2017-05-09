@@ -70,7 +70,7 @@ public class DefaultRdbModuleParser {
         byte[] ary = new byte[8];
         long value = loadSigned();
         for (int i = 0; i < 8; i++) {
-            ary[7 - i] = (byte) ((value >>> (i * 8)) & 0xFF);
+            ary[7 - i] = (byte) ((value >>> (i << 3)) & 0xFF);
         }
         return new BigInteger(1, ary);
     }

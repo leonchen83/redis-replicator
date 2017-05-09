@@ -36,54 +36,54 @@ public class RedisSocketFactory extends SocketFactory {
     }
 
     @Override
-    public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port) throws IOException {
         if (configuration.isSsl()) {
-            return filterSsl(filter(configuration.getSslSocketFactory().createSocket(host, port)), host);
+            return buildSsl(build(configuration.getSslSocketFactory().createSocket(host, port)), host);
         } else {
-            return filter(new Socket(host, port));
+            return build(new Socket(host, port));
         }
     }
 
     @Override
-    public Socket createSocket(String host, int port, InetAddress localAddr, int localPort) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port, InetAddress localAddr, int localPort) throws IOException {
         if (configuration.isSsl()) {
-            return filterSsl(filter(configuration.getSslSocketFactory().createSocket(host, port, localAddr, localPort)), host);
+            return buildSsl(build(configuration.getSslSocketFactory().createSocket(host, port, localAddr, localPort)), host);
         } else {
-            return filter(new Socket(host, port, localAddr, localPort));
+            return build(new Socket(host, port, localAddr, localPort));
         }
     }
 
     @Override
     public Socket createSocket(InetAddress address, int port) throws IOException {
         if (configuration.isSsl()) {
-            return filterSsl(filter(configuration.getSslSocketFactory().createSocket(address, port)), address.getHostAddress());
+            return buildSsl(build(configuration.getSslSocketFactory().createSocket(address, port)), address.getHostAddress());
         } else {
-            return filter(new Socket(address, port));
+            return build(new Socket(address, port));
         }
     }
 
     @Override
     public Socket createSocket(InetAddress address, int port, InetAddress localAddr, int localPort) throws IOException {
         if (configuration.isSsl()) {
-            return filterSsl(filter(configuration.getSslSocketFactory().createSocket(address, port, localAddr, localPort)), address.getHostAddress());
+            return buildSsl(build(configuration.getSslSocketFactory().createSocket(address, port, localAddr, localPort)), address.getHostAddress());
         } else {
-            return filter(new Socket(address, port, localAddr, localPort));
+            return build(new Socket(address, port, localAddr, localPort));
         }
     }
 
     public Socket createSocket(String host, int port, int timeout) throws IOException, UnknownHostException {
         Socket socket = new Socket();
-        filter(socket);
+        build(socket);
         socket.connect(new InetSocketAddress(host, port), timeout);
         if (configuration.isSsl()) {
             socket = configuration.getSslSocketFactory().createSocket(socket, host, port, true);
-            return filterSsl(socket, host);
+            return buildSsl(socket, host);
         } else {
             return socket;
         }
     }
 
-    private Socket filter(Socket socket) throws SocketException {
+    private Socket build(Socket socket) throws SocketException {
         socket.setReuseAddress(true);
         socket.setKeepAlive(true);
         socket.setTcpNoDelay(true);
@@ -100,7 +100,7 @@ public class RedisSocketFactory extends SocketFactory {
         return socket;
     }
 
-    private Socket filterSsl(Socket socket, String host) throws SocketException {
+    private Socket buildSsl(Socket socket, String host) throws SocketException {
         if (configuration.getSslParameters() != null) {
             ((SSLSocket) socket).setSSLParameters(configuration.getSslParameters());
         }

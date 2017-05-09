@@ -1,6 +1,7 @@
 language: java
-dist: precise
-sudo: required
+addons:
+  hosts:
+    - travis.dev
 jdk:
     - oraclejdk7
     - oraclejdk8

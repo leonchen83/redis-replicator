@@ -16,12 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.*;
 
 /**
  * @author Leon Chen
@@ -41,7 +41,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 if (idx >= command.length) break;
                 token = (String) command[idx];
             }
-            while ("GET".equalsIgnoreCase(token) || "SET".equalsIgnoreCase(token) || "INCRBY".equalsIgnoreCase(token));
+            while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
         }
         List<OverFlow> overFlowList = null;
         if (idx < command.length) {
@@ -79,7 +79,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 if (idx >= params.length) break;
                 token = (String) params[idx];
             }
-            while ("GET".equalsIgnoreCase(token) || "SET".equalsIgnoreCase(token) || "INCRBY".equalsIgnoreCase(token));
+            while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
         }
         overFlow.setOverFlowType(overFlowType);
         overFlow.setStatements(list);

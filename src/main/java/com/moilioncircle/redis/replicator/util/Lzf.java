@@ -17,8 +17,8 @@ package com.moilioncircle.redis.replicator.util;
 /**
  * @author Ning
  * @author Leon Chen
- * @since 2.1.0
  * @see <a href="https://github.com/ning/compress/blob/master/src/main/java/com/ning/compress/lzf/impl/VanillaChunkDecoder.java">VanillaChunkDecoder.java</a>
+ * @since 2.1.0
  */
 public class Lzf {
 

@@ -155,15 +155,15 @@ public class PsyncTest {
             super(host, port, configuration);
         }
 
-        public Socket getSocket(){
+        public Socket getSocket() {
             return super.socket;
         }
 
-        public InputStream getInputStream(){
+        public InputStream getInputStream() {
             return super.inputStream;
         }
 
-        public OutputStream getOutputStream(){
+        public OutputStream getOutputStream() {
             return super.outputStream;
         }
     }

@@ -39,6 +39,7 @@ public class BaseRdbParser {
     /**
      * "expiry time in seconds". After that, expiry time is read as a 4 byte unsigned int
      * <p>
+     *
      * @return seconds
      * @throws IOException when read timeout
      */
@@ -49,6 +50,7 @@ public class BaseRdbParser {
     /**
      * "expiry time in ms". After that, expiry time is read as a 8 byte unsigned long
      * <p>
+     *
      * @return millisecond
      * @throws IOException when read timeout
      */
@@ -67,6 +69,7 @@ public class BaseRdbParser {
      * <p>
      * 4. |11xxxxxx| the remaining 6 bits are read.and then the next object is encoded in a special format.so we set isencoded = true
      * <p>
+     *
      * @return tuple(len, isencoded)
      * @throws IOException when read timeout
      * @see #rdbLoadIntegerObject
@@ -96,7 +99,7 @@ public class BaseRdbParser {
 
     /**
      * @param enctype 0,1,2
-     * @param flags  RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
+     * @param flags   RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
      * @return String rdb object
      * @throws IOException when read timeout
      */
@@ -166,6 +169,7 @@ public class BaseRdbParser {
      * <p>
      * 4.|11xxxxxx| remaining 6bit is 3,then lzf compressed string follows
      * <p>
+     *
      * @param flags RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
      * @return String rdb object
      * @throws IOException when read timeout

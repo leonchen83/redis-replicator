@@ -241,32 +241,32 @@ public class PingParserTest {
         {
             EvalParser parser = new EvalParser();
             EvalCommand cmd = parser.parse(new Object[]{"eval", "return redis.call('set',KEYS[1],'bar')", "1", "foo"});
-            assertEquals("return redis.call('set',KEYS[1],'bar')",cmd.getScript());
-            assertEquals(1,cmd.getNumkeys());
-            assertEquals("foo",cmd.getKeys()[0]);
+            assertEquals("return redis.call('set',KEYS[1],'bar')", cmd.getScript());
+            assertEquals(1, cmd.getNumkeys());
+            assertEquals("foo", cmd.getKeys()[0]);
             System.out.println(cmd);
         }
 
         {
             ScriptParser parser = new ScriptParser();
-            ScriptLoadCommand cmd = (ScriptLoadCommand)parser.parse(new Object[]{"script","load", "return redis.call('set',KEYS[1],'bar')"});
-            assertEquals("return redis.call('set',KEYS[1],'bar')",cmd.getScript());
+            ScriptLoadCommand cmd = (ScriptLoadCommand) parser.parse(new Object[]{"script", "load", "return redis.call('set',KEYS[1],'bar')"});
+            assertEquals("return redis.call('set',KEYS[1],'bar')", cmd.getScript());
             System.out.println(cmd);
         }
 
         {
             ScriptParser parser = new ScriptParser();
-            ScriptFlushCommand cmd = (ScriptFlushCommand)parser.parse(new Object[]{"script","flush"});
+            ScriptFlushCommand cmd = (ScriptFlushCommand) parser.parse(new Object[]{"script", "flush"});
             System.out.println(cmd);
         }
 
         {
             RestoreParser parser = new RestoreParser();
             RestoreCommand cmd = parser.parse(new Object[]{"restore", "mykey", "0", "\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd"});
-            assertEquals("\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd",cmd.getSerializedValue());
-            assertEquals("mykey",cmd.getKey());
-            assertEquals(0,cmd.getTtl());
-            assertEquals(null,cmd.getReplace());
+            assertEquals("\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd", cmd.getSerializedValue());
+            assertEquals("mykey", cmd.getKey());
+            assertEquals(0, cmd.getTtl());
+            assertEquals(null, cmd.getReplace());
             System.out.println(cmd);
         }
 

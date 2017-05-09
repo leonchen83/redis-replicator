@@ -20,7 +20,7 @@ package com.moilioncircle.redis.replicator.util;
  * @author Leon Chen
  * @since 2.1.0
  */
-public final class CompressLZF{
+public final class CompressLZF {
 
     /**
      * The number of entries in the hash table. The size is a trade-off between

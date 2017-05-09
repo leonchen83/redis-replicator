@@ -31,7 +31,7 @@ public class ZRemRangeByRankParser implements CommandParser<ZRemRangeByRankComma
     public ZRemRangeByRankCommand parse(Object[] command) {
         int idx = 1;
         String key = (String) command[idx++];
-        long start =new BigDecimal((String) command[idx++]).longValueExact();
+        long start = new BigDecimal((String) command[idx++]).longValueExact();
         long stop = new BigDecimal((String) command[idx++]).longValueExact();
         return new ZRemRangeByRankCommand(key, start, stop);
     }

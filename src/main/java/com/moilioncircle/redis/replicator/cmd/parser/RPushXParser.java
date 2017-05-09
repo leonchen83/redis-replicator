@@ -21,8 +21,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.RPushXCommand;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
  * @version 2.1.1
+ * @since 2.1.0
  */
 public class RPushXParser implements CommandParser<RPushXCommand> {
 

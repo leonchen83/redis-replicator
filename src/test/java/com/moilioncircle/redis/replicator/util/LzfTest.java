@@ -33,7 +33,7 @@ public class LzfTest {
             String str = "abcdsklafjslfjfd;sfdklafjlsafjslfjasl;fkjdsalfjasfjlas;dkfjalsvlasfkal;sj";
             byte[] out = compress(str.getBytes());
             ByteArray in = Lzf.decode(new ByteArray(out), str.getBytes().length);
-            assertEquals(new String(in.first()),str);
+            assertEquals(new String(in.first()), str);
         }
 
         {
@@ -43,8 +43,8 @@ public class LzfTest {
             byte[] out = compress(bytes);
             ByteArray bin = Lzf.decode(new ByteArray(out), len);
             byte[] oin = bin.first();
-            for(int i=0; i<len; i++){
-                assertEquals(oin[i],bytes[i]);
+            for (int i = 0; i < len; i++) {
+                assertEquals(oin[i], bytes[i]);
             }
         }
 
@@ -55,8 +55,8 @@ public class LzfTest {
             byte[] out = compress(bytes);
             ByteArray bin = Lzf.decode(new ByteArray(out), len);
             byte[] oin = bin.first();
-            for(int i=0; i<len; i++){
-                assertEquals(oin[i],bytes[i]);
+            for (int i = 0; i < len; i++) {
+                assertEquals(oin[i], bytes[i]);
             }
         }
 

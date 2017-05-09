@@ -16,8 +16,14 @@
 
 package com.moilioncircle.redis.replicator;
 
-import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
-import static com.moilioncircle.redis.replicator.Constants.STAR;
+import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.io.RedisOutputStream;
+import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
+import com.moilioncircle.redis.replicator.rdb.RdbParser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -26,15 +32,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.moilioncircle.redis.replicator.cmd.*;
-import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.io.RedisOutputStream;
-import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
-import com.moilioncircle.redis.replicator.rdb.RdbParser;
+import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
+import static com.moilioncircle.redis.replicator.Constants.STAR;
 
 /**
  * @author Leon Chen
@@ -65,6 +64,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     /**
      * PSYNC
      * <p>
+     *
      * @throws IOException when read timeout or connect timeout
      */
     @Override
@@ -80,6 +80,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     /**
      * PSYNC
      * <p>
+     *
      * @throws IOException when read timeout or connect timeout
      */
     protected void doOpen() throws IOException {

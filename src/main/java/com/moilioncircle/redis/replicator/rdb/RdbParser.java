@@ -32,10 +32,11 @@ import static com.moilioncircle.redis.replicator.Constants.*;
 /**
  * Redis RDB format
  * <p>
+ *
  * @author Leon Chen
- * @since 2.1.0
  * @see <a href="https://github.com/antirez/redis/blob/3.0/src/rdb.c">rdb.c</a>
  * @see <a href="https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format">Redis-RDB-Dump-File-Format</a>
+ * @since 2.1.0
  */
 public class RdbParser {
 

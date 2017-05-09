@@ -22,8 +22,8 @@ import java.util.Arrays;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
  * @version 2.1.1
+ * @since 2.1.0
  */
 public class RPushXCommand implements Command {
     private String key;

@@ -25,8 +25,8 @@ import static com.moilioncircle.redis.replicator.Constants.*;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
  * @see <a href="http://redis.io/topics/protocol">protocol</a>
+ * @since 2.1.0
  */
 public class ReplyParser {
     private final RedisInputStream in;

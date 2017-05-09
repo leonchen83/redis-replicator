@@ -31,16 +31,16 @@ public class RPushParserTest {
         {
             RPushParser parser = new RPushParser();
             RPushCommand cmd = parser.parse("rpush key v1 v2".split(" "));
-            assertEquals("key",cmd.getKey());
-            assertEquals("v1",cmd.getValues()[0]);
-            assertEquals("v2",cmd.getValues()[1]);
+            assertEquals("key", cmd.getKey());
+            assertEquals("v1", cmd.getValues()[0]);
+            assertEquals("v2", cmd.getValues()[1]);
             System.out.println(cmd);
         }
 
         {
             RPushXParser parser = new RPushXParser();
             RPushXCommand cmd = parser.parse("rpushx key v1 v2".split(" "));
-            assertEquals("key",cmd.getKey());
+            assertEquals("key", cmd.getKey());
             assertEquals("v1", cmd.getValues()[0]);
             assertEquals("v2", cmd.getValues()[1]);
             System.out.println(cmd);
@@ -49,16 +49,16 @@ public class RPushParserTest {
         {
             LPushParser parser = new LPushParser();
             LPushCommand cmd = parser.parse("lpush key v1 v2".split(" "));
-            assertEquals("key",cmd.getKey());
-            assertEquals("v1",cmd.getValues()[0]);
-            assertEquals("v2",cmd.getValues()[1]);
+            assertEquals("key", cmd.getKey());
+            assertEquals("v1", cmd.getValues()[0]);
+            assertEquals("v2", cmd.getValues()[1]);
             System.out.println(cmd);
         }
 
         {
             LPushXParser parser = new LPushXParser();
             LPushXCommand cmd = parser.parse("lpushx key v1 v2".split(" "));
-            assertEquals("key",cmd.getKey());
+            assertEquals("key", cmd.getKey());
             assertEquals("v1", cmd.getValues()[0]);
             assertEquals("v2", cmd.getValues()[1]);
             System.out.println(cmd);
@@ -67,14 +67,14 @@ public class RPushParserTest {
         {
             LPopParser parser = new LPopParser();
             LPopCommand cmd = parser.parse("lpop key".split(" "));
-            assertEquals("key",cmd.getKey());
+            assertEquals("key", cmd.getKey());
             System.out.println(cmd);
         }
 
         {
             RPopParser parser = new RPopParser();
             RPopCommand cmd = parser.parse("rpop key".split(" "));
-            assertEquals("key",cmd.getKey());
+            assertEquals("key", cmd.getKey());
             System.out.println(cmd);
         }
     }

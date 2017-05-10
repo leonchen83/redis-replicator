@@ -18,6 +18,9 @@ package com.moilioncircle.redis.replicator.util;
 
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -39,7 +42,7 @@ public class ByteArrayTest {
         }
         ByteArray bytes1 = new ByteArray(str.getBytes().length - 10, 10);
         ByteArray.arraycopy(bytes, 10, bytes1, 0, bytes.length - 10);
-        assertEquals(str.substring(10), new String(bytes1.first()));
+        assertEquals(str.substring(10), getString(bytes1));
 
         str = "sdajk";
         ByteArray bytes2 = new ByteArray(str.getBytes().length, 10);
@@ -50,11 +53,22 @@ public class ByteArrayTest {
             assertEquals(b, bytes2.get(i));
             i++;
         }
-        assertEquals(new String(bytes2.first()), "sdajk");
+        assertEquals(getString(bytes2), "sdajk");
 
         ByteArray bytes3 = new ByteArray(bytes2.length() - 1, 10);
         ByteArray.arraycopy(bytes2, 1, bytes3, 0, bytes2.length() - 1);
-        assertEquals(str.substring(1), new String(bytes3.first()));
+        assertEquals(str.substring(1), getString(bytes3));
+    }
+
+    private String getString(ByteArray ary) {
+        ByteArrayOutputStream o = new ByteArrayOutputStream();
+        for (byte[] b : ary) {
+            try {
+                o.write(b);
+            } catch (IOException e) {
+            }
+        }
+        return new String(o.toByteArray());
     }
 
 }

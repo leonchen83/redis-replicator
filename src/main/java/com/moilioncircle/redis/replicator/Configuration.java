@@ -80,12 +80,12 @@ public class Configuration {
     private String authPassword = null;
 
     /**
-     * discard rdb parser
+     * discard rdb event
      */
     private boolean discardRdbEvent = false;
 
     /**
-     * async cached bytes
+     * async buffer size
      */
     private int asyncCachedBytes = 512 * 1024;
 
@@ -95,7 +95,7 @@ public class Configuration {
     private boolean verbose = false;
 
     /**
-     * used in psync heart beat
+     * used in psync heartbeat
      */
     private int heartBeatPeriod = 1000;
 
@@ -120,7 +120,7 @@ public class Configuration {
     private HostnameVerifier hostnameVerifier;
 
     /**
-     * psync master run id
+     * psync master repl_id
      */
     private String replId = "?";
 

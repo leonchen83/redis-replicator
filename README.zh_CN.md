@@ -33,6 +33,7 @@
          * [4.2.4. 再写一个command parser](#424-再写一个command-parser)
          * [4.2.5. 注册module parser和command parser并处理相关事件](#425-注册module-parser和command-parser并处理相关事件)
       * [4.3. 编写你自己的rdb解析器](#43-编写你自己的rdb解析器)
+      * [4.4. 事件时间线](#44-事件时间线)
    * [5. 其他主题](#5-其他主题)
       * [5.1. 内置的Command Parser](#51-内置的command-parser)
       * [5.2. 当出现EOFException](#52-当出现eofexception)
@@ -465,6 +466,17 @@ redis 2.4 - 4.0
 ## 4.3. 编写你自己的rdb解析器  
 * 写一个类继承 `RdbVisitor`抽象类  
 * 通过`Replicator`的`setRdbVisitor`方法注册你自己的 `RdbVisitor`.  
+
+## 4.4. 事件时间线  
+
+```java  
+     |                         全量同步                         |             部分同步          |
+     ↓-----------<--------------<-------------<----------<-----↓--------------<--------------↑
+     ↓                                                         ↓                             ↑ <-重连    
+    连接->------->-------------->------------->---------->-------------------->---------------x <-断线
+               ↓              ↓          ↓            ↓                   ↓
+          prefullsync    auxfields...  rdbs...   postfullsync            cmds...       
+```
 
 # 5. 其他主题  
   

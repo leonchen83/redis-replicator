@@ -32,6 +32,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
          * [4.2.4. Write a command parser](#424-write-a-command-parser)
          * [4.2.5. Register this module parser and command parser and handle event](#425-register-this-module-parser-and-command-parser-and-handle-event)
       * [4.3. Write your own rdb parser](#43-write-your-own-rdb-parser)
+      * [4.4. Event timeline](#44-event-timeline)
    * [5. Other topics](#5-other-topics)
       * [5.1. Built-in command parser](#51-built-in-command-parser)
       * [5.2. EOFException](#52-eofexception)
@@ -459,6 +460,17 @@ redis 2.4 - 4.0
 ## 4.3. Write your own rdb parser  
 * extends `RdbVisitor`  
 * register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
+
+## 4.4. Event timeline  
+
+```java  
+     |                     full resynchronization              |  partial resynchronization  |
+     ↓-----------<--------------<-------------<----------<-----↓--------------<--------------↑
+     ↓                                                         ↓                             ↑ <-reconnect    
+ connect->------->-------------->------------->---------->-------------------->--------------x <-disconnect
+               ↓              ↓          ↓            ↓                   ↓
+          prefullsync    auxfields...  rdbs...   postfullsync            cmds...       
+```
 
 # 5. Other topics  
   

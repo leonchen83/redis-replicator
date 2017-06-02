@@ -462,15 +462,13 @@ redis 2.4 - 4.0
 * register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 
 ## 4.4. Event timeline  
-
-```java  
-     |                     full resynchronization              |  partial resynchronization  |
-     ↓-----------<--------------<-------------<----------<-----↓--------------<--------------↑
-     ↓                                                         ↓                             ↑ <-reconnect    
- connect->------->-------------->------------->---------->-------------------->--------------x <-disconnect
+  
+     |                     full resynchronization              |  partial resynchronization  |  
+     ↓-----------<--------------<-------------<----------<-----↓--------------<--------------↑  
+     ↓                                                         ↓                             ↑ <-reconnect  
+ connect->------->-------------->------------->---------->-------------------->--------------x <-disconnect  
                ↓              ↓          ↓            ↓                   ↓
           prefullsync    auxfields...  rdbs...   postfullsync            cmds...       
-```
 
 # 5. Other topics  
   

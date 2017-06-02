@@ -102,6 +102,11 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     }
 
     @Override
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
     public void setRdbVisitor(RdbVisitor rdbVisitor) {
         this.rdbVisitor = rdbVisitor;
     }

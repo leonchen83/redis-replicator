@@ -186,6 +186,11 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
+    public Configuration getConfiguration() {
+        return replicator.getConfiguration();
+    }
+
+    @Override
     public void open() throws IOException {
         replicator.open();
     }

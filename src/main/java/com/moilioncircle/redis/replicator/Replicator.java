@@ -63,5 +63,11 @@ public interface Replicator extends Closeable, ReplicatorListener {
      */
     boolean verbose();
 
+    /**
+     * @return configuration
+     * @since 2.1.3
+     */
+    Configuration getConfiguration();
+
     void open() throws IOException;
 }

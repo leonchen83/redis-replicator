@@ -52,8 +52,8 @@ public class ReplyParser {
     }
 
     /**
-     * @param handler bulk string handler
-     * @return Object[] or String or Long
+     * @param handler bulk reply handler
+     * @return Object[] or byte[] or Long
      * @throws IOException when read timeout
      */
     public Object parse(BulkReplyHandler handler) throws IOException {
@@ -122,7 +122,7 @@ public class ReplyParser {
                         builder.put((byte) c);
                     }
                     if ((c = in.read()) == '\n') {
-                        return builder.toString();
+                        return builder.array();
                     } else {
                         builder.put((byte) c);
                     }
@@ -135,7 +135,7 @@ public class ReplyParser {
                         builder.put((byte) c);
                     }
                     if ((c = in.read()) == '\n') {
-                        return builder.toString();
+                        return builder.array();
                     } else {
                         builder.put((byte) c);
                     }

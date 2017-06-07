@@ -26,11 +26,11 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class SMoveParserTest {
+public class SMoveParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         SMoveParser parser = new SMoveParser();
-        SMoveCommand cmd = parser.parse("smove src des field".split(" "));
+        SMoveCommand cmd = parser.parse(toObjectArray("smove src des field".split(" ")));
         assertEquals("src", cmd.getSource());
         assertEquals("des", cmd.getDestination());
         assertEquals("field", cmd.getMember());
@@ -38,7 +38,7 @@ public class SMoveParserTest {
 
         {
             SwapDBParser parser1 = new SwapDBParser();
-            SwapDBCommand cmd1 = parser1.parse("swapdb 0 1".split(" "));
+            SwapDBCommand cmd1 = parser1.parse(toObjectArray("swapdb 0 1".split(" ")));
             assertEquals(0, cmd1.getSource());
             assertEquals(1, cmd1.getTarget());
             System.out.println(cmd1);

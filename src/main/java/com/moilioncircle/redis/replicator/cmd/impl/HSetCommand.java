@@ -26,14 +26,24 @@ public class HSetCommand implements Command {
     private String key;
     private String field;
     private String value;
+    private byte[] rawKey;
+    private byte[] rawField;
+    private byte[] rawValue;
 
     public HSetCommand() {
     }
 
     public HSetCommand(String key, String field, String value) {
+        this(key, field, value, null, null, null);
+    }
+
+    public HSetCommand(String key, String field, String value, byte[] rawKey, byte[] rawField, byte[] rawValue) {
         this.key = key;
         this.field = field;
         this.value = value;
+        this.rawKey = rawKey;
+        this.rawField = rawField;
+        this.rawValue = rawValue;
     }
 
     public String getKey() {
@@ -58,6 +68,30 @@ public class HSetCommand implements Command {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawField() {
+        return rawField;
+    }
+
+    public void setRawField(byte[] rawField) {
+        this.rawField = rawField;
+    }
+
+    public byte[] getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
     }
 
     @Override

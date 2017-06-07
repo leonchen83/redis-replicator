@@ -26,18 +26,18 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class LInsertParserTest {
+public class LInsertParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         LInsertParser parser = new LInsertParser();
-        LInsertCommand cmd = parser.parse("LINSERT mylist BEFORE World There".split(" "));
+        LInsertCommand cmd = parser.parse(toObjectArray("LINSERT mylist BEFORE World There".split(" ")));
         assertEquals("mylist", cmd.getKey());
         assertEquals(LInsertType.BEFORE, cmd.getlInsertType());
         assertEquals("World", cmd.getPivot());
         assertEquals("There", cmd.getValue());
         System.out.println(cmd);
 
-        cmd = parser.parse("LINSERT mylist AFTER World There".split(" "));
+        cmd = parser.parse(toObjectArray("LINSERT mylist AFTER World There".split(" ")));
         assertEquals("mylist", cmd.getKey());
         assertEquals(LInsertType.AFTER, cmd.getlInsertType());
         assertEquals("World", cmd.getPivot());

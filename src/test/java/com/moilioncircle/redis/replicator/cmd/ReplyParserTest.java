@@ -35,7 +35,7 @@ public class ReplyParserTest {
             RedisInputStream in = new RedisInputStream(new ByteArrayInputStream(":56789\r\n".getBytes()));
             ReplyParser replyParser = new ReplyParser(in);
             Long r = (Long) replyParser.parse(new BulkReplyHandler.SimpleBulkReplyHandler());
-            assertEquals(56789l, r.longValue());
+            assertEquals(56789L, r.longValue());
         }
 
     }

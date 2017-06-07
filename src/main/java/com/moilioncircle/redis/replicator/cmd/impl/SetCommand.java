@@ -28,16 +28,24 @@ public class SetCommand implements Command {
     private Integer ex;
     private Long px;
     private ExistType existType;
+    private byte[] rawKey;
+    private byte[] rawValue;
 
     public SetCommand() {
     }
 
     public SetCommand(String key, String value, Integer ex, Long px, ExistType existType) {
+        this(key, value, ex, px, existType, null, null);
+    }
+
+    public SetCommand(String key, String value, Integer ex, Long px, ExistType existType, byte[] rawKey, byte[] rawValue) {
         this.key = key;
         this.value = value;
         this.ex = ex;
         this.px = px;
         this.existType = existType;
+        this.rawKey = rawKey;
+        this.rawValue = rawValue;
     }
 
     public String getKey() {
@@ -78,6 +86,22 @@ public class SetCommand implements Command {
 
     public void setExistType(ExistType existType) {
         this.existType = existType;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
     }
 
     @Override

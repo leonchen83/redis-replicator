@@ -22,12 +22,18 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  */
 public class ScriptLoadCommand extends ScriptCommand {
     private String script;
+    private byte[] rawScript;
 
     public ScriptLoadCommand() {
     }
 
     public ScriptLoadCommand(String script) {
+        this(script, null);
+    }
+
+    public ScriptLoadCommand(String script, byte[] rawScript) {
         this.script = script;
+        this.rawScript = rawScript;
     }
 
     public String getScript() {
@@ -36,6 +42,14 @@ public class ScriptLoadCommand extends ScriptCommand {
 
     public void setScript(String script) {
         this.script = script;
+    }
+
+    public byte[] getRawScript() {
+        return rawScript;
+    }
+
+    public void setRawScript(byte[] rawScript) {
+        this.rawScript = rawScript;
     }
 
     @Override

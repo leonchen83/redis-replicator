@@ -25,13 +25,19 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class MoveCommand implements Command {
     private String key;
     private int db;
+    private byte[] rawKey;
 
     public MoveCommand() {
     }
 
     public MoveCommand(String key, int db) {
+        this(key, db, null);
+    }
+
+    public MoveCommand(String key, int db, byte[] rawKey) {
         this.key = key;
         this.db = db;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -48,6 +54,14 @@ public class MoveCommand implements Command {
 
     public void setDb(int db) {
         this.db = db;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

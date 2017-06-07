@@ -26,14 +26,20 @@ public class Geo implements Serializable {
     private String member;
     private double longitude;
     private double latitude;
+    private byte[] rawMember;
 
     public Geo() {
     }
 
     public Geo(String member, double longitude, double latitude) {
+        this(member, longitude, latitude, null);
+    }
+
+    public Geo(String member, double longitude, double latitude, byte[] rawMember) {
         this.member = member;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.rawMember = rawMember;
     }
 
     public String getMember() {
@@ -58,6 +64,14 @@ public class Geo implements Serializable {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public byte[] getRawMember() {
+        return rawMember;
+    }
+
+    public void setRawMember(byte[] rawMember) {
+        this.rawMember = rawMember;
     }
 
     @Override

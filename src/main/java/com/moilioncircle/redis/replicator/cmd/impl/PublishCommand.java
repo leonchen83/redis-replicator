@@ -25,13 +25,21 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class PublishCommand implements Command {
     private String channel;
     private String message;
+    private byte[] rawChannel;
+    private byte[] rawMessage;
 
     public PublishCommand() {
     }
 
     public PublishCommand(String channel, String message) {
+        this(channel, message, null, null);
+    }
+
+    public PublishCommand(String channel, String message, byte[] rawChannel, byte[] rawMessage) {
         this.channel = channel;
         this.message = message;
+        this.rawChannel = rawChannel;
+        this.rawMessage = rawMessage;
     }
 
     public String getChannel() {
@@ -48,6 +56,22 @@ public class PublishCommand implements Command {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public byte[] getRawChannel() {
+        return rawChannel;
+    }
+
+    public void setRawChannel(byte[] rawChannel) {
+        this.rawChannel = rawChannel;
+    }
+
+    public byte[] getRawMessage() {
+        return rawMessage;
+    }
+
+    public void setRawMessage(byte[] rawMessage) {
+        this.rawMessage = rawMessage;
     }
 
     @Override

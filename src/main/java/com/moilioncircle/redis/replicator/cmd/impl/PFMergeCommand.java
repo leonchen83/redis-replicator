@@ -26,14 +26,22 @@ import java.util.Arrays;
  */
 public class PFMergeCommand implements Command {
     private String destkey;
-    private String sourcekeys[];
+    private String[] sourcekeys;
+    private byte[] rawDestkey;
+    private byte[][] rawSourcekeys;
 
     public PFMergeCommand() {
     }
 
-    public PFMergeCommand(String destkey, String... sourcekeys) {
+    public PFMergeCommand(String destkey, String[] sourcekeys) {
+        this(destkey, sourcekeys, null, null);
+    }
+
+    public PFMergeCommand(String destkey, String[] sourcekeys, byte[] rawDestkey, byte[][] rawSourcekeys) {
         this.destkey = destkey;
         this.sourcekeys = sourcekeys;
+        this.rawDestkey = rawDestkey;
+        this.rawSourcekeys = rawSourcekeys;
     }
 
     public String getDestkey() {
@@ -50,6 +58,22 @@ public class PFMergeCommand implements Command {
 
     public void setSourcekeys(String[] sourcekeys) {
         this.sourcekeys = sourcekeys;
+    }
+
+    public byte[] getRawDestkey() {
+        return rawDestkey;
+    }
+
+    public void setRawDestkey(byte[] rawDestkey) {
+        this.rawDestkey = rawDestkey;
+    }
+
+    public byte[][] getRawSourcekeys() {
+        return rawSourcekeys;
+    }
+
+    public void setRawSourcekeys(byte[][] rawSourcekeys) {
+        this.rawSourcekeys = rawSourcekeys;
     }
 
     @Override

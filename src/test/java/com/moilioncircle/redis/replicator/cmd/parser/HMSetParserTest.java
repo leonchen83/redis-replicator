@@ -25,20 +25,20 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class HMSetParserTest {
+public class HMSetParserTest extends AbstractParserTest {
 
     @Test
     public void testParse() throws Exception {
         {
             HMSetParser hmSetParser = new HMSetParser();
-            HMSetCommand command = hmSetParser.parse(new Object[]{"hmset", "key", "field", "value"});
+            HMSetCommand command = hmSetParser.parse(toObjectArray(new Object[]{"hmset", "key", "field", "value"}));
             assertEquals("key", command.getKey());
             assertEquals(1, command.getFields().size());
         }
 
         {
             HMSetParser hmSetParser = new HMSetParser();
-            HMSetCommand command = hmSetParser.parse(new Object[]{"hmset", "key", "field", "value", "field1", "value1"});
+            HMSetCommand command = hmSetParser.parse(toObjectArray(new Object[]{"hmset", "key", "field", "value", "field1", "value1"}));
             assertEquals("key", command.getKey());
             assertEquals(2, command.getFields().size());
         }

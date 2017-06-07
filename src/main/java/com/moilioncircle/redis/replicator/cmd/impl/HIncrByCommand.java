@@ -26,14 +26,22 @@ public class HIncrByCommand implements Command {
     private String key;
     private String field;
     private long increment;
+    private byte[] rawKey;
+    private byte[] rawField;
 
     public HIncrByCommand() {
     }
 
     public HIncrByCommand(String key, String field, long increment) {
+        this(key, field, increment, null, null);
+    }
+
+    public HIncrByCommand(String key, String field, long increment, byte[] rawKey, byte[] rawField) {
         this.key = key;
         this.field = field;
         this.increment = increment;
+        this.rawKey = rawKey;
+        this.rawField = rawField;
     }
 
     public String getKey() {
@@ -58,6 +66,22 @@ public class HIncrByCommand implements Command {
 
     public void setIncrement(long increment) {
         this.increment = increment;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawField() {
+        return rawField;
+    }
+
+    public void setRawField(byte[] rawField) {
+        this.rawField = rawField;
     }
 
     @Override

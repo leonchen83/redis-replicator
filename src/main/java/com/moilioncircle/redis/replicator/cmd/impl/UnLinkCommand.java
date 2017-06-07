@@ -26,12 +26,18 @@ import java.util.Arrays;
  */
 public class UnLinkCommand implements Command {
     private String[] keys;
+    private byte[][] rawKeys;
 
     public UnLinkCommand() {
     }
 
-    public UnLinkCommand(String... keys) {
+    public UnLinkCommand(String[] keys) {
+        this(keys, null);
+    }
+
+    public UnLinkCommand(String[] keys, byte[][] rawKeys) {
         this.keys = keys;
+        this.rawKeys = rawKeys;
     }
 
     public String[] getKeys() {
@@ -40,6 +46,14 @@ public class UnLinkCommand implements Command {
 
     public void setKeys(String[] keys) {
         this.keys = keys;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
     }
 
     @Override

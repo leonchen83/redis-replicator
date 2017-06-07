@@ -31,16 +31,22 @@ public class ZAddCommand implements Command {
     private Boolean isCh;
     private Boolean isIncr;
     private ZSetEntry[] zSetEntries;
+    private byte[] rawKey;
 
     public ZAddCommand() {
     }
 
     public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries) {
+        this(key, existType, isCh, isIncr, zSetEntries, null);
+    }
+
+    public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries, byte[] rawKey) {
         this.key = key;
         this.existType = existType;
         this.isCh = isCh;
         this.isIncr = isIncr;
         this.zSetEntries = zSetEntries;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -85,6 +91,14 @@ public class ZAddCommand implements Command {
 
     public void setzSetEntries(ZSetEntry[] zSetEntries) {
         this.zSetEntries = zSetEntries;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

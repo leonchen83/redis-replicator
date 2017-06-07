@@ -27,15 +27,23 @@ public class RestoreCommand implements Command {
     private int ttl;
     private String serializedValue;
     private Boolean isReplace;
+    private byte[] rawKey;
+    private byte[] rawSerializedValue;
 
     public RestoreCommand() {
     }
 
     public RestoreCommand(String key, int ttl, String serializedValue, Boolean isReplace) {
+        this(key, ttl, serializedValue, isReplace, null, null);
+    }
+
+    public RestoreCommand(String key, int ttl, String serializedValue, Boolean isReplace, byte[] rawKey, byte[] rawSerializedValue) {
         this.key = key;
         this.ttl = ttl;
         this.serializedValue = serializedValue;
         this.isReplace = isReplace;
+        this.rawKey = rawKey;
+        this.rawSerializedValue = rawSerializedValue;
     }
 
     public String getKey() {
@@ -68,6 +76,22 @@ public class RestoreCommand implements Command {
 
     public void setReplace(Boolean replace) {
         isReplace = replace;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawSerializedValue() {
+        return rawSerializedValue;
+    }
+
+    public void setRawSerializedValue(byte[] rawSerializedValue) {
+        this.rawSerializedValue = rawSerializedValue;
     }
 
     @Override

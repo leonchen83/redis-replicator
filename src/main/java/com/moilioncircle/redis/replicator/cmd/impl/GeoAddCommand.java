@@ -27,13 +27,19 @@ import java.util.Arrays;
 public class GeoAddCommand implements Command {
     private String key;
     private Geo[] geos;
+    private byte[] rawKey;
 
     public GeoAddCommand() {
     }
 
     public GeoAddCommand(String key, Geo[] geos) {
+        this(key, geos, null);
+    }
+
+    public GeoAddCommand(String key, Geo[] geos, byte[] rawKey) {
         this.key = key;
         this.geos = geos;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -50,6 +56,14 @@ public class GeoAddCommand implements Command {
 
     public void setGeos(Geo[] geos) {
         this.geos = geos;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

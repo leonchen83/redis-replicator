@@ -24,14 +24,22 @@ public class SetTypeOffsetValue implements Statement {
     private String type;
     private String offset;
     private long value;
+    private byte[] rawType;
+    private byte[] rawOffset;
 
     public SetTypeOffsetValue() {
     }
 
     public SetTypeOffsetValue(String type, String offset, long value) {
+        this(type, offset, value, null, null);
+    }
+
+    public SetTypeOffsetValue(String type, String offset, long value, byte[] rawType, byte[] rawOffset) {
         this.type = type;
         this.offset = offset;
         this.value = value;
+        this.rawType = rawType;
+        this.rawOffset = rawOffset;
     }
 
     public String getType() {
@@ -56,6 +64,22 @@ public class SetTypeOffsetValue implements Statement {
 
     public void setValue(long value) {
         this.value = value;
+    }
+
+    public byte[] getRawType() {
+        return rawType;
+    }
+
+    public void setRawType(byte[] rawType) {
+        this.rawType = rawType;
+    }
+
+    public byte[] getRawOffset() {
+        return rawOffset;
+    }
+
+    public void setRawOffset(byte[] rawOffset) {
+        this.rawOffset = rawOffset;
     }
 
     @Override

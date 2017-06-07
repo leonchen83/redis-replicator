@@ -25,11 +25,11 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class BRPopLPushParserTest {
+public class BRPopLPushParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         BRPopLPushParser parser = new BRPopLPushParser();
-        BRPopLPushCommand cmd = parser.parse(new Object[]{"brpoplpush", "source", "target", "100"});
+        BRPopLPushCommand cmd = parser.parse(toObjectArray(new Object[]{"brpoplpush", "source", "target", "100"}));
         assertEquals("source", cmd.getSource());
         assertEquals("target", cmd.getDestination());
         assertEquals(100, cmd.getTimeout());

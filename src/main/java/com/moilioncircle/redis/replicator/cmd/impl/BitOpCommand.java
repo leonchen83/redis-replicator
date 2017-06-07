@@ -27,15 +27,23 @@ import java.util.Arrays;
 public class BitOpCommand implements Command {
     private Op op;
     private String destkey;
-    private String keys[];
+    private String[] keys;
+    private byte[] rawDestkey;
+    private byte[][] rawKeys;
 
     public BitOpCommand() {
     }
 
     public BitOpCommand(Op op, String destkey, String[] keys) {
+        this(op, destkey, keys, null, null);
+    }
+
+    public BitOpCommand(Op op, String destkey, String[] keys, byte[] rawDestkey, byte[][] rawKeys) {
         this.op = op;
         this.destkey = destkey;
         this.keys = keys;
+        this.rawDestkey = rawDestkey;
+        this.rawKeys = rawKeys;
     }
 
     public Op getOp() {
@@ -60,6 +68,22 @@ public class BitOpCommand implements Command {
 
     public void setKeys(String[] keys) {
         this.keys = keys;
+    }
+
+    public byte[] getRawDestkey() {
+        return rawDestkey;
+    }
+
+    public void setRawDestkey(byte[] rawDestkey) {
+        this.rawDestkey = rawDestkey;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
     }
 
     @Override

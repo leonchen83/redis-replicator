@@ -27,13 +27,21 @@ import java.util.Map;
 public class HMSetCommand implements Command {
     private String key;
     private Map<String, String> fields;
+    private byte[] rawKey;
+    private Map<byte[], byte[]> rawFields;
 
     public HMSetCommand() {
     }
 
     public HMSetCommand(String key, Map<String, String> fields) {
+        this(key, fields, null, null);
+    }
+
+    public HMSetCommand(String key, Map<String, String> fields, byte[] rawKey, Map<byte[], byte[]> rawFields) {
         this.key = key;
         this.fields = fields;
+        this.rawKey = rawKey;
+        this.rawFields = rawFields;
     }
 
     public String getKey() {
@@ -50,6 +58,22 @@ public class HMSetCommand implements Command {
 
     public void setFields(Map<String, String> fields) {
         this.fields = fields;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public Map<byte[], byte[]> getRawFields() {
+        return rawFields;
+    }
+
+    public void setRawFields(Map<byte[], byte[]> rawFields) {
+        this.rawFields = rawFields;
     }
 
     @Override

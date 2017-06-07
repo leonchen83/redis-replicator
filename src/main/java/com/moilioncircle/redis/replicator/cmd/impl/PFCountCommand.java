@@ -26,12 +26,18 @@ import java.util.Arrays;
  */
 public class PFCountCommand implements Command {
     private String[] keys;
+    private byte[][] rawKeys;
 
     public PFCountCommand() {
     }
 
-    public PFCountCommand(String... keys) {
+    public PFCountCommand(String[] keys) {
+        this(keys, null);
+    }
+
+    public PFCountCommand(String[] keys, byte[][] rawKeys) {
         this.keys = keys;
+        this.rawKeys = rawKeys;
     }
 
     public String[] getKeys() {
@@ -40,6 +46,14 @@ public class PFCountCommand implements Command {
 
     public void setKeys(String[] keys) {
         this.keys = keys;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
     }
 
     @Override

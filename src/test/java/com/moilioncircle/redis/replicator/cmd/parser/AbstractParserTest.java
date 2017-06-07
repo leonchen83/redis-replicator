@@ -16,23 +16,18 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 2.1.3
  */
-public class ExpireParserTest extends AbstractParserTest {
-    @Test
-    public void parse() throws Exception {
-        ExpireParser parser = new ExpireParser();
-        ExpireCommand cmd = parser.parse(toObjectArray("expire key 100".split(" ")));
-        assertEquals("key", cmd.getKey());
-        assertEquals(100, cmd.getEx());
-        System.out.println(cmd);
-    }
+public class AbstractParserTest {
 
+    protected Object[] toObjectArray(Object[] raw) {
+        Object[] r = new Object[raw.length];
+        for (int i = 0; i < r.length; i++) {
+            if (raw[i] instanceof String) r[i] = ((String) raw[i]).getBytes();
+            else r[i] = raw[i];
+        }
+        return r;
+    }
 }

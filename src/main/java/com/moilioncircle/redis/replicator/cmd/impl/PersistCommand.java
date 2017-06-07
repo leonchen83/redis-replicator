@@ -24,12 +24,18 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class PersistCommand implements Command {
     private String key;
+    private byte[] rawKey;
 
     public PersistCommand() {
     }
 
     public PersistCommand(String key) {
+        this(key, null);
+    }
+
+    public PersistCommand(String key, byte[] rawKey) {
         this.key = key;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -38,6 +44,14 @@ public class PersistCommand implements Command {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

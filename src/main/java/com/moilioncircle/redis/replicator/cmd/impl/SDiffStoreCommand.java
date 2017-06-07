@@ -26,14 +26,22 @@ import java.util.Arrays;
  */
 public class SDiffStoreCommand implements Command {
     private String destination;
-    private String keys[];
+    private String[] keys;
+    private byte[] rawDestination;
+    private byte[][] rawKeys;
 
     public SDiffStoreCommand() {
     }
 
-    public SDiffStoreCommand(String destination, String... keys) {
+    public SDiffStoreCommand(String destination, String[] keys) {
+        this(destination, keys, null, null);
+    }
+
+    public SDiffStoreCommand(String destination, String[] keys, byte[] rawDestination, byte[][] rawKeys) {
         this.destination = destination;
         this.keys = keys;
+        this.rawDestination = rawDestination;
+        this.rawKeys = rawKeys;
     }
 
     public String getDestination() {
@@ -50,6 +58,22 @@ public class SDiffStoreCommand implements Command {
 
     public void setKeys(String[] keys) {
         this.keys = keys;
+    }
+
+    public byte[] getRawDestination() {
+        return rawDestination;
+    }
+
+    public void setRawDestination(byte[] rawDestination) {
+        this.rawDestination = rawDestination;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
     }
 
     @Override

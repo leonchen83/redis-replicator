@@ -25,13 +25,19 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class ExpireCommand implements Command {
     private String key;
     private int ex;
+    private byte[] rawKey;
 
     public ExpireCommand() {
     }
 
     public ExpireCommand(String key, int ex) {
+        this(key, ex, null);
+    }
+
+    public ExpireCommand(String key, int ex, byte[] rawKey) {
         this.key = key;
         this.ex = ex;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -48,6 +54,14 @@ public class ExpireCommand implements Command {
 
     public void setEx(int ex) {
         this.ex = ex;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

@@ -27,13 +27,21 @@ import java.util.Arrays;
 public class RPushCommand implements Command {
     private String key;
     private String[] values;
+    private byte[] rawKey;
+    private byte[][] rawValues;
 
     public RPushCommand() {
     }
 
-    public RPushCommand(String key, String... values) {
+    public RPushCommand(String key, String[] values) {
+        this(key, values, null, null);
+    }
+
+    public RPushCommand(String key, String[] values, byte[] rawKey, byte[][] rawValues) {
         this.key = key;
         this.values = values;
+        this.rawKey = rawKey;
+        this.rawValues = rawValues;
     }
 
     public String getKey() {
@@ -50,6 +58,22 @@ public class RPushCommand implements Command {
 
     public void setValues(String[] values) {
         this.values = values;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[][] getRawValues() {
+        return rawValues;
+    }
+
+    public void setRawValues(byte[][] rawValues) {
+        this.rawValues = rawValues;
     }
 
     @Override

@@ -27,13 +27,21 @@ import java.util.Arrays;
 public class HDelCommand implements Command {
     private String key;
     private String fields[];
+    private byte[] rawKey;
+    private byte[][] rawFields;
 
     public HDelCommand() {
     }
 
-    public HDelCommand(String key, String... fields) {
+    public HDelCommand(String key, String[] fields) {
+        this(key, fields, null, null);
+    }
+
+    public HDelCommand(String key, String[] fields, byte[] rawKey, byte[][] rawFields) {
         this.key = key;
         this.fields = fields;
+        this.rawKey = rawKey;
+        this.rawFields = rawFields;
     }
 
     public String getKey() {
@@ -50,6 +58,22 @@ public class HDelCommand implements Command {
 
     public void setFields(String[] fields) {
         this.fields = fields;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[][] getRawFields() {
+        return rawFields;
+    }
+
+    public void setRawFields(byte[][] rawFields) {
+        this.rawFields = rawFields;
     }
 
     @Override

@@ -26,14 +26,20 @@ public class SetBitCommand implements Command {
     private String key;
     private long offset;
     private int value;
+    private byte[] rawKey;
 
     public SetBitCommand() {
     }
 
     public SetBitCommand(String key, long offset, int value) {
+        this(key, offset, value, null);
+    }
+
+    public SetBitCommand(String key, long offset, int value, byte[] rawKey) {
         this.key = key;
         this.offset = offset;
         this.value = value;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -58,6 +64,14 @@ public class SetBitCommand implements Command {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

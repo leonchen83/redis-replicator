@@ -24,12 +24,18 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class IncrCommand implements Command {
     private String key;
+    private byte[] rawKey;
 
     public IncrCommand() {
     }
 
     public IncrCommand(String key) {
+        this(key, null);
+    }
+
+    public IncrCommand(String key, byte[] rawKey) {
         this.key = key;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -38,6 +44,14 @@ public class IncrCommand implements Command {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

@@ -26,12 +26,18 @@ import java.util.Map;
  */
 public class MSetNxCommand implements Command {
     private Map<String, String> kv;
+    private Map<byte[], byte[]> rawKv;
 
     public MSetNxCommand() {
     }
 
     public MSetNxCommand(Map<String, String> kv) {
+        this(kv, null);
+    }
+
+    public MSetNxCommand(Map<String, String> kv, Map<byte[], byte[]> rawKv) {
         this.kv = kv;
+        this.rawKv = rawKv;
     }
 
     public Map<String, String> getKv() {
@@ -40,6 +46,14 @@ public class MSetNxCommand implements Command {
 
     public void setKv(Map<String, String> kv) {
         this.kv = kv;
+    }
+
+    public Map<byte[], byte[]> getRawKv() {
+        return rawKv;
+    }
+
+    public void setRawKv(Map<byte[], byte[]> rawKv) {
+        this.rawKv = rawKv;
     }
 
     @Override

@@ -25,13 +25,19 @@ import java.io.Serializable;
 public class ZSetEntry implements Serializable {
     private String element;
     private double score;
+    private byte[] rawElement;
 
     public ZSetEntry() {
     }
 
     public ZSetEntry(String element, double score) {
+        this(element, score, null);
+    }
+
+    public ZSetEntry(String element, double score, byte[] rawElement) {
         this.element = element;
         this.score = score;
+        this.rawElement = rawElement;
     }
 
     public String getElement() {
@@ -48,6 +54,14 @@ public class ZSetEntry implements Serializable {
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public byte[] getRawElement() {
+        return rawElement;
+    }
+
+    public void setRawElement(byte[] rawElement) {
+        this.rawElement = rawElement;
     }
 
     @Override

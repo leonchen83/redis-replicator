@@ -26,12 +26,18 @@ import java.util.Arrays;
  */
 public class DelCommand implements Command {
     private String[] keys;
+    private byte[][] rawKeys;
 
     public DelCommand() {
     }
 
-    public DelCommand(String... keys) {
+    public DelCommand(String[] keys) {
+        this(keys, null);
+    }
+
+    public DelCommand(String[] keys, byte[][] rawKeys) {
         this.keys = keys;
+        this.rawKeys = rawKeys;
     }
 
     public String[] getKeys() {
@@ -40,6 +46,14 @@ public class DelCommand implements Command {
 
     public void setKeys(String[] keys) {
         this.keys = keys;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
     }
 
     @Override

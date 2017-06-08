@@ -82,7 +82,7 @@ redis 2.4 - 4.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.1.2</version>
+        <version>2.2.0</version>
     </dependency>
 ```
 
@@ -396,8 +396,8 @@ redis 2.4 - 4.0
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = new String((byte[])command[1],Constants.CHARSET);
-            long value = Long.parseLong(new String((byte[])command[2],Constants.CHARSET));
+            String key = new String((byte[]) command[1], Constants.CHARSET);
+            long value = Long.parseLong(new String((byte[]) command[2], Constants.CHARSET));
             return new HelloTypeCommand(key, value);
         }
     }

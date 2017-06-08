@@ -99,7 +99,7 @@ public class BaseRdbParser {
     /**
      * @param enctype 0,1,2
      * @param flags   RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
-     * @return String rdb object
+     * @return ByteArray rdb byte array object
      * @throws IOException when read timeout
      */
     public ByteArray rdbLoadIntegerObject(int enctype, int flags) throws IOException {
@@ -142,7 +142,7 @@ public class BaseRdbParser {
      * <p>
      *
      * @param flags RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
-     * @return String rdb object
+     * @return ByteArray rdb byte array object
      * @throws IOException when read timeout
      * @see #rdbLoadLen
      */
@@ -176,7 +176,7 @@ public class BaseRdbParser {
      * <p>
      *
      * @param flags RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
-     * @return String rdb object
+     * @return ByteArray rdb byte array object
      * @throws IOException when read timeout
      * @see #rdbLoadIntegerObject
      * @see #rdbLoadLzfStringObject
@@ -211,7 +211,7 @@ public class BaseRdbParser {
     }
 
     /**
-     * @return InputStream rdb object with raw bytes
+     * @return ByteArray rdb object with byte[]
      * @throws IOException when read timeout
      */
     public ByteArray rdbLoadPlainStringObject() throws IOException {
@@ -219,7 +219,7 @@ public class BaseRdbParser {
     }
 
     /**
-     * @return EncodedString rdb object with UTF-8 string
+     * @return ByteArray rdb object with byte[]
      * @throws IOException when read timeout
      */
     public ByteArray rdbLoadEncodedStringObject() throws IOException {
@@ -299,14 +299,14 @@ public class BaseRdbParser {
             switch (special >> 6) {
                 case 0:
                     int len = special & 0x3f;
-                    return StringHelper.bytes(in, len);
+                    return bytes(in, len);
                 case 1:
                     len = ((special & 0x3f) << 8) | in.read();
-                    return StringHelper.bytes(in, len);
+                    return bytes(in, len);
                 case 2:
                     //bigEndian
                     len = in.readInt(4, false);
-                    return StringHelper.bytes(in, len);
+                    return bytes(in, len);
                 default:
                     break;
             }

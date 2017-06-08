@@ -119,14 +119,6 @@ public class RdbBinaryTest {
         }
     }
 
-    public static byte[] toByteArray(Object object) throws IOException {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutput out = new ObjectOutputStream(bos)) {
-            out.writeObject(object);
-            return bos.toByteArray();
-        }
-    }
-
     static class Test implements Serializable {
         private String a;
         private int b;

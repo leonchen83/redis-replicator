@@ -112,7 +112,6 @@ public class RdbBinaryTest {
         /**
          *
          */
-        private static final long serialVersionUID = 1L;
         private String a;
         private int b;
         private long c;

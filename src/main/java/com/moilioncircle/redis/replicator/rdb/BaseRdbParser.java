@@ -123,8 +123,10 @@ public class BaseRdbParser {
         if (plain) {
             return new ByteArray(value);
         } else if (encode) {
+            // createStringObjectFromLongLong(val);
             return new ByteArray(String.valueOf(in.readInt(value)).getBytes());
         } else {
+            // createObject(OBJ_STRING,sdsfromlonglong(val));
             return new ByteArray(value);
         }
     }
@@ -149,6 +151,11 @@ public class BaseRdbParser {
         boolean encode = (flags & RDB_LOAD_ENC) != 0;
         long clen = rdbLoadLen().len;
         long len = rdbLoadLen().len;
+        // if (plain || sds) {
+        //     return val;
+        // } else {
+        //     return createObject(OBJ_STRING,val);
+        // }
         if (plain) {
             return Lzf.decode(in.readBytes(clen), len);
         } else if (encode) {
@@ -192,12 +199,13 @@ public class BaseRdbParser {
                     throw new AssertionError("unknown RdbParser encoding type:" + len);
             }
         }
-
         if (plain) {
             return in.readBytes(len);
         } else if (encode) {
+            // createStringObject(NULL,len)
             return in.readBytes(len);
         } else {
+            // createRawStringObject(NULL,len);
             return in.readBytes(len);
         }
     }

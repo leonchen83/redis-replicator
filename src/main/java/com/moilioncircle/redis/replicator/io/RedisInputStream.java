@@ -59,6 +59,7 @@ public class RedisInputStream extends InputStream {
     }
 
     protected void notify(byte... bytes) {
+        if (listeners.isEmpty()) return;
         for (RawByteListener listener : listeners) {
             listener.handle(bytes);
         }

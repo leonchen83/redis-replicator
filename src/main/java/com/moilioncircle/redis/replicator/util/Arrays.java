@@ -133,20 +133,15 @@ public class Arrays {
     public static String toString(char[] a) {
         if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1) return "[]";
-        StringBuilder b = new StringBuilder();
-        b.append('[').append(a);
-        return b.append(']').toString();
+        if (iMax == -1) return "";
+        return new String(a);
     }
 
     private static String toString(byte[] a) {
         if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1) return "[]";
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        b.append(new String(a, Constants.CHARSET));
-        return b.append(']').toString();
+        if (iMax == -1) return "";
+        return new String(a, Constants.CHARSET);
     }
 
     private static String toString(boolean[] a) {

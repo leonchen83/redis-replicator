@@ -16,7 +16,6 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.Lzf;
@@ -103,7 +102,7 @@ public class BaseRdbParser {
      * @return String rdb object
      * @throws IOException when read timeout
      */
-    public Object rdbLoadIntegerObject(int enctype, int flags) throws IOException {
+    public ByteArray rdbLoadIntegerObject(int enctype, int flags) throws IOException {
         boolean plain = (flags & RDB_LOAD_PLAIN) != 0;
         boolean encode = (flags & RDB_LOAD_ENC) != 0;
         byte[] value;
@@ -124,7 +123,7 @@ public class BaseRdbParser {
         if (plain) {
             return new ByteArray(value);
         } else if (encode) {
-            return new EncodedString(String.valueOf(in.readInt(value)), new ByteArray(value));
+            return new ByteArray(String.valueOf(in.readInt(value)).getBytes());
         } else {
             return new ByteArray(value);
         }
@@ -145,7 +144,7 @@ public class BaseRdbParser {
      * @throws IOException when read timeout
      * @see #rdbLoadLen
      */
-    public Object rdbLoadLzfStringObject(int flags) throws IOException {
+    public ByteArray rdbLoadLzfStringObject(int flags) throws IOException {
         boolean plain = (flags & RDB_LOAD_PLAIN) != 0;
         boolean encode = (flags & RDB_LOAD_ENC) != 0;
         long clen = rdbLoadLen().len;
@@ -153,8 +152,7 @@ public class BaseRdbParser {
         if (plain) {
             return Lzf.decode(in.readBytes(clen), len);
         } else if (encode) {
-            ByteArray bytes = Lzf.decode(in.readBytes(clen), len);
-            return new EncodedString(new String(bytes.first(), Constants.CHARSET), bytes);
+            return Lzf.decode(in.readBytes(clen), len);
         } else {
             return Lzf.decode(in.readBytes(clen), len);
         }
@@ -176,7 +174,7 @@ public class BaseRdbParser {
      * @see #rdbLoadIntegerObject
      * @see #rdbLoadLzfStringObject
      */
-    public Object rdbGenericLoadStringObject(int flags) throws IOException {
+    public ByteArray rdbGenericLoadStringObject(int flags) throws IOException {
         boolean plain = (flags & RDB_LOAD_PLAIN) != 0;
         boolean encode = (flags & RDB_LOAD_ENC) != 0;
         Len lenObj = rdbLoadLen();
@@ -198,8 +196,7 @@ public class BaseRdbParser {
         if (plain) {
             return in.readBytes(len);
         } else if (encode) {
-            ByteArray bytes = in.readBytes(len);
-            return new EncodedString(new String(bytes.first(), Constants.CHARSET), bytes);
+            return in.readBytes(len);
         } else {
             return in.readBytes(len);
         }
@@ -210,15 +207,15 @@ public class BaseRdbParser {
      * @throws IOException when read timeout
      */
     public ByteArray rdbLoadPlainStringObject() throws IOException {
-        return (ByteArray) rdbGenericLoadStringObject(RDB_LOAD_PLAIN);
+        return rdbGenericLoadStringObject(RDB_LOAD_PLAIN);
     }
 
     /**
      * @return EncodedString rdb object with UTF-8 string
      * @throws IOException when read timeout
      */
-    public EncodedString rdbLoadEncodedStringObject() throws IOException {
-        return (EncodedString) rdbGenericLoadStringObject(RDB_LOAD_ENC);
+    public ByteArray rdbLoadEncodedStringObject() throws IOException {
+        return rdbGenericLoadStringObject(RDB_LOAD_ENC);
     }
 
     public double rdbLoadDoubleValue() throws IOException {
@@ -261,6 +258,10 @@ public class BaseRdbParser {
             return in.readString(len);
         }
 
+        public static byte[] bytes(RedisInputStream in, int len) throws IOException {
+            return in.readBytes(len).first();
+        }
+
         public static long skip(RedisInputStream in, long len) throws IOException {
             return in.skip(len);
         }
@@ -281,7 +282,7 @@ public class BaseRdbParser {
          * |11100000|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 8 bytes as 64bit long
          * |11xxxxxx| next 6 bit value as int value
          */
-        public static String zipListEntry(RedisInputStream in) throws IOException {
+        public static byte[] zipListEntry(RedisInputStream in) throws IOException {
             int prevlen = in.read();
             if (prevlen >= 254) {
                 prevlen = in.readInt(4);
@@ -290,31 +291,31 @@ public class BaseRdbParser {
             switch (special >> 6) {
                 case 0:
                     int len = special & 0x3f;
-                    return StringHelper.str(in, len);
+                    return StringHelper.bytes(in, len);
                 case 1:
                     len = ((special & 0x3f) << 8) | in.read();
-                    return StringHelper.str(in, len);
+                    return StringHelper.bytes(in, len);
                 case 2:
                     //bigEndian
                     len = in.readInt(4, false);
-                    return StringHelper.str(in, len);
+                    return StringHelper.bytes(in, len);
                 default:
                     break;
             }
             switch (special) {
                 case ZIP_INT_8B:
-                    return String.valueOf(in.readInt(1));
+                    return String.valueOf(in.readInt(1)).getBytes();
                 case ZIP_INT_16B:
-                    return String.valueOf(in.readInt(2));
+                    return String.valueOf(in.readInt(2)).getBytes();
                 case ZIP_INT_24B:
-                    return String.valueOf(in.readInt(3));
+                    return String.valueOf(in.readInt(3)).getBytes();
                 case ZIP_INT_32B:
-                    return String.valueOf(in.readInt(4));
+                    return String.valueOf(in.readInt(4)).getBytes();
                 case ZIP_INT_64B:
-                    return String.valueOf(in.readLong(8));
+                    return String.valueOf(in.readLong(8)).getBytes();
                 default:
                     //6BIT
-                    return String.valueOf(special - 0xf1);
+                    return String.valueOf(special - 0xf1).getBytes();
             }
         }
     }
@@ -367,18 +368,6 @@ public class BaseRdbParser {
 
         public static long lenOfContent(RedisInputStream in) throws IOException {
             return in.readUInt(4);
-        }
-    }
-
-    public static class EncodedString {
-        public final String string;
-        public final byte[] rawBytes;
-        public final ByteArray bytes;
-
-        public EncodedString(String string, ByteArray bytes) {
-            this.bytes = bytes;
-            this.string = string;
-            this.rawBytes = bytes.first();
         }
     }
 }

@@ -23,4 +23,13 @@ import java.util.List;
  * @since 2.1.0
  */
 public class KeyStringValueList extends KeyValuePair<List<String>> {
+    protected List<byte[]> rawValue;
+
+    public List<byte[]> getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(List<byte[]> rawValue) {
+        this.rawValue = rawValue;
+    }
 }

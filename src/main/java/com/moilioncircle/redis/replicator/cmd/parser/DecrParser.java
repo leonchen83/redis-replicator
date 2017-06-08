@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.DecrCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -26,8 +29,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.DecrCommand;
 public class DecrParser implements CommandParser<DecrCommand> {
     @Override
     public DecrCommand parse(Object[] command) {
-        String key = (String) command[1];
-        return new DecrCommand(key);
+        String key = objToString(command[1]);
+        byte[] rawKey = objToBytes(command[1]);
+        return new DecrCommand(key, rawKey);
     }
 
 }

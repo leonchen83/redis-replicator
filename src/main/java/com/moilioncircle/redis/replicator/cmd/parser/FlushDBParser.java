@@ -19,6 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.FlushDBCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -27,7 +29,7 @@ public class FlushDBParser implements CommandParser<FlushDBCommand> {
     @Override
     public FlushDBCommand parse(Object[] command) {
         Boolean isAsync = null;
-        if (command.length == 2 && "ASYNC".equalsIgnoreCase((String) command[1])) {
+        if (command.length == 2 && "ASYNC".equalsIgnoreCase(objToString(command[1]))) {
             isAsync = true;
         }
         return new FlushDBCommand(isAsync);

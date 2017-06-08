@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZIncrByCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,10 +31,14 @@ public class ZIncrByParser implements CommandParser<ZIncrByCommand> {
     @Override
     public ZIncrByCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
-        double increment = Double.parseDouble((String) command[idx++]);
-        String member = (String) command[idx++];
-        return new ZIncrByCommand(key, increment, member);
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        double increment = Double.parseDouble(objToString(command[idx++]));
+        String member = objToString(command[idx]);
+        byte[] rawMember = objToBytes(command[idx]);
+        idx++;
+        return new ZIncrByCommand(key, increment, member, rawKey, rawMember);
     }
 
 }

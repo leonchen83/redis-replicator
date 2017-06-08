@@ -23,6 +23,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -31,19 +34,29 @@ public class EvalParser implements CommandParser<EvalCommand> {
     @Override
     public EvalCommand parse(Object[] command) {
         int idx = 1;
-        String script = (String) command[idx++];
-        int numkeys = new BigDecimal((String) command[idx++]).intValueExact();
+        String script = objToString(command[idx]);
+        byte[] rawScript = objToBytes(command[idx]);
+        idx++;
+        int numkeys = new BigDecimal(objToString(command[idx++])).intValueExact();
         String[] keys = new String[numkeys];
+        byte[][] rawKeys = new byte[numkeys][];
         for (int i = 0; i < numkeys; i++) {
-            keys[i] = (String) command[idx++];
+            keys[i] = objToString(command[idx]);
+            rawKeys[i] = objToBytes(command[idx]);
+            idx++;
         }
         List<String> list = new ArrayList<>();
+        List<byte[]> rawList = new ArrayList<>();
         while (idx < command.length) {
-            list.add((String) command[idx++]);
+            list.add(objToString(command[idx]));
+            rawList.add(objToBytes(command[idx]));
+            idx++;
         }
         String[] args = new String[list.size()];
+        byte[][] rawArgs = new byte[rawList.size()][];
         list.toArray(args);
-        return new EvalCommand(script, numkeys, keys, args);
+        rawList.toArray(rawArgs);
+        return new EvalCommand(script, numkeys, keys, args, rawScript, rawKeys, rawArgs);
     }
 
 }

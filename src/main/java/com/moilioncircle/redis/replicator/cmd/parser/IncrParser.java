@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.IncrCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -26,8 +29,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.IncrCommand;
 public class IncrParser implements CommandParser<IncrCommand> {
     @Override
     public IncrCommand parse(Object[] command) {
-        String key = (String) command[1];
-        return new IncrCommand(key);
+        String key = objToString(command[1]);
+        byte[] rawKey = objToBytes(command[1]);
+        return new IncrCommand(key, rawKey);
     }
 
 }

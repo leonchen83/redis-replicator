@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PingCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -26,8 +29,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.PingCommand;
 public class PingParser implements CommandParser<PingCommand> {
     @Override
     public PingCommand parse(Object[] command) {
-        String message = command.length == 1 ? null : (String) command[1];
-        return new PingCommand(message);
+        String message = command.length == 1 ? null : objToString(command[1]);
+        byte[] rawMessage = command.length == 1 ? null : objToBytes(command[1]);
+        return new PingCommand(message, rawMessage);
     }
 
 }

@@ -21,6 +21,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.RestoreCommand;
 
 import java.math.BigDecimal;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -30,13 +33,17 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
     public RestoreCommand parse(Object[] command) {
         int idx = 1;
         Boolean isReplace = null;
-        String key = (String) command[idx++];
-        int ttl = new BigDecimal((String) command[idx++]).intValueExact();
-        String serializedValue = (String) command[idx++];
-        if (idx < command.length && ((String) command[idx++]).equalsIgnoreCase("REPLACE")) {
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        int ttl = new BigDecimal(objToString(command[idx++])).intValueExact();
+        String serializedValue = objToString(command[idx]);
+        byte[] rawSerializedValue = objToBytes(command[idx]);
+        idx++;
+        if (idx < command.length && (objToString(command[idx++])).equalsIgnoreCase("REPLACE")) {
             isReplace = true;
         }
-        return new RestoreCommand(key, ttl, serializedValue, isReplace);
+        return new RestoreCommand(key, ttl, serializedValue, isReplace, rawKey, rawSerializedValue);
     }
 
 }

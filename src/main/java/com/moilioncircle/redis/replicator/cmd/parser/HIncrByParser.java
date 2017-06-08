@@ -21,6 +21,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.HIncrByCommand;
 
 import java.math.BigDecimal;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -30,10 +33,14 @@ public class HIncrByParser implements CommandParser<HIncrByCommand> {
     @Override
     public HIncrByCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
-        String field = (String) command[idx++];
-        long increment = new BigDecimal((String) command[idx++]).longValueExact();
-        return new HIncrByCommand(key, field, increment);
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        String field = objToString(command[idx]);
+        byte[] rawField = objToBytes(command[idx]);
+        idx++;
+        long increment = new BigDecimal(objToString(command[idx++])).longValueExact();
+        return new HIncrByCommand(key, field, increment, rawKey, rawField);
     }
 
 }

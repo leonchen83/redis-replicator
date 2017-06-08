@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SAddCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -29,12 +32,18 @@ public class SAddParser implements CommandParser<SAddCommand> {
     @Override
     public SAddCommand parse(Object[] command) {
         int idx = 1, newIdx = 0;
-        String key = (String) command[idx++];
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
         String[] members = new String[command.length - 2];
+        byte[][] rawMembers = new byte[command.length - 2][];
         while (idx < command.length) {
-            members[newIdx++] = (String) command[idx++];
+            members[newIdx] = objToString(command[idx]);
+            rawMembers[newIdx] = objToBytes(command[idx]);
+            newIdx++;
+            idx++;
         }
-        return new SAddCommand(key, members);
+        return new SAddCommand(key, members, rawKey, rawMembers);
     }
 
 }

@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SInterStoreCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -27,12 +30,16 @@ public class SInterStoreParser implements CommandParser<SInterStoreCommand> {
     @Override
     public SInterStoreCommand parse(Object[] command) {
         int idx = 1;
-        String destination = (String) command[idx++];
+        String destination = objToString(command[idx]);
+        byte[] rawDestination = objToBytes(command[idx]);
+        idx++;
         String[] keys = new String[command.length - 2];
+        byte[][] rawKeys = new byte[command.length - 2][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            keys[j] = (String) command[i];
+            keys[j] = objToString(command[i]);
+            rawKeys[j] = objToBytes(command[i]);
         }
-        return new SInterStoreCommand(destination, keys);
+        return new SInterStoreCommand(destination, keys, rawDestination, rawKeys);
     }
 
 }

@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.RenameNxCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -27,9 +30,13 @@ public class RenameNxParser implements CommandParser<RenameNxCommand> {
     @Override
     public RenameNxCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
-        String newKey = (String) command[idx++];
-        return new RenameNxCommand(key, newKey);
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        String newKey = objToString(command[idx]);
+        byte[] rawNewKey = objToBytes(command[idx]);
+        idx++;
+        return new RenameNxCommand(key, newKey, rawKey, rawNewKey);
     }
 
 }

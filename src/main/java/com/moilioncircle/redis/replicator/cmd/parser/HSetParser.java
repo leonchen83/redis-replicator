@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.HSetCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,10 +31,16 @@ public class HSetParser implements CommandParser<HSetCommand> {
     @Override
     public HSetCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
-        String field = (String) command[idx++];
-        String value = (String) command[idx++];
-        return new HSetCommand(key, field, value);
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        String field = objToString(command[idx]);
+        byte[] rawField = objToBytes(command[idx]);
+        idx++;
+        String value = objToString(command[idx]);
+        byte[] rawValue = objToBytes(command[idx]);
+        idx++;
+        return new HSetCommand(key, field, value, rawKey, rawField, rawValue);
     }
 
 }

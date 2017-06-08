@@ -21,6 +21,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
 
 import java.math.BigDecimal;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -29,9 +32,11 @@ public class ExpireParser implements CommandParser<ExpireCommand> {
     @Override
     public ExpireCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
-        int ex = new BigDecimal((String) command[idx++]).intValueExact();
-        return new ExpireCommand(key, ex);
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        int ex = new BigDecimal(objToString(command[idx++])).intValueExact();
+        return new ExpireCommand(key, ex, rawKey);
     }
 
 }

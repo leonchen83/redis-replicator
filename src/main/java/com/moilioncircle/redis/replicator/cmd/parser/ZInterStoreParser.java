@@ -22,6 +22,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
 
 import java.math.BigDecimal;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -31,25 +34,30 @@ public class ZInterStoreParser implements CommandParser<ZInterStoreCommand> {
     public ZInterStoreCommand parse(Object[] command) {
         int idx = 1;
         AggregateType aggregateType = null;
-        String destination = (String) command[idx++];
-        int numkeys = new BigDecimal((String) command[idx++]).intValueExact();
+        String destination = objToString(command[idx]);
+        byte[] rawDestination = objToBytes(command[idx]);
+        idx++;
+        int numkeys = new BigDecimal(objToString(command[idx++])).intValueExact();
         String[] keys = new String[numkeys];
+        byte[][] rawKeys = new byte[numkeys][];
         for (int i = 0; i < numkeys; i++) {
-            keys[i] = (String) command[idx++];
+            keys[i] = objToString(command[idx]);
+            rawKeys[i] = objToBytes(command[idx]);
+            idx++;
         }
         double[] weights = null;
         while (idx < command.length) {
-            String param = (String) command[idx];
+            String param = objToString(command[idx]);
             if ("WEIGHTS".equalsIgnoreCase(param)) {
                 idx++;
                 weights = new double[numkeys];
                 for (int i = 0; i < numkeys; i++) {
-                    weights[i] = Double.parseDouble((String) command[idx++]);
+                    weights[i] = Double.parseDouble(objToString(command[idx++]));
                 }
             }
             if ("AGGREGATE".equalsIgnoreCase(param)) {
                 idx++;
-                String next = (String) command[idx++];
+                String next = objToString(command[idx++]);
                 if ("SUM".equalsIgnoreCase(next)) {
                     aggregateType = AggregateType.SUM;
                 } else if ("MIN".equalsIgnoreCase(next)) {
@@ -59,7 +67,7 @@ public class ZInterStoreParser implements CommandParser<ZInterStoreCommand> {
                 }
             }
         }
-        return new ZInterStoreCommand(destination, numkeys, keys, weights, aggregateType);
+        return new ZInterStoreCommand(destination, numkeys, keys, weights, aggregateType, rawDestination, rawKeys);
     }
 
 }

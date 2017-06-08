@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.UnLinkCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,8 +31,10 @@ public class UnLinkParser implements CommandParser<UnLinkCommand> {
     public UnLinkCommand parse(Object[] command) {
         int idx = 1;
         String[] keys = new String[command.length - 1];
+        byte[][] rawKeys = new byte[command.length - 1][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            keys[j] = (String) command[i];
+            keys[j] = objToString(command[i]);
+            rawKeys[j] = objToBytes(command[i]);
         }
         return new UnLinkCommand(keys);
     }

@@ -26,6 +26,7 @@ import static com.moilioncircle.redis.replicator.Constants.CHARSET;
 class CommandParsers {
 
     public static String objToString(Object object) {
+        if (object == null) return null;
         byte[] bytes = (byte[]) object;
         return new String(bytes, CHARSET);
     }

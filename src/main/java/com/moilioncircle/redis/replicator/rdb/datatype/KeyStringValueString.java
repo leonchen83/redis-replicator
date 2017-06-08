@@ -21,6 +21,7 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  * @since 2.1.0
  */
 public class KeyStringValueString extends KeyValuePair<String> {
+
     protected byte[] rawValue;
 
     /**

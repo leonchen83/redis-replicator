@@ -34,7 +34,6 @@ public class Constants {
     };
 
     public static final Charset CHARSET = Charset.forName("UTF-8");
-    public static final String EMPTY = "";
 
     /**
      * len type

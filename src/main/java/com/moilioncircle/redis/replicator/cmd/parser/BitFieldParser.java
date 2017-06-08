@@ -65,7 +65,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
     private int parseOverFlow(int i, Object[] params, OverFlow overFlow) {
         int idx = i;
         accept(objToString(params[idx++]), "OVERFLOW");
-        OverFlowType overFlowType = null;
+        OverFlowType overFlowType;
         String keyWord = objToString(params[idx++]);
         if ("WRAP".equalsIgnoreCase(keyWord)) {
             overFlowType = OverFlowType.WRAP;
@@ -94,7 +94,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
     private int parseStatement(int i, Object[] params, List<Statement> list) {
         int idx = i;
         String keyWord = objToString(params[idx++]);
-        Statement statement = null;
+        Statement statement;
         if ("GET".equalsIgnoreCase(keyWord)) {
             GetTypeOffset getTypeOffset = new GetTypeOffset();
             idx = parseGet(idx - 1, params, getTypeOffset);

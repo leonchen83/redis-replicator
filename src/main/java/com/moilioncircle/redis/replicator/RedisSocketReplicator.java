@@ -212,7 +212,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         });
         //sync command
         if ("OK".equals(new String(reply, CHARSET))) return;
-        throw new AssertionError("SYNC failed." + reply);
+        throw new AssertionError("SYNC failed." + new String(reply, CHARSET));
     }
 
     protected void establishConnection() throws IOException {

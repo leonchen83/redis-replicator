@@ -21,7 +21,10 @@ import com.moilioncircle.redis.replicator.Configuration;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * @author Leon Chen
@@ -71,7 +74,7 @@ public class RedisSocketFactory extends SocketFactory {
         }
     }
 
-    public Socket createSocket(String host, int port, int timeout) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port, int timeout) throws IOException {
         Socket socket = new Socket();
         build(socket);
         socket.connect(new InetSocketAddress(host, port), timeout);

@@ -32,7 +32,7 @@ import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objTo
 public class MSetNxParser implements CommandParser<MSetNxCommand> {
     @Override
     public MSetNxCommand parse(Object[] command) {
-        if (command.length == 1) return new MSetNxCommand(null);
+        if (command.length == 1) return new MSetNxCommand(null, null);
         int idx = 1;
         Map<String, String> kv = new LinkedHashMap<>();
         Map<byte[], byte[]> rawKv = new LinkedHashMap<>();

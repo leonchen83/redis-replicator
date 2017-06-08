@@ -76,12 +76,12 @@ public class DefaultRdbModuleParser {
     }
 
     public String loadString() throws IOException {
-        ByteArray bytes = (ByteArray) parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_NONE);
+        ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_NONE);
         return new String(bytes.first(), Constants.CHARSET);
     }
 
     public String loadStringBuffer() throws IOException {
-        ByteArray bytes = (ByteArray) parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_PLAIN);
+        ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_PLAIN);
         return new String(bytes.first(), Constants.CHARSET);
     }
 

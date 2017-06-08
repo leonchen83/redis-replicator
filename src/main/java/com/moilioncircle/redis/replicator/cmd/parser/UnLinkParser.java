@@ -36,6 +36,6 @@ public class UnLinkParser implements CommandParser<UnLinkCommand> {
             keys[j] = objToString(command[i]);
             rawKeys[j] = objToBytes(command[i]);
         }
-        return new UnLinkCommand(keys);
+        return new UnLinkCommand(keys, rawKeys);
     }
 }

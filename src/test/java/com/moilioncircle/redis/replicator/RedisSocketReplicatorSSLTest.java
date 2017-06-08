@@ -157,12 +157,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                         .setSslParameters(new SSLParameters())
                         .setSslSocketFactory(createTrustStoreSslSocketFactory()));
         final AtomicInteger acc = new AtomicInteger(0);
-        Jedis jedis = null;
-        try {
-            jedis = new Jedis("127.0.0.1", 6379);
+        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
             jedis.set("ssl2", "true");
-        } finally {
-            jedis.close();
         }
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -176,12 +172,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                Jedis jedis = null;
-                try {
-                    jedis = new Jedis("127.0.0.1", 6379);
+                try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
                     jedis.del("ssl2");
-                } finally {
-                    jedis.close();
                 }
                 try {
                     replicator.close();
@@ -209,12 +201,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                         .setSslParameters(new SSLParameters())
                         .setSslSocketFactory(createTrustNoOneSslSocketFactory()));
         final AtomicInteger acc = new AtomicInteger(0);
-        Jedis jedis = null;
-        try {
-            jedis = new Jedis("127.0.0.1", 6379);
+        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
             jedis.set("ssl3", "true");
-        } finally {
-            jedis.close();
         }
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -232,12 +220,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                Jedis jedis = null;
-                try {
-                    jedis = new Jedis("127.0.0.1", 6379);
+                try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
                     jedis.del("ssl3");
-                } finally {
-                    jedis.close();
                 }
                 try {
                     replicator.close();
@@ -269,12 +253,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                         .setSslParameters(new SSLParameters())
                         .setSslSocketFactory(createTrustStoreSslSocketFactory()));
         final AtomicInteger acc = new AtomicInteger(0);
-        Jedis jedis = null;
-        try {
-            jedis = new Jedis("127.0.0.1", 6379);
+        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
             jedis.set("ssl4", "true");
-        } finally {
-            jedis.close();
         }
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -288,12 +268,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                Jedis jedis = null;
-                try {
-                    jedis = new Jedis("127.0.0.1", 6379);
+                try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
                     jedis.del("ssl4");
-                } finally {
-                    jedis.close();
                 }
                 try {
                     replicator.close();
@@ -315,12 +291,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
     private static SSLSocketFactory createTrustStoreSslSocketFactory() throws Exception {
 
         KeyStore trustStore = KeyStore.getInstance("jceks");
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream("src/test/resources/keystore/truststore.jceks");
+        try (InputStream inputStream = new FileInputStream("src/test/resources/keystore/truststore.jceks")) {
             trustStore.load(inputStream, null);
-        } finally {
-            inputStream.close();
         }
 
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");

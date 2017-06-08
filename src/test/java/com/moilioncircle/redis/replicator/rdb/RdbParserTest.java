@@ -164,7 +164,7 @@ public class RdbParserTest {
         assertEquals("abcdef", map.get("abcdef").getValue());
         assertEquals("thisisalongerstring.idontknowwhatitmeans", map.get("longerstring").getValue());
 
-        assertEquals(new Date(1671963072573l), new Date(map.get("expires_ms_precision").getExpiredMs()));
+        assertEquals(new Date(1671963072573L), new Date(map.get("expires_ms_precision").getExpiredMs()));
     }
 
     public void template(String filename, final ConcurrentHashMap<String, KeyValuePair> map) {

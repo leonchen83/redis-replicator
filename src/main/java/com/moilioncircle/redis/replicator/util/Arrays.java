@@ -25,6 +25,7 @@ import java.util.Set;
  * @author Leon Chen
  * @since 2.2.0
  */
+@SuppressWarnings("ALL")
 public class Arrays {
 
     public static String deepToString(Object[] a) {
@@ -155,8 +156,7 @@ public class Arrays {
             return "[]";
 
         StringBuilder b = new StringBuilder();
-        b.append('[');
-        b.append(a);
+        b.append('[').append(a);
         return b.append(']').toString();
     }
 

@@ -41,7 +41,7 @@ import static com.moilioncircle.redis.replicator.Constants.*;
 public class RdbParser {
 
     protected final RedisInputStream in;
-    protected RdbVisitor rdbVisitor;
+    protected final RdbVisitor rdbVisitor;
     protected final AbstractReplicator replicator;
     protected static final Log logger = LogFactory.getLog(RdbParser.class);
 

@@ -325,7 +325,7 @@ redis 2.4 - 4.0
 
         @Override
         public YourAppendCommand parse(Object[] command) {
-            return new YourAppendCommand((String) command[1], (String) command[2]);
+            return new YourAppendCommand(new String((byte[]) command[1], CHARSET), new String((byte[]) command[2], CHARSET));
         }
     }
 
@@ -402,8 +402,8 @@ redis 2.4 - 4.0
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = (String) command[1];
-            long value = Long.parseLong((String) command[2]);
+            String key = new String((byte[])command[1],Constants.CHARSET);
+            long value = Long.parseLong(new String((byte[])command[2],Constants.CHARSET));
             return new HelloTypeCommand(key, value);
         }
     }
@@ -590,7 +590,7 @@ redis 2.4 - 4.0
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof KeyStringValueString) {
                     KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    System.out.println(Arrays.toString(ksvs.getRawBytes()));
+                    System.out.println(Arrays.toString(ksvs.getRawValue()));
                 }
             }
         });

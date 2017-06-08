@@ -34,6 +34,8 @@ import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static com.moilioncircle.redis.replicator.Constants.CHARSET;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -101,8 +103,8 @@ public class ModuleParserExample {
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = (String) command[1];
-            long value = Long.parseLong((String) command[2]);
+            String key = new String((byte[]) command[1], CHARSET);
+            long value = Long.parseLong(new String((byte[]) command[2], CHARSET));
             return new HelloTypeCommand(key, value);
         }
     }

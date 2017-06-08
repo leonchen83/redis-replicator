@@ -111,8 +111,8 @@ public class ModuleTest {
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = (String) command[1];
-            long value = Long.parseLong((String) command[2]);
+            String key = new String((byte[]) command[1], Constants.CHARSET);
+            long value = Long.parseLong(new String((byte[]) command[2], Constants.CHARSET));
             return new HelloTypeCommand(key, value);
         }
     }

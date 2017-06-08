@@ -24,6 +24,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
+import static com.moilioncircle.redis.replicator.Constants.CHARSET;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -51,7 +53,7 @@ public class CommandParserExample {
 
         @Override
         public YourAppendCommand parse(Object[] command) {
-            return new YourAppendCommand((String) command[1], (String) command[2]);
+            return new YourAppendCommand(new String((byte[]) command[1], CHARSET), new String((byte[]) command[2], CHARSET));
         }
 
         public static class YourAppendCommand implements Command {

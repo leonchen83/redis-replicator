@@ -25,6 +25,9 @@ import java.util.List;
  * @since 2.1.0
  */
 public class BitFieldCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private String key;
     private byte[] rawKey;
     private List<Statement> statements;

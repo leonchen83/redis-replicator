@@ -23,6 +23,9 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.1
  */
 public class ZRemRangeByLexCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private String key;
     private String min;
     private String max;

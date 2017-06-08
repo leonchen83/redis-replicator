@@ -21,6 +21,9 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @since 2.1.0
  */
 public class ScriptLoadCommand extends ScriptCommand {
+
+    private static final long serialVersionUID = 1L;
+    
     private String script;
     private byte[] rawScript;
 

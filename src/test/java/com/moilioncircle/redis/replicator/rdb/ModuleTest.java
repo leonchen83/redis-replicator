@@ -40,6 +40,7 @@ import static org.junit.Assert.assertEquals;
 public class ModuleTest {
     @Test
     public void testModule() throws IOException {
+        @SuppressWarnings("resource")
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
@@ -90,6 +91,9 @@ public class ModuleTest {
     }
 
     public static class HelloTypeModule implements Module {
+
+        private static final long serialVersionUID = 1L;
+        
         private final long[] value;
 
         public HelloTypeModule(long[] value) {
@@ -118,6 +122,7 @@ public class ModuleTest {
     }
 
     public static class HelloTypeCommand implements Command {
+        private static final long serialVersionUID = 1L;
         private final String key;
         private final long value;
 

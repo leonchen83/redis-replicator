@@ -29,7 +29,9 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class RedisAofReplicatorTest {
+
     @Test
     public void open() throws Exception {
         Replicator replicator = new RedisReplicator(

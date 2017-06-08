@@ -26,6 +26,8 @@ import java.util.Arrays;
  */
 public class SRemCommand implements Command {
 
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private String[] members;
     private byte[] rawKey;

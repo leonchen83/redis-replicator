@@ -25,6 +25,9 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class GeoAddCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private String key;
     private Geo[] geos;
     private byte[] rawKey;

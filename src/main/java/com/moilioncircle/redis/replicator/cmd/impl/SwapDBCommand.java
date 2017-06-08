@@ -23,6 +23,9 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.1
  */
 public class SwapDBCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private int source;
     private int target;
 

@@ -40,6 +40,7 @@ import static com.moilioncircle.redis.replicator.Constants.CHARSET;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class ModuleParserExample {
     public static void main(String[] args) throws IOException {
         RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -82,6 +83,10 @@ public class ModuleParserExample {
     }
 
     public static class HelloTypeModule implements Module {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
         private final long[] value;
 
         public HelloTypeModule(long[] value) {
@@ -110,6 +115,10 @@ public class ModuleParserExample {
     }
 
     public static class HelloTypeCommand implements Command {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
         private final String key;
         private final long value;
 

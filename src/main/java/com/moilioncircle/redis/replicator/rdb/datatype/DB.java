@@ -23,6 +23,9 @@ import java.io.Serializable;
  * @since 2.1.0
  */
 public class DB implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    
     private long dbNumber;
     /* rdb version 7 */
     private Long dbsize = null;

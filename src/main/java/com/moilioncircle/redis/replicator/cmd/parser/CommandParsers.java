@@ -22,7 +22,6 @@ import static com.moilioncircle.redis.replicator.Constants.CHARSET;
  * @author Leon Chen
  * @since 2.2.0
  */
-@SuppressWarnings("unchecked")
 class CommandParsers {
 
     public static String objToString(Object object) {

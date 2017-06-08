@@ -45,7 +45,7 @@ public class RdbBinaryParserTest {
 
     @Test
     public void testParse() throws Exception {
-        ConcurrentHashMap<String, KeyValuePair> map = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
         String[] resources = new String[]{"dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
                 "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
@@ -110,7 +110,7 @@ public class RdbBinaryParserTest {
         List<String> numlist = Arrays.asList(numbers);
         assertContainsList(numlist, map.get("ziplist_with_integers"));
 
-        List<String> list = (ArrayList) map.get("force_linkedlist").getValue();
+        List<String> list = (ArrayList<String>) map.get("force_linkedlist").getValue();
         assertEquals(1000, list.size());
         assertByteArray("41PJSO2KRV6SK1WJ6936L06YQDPV68R5J2TAZO3YAR5IL5GUI8".getBytes(), map.get("force_linkedlist"), 0);
         assertByteArray("E41JRQX2DB4P1AQZI86BAT7NHPBHPRIIHQKA4UXG94ELZZ7P3Y".getBytes(), map.get("force_linkedlist"), 1);
@@ -127,7 +127,7 @@ public class RdbBinaryParserTest {
         numlist = Arrays.asList("alpha", "beta", "gamma", "delta", "phi", "kappa");
         assertContains(numlist, map.get("regular_set"));
 
-        List<ZSetEntry> zset = new ArrayList(((Set<ZSetEntry>) map.get("sorted_set_as_ziplist").getValue()));
+        List<ZSetEntry> zset = new ArrayList<>(((Set<ZSetEntry>) map.get("sorted_set_as_ziplist").getValue()));
 
         for (ZSetEntry entry : zset) {
             if (entry.getElement().equals("8b6ba6718a786daefa69438148361901")) {
@@ -161,7 +161,6 @@ public class RdbBinaryParserTest {
         assertEquals(new Date(1671963072573L), new Date(map.get("expires_ms_precision").getExpiredMs()));
     }
 
-    @SuppressWarnings("unchecked")
     public void assertByteArray(byte[] bytes, KeyValuePair<?> kv) {
         if (kv instanceof KeyStringValueString) {
             KeyStringValueString ksvs = (KeyStringValueString) kv;
@@ -171,7 +170,6 @@ public class RdbBinaryParserTest {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void assertByteArray(byte[] bytes, KeyValuePair<?> kv, String field) {
         if (kv instanceof KeyStringValueHash) {
             KeyStringValueHash ksvh = (KeyStringValueHash) kv;
@@ -186,7 +184,6 @@ public class RdbBinaryParserTest {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void assertByteArray(byte[] bytes, KeyValuePair<?> kv, int index) {
         if (kv instanceof KeyStringValueList) {
             KeyStringValueList ksvh = (KeyStringValueList) kv;
@@ -196,7 +193,6 @@ public class RdbBinaryParserTest {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void assertContains(List<String> list, KeyValuePair<?> kv) {
         List<String> source = new ArrayList<>(list.size());
         for (String s : list) {
@@ -217,7 +213,6 @@ public class RdbBinaryParserTest {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void assertContainsList(List<String> list, KeyValuePair<?> kv) {
         List<String> source = new ArrayList<>(list.size());
         for (String s : list) {
@@ -238,8 +233,9 @@ public class RdbBinaryParserTest {
         }
     }
 
-    public void template(String filename, final ConcurrentHashMap<String, KeyValuePair> map) {
+    public void template(String filename, final ConcurrentHashMap<String, KeyValuePair<?>> map) {
         try {
+            @SuppressWarnings("resource")
             Replicator replicator = new RedisReplicator(RdbBinaryParserTest.class.
                     getClassLoader().getResourceAsStream(filename)
                     , FileType.RDB, Configuration.defaultSetting());

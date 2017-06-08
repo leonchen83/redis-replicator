@@ -23,6 +23,9 @@ import java.io.Serializable;
  * @since 2.1.0
  */
 public class ZSetEntry implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    
     private String element;
     private double score;
     private byte[] rawElement;

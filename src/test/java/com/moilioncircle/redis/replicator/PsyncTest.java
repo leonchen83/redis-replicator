@@ -40,6 +40,7 @@ import static junit.framework.TestCase.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class PsyncTest {
 
     @Test
@@ -78,7 +79,7 @@ public class PsyncTest {
                 }
                 if (command instanceof SetCommand && ((SetCommand) command).getKey().startsWith("psync")) {
                     SetCommand setCommand = (SetCommand) command;
-                    int num = Integer.parseInt(setCommand.getKey().split(" ")[1]);
+                    Integer.parseInt(setCommand.getKey().split(" ")[1]); // num
                     acc.incrementAndGet();
                     if (acc.get() == 200) {
                         System.out.println("close for psync");

@@ -25,6 +25,9 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class PFAddCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private String key;
     private String[] elements;
     private byte[] rawKey;

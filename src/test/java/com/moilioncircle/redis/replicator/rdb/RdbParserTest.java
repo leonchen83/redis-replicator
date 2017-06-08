@@ -39,7 +39,7 @@ public class RdbParserTest {
 
     @Test
     public void testParse() throws Exception {
-        ConcurrentHashMap<String, KeyValuePair> map = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
         String[] resources = new String[]{"dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
                 "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
@@ -84,7 +84,7 @@ public class RdbParserTest {
         assertEquals("T63SOS8DQJF0Q0VJEZ0D1IQFCYTIPSBOUIAI9SB0OV57MQR1FI", ((HashMap<String, String>) map.get("force_dictionary").getValue()).get("ZMU5WEJDG7KU89AOG5LJT6K7HMNB3DEI43M6EYTJ83VRJ6XNXQ"));
         assertEquals("6VULTCV52FXJ8MGVSFTZVAGK2JXZMGQ5F8OVJI0X6GEDDR27RZ", ((HashMap<String, String>) map.get("force_dictionary").getValue()).get("UHS5ESW4HLK8XOGTM39IK1SJEUGVV9WOPK6JYA5QBZSJU84491"));
 
-        List<String> list = (ArrayList) map.get("ziplist_compresses_easily").getValue();
+        List<String> list = (ArrayList<String>) map.get("ziplist_compresses_easily").getValue();
         assertEquals("aaaaaa", list.get(0));
         assertEquals("aaaaaaaaaaaa", list.get(1));
         assertEquals("aaaaaaaaaaaaaaaaaa", list.get(2));
@@ -92,48 +92,48 @@ public class RdbParserTest {
         assertEquals("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", list.get(4));
         assertEquals("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", list.get(5));
 
-        list = (ArrayList) map.get("ziplist_doesnt_compress").getValue();
+        list = (ArrayList<String>) map.get("ziplist_doesnt_compress").getValue();
         assertEquals("aj2410", list.get(0));
         assertEquals("cc953a17a8e096e76a44169ad3f9ac87c5f8248a403274416179aa9fbd852344", list.get(1));
 
         String[] numbers = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "-2", "25", "-61", "63", "16380", "-16000", "65535", "-65523", "4194304", "9223372036854775807"};
-        List numlist = Arrays.asList(numbers);
+        List<String> numlist = Arrays.asList(numbers);
 
-        list = (ArrayList) map.get("ziplist_with_integers").getValue();
+        list = (ArrayList<String>) map.get("ziplist_with_integers").getValue();
         for (String str : list) {
             assertEquals(true, numlist.contains(str));
         }
 
-        list = (ArrayList) map.get("force_linkedlist").getValue();
+        list = (ArrayList<String>) map.get("force_linkedlist").getValue();
         assertEquals(1000, list.size());
         assertEquals("41PJSO2KRV6SK1WJ6936L06YQDPV68R5J2TAZO3YAR5IL5GUI8", list.get(0));
         assertEquals("E41JRQX2DB4P1AQZI86BAT7NHPBHPRIIHQKA4UXG94ELZZ7P3Y", list.get(1));
 
         numlist = Arrays.asList("32766", "32765", "32764");
-        list = new ArrayList(((Set<String>) map.get("intset_16").getValue()));
+        list = new ArrayList<>(((Set<String>) map.get("intset_16").getValue()));
         for (String str : list) {
             assertEquals(true, numlist.contains(str));
         }
 
         numlist = Arrays.asList("2147418110", "2147418109", "2147418108");
-        list = new ArrayList(((Set<String>) map.get("intset_32").getValue()));
+        list = new ArrayList<>(((Set<String>) map.get("intset_32").getValue()));
         for (String str : list) {
             assertEquals(true, numlist.contains(str));
         }
 
         numlist = Arrays.asList("9223090557583032318", "9223090557583032317", "9223090557583032316");
-        list = new ArrayList(((Set<String>) map.get("intset_64").getValue()));
+        list = new ArrayList<>(((Set<String>) map.get("intset_64").getValue()));
         for (String str : list) {
             assertEquals(true, numlist.contains(str));
         }
 
         numlist = Arrays.asList("alpha", "beta", "gamma", "delta", "phi", "kappa");
-        list = new ArrayList(((Set<String>) map.get("regular_set").getValue()));
+        list = new ArrayList<>(((Set<String>) map.get("regular_set").getValue()));
         for (String str : list) {
             assertEquals(true, numlist.contains(str));
         }
 
-        List<ZSetEntry> zset = new ArrayList(((Set<ZSetEntry>) map.get("sorted_set_as_ziplist").getValue()));
+        List<ZSetEntry> zset = new ArrayList<>(((Set<ZSetEntry>) map.get("sorted_set_as_ziplist").getValue()));
 
         for (ZSetEntry entry : zset) {
             if (entry.getElement().equals("8b6ba6718a786daefa69438148361901")) {
@@ -167,7 +167,8 @@ public class RdbParserTest {
         assertEquals(new Date(1671963072573L), new Date(map.get("expires_ms_precision").getExpiredMs()));
     }
 
-    public void template(String filename, final ConcurrentHashMap<String, KeyValuePair> map) {
+    @SuppressWarnings("resource")
+    public void template(String filename, final ConcurrentHashMap<String, KeyValuePair<?>> map) {
         try {
             Replicator replicator = new RedisReplicator(RdbParserTest.class.
                     getClassLoader().getResourceAsStream(filename)

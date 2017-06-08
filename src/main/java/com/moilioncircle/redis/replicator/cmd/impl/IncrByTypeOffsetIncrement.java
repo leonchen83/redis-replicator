@@ -21,6 +21,9 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @since 2.1.0
  */
 public class IncrByTypeOffsetIncrement implements Statement {
+
+    private static final long serialVersionUID = 1L;
+    
     private String type;
     private String offset;
     private long increment;

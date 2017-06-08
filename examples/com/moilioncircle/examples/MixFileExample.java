@@ -32,6 +32,7 @@ import java.io.IOException;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class MixFileExample {
     public static void main(String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.MIXED,

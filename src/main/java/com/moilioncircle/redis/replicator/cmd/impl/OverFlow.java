@@ -24,6 +24,9 @@ import java.util.List;
  * @since 2.1.0
  */
 public class OverFlow implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    
     private OverFlowType overFlowType;
     private List<Statement> statements;
 

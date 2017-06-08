@@ -37,6 +37,7 @@ import java.util.Map;
  * @since 2.2.0
  */
 public class RdbBinaryTest {
+    @SuppressWarnings("resource")
     @org.junit.Test
     public void test() throws IOException {
         Replicator r = new RedisReplicator(RdbBinaryTest.class.getClassLoader().getResourceAsStream("binarydump.rdb"), FileType.RDB,
@@ -51,11 +52,7 @@ public class RdbBinaryTest {
                         TestCase.assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
                         TestCase.assertEquals(1000301032, obj.getB());
                         TestCase.assertEquals(440910321039102L, obj.getC());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        TestCase.fail();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                    } catch (IOException | ClassNotFoundException e) {
                         TestCase.fail();
                     }
                 }
@@ -66,11 +63,7 @@ public class RdbBinaryTest {
                         TestCase.assertEquals("中文测试12131", obj.getA());
                         TestCase.assertEquals(1000301032, obj.getB());
                         TestCase.assertEquals(440910321039102L, obj.getC());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        TestCase.fail();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                    } catch (IOException | ClassNotFoundException e) {
                         TestCase.fail();
                     }
                 }
@@ -81,11 +74,7 @@ public class RdbBinaryTest {
                         TestCase.assertEquals("中文测试jfskdfjslf", obj.getA());
                         TestCase.assertEquals(1000301032, obj.getB());
                         TestCase.assertEquals(440910321039102L, obj.getC());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        TestCase.fail();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
+                    } catch (IOException | ClassNotFoundException e) {
                         TestCase.fail();
                     }
                 }
@@ -120,6 +109,10 @@ public class RdbBinaryTest {
     }
 
     static class Test implements Serializable {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
         private String a;
         private int b;
         private long c;

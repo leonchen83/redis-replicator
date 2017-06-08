@@ -22,6 +22,8 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  */
 public class KeyStringValueString extends KeyValuePair<String> {
 
+    private static final long serialVersionUID = 1L;
+
     protected byte[] rawValue;
 
     /**

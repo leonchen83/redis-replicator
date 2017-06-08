@@ -25,7 +25,6 @@ import java.util.Set;
  * @author Leon Chen
  * @since 2.2.0
  */
-@SuppressWarnings("ALL")
 public class Arrays {
 
     public static String deepToString(Object[] a) {
@@ -56,7 +55,7 @@ public class Arrays {
             if (element == null) {
                 buf.append("null");
             } else {
-                Class eClass = element.getClass();
+                Class<?> eClass = element.getClass();
 
                 if (eClass.isArray()) {
                     if (eClass == byte[].class)

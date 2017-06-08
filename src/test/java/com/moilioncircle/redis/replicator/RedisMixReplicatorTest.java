@@ -31,6 +31,7 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class RedisMixReplicatorTest {
     @Test
     public void testOpen() throws IOException {

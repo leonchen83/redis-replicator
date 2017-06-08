@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class RedisSocketReplicatorTest extends TestCase {
 
     @Test

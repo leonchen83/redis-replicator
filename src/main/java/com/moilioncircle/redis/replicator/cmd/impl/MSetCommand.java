@@ -25,6 +25,9 @@ import java.util.Map;
  * @since 2.1.0
  */
 public class MSetCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private Map<String, String> kv;
     private Map<byte[], byte[]> rawKv;
 

@@ -30,6 +30,7 @@ import static com.moilioncircle.redis.replicator.Constants.CHARSET;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class CommandParserExample {
     public static void main(String[] args) throws Exception {
         final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -57,6 +58,10 @@ public class CommandParserExample {
         }
 
         public static class YourAppendCommand implements Command {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
             public final String key;
             public final String value;
 

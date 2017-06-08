@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class RedisSocketReplicatorSSLTest extends TestCase {
 
     private static void setJvmTrustStore(String trustStoreFilePath, String trustStoreType) {

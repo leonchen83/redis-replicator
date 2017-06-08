@@ -116,7 +116,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         int expiredSec = parser.rdbLoadTime();
         int valueType = applyType(in);
-        KeyValuePair kv = rdbLoadObject(in, db, valueType, version);
+        KeyValuePair<?> kv = rdbLoadObject(in, db, valueType, version);
         kv.setExpiredType(ExpiredType.SECOND);
         kv.setExpiredValue((long) expiredSec);
         return kv;
@@ -135,7 +135,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         long expiredMs = parser.rdbLoadMillisecondTime();
         int valueType = applyType(in);
-        KeyValuePair kv = rdbLoadObject(in, db, valueType, version);
+        KeyValuePair<?> kv = rdbLoadObject(in, db, valueType, version);
         kv.setExpiredType(ExpiredType.MS);
         kv.setExpiredValue(expiredMs);
         return kv;
@@ -322,7 +322,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
         Map<String, String> map = new LinkedHashMap<>();
         Map<byte[], byte[]> rawMap = new LinkedHashMap<>();
-        int zmlen = BaseRdbParser.LenHelper.zmlen(stream);
+        BaseRdbParser.LenHelper.zmlen(stream); // zmlen
         while (true) {
             int zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
             if (zmEleLen == 255) {
@@ -367,8 +367,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
 
         List<String> list = new ArrayList<>();
         List<byte[]> rawList = new ArrayList<>();
-        int zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
-        int zltail = BaseRdbParser.LenHelper.zltail(stream);
+        BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
+        BaseRdbParser.LenHelper.zltail(stream); // zltail
         int zllen = BaseRdbParser.LenHelper.zllen(stream);
         for (int i = 0; i < zllen; i++) {
             byte[] e = BaseRdbParser.StringHelper.zipListEntry(stream);
@@ -447,8 +447,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
 
         Set<ZSetEntry> zset = new LinkedHashSet<>();
-        int zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
-        int zltail = BaseRdbParser.LenHelper.zltail(stream);
+        BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
+        BaseRdbParser.LenHelper.zltail(stream); // zltail
         int zllen = BaseRdbParser.LenHelper.zllen(stream);
         while (zllen > 0) {
             byte[] element = BaseRdbParser.StringHelper.zipListEntry(stream);
@@ -483,8 +483,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
 
         Map<String, String> map = new LinkedHashMap<>();
         Map<byte[], byte[]> rawMap = new LinkedHashMap<>();
-        int zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
-        int zltail = BaseRdbParser.LenHelper.zltail(stream);
+        BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
+        BaseRdbParser.LenHelper.zltail(stream); // zltail
         int zllen = BaseRdbParser.LenHelper.zllen(stream);
         while (zllen > 0) {
             byte[] field = BaseRdbParser.StringHelper.zipListEntry(stream);
@@ -519,8 +519,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
             ByteArray element = parser.rdbGenericLoadStringObject(RDB_LOAD_NONE);
             RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(element));
 
-            int zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
-            int zltail = BaseRdbParser.LenHelper.zltail(stream);
+            BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
+            BaseRdbParser.LenHelper.zltail(stream); // zltail
             int zllen = BaseRdbParser.LenHelper.zllen(stream);
             for (int j = 0; j < zllen; j++) {
                 byte[] e = BaseRdbParser.StringHelper.zipListEntry(stream);
@@ -570,7 +570,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         return replicator.getModuleParser(moduleName, moduleVersion);
     }
 
-    protected KeyValuePair rdbLoadObject(RedisInputStream in, DB db, int valueType, int version) throws IOException {
+    protected KeyValuePair<?> rdbLoadObject(RedisInputStream in, DB db, int valueType, int version) throws IOException {
         /*
          * ----------------------------
          * $value-type                 # This name value pair doesn't have an expiry. $value_type guaranteed != to FD, FC, FE and FF
@@ -580,31 +580,31 @@ public class DefaultRdbVisitor extends RdbVisitor {
          */
         switch (valueType) {
             case RDB_TYPE_STRING:
-                return (KeyValuePair) applyString(in, db, version);
+                return (KeyValuePair<?>) applyString(in, db, version);
             case RDB_TYPE_LIST:
-                return (KeyValuePair) applyList(in, db, version);
+                return (KeyValuePair<?>) applyList(in, db, version);
             case RDB_TYPE_SET:
-                return (KeyValuePair) applySet(in, db, version);
+                return (KeyValuePair<?>) applySet(in, db, version);
             case RDB_TYPE_ZSET:
-                return (KeyValuePair) applyZSet(in, db, version);
+                return (KeyValuePair<?>) applyZSet(in, db, version);
             case RDB_TYPE_ZSET_2:
-                return (KeyValuePair) applyZSet2(in, db, version);
+                return (KeyValuePair<?>) applyZSet2(in, db, version);
             case RDB_TYPE_HASH:
-                return (KeyValuePair) applyHash(in, db, version);
+                return (KeyValuePair<?>) applyHash(in, db, version);
             case RDB_TYPE_HASH_ZIPMAP:
-                return (KeyValuePair) applyHashZipMap(in, db, version);
+                return (KeyValuePair<?>) applyHashZipMap(in, db, version);
             case RDB_TYPE_LIST_ZIPLIST:
-                return (KeyValuePair) applyListZipList(in, db, version);
+                return (KeyValuePair<?>) applyListZipList(in, db, version);
             case RDB_TYPE_SET_INTSET:
-                return (KeyValuePair) applySetIntSet(in, db, version);
+                return (KeyValuePair<?>) applySetIntSet(in, db, version);
             case RDB_TYPE_ZSET_ZIPLIST:
-                return (KeyValuePair) applyZSetZipList(in, db, version);
+                return (KeyValuePair<?>) applyZSetZipList(in, db, version);
             case RDB_TYPE_HASH_ZIPLIST:
-                return (KeyValuePair) applyHashZipList(in, db, version);
+                return (KeyValuePair<?>) applyHashZipList(in, db, version);
             case RDB_TYPE_LIST_QUICKLIST:
-                return (KeyValuePair) applyListQuickList(in, db, version);
+                return (KeyValuePair<?>) applyListQuickList(in, db, version);
             case RDB_TYPE_MODULE:
-                return (KeyValuePair) applyModule(in, db, version);
+                return (KeyValuePair<?>) applyModule(in, db, version);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
         }

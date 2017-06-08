@@ -23,6 +23,9 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class SetCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private String key;
     private String value;
     private Integer ex;

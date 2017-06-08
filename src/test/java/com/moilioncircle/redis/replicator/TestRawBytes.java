@@ -27,6 +27,7 @@ import java.util.Arrays;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class TestRawBytes {
     public static void main(String[] args) throws IOException, InterruptedException {
         Replicator replicator = new RedisRdbReplicator(

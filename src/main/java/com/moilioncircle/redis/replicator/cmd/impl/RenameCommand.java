@@ -23,6 +23,9 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class RenameCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private String key;
     private String newKey;
     private byte[] rawKey;

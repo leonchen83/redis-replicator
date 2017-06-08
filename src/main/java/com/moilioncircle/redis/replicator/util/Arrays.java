@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * @author Leon Chen
- * @since 2.1.3
+ * @since 2.2.0
  */
 public class Arrays {
 

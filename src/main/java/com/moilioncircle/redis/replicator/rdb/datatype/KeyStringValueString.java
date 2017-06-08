@@ -25,7 +25,7 @@ public class KeyStringValueString extends KeyValuePair<String> {
 
     /**
      * @return raw bytes
-     * @since 2.1.3
+     * @since 2.2.0
      * @deprecated instead of {@link #getRawValue}
      */
     @Deprecated
@@ -35,7 +35,7 @@ public class KeyStringValueString extends KeyValuePair<String> {
 
     /**
      * @param rawBytes raw bytes
-     * @since 2.1.3
+     * @since 2.2.0
      * @deprecated instead of {@link #setRawValue}
      */
     public void setRawBytes(byte[] rawBytes) {

@@ -29,9 +29,7 @@ import java.util.Set;
 public class Arrays {
 
     public static String deepToString(Object[] a) {
-        if (a == null)
-            return "null";
-
+        if (a == null) return "null";
         int bufLen = 20 * a.length;
         if (a.length != 0 && bufLen <= 0)
             bufLen = Integer.MAX_VALUE;
@@ -40,8 +38,7 @@ public class Arrays {
         return buf.toString();
     }
 
-    private static void deepToString(Object[] a, StringBuilder buf,
-                                     Set<Object[]> dejaVu) {
+    private static void deepToString(Object[] a, StringBuilder buf, Set<Object[]> dejaVu) {
         if (a == null) {
             buf.append("null");
             return;
@@ -55,7 +52,6 @@ public class Arrays {
         dejaVu.add(a);
         buf.append('[');
         for (int i = 0; ; i++) {
-
             Object element = a[i];
             if (element == null) {
                 buf.append("null");
@@ -89,8 +85,7 @@ public class Arrays {
                     buf.append(element.toString());
                 }
             }
-            if (i == iMax)
-                break;
+            if (i == iMax) break;
             buf.append(", ");
         }
         buf.append(']');
@@ -98,75 +93,57 @@ public class Arrays {
     }
 
     public static String toString(long[] a) {
-        if (a == null)
-            return "null";
+        if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1)
-            return "[]";
-
+        if (iMax == -1) return "[]";
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (int i = 0; ; i++) {
             b.append(a[i]);
-            if (i == iMax)
-                return b.append(']').toString();
+            if (i == iMax) return b.append(']').toString();
             b.append(", ");
         }
     }
 
     public static String toString(int[] a) {
-        if (a == null)
-            return "null";
+        if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1)
-            return "[]";
-
+        if (iMax == -1) return "[]";
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (int i = 0; ; i++) {
             b.append(a[i]);
-            if (i == iMax)
-                return b.append(']').toString();
+            if (i == iMax) return b.append(']').toString();
             b.append(", ");
         }
     }
 
     public static String toString(short[] a) {
-        if (a == null)
-            return "null";
+        if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1)
-            return "[]";
-
+        if (iMax == -1) return "[]";
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (int i = 0; ; i++) {
             b.append(a[i]);
-            if (i == iMax)
-                return b.append(']').toString();
+            if (i == iMax) return b.append(']').toString();
             b.append(", ");
         }
     }
 
     public static String toString(char[] a) {
-        if (a == null)
-            return "null";
+        if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1)
-            return "[]";
-
+        if (iMax == -1) return "[]";
         StringBuilder b = new StringBuilder();
         b.append('[').append(a);
         return b.append(']').toString();
     }
 
     private static String toString(byte[] a) {
-        if (a == null)
-            return "null";
+        if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1)
-            return "[]";
-
+        if (iMax == -1) return "[]";
         StringBuilder b = new StringBuilder();
         b.append('[');
         b.append(new String(a, Constants.CHARSET));
@@ -174,53 +151,40 @@ public class Arrays {
     }
 
     private static String toString(boolean[] a) {
-        if (a == null)
-            return "null";
+        if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1)
-            return "[]";
-
+        if (iMax == -1) return "[]";
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (int i = 0; ; i++) {
             b.append(a[i]);
-            if (i == iMax)
-                return b.append(']').toString();
+            if (i == iMax) return b.append(']').toString();
             b.append(", ");
         }
     }
 
     private static String toString(float[] a) {
-        if (a == null)
-            return "null";
-
+        if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1)
-            return "[]";
-
+        if (iMax == -1) return "[]";
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (int i = 0; ; i++) {
             b.append(a[i]);
-            if (i == iMax)
-                return b.append(']').toString();
+            if (i == iMax) return b.append(']').toString();
             b.append(", ");
         }
     }
 
     private static String toString(double[] a) {
-        if (a == null)
-            return "null";
+        if (a == null) return "null";
         int iMax = a.length - 1;
-        if (iMax == -1)
-            return "[]";
-
+        if (iMax == -1) return "[]";
         StringBuilder b = new StringBuilder();
         b.append('[');
         for (int i = 0; ; i++) {
             b.append(a[i]);
-            if (i == iMax)
-                return b.append(']').toString();
+            if (i == iMax) return b.append(']').toString();
             b.append(", ");
         }
     }

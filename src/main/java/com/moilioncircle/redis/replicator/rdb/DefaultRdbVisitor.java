@@ -513,14 +513,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyStringValueList o14 = new KeyStringValueList();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
-        List<String> stringList = new ArrayList<>();
-        List<byte[]> byteList = new ArrayList<>();
+        List<String> list = new ArrayList<>();
+        List<byte[]> rawList = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             ByteArray element = parser.rdbGenericLoadStringObject(RDB_LOAD_NONE);
             RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(element));
 
-            List<String> list = new ArrayList<>();
-            List<byte[]> rawList = new ArrayList<>();
             int zlbytes = BaseRdbParser.LenHelper.zlbytes(stream);
             int zltail = BaseRdbParser.LenHelper.zltail(stream);
             int zllen = BaseRdbParser.LenHelper.zllen(stream);
@@ -533,12 +531,10 @@ public class DefaultRdbVisitor extends RdbVisitor {
             if (zlend != 255) {
                 throw new AssertionError("zlend expect 255 but " + zlend);
             }
-            stringList.addAll(list);
-            byteList.addAll(rawList);
         }
         o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
-        o14.setValue(stringList);
-        o14.setRawValue(byteList);
+        o14.setValue(list);
+        o14.setRawValue(rawList);
         o14.setDb(db);
         o14.setKey(new String(key, CHARSET));
         o14.setRawKey(key);

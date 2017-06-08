@@ -1,4 +1,4 @@
-package com.moilioncircle.redis.replicator;
+package com.moilioncircle.redis.replicator.rdb;
 /*
  * Copyright 2016 leon chen
  *
@@ -15,12 +15,12 @@ package com.moilioncircle.redis.replicator;
  * limitations under the License.
  */
 
+import com.moilioncircle.redis.replicator.*;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;

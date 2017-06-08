@@ -108,6 +108,7 @@ public class RdbBinaryTest {
         }
     }
 
+    @SuppressWarnings("serial")
     static class Test implements Serializable {
         /**
          *

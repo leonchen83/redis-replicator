@@ -68,4 +68,25 @@ public class ZSetEntry implements Serializable {
     public String toString() {
         return "[" + element + ", " + score + "]";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ZSetEntry zSetEntry = (ZSetEntry) o;
+
+        if (Double.compare(zSetEntry.score, score) != 0) return false;
+        return element.equals(zSetEntry.element);
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = element.hashCode();
+        temp = Double.doubleToLongBits(score);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }

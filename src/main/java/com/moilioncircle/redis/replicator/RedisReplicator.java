@@ -208,6 +208,6 @@ public class RedisReplicator implements Replicator {
     @Deprecated
     public void handle(byte... rawBytes) {
         if (!(replicator instanceof AbstractReplicatorListener)) return;
-        ((AbstractReplicatorListener) replicator).handle(rawBytes);
+        ((AbstractReplicatorListener) replicator).doRawByteListener(rawBytes);
     }
 }

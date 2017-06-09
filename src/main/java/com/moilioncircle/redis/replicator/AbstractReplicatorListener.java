@@ -158,11 +158,6 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         }
     }
 
-    /**
-     * @param bytes input stream raw bytes
-     * @since 2.2.0
-     * @deprecated notice that this method will remove upper version 3.0.0
-     */
     protected void doRawByteListener(byte... bytes) {
         if (rawByteListeners.isEmpty()) return;
         for (RawByteListener listener : rawByteListeners) {

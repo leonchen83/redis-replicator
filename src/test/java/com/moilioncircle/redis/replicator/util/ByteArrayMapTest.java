@@ -30,9 +30,12 @@ public class ByteArrayMapTest {
         assertEquals(true, bytes.containsValue(null));
 
         Set<byte[]> s = bytes.keySet();
+
         Iterator<byte[]> it = s.iterator();
         while (it.hasNext()) {
-            assertEquals(true, bytes.containsKey(it.next()));
+            byte[] key = it.next();
+            assertEquals(true, s.contains(key));
+            assertEquals(true, bytes.containsKey(key));
         }
 
         for (byte[] b : bytes.keySet()) {
@@ -48,9 +51,17 @@ public class ByteArrayMapTest {
             assertEquals(true, bytes.containsValue(entry.getValue()));
         }
 
-        Iterator<Map.Entry<byte[], byte[]>> itr = bytes.entrySet().iterator();
+        Set<Map.Entry<byte[], byte[]>> ss = bytes.entrySet();
+        Iterator<Map.Entry<byte[], byte[]>> itr = ss.iterator();
         while (itr.hasNext()) {
             Map.Entry<byte[], byte[]> entry = itr.next();
+            assertEquals(true, ss.contains(entry));
+            assertEquals(true, ss.contains(new TestEntry(entry.getKey(), entry.getValue())));
+            if (entry.getValue() != null) {
+                assertEquals(false, ss.contains(new TestEntry(entry.getKey(), Arrays.copyOf(entry.getValue(), entry.getValue().length))));
+            } else {
+                assertEquals(true, ss.contains(new TestEntry(entry.getKey(), null)));
+            }
             assertEquals(true, bytes.containsKey(entry.getKey()));
             assertEquals(true, bytes.containsValue(entry.getValue()));
         }
@@ -62,6 +73,32 @@ public class ByteArrayMapTest {
         bytes = new ByteArrayMap<>(new HashMap<byte[], byte[]>());
         assertEquals(0, bytes.size());
         assertEquals(true, bytes.isEmpty());
+    }
+
+    private final class TestEntry implements Map.Entry<byte[], byte[]> {
+
+        private final byte[] key;
+        private final byte[] value;
+
+        private TestEntry(byte[] key, byte[] value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public byte[] getKey() {
+            return this.key;
+        }
+
+        @Override
+        public byte[] getValue() {
+            return this.value;
+        }
+
+        @Override
+        public byte[] setValue(byte[] value) {
+            throw new UnsupportedOperationException();
+        }
     }
 
 }

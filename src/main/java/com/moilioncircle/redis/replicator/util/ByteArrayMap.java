@@ -140,18 +140,21 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
             return ByteArrayMap.this.size();
         }
 
+        @Override
         public final Iterator<Entry<byte[], V>> iterator() {
             return new EntryIterator();
         }
 
+        @Override
         public final boolean contains(Object o) {
             if (!(o instanceof Map.Entry)) return false;
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            if (!(e.getKey() instanceof byte[])) return false;
-            byte[] key = (byte[]) e.getKey();
+            Object obj = e.getKey();
+            if (obj != null && !(obj instanceof byte[])) return false;
+            byte[] key = (byte[]) obj;
             if (!ByteArrayMap.this.containsKey(key)) return false;
             V v = ByteArrayMap.this.get(key);
-            return (v == null && v == e.getValue()) || e.getValue().equals(v);
+            return v != null ? v.equals(e.getValue()) : e.getValue() == v;
         }
     }
 
@@ -162,10 +165,12 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
             return ByteArrayMap.this.size();
         }
 
+        @Override
         public final Iterator<byte[]> iterator() {
             return new KeyIterator();
         }
 
+        @Override
         public final boolean contains(Object o) {
             return ByteArrayMap.this.containsKey(o);
         }
@@ -184,6 +189,11 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
         public byte[] next() {
             return iterator.next().bytes;
         }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private final class EntryIterator implements Iterator<Map.Entry<byte[], V>> {
@@ -199,6 +209,11 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
         public Entry<byte[], V> next() {
             Map.Entry<Key, V> v = iterator.next();
             return new Node(v.getKey().bytes, v.getValue());
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 

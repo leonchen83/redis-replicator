@@ -23,6 +23,7 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
+import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -302,7 +303,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o4.setValueRdbType(RDB_TYPE_HASH);
         o4.setValue(map);
-        o4.setRawValue(rawMap);
+        o4.setRawValue(new ByteArrayMap<>(rawMap));
         o4.setDb(db);
         o4.setKey(new String(key, CHARSET));
         o4.setRawKey(key);
@@ -328,7 +329,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             if (zmEleLen == 255) {
                 o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
                 o9.setValue(map);
-                o9.setRawValue(rawMap);
+                o9.setRawValue(new ByteArrayMap<>(rawMap));
                 o9.setDb(db);
                 o9.setKey(new String(key, CHARSET));
                 o9.setRawKey(key);
@@ -339,7 +340,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             if (zmEleLen == 255) {
                 o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
                 o9.setValue(map);
-                o9.setRawValue(rawMap);
+                o9.setRawValue(new ByteArrayMap<>(rawMap));
                 o9.setDb(db);
                 o9.setKey(new String(key, CHARSET));
                 o9.setRawKey(key);
@@ -500,7 +501,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
         o13.setValue(map);
-        o13.setRawValue(rawMap);
+        o13.setRawValue(new ByteArrayMap<>(rawMap));
         o13.setDb(db);
         o13.setKey(new String(key, CHARSET));
         o13.setRawKey(key);

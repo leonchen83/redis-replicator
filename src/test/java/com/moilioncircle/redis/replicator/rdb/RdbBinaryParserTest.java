@@ -164,7 +164,7 @@ public class RdbBinaryParserTest {
     public void assertByteArray(byte[] bytes, KeyValuePair<?> kv) {
         if (kv instanceof KeyStringValueString) {
             KeyStringValueString ksvs = (KeyStringValueString) kv;
-            assertEquals(Arrays.toString(bytes), Arrays.toString(ksvs.getRawValue()));
+            assertEquals(true, Arrays.equals(bytes, ksvs.getRawValue()));
         } else {
             fail();
         }
@@ -174,11 +174,7 @@ public class RdbBinaryParserTest {
         if (kv instanceof KeyStringValueHash) {
             KeyStringValueHash ksvh = (KeyStringValueHash) kv;
             Map<byte[], byte[]> m = ksvh.getRawValue();
-            Map<String, byte[]> target = new LinkedHashMap<>();
-            for (Map.Entry<byte[], byte[]> entry : m.entrySet()) {
-                target.put(Arrays.toString(entry.getKey()), entry.getValue());
-            }
-            assertEquals(Arrays.toString(bytes), Arrays.toString(target.get(Arrays.toString(field.getBytes()))));
+            assertEquals(true, Arrays.equals(bytes, m.get(field.getBytes())));
         } else {
             fail();
         }
@@ -187,7 +183,7 @@ public class RdbBinaryParserTest {
     public void assertByteArray(byte[] bytes, KeyValuePair<?> kv, int index) {
         if (kv instanceof KeyStringValueList) {
             KeyStringValueList ksvh = (KeyStringValueList) kv;
-            assertEquals(Arrays.toString(bytes), Arrays.toString(ksvh.getRawValue().get(index)));
+            assertEquals(true, Arrays.equals(bytes, ksvh.getRawValue().get(index)));
         } else {
             fail();
         }

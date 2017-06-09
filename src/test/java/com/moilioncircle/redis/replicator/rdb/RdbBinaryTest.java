@@ -27,10 +27,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import junit.framework.TestCase;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Leon Chen
@@ -40,47 +37,51 @@ public class RdbBinaryTest {
     @SuppressWarnings("resource")
     @org.junit.Test
     public void test() throws IOException {
+        final List<KeyValuePair<?>> list = new ArrayList<>();
         Replicator r = new RedisReplicator(RdbBinaryTest.class.getClassLoader().getResourceAsStream("binarydump.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv.getKey().equals("seri1")) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    try {
-                        Test obj = (Test) toObject(ksvs.getRawValue());
-                        TestCase.assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
-                        TestCase.assertEquals(1000301032, obj.getB());
-                        TestCase.assertEquals(440910321039102L, obj.getC());
-                    } catch (IOException | ClassNotFoundException e) {
-                        TestCase.fail();
-                    }
-                }
-                if (kv.getKey().equals("seri2")) {
-                    KeyStringValueHash ksvs = (KeyStringValueHash) kv;
-                    try {
-                        Test obj = (Test) toObject(ksvs.getRawValue(), "field2".getBytes());
-                        TestCase.assertEquals("中文测试12131", obj.getA());
-                        TestCase.assertEquals(1000301032, obj.getB());
-                        TestCase.assertEquals(440910321039102L, obj.getC());
-                    } catch (IOException | ClassNotFoundException e) {
-                        TestCase.fail();
-                    }
-                }
-                if (kv.getKey().equals("seri3")) {
-                    KeyStringValueList ksvs = (KeyStringValueList) kv;
-                    try {
-                        Test obj = (Test) toObject(ksvs.getRawValue());
-                        TestCase.assertEquals("中文测试jfskdfjslf", obj.getA());
-                        TestCase.assertEquals(1000301032, obj.getB());
-                        TestCase.assertEquals(440910321039102L, obj.getC());
-                    } catch (IOException | ClassNotFoundException e) {
-                        TestCase.fail();
-                    }
-                }
+                list.add(kv);
             }
         });
         r.open();
+        for (KeyValuePair<?> kv : list) {
+            if (kv.getKey().equals("seri1")) {
+                KeyStringValueString ksvs = (KeyStringValueString) kv;
+                try {
+                    Test obj = (Test) toObject(ksvs.getRawValue());
+                    TestCase.assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
+                    TestCase.assertEquals(1000301032, obj.getB());
+                    TestCase.assertEquals(440910321039102L, obj.getC());
+                } catch (IOException | ClassNotFoundException e) {
+                    TestCase.fail();
+                }
+            }
+            if (kv.getKey().equals("seri2")) {
+                KeyStringValueHash ksvs = (KeyStringValueHash) kv;
+                try {
+                    Test obj = (Test) toObject(ksvs.getRawValue(), "field2".getBytes());
+                    TestCase.assertEquals("中文测试12131", obj.getA());
+                    TestCase.assertEquals(1000301032, obj.getB());
+                    TestCase.assertEquals(440910321039102L, obj.getC());
+                } catch (IOException | ClassNotFoundException e) {
+                    TestCase.fail();
+                }
+            }
+            if (kv.getKey().equals("seri3")) {
+                KeyStringValueList ksvs = (KeyStringValueList) kv;
+                try {
+                    Test obj = (Test) toObject(ksvs.getRawValue());
+                    TestCase.assertEquals("中文测试jfskdfjslf", obj.getA());
+                    TestCase.assertEquals(1000301032, obj.getB());
+                    TestCase.assertEquals(440910321039102L, obj.getC());
+                } catch (IOException | ClassNotFoundException e) {
+                    TestCase.fail();
+                }
+            }
+        }
     }
 
     private Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {

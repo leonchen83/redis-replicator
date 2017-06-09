@@ -23,7 +23,7 @@ package com.moilioncircle.redis.replicator.event;
 public class PostFullSyncEvent implements Event {
 
     private static final long serialVersionUID = 1L;
-    
+
     private final long checksum;
 
     public long getChecksum() {

@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class ZInterStoreCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String destination;
     private int numkeys;
     private String[] keys;

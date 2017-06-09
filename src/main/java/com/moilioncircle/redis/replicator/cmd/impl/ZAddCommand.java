@@ -28,7 +28,7 @@ import java.util.Arrays;
 public class ZAddCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String key;
     private ExistType existType;
     private Boolean isCh;

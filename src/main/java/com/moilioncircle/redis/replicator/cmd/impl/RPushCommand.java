@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class RPushCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String key;
     private String[] values;
     private byte[] rawKey;

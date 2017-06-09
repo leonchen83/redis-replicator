@@ -25,7 +25,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class ExpireAtCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String key;
     private long ex;
     private byte[] rawKey;

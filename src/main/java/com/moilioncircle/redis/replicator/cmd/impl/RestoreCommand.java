@@ -25,7 +25,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class RestoreCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String key;
     private int ttl;
     private String serializedValue;

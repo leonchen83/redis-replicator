@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class BitOpCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private Op op;
     private String destkey;
     private String[] keys;

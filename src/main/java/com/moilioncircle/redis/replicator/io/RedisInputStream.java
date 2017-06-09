@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Leon Chen
@@ -39,7 +38,7 @@ public class RedisInputStream extends InputStream {
     protected final byte[] buf;
     protected boolean mark = false;
     protected final InputStream in;
-    protected final List<RawByteListener> listeners = new CopyOnWriteArrayList<>();
+    protected List<RawByteListener> listeners;
 
     public RedisInputStream(final InputStream in) {
         this(in, 8192);
@@ -50,16 +49,12 @@ public class RedisInputStream extends InputStream {
         this.buf = new byte[len];
     }
 
-    public void addRawByteListener(RawByteListener listener) {
-        this.listeners.add(listener);
-    }
-
-    public void removeRawByteListener(RawByteListener listener) {
-        this.listeners.remove(listener);
+    public synchronized void setListeners(List<RawByteListener> listeners) {
+        this.listeners = listeners;
     }
 
     protected void notify(byte... bytes) {
-        if (listeners.isEmpty()) return;
+        if (listeners == null || listeners.isEmpty()) return;
         for (RawByteListener listener : listeners) {
             listener.handle(bytes);
         }

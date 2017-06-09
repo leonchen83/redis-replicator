@@ -27,7 +27,7 @@ import java.util.Arrays;
 public class EvalCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String script;
     private int numkeys;
     private String[] keys;

@@ -25,7 +25,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class ZIncrByCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String key;
     private double increment;
     private String member;

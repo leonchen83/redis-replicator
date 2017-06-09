@@ -50,7 +50,7 @@ public class RedisAofReplicator extends AbstractReplicator {
     public RedisAofReplicator(InputStream in, Configuration configuration) {
         this.configuration = configuration;
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
-        this.inputStream.addRawByteListener(this);
+        this.inputStream.setListeners(this.rawByteListeners);
         this.replyParser = new ReplyParser(inputStream);
         builtInCommandParserRegister();
         addExceptionListener(new DefaultExceptionListener());

@@ -93,7 +93,7 @@ public class ModuleTest {
     public static class HelloTypeModule implements Module {
 
         private static final long serialVersionUID = 1L;
-        
+
         private final long[] value;
 
         public HelloTypeModule(long[] value) {

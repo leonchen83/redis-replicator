@@ -30,7 +30,7 @@ import java.util.Set;
 public class KeyValuePair<T> implements Event {
 
     private static final long serialVersionUID = 1L;
-    
+
     protected DB db;
     protected int valueRdbType;
     protected ExpiredType expiredType = ExpiredType.NONE;

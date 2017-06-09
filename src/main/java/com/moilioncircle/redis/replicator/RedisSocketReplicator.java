@@ -333,8 +333,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (!connected.compareAndSet(false, true)) return;
         socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
         outputStream = new RedisOutputStream(socket.getOutputStream());
-        inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream(), configuration.getAsyncCachedBytes()) : socket.getInputStream(), configuration.getBufferSize());
-        inputStream.addRawByteListener(this);
+        inputStream = new RedisInputStream(
+                configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream(), configuration.getAsyncCachedBytes()) : socket.getInputStream(),
+                configuration.getBufferSize());
+        inputStream.setListeners(this.rawByteListeners);
         replyParser = new ReplyParser(inputStream);
     }
 
@@ -352,7 +354,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
         try {
             if (inputStream != null) {
-                inputStream.removeRawByteListener(this);
+                inputStream.setListeners(null);
                 inputStream.close();
             }
         } catch (IOException e) {

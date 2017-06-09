@@ -25,7 +25,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class BRPopLPushCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String source;
     private String destination;
     private int timeout;

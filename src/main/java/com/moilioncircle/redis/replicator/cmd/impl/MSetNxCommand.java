@@ -27,7 +27,7 @@ import java.util.Map;
 public class MSetNxCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-    
+
     private Map<String, String> kv;
     private Map<byte[], byte[]> rawKv;
 

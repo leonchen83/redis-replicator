@@ -209,6 +209,16 @@ public class RedisInputStream extends InputStream {
     }
 
     @Override
+    public int read(byte[] b) throws IOException {
+        return read(b, 0, b.length);
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        return (int) read(new ByteArray(b), off, len);
+    }
+
+    @Override
     public int available() throws IOException {
         return tail - head + in.available();
     }

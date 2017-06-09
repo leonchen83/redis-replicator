@@ -60,20 +60,20 @@ public class Arrays {
                 if (eClass.isArray()) {
                     if (eClass == byte[].class)
                         buf.append(toString((byte[]) element));
-                    else if (eClass == short[].class)
-                        buf.append(toString((short[]) element));
-                    else if (eClass == int[].class)
-                        buf.append(toString((int[]) element));
-                    else if (eClass == long[].class)
-                        buf.append(toString((long[]) element));
                     else if (eClass == char[].class)
                         buf.append(toString((char[]) element));
+                    else if (eClass == short[].class)
+                        buf.append(java.util.Arrays.toString((short[]) element));
+                    else if (eClass == int[].class)
+                        buf.append(java.util.Arrays.toString((int[]) element));
+                    else if (eClass == long[].class)
+                        buf.append(java.util.Arrays.toString((long[]) element));
                     else if (eClass == float[].class)
-                        buf.append(toString((float[]) element));
+                        buf.append(java.util.Arrays.toString((float[]) element));
                     else if (eClass == double[].class)
-                        buf.append(toString((double[]) element));
+                        buf.append(java.util.Arrays.toString((double[]) element));
                     else if (eClass == boolean[].class)
-                        buf.append(toString((boolean[]) element));
+                        buf.append(java.util.Arrays.toString((boolean[]) element));
                     else { // element is an array of object references
                         if (dejaVu.contains(element))
                             buf.append("[...]");
@@ -91,45 +91,6 @@ public class Arrays {
         dejaVu.remove(a);
     }
 
-    public static String toString(long[] a) {
-        if (a == null) return "null";
-        int iMax = a.length - 1;
-        if (iMax == -1) return "[]";
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (int i = 0; ; i++) {
-            b.append(a[i]);
-            if (i == iMax) return b.append(']').toString();
-            b.append(", ");
-        }
-    }
-
-    public static String toString(int[] a) {
-        if (a == null) return "null";
-        int iMax = a.length - 1;
-        if (iMax == -1) return "[]";
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (int i = 0; ; i++) {
-            b.append(a[i]);
-            if (i == iMax) return b.append(']').toString();
-            b.append(", ");
-        }
-    }
-
-    public static String toString(short[] a) {
-        if (a == null) return "null";
-        int iMax = a.length - 1;
-        if (iMax == -1) return "[]";
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (int i = 0; ; i++) {
-            b.append(a[i]);
-            if (i == iMax) return b.append(']').toString();
-            b.append(", ");
-        }
-    }
-
     public static String toString(char[] a) {
         if (a == null) return "null";
         int iMax = a.length - 1;
@@ -142,45 +103,6 @@ public class Arrays {
         int iMax = a.length - 1;
         if (iMax == -1) return "";
         return new String(a, Constants.CHARSET);
-    }
-
-    private static String toString(boolean[] a) {
-        if (a == null) return "null";
-        int iMax = a.length - 1;
-        if (iMax == -1) return "[]";
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (int i = 0; ; i++) {
-            b.append(a[i]);
-            if (i == iMax) return b.append(']').toString();
-            b.append(", ");
-        }
-    }
-
-    private static String toString(float[] a) {
-        if (a == null) return "null";
-        int iMax = a.length - 1;
-        if (iMax == -1) return "[]";
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (int i = 0; ; i++) {
-            b.append(a[i]);
-            if (i == iMax) return b.append(']').toString();
-            b.append(", ");
-        }
-    }
-
-    private static String toString(double[] a) {
-        if (a == null) return "null";
-        int iMax = a.length - 1;
-        if (iMax == -1) return "[]";
-        StringBuilder b = new StringBuilder();
-        b.append('[');
-        for (int i = 0; ; i++) {
-            b.append(a[i]);
-            if (i == iMax) return b.append(']').toString();
-            b.append(", ");
-        }
     }
 
 }

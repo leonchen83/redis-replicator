@@ -22,6 +22,7 @@
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${pattern}"/>
+            <RegexFilter regex=".*socket error.*" onMatch="DENY" onMismatch="ACCEPT"/>
         </Console>
     </Appenders>
     <Loggers>

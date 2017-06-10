@@ -55,11 +55,11 @@ public class RedisMixReplicatorTest {
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
-                System.out.println("close open");
-                assertEquals(244653, acc.get());
-                assertEquals(59259, acc1.get());
+                System.out.println("close testOpen");
             }
         });
         replicator.open();
+        assertEquals(244653, acc.get());
+        assertEquals(59259, acc1.get());
     }
 }

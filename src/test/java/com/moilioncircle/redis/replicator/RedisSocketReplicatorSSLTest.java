@@ -179,7 +179,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                 try {
                     replicator.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -187,10 +186,10 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testSsl2");
-                assertEquals(1, acc.get());
             }
         });
         replicator.open();
+        assertEquals(1, acc.get());
     }
 
     @Test
@@ -214,7 +213,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv.getKey().equals("ssl3")) {
-                    System.out.println(kv);
                     acc.incrementAndGet();
                 }
             }
@@ -227,7 +225,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                 try {
                     replicator.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -241,7 +238,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             replicator.open();
             fail();
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -275,7 +271,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                 try {
                     replicator.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -283,10 +278,10 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testSsl4");
-                assertEquals(0, acc.get());
             }
         });
         replicator.open();
+        assertEquals(0, acc.get());
     }
 
     private static SSLSocketFactory createTrustStoreSslSocketFactory() throws Exception {

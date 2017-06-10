@@ -53,7 +53,8 @@ public class RedisAofReplicator extends AbstractReplicator {
         this.inputStream.setListeners(this.rawByteListeners);
         this.replyParser = new ReplyParser(inputStream);
         builtInCommandParserRegister();
-        addExceptionListener(new DefaultExceptionListener());
+        if (configuration.isUseDefaultExceptionListener())
+            addExceptionListener(new DefaultExceptionListener());
     }
 
     @Override

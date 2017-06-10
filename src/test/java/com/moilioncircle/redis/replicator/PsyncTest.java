@@ -56,7 +56,8 @@ public class PsyncTest {
                 setReceiveBufferSize(0).
                 setSendBufferSize(0).
                 setDiscardRdbEvent(true).
-                setRetryTimeInterval(1000);
+                setRetryTimeInterval(1000).
+                setUseDefaultExceptionListener(false);
         System.out.println(configuration);
         Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
         final AtomicBoolean flag = new AtomicBoolean(false);
@@ -94,7 +95,6 @@ public class PsyncTest {
                         try {
                             replicator.close();
                         } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
                 }
@@ -103,30 +103,28 @@ public class PsyncTest {
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
-                assertEquals(1000, acc.get());
-                for (AuxField auxField : set) {
-                    System.out.println(auxField.getAuxKey() + "=" + auxField.getAuxValue());
-                }
+                System.out.println("psync closed");
             }
         });
         replicator.open();
+        assertEquals(1000, acc.get());
+        for (AuxField auxField : set) {
+            System.out.println(auxField.getAuxKey() + "=" + auxField.getAuxValue());
+        }
     }
 
     private static void close(Replicator replicator) {
         try {
             ((TestRedisSocketReplicator) replicator).getOutputStream().close();
         } catch (IOException e) {
-            e.printStackTrace();
         }
         try {
             ((TestRedisSocketReplicator) replicator).getInputStream().close();
         } catch (IOException e) {
-            e.printStackTrace();
         }
         try {
             ((TestRedisSocketReplicator) replicator).getSocket().close();
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

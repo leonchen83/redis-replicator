@@ -57,7 +57,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
         this.configuration = configuration;
         this.socketFactory = new RedisSocketFactory(configuration);
         builtInCommandParserRegister();
-        addExceptionListener(new DefaultExceptionListener());
+        if (configuration.isUseDefaultExceptionListener())
+            addExceptionListener(new DefaultExceptionListener());
     }
 
     /**

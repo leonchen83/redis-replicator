@@ -48,10 +48,10 @@ public class RedisAofReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close open");
-                assertEquals(4, acc.get());
             }
         });
         replicator.open();
+        assertEquals(4, acc.get());
     }
 
     @Test
@@ -72,10 +72,11 @@ public class RedisAofReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close open2");
-                assertEquals(48000, acc.get());
+
             }
         });
         replicator.open();
+        assertEquals(48000, acc.get());
     }
 
     @Test
@@ -94,10 +95,10 @@ public class RedisAofReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close open3");
-                assertEquals(92539, acc.get());
             }
         });
         replicator.open();
+        assertEquals(92539, acc.get());
     }
 
     @Test
@@ -116,10 +117,10 @@ public class RedisAofReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close open4");
-                assertEquals(71, acc.get());
             }
         });
         replicator.open();
+        assertEquals(71, acc.get());
     }
 
 }

@@ -24,6 +24,8 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -58,11 +60,11 @@ public class RedisRdbReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testChecksumV7");
-                assertEquals(19, acc.get());
-                assertEquals(6576517133597126869L, atomicChecksum.get());
             }
         });
         redisReplicator.open();
+        assertEquals(19, acc.get());
+        assertEquals(6576517133597126869L, atomicChecksum.get());
     }
 
     @Test
@@ -88,12 +90,11 @@ public class RedisRdbReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testChecksumV6");
-                assertEquals(132, acc.get());
-                assertEquals(-3409494954737929802L, atomicChecksum.get());
             }
         });
         redisReplicator.open();
-
+        assertEquals(132, acc.get());
+        assertEquals(-3409494954737929802L, atomicChecksum.get());
     }
 
     @Test
@@ -107,10 +108,10 @@ public class RedisRdbReplicatorTest {
             public void handle(Replicator replicator) {
                 System.out.println("close testCloseListener1");
                 acc.incrementAndGet();
-                assertEquals(1, acc.get());
             }
         });
         replicator.open();
+        assertEquals(1, acc.get());
     }
 
     @Test
@@ -119,39 +120,41 @@ public class RedisRdbReplicatorTest {
                 RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
+        final List<KeyValuePair<?>> list = new ArrayList<>();
         redisReplicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                list.add(kv);
                 acc.incrementAndGet();
-                if (kv.getKey().equals("abcd")) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    assertEquals("abcd", ksvs.getValue());
-                }
-                if (kv.getKey().equals("foo")) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    assertEquals("bar", ksvs.getValue());
-                }
-                if (kv.getKey().equals("aaa")) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    assertEquals("bbb", ksvs.getValue());
-                }
             }
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
                 super.postFullSync(replicator, checksum);
-                assertEquals(19, acc.get());
             }
         });
         redisReplicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testFileV7");
-                assertEquals(19, acc.get());
             }
         });
         redisReplicator.open();
-
+        assertEquals(19, acc.get());
+        for (KeyValuePair<?> kv : list) {
+            if (kv.getKey().equals("abcd")) {
+                KeyStringValueString ksvs = (KeyStringValueString) kv;
+                assertEquals("abcd", ksvs.getValue());
+            }
+            if (kv.getKey().equals("foo")) {
+                KeyStringValueString ksvs = (KeyStringValueString) kv;
+                assertEquals("bar", ksvs.getValue());
+            }
+            if (kv.getKey().equals("aaa")) {
+                KeyStringValueString ksvs = (KeyStringValueString) kv;
+                assertEquals("bbb", ksvs.getValue());
+            }
+        }
     }
 
     @Test
@@ -164,7 +167,6 @@ public class RedisRdbReplicatorTest {
             @Override
             public void preFullSync(Replicator replicator) {
                 super.preFullSync(replicator);
-                assertEquals(0, acc.get());
             }
 
             @Override
@@ -183,10 +185,10 @@ public class RedisRdbReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testFilter");
-                assertEquals(13, acc.get());
             }
         });
         redisReplicator.open();
+        assertEquals(13, acc.get());
     }
 
     @Test
@@ -211,10 +213,10 @@ public class RedisRdbReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testFileV6");
-                assertEquals(132, acc.get());
             }
         });
         redisReplicator.open();
+        assertEquals(132, acc.get());
     }
 
     @Test
@@ -247,11 +249,11 @@ public class RedisRdbReplicatorTest {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testFileV8");
-                assertEquals(92499, acc.get());
-                assertEquals(7, acc1.get());
             }
         });
         redisReplicator.open();
+        assertEquals(92499, acc.get());
+        assertEquals(7, acc1.get());
     }
 
 }

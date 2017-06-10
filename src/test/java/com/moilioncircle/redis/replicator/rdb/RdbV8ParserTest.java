@@ -64,7 +64,6 @@ public class RdbV8ParserTest {
             replicator.addRdbListener(new RdbListener.Adaptor() {
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                    System.out.println(kv);
                     map.put(kv.getKey(), kv);
                 }
             });

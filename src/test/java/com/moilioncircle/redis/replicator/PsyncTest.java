@@ -140,7 +140,6 @@ public class PsyncTest {
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
             jedis.close();

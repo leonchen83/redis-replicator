@@ -27,7 +27,7 @@ import java.util.Arrays;
  */
 public class ByteArrayMap<V> implements Map<byte[], V> {
 
-    private final Map<Key, V> map;
+    protected final Map<Key, V> map;
 
     public ByteArrayMap(Map<? extends byte[], ? extends V> m) {
         this(true, m);
@@ -38,7 +38,19 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
         internalPutAll(m);
     }
 
-    private ByteArrayMap(boolean ordered, int initialCapacity, float loadFactor) {
+    protected ByteArrayMap() {
+        this(true);
+    }
+
+    protected ByteArrayMap(boolean ordered) {
+        this(ordered, 16);
+    }
+
+    protected ByteArrayMap(boolean ordered, int initialCapacity) {
+        this(ordered, initialCapacity, 0.75f);
+    }
+
+    protected ByteArrayMap(boolean ordered, int initialCapacity, float loadFactor) {
         if (ordered) map = new LinkedHashMap<>(initialCapacity, loadFactor);
         else map = new HashMap<>(initialCapacity, loadFactor);
     }
@@ -105,10 +117,14 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
         return Collections.unmodifiableSet(new EntrySet());
     }
 
-    private void internalPutAll(Map<? extends byte[], ? extends V> m) {
+    protected V internalPut(byte[] key, V v) {
+        return map.put(new Key(key), v);
+    }
+
+    protected void internalPutAll(Map<? extends byte[], ? extends V> m) {
         if (m == null) return;
         for (Map.Entry<? extends byte[], ? extends V> entry : m.entrySet()) {
-            map.put(new Key(entry.getKey()), entry.getValue());
+            internalPut(entry.getKey(), entry.getValue());
         }
     }
 

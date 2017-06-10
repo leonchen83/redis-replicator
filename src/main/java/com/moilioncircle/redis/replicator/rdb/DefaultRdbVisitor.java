@@ -23,7 +23,6 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
-import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -293,17 +292,17 @@ public class DefaultRdbVisitor extends RdbVisitor {
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         Map<String, String> map = new LinkedHashMap<>();
-        Map<byte[], byte[]> rawMap = new LinkedHashMap<>();
+        ByteArrayMap rawMap = new ByteArrayMap();
         while (len > 0) {
             byte[] field = parser.rdbLoadEncodedStringObject().first();
             byte[] value = parser.rdbLoadEncodedStringObject().first();
             map.put(new String(field, CHARSET), new String(value, CHARSET));
-            rawMap.put(field, value);
+            rawMap.internalPut(field, value);
             len--;
         }
         o4.setValueRdbType(RDB_TYPE_HASH);
         o4.setValue(map);
-        o4.setRawValue(new ByteArrayMap<>(rawMap));
+        o4.setRawValue(rawMap);
         o4.setDb(db);
         o4.setKey(new String(key, CHARSET));
         o4.setRawKey(key);
@@ -322,14 +321,14 @@ public class DefaultRdbVisitor extends RdbVisitor {
         ByteArray aux = parser.rdbLoadPlainStringObject();
         RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
         Map<String, String> map = new LinkedHashMap<>();
-        Map<byte[], byte[]> rawMap = new LinkedHashMap<>();
+        ByteArrayMap rawMap = new ByteArrayMap();
         BaseRdbParser.LenHelper.zmlen(stream); // zmlen
         while (true) {
             int zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
             if (zmEleLen == 255) {
                 o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
                 o9.setValue(map);
-                o9.setRawValue(new ByteArrayMap<>(rawMap));
+                o9.setRawValue(rawMap);
                 o9.setDb(db);
                 o9.setKey(new String(key, CHARSET));
                 o9.setRawKey(key);
@@ -340,7 +339,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             if (zmEleLen == 255) {
                 o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
                 o9.setValue(map);
-                o9.setRawValue(new ByteArrayMap<>(rawMap));
+                o9.setRawValue(rawMap);
                 o9.setDb(db);
                 o9.setKey(new String(key, CHARSET));
                 o9.setRawKey(key);
@@ -350,7 +349,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             byte[] value = BaseRdbParser.StringHelper.bytes(stream, zmEleLen);
             BaseRdbParser.StringHelper.skip(stream, free);
             map.put(new String(field, CHARSET), new String(value, CHARSET));
-            rawMap.put(field, value);
+            rawMap.internalPut(field, value);
         }
     }
 
@@ -483,7 +482,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
 
         Map<String, String> map = new LinkedHashMap<>();
-        Map<byte[], byte[]> rawMap = new LinkedHashMap<>();
+        ByteArrayMap rawMap = new ByteArrayMap();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
         int zllen = BaseRdbParser.LenHelper.zllen(stream);
@@ -493,7 +492,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             byte[] value = BaseRdbParser.StringHelper.zipListEntry(stream);
             zllen--;
             map.put(new String(field, CHARSET), new String(value, CHARSET));
-            rawMap.put(field, value);
+            rawMap.internalPut(field, value);
         }
         int zlend = BaseRdbParser.LenHelper.zlend(stream);
         if (zlend != 255) {
@@ -501,7 +500,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
         o13.setValue(map);
-        o13.setRawValue(new ByteArrayMap<>(rawMap));
+        o13.setRawValue(rawMap);
         o13.setDb(db);
         o13.setKey(new String(key, CHARSET));
         o13.setRawKey(key);
@@ -608,6 +607,19 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?>) applyModule(in, db, version);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
+        }
+    }
+
+    private class ByteArrayMap extends com.moilioncircle.redis.replicator.util.ByteArrayMap<byte[]> {
+
+        @Override
+        public byte[] internalPut(byte[] key, byte[] value) {
+            return super.internalPut(key, value);
+        }
+
+        @Override
+        public void internalPutAll(Map<? extends byte[], ? extends byte[]> m) {
+            super.internalPutAll(m);
         }
     }
 }

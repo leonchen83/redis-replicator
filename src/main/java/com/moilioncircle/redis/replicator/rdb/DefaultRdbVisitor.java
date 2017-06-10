@@ -613,12 +613,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
     private class ByteArrayMap extends com.moilioncircle.redis.replicator.util.ByteArrayMap<byte[]> {
 
         @Override
-        public byte[] internalPut(byte[] key, byte[] value) {
+        protected byte[] internalPut(byte[] key, byte[] value) {
             return super.internalPut(key, value);
         }
 
         @Override
-        public void internalPutAll(Map<? extends byte[], ? extends byte[]> m) {
+        protected void internalPutAll(Map<? extends byte[], ? extends byte[]> m) {
             super.internalPutAll(m);
         }
     }

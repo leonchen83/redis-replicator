@@ -233,9 +233,7 @@ public class RedisSocketReplicatorTest extends TestCase {
     @Test
     public void testZAdd() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("localhost",
-                6379,
-                Configuration.defaultSetting().setRetries(0));
+        final Replicator replicator = new RedisReplicator("localhost", 6379, Configuration.defaultSetting().setRetries(0));
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {

@@ -38,7 +38,7 @@ public class RedisInputStream extends InputStream {
     protected final byte[] buf;
     protected boolean mark = false;
     protected final InputStream in;
-    protected List<RawByteListener> listeners;
+    protected List<RawByteListener> rawByteListeners;
 
     public RedisInputStream(final InputStream in) {
         this(in, 8192);
@@ -49,33 +49,33 @@ public class RedisInputStream extends InputStream {
         this.buf = new byte[len];
     }
 
-    public synchronized void setListeners(List<RawByteListener> listeners) {
-        this.listeners = listeners;
+    public synchronized void setRawByteListeners(List<RawByteListener> rawByteListeners) {
+        this.rawByteListeners = rawByteListeners;
     }
 
     /**
-     * @param listener raw bytes listener
+     * @param rawByteListener raw bytes listener
      * @since 2.2.0
-     * @deprecated using {@link #setListeners} instead. will remove in version 3.0.0
+     * @deprecated using {@link #setRawByteListeners} instead. will remove in version 3.0.0
      */
     @Deprecated
-    public synchronized void addRawByteListener(RawByteListener listener) {
-        if (listener != null) this.listeners.add(listener);
+    public synchronized void addRawByteListener(RawByteListener rawByteListener) {
+        if (rawByteListeners != null) this.rawByteListeners.add(rawByteListener);
     }
 
     /**
-     * @param listener raw bytes listener
+     * @param rawByteListener raw bytes listener
      * @since 2.2.0
-     * @deprecated using {@link #setListeners} instead. will remove in version 3.0.0
+     * @deprecated using {@link #setRawByteListeners} instead. will remove in version 3.0.0
      */
     @Deprecated
-    public synchronized void removeRawByteListener(RawByteListener listener) {
-        if (listener != null) this.listeners.remove(listener);
+    public synchronized void removeRawByteListener(RawByteListener rawByteListener) {
+        if (rawByteListeners != null) this.rawByteListeners.remove(rawByteListener);
     }
 
     protected void notify(byte... bytes) {
-        if (listeners == null || listeners.isEmpty()) return;
-        for (RawByteListener listener : listeners) {
+        if (rawByteListeners == null || rawByteListeners.isEmpty()) return;
+        for (RawByteListener listener : rawByteListeners) {
             listener.handle(bytes);
         }
     }

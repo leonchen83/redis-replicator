@@ -39,7 +39,7 @@ public class RedisRdbReplicator extends AbstractReplicator {
     public RedisRdbReplicator(InputStream in, Configuration configuration) {
         this.configuration = configuration;
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
-        this.inputStream.setListeners(this.rawByteListeners);
+        this.inputStream.setRawByteListeners(this.rawByteListeners);
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
     }

@@ -54,7 +54,7 @@ public class DefaultRdbModuleParser {
      * @return signed long
      * @throws IOException IOException
      * @since 2.1.2
-     * @deprecated cause typo and return signed long. Use {@link #loadUnsigned()} instead.
+     * @deprecated cause typo and return signed long. Use {@link #loadUnsigned()} instead. will remove this method in 3.0.0
      */
     @Deprecated
     public long loadUnSigned() throws IOException {

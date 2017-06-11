@@ -29,7 +29,7 @@ public class KeyStringValueString extends KeyValuePair<String> {
     /**
      * @return raw bytes
      * @since 2.2.0
-     * @deprecated instead of {@link #getRawValue}
+     * @deprecated instead of {@link #getRawValue}. will remove in version 3.0.0
      */
     @Deprecated
     public byte[] getRawBytes() {
@@ -39,7 +39,7 @@ public class KeyStringValueString extends KeyValuePair<String> {
     /**
      * @param rawBytes raw bytes
      * @since 2.2.0
-     * @deprecated instead of {@link #setRawValue}
+     * @deprecated instead of {@link #setRawValue}. will remove in version 3.0.0
      */
     public void setRawBytes(byte[] rawBytes) {
         this.rawValue = rawBytes;

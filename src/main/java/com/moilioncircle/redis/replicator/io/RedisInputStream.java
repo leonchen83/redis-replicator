@@ -56,7 +56,7 @@ public class RedisInputStream extends InputStream {
     /**
      * @param listener raw bytes listener
      * @since 2.2.0
-     * @deprecated using {@link #setListeners} instead
+     * @deprecated using {@link #setListeners} instead. will remove in version 3.0.0
      */
     @Deprecated
     public synchronized void addRawByteListener(RawByteListener listener) {
@@ -66,7 +66,7 @@ public class RedisInputStream extends InputStream {
     /**
      * @param listener raw bytes listener
      * @since 2.2.0
-     * @deprecated using {@link #setListeners} instead
+     * @deprecated using {@link #setListeners} instead. will remove in version 3.0.0
      */
     @Deprecated
     public synchronized void removeRawByteListener(RawByteListener listener) {

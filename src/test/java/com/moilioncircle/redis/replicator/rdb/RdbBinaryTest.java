@@ -20,6 +20,11 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.cmd.impl.HMSetCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SAddCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
@@ -27,16 +32,19 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import junit.framework.TestCase;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Leon Chen
  * @since 2.2.0
  */
 public class RdbBinaryTest {
-    @SuppressWarnings("resource")
+
     @org.junit.Test
-    public void test() throws IOException {
+    @SuppressWarnings("resource")
+    public void testRdb() throws IOException {
         final List<KeyValuePair<?>> list = new ArrayList<>();
         Replicator r = new RedisReplicator(RdbBinaryTest.class.getClassLoader().getResourceAsStream("binarydump.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
@@ -84,6 +92,56 @@ public class RdbBinaryTest {
         }
     }
 
+    @org.junit.Test
+    @SuppressWarnings("resource")
+    public void testAof() throws IOException {
+        final List<Command> list = new ArrayList<>();
+        Replicator r = new RedisReplicator(RdbBinaryTest.class.getClassLoader().getResourceAsStream("appendonly7.aof"), FileType.AOF,
+                Configuration.defaultSetting());
+        r.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                list.add(command);
+            }
+        });
+        r.open();
+        for (Command cmd : list) {
+            if (cmd instanceof SetCommand) {
+                SetCommand s = (SetCommand) cmd;
+                try {
+                    Test obj = (Test) toObject(s.getRawValue());
+                    TestCase.assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
+                    TestCase.assertEquals(1000301032, obj.getB());
+                    TestCase.assertEquals(440910321039102L, obj.getC());
+                } catch (IOException | ClassNotFoundException e) {
+                    TestCase.fail();
+                }
+            }
+            if (cmd instanceof HMSetCommand) {
+                HMSetCommand h = (HMSetCommand) cmd;
+                try {
+                    Test obj = (Test) toObject(h.getRawFields(), "field2".getBytes());
+                    TestCase.assertEquals("中文测试12131", obj.getA());
+                    TestCase.assertEquals(1000301032, obj.getB());
+                    TestCase.assertEquals(440910321039102L, obj.getC());
+                } catch (IOException | ClassNotFoundException e) {
+                    TestCase.fail();
+                }
+            }
+            if (cmd instanceof SAddCommand) {
+                SAddCommand s = (SAddCommand) cmd;
+                try {
+                    Test obj = (Test) toObject(s.getRawMembers()[0]);
+                    TestCase.assertEquals("中文测试jfskdfjslf", obj.getA());
+                    TestCase.assertEquals(1000301032, obj.getB());
+                    TestCase.assertEquals(440910321039102L, obj.getC());
+                } catch (IOException | ClassNotFoundException e) {
+                    TestCase.fail();
+                }
+            }
+        }
+    }
+
     private Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
              ObjectInput in = new ObjectInputStream(bis)) {
@@ -92,11 +150,7 @@ public class RdbBinaryTest {
     }
 
     private Object toObject(Map<byte[], byte[]> map, byte[] field) throws IOException, ClassNotFoundException {
-        Map<String, byte[]> m = new HashMap<>();
-        for (Map.Entry<byte[], byte[]> entry : map.entrySet()) {
-            m.put(Arrays.toString(entry.getKey()), entry.getValue());
-        }
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(m.get(Arrays.toString(field)));
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(map.get(field));
              ObjectInput in = new ObjectInputStream(bis)) {
             return in.readObject();
         }

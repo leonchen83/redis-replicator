@@ -38,7 +38,7 @@ public class HMSetParser implements CommandParser<HMSetCommand> {
         byte[] rawKey = objToBytes(command[idx]);
         idx++;
         Map<String, String> fields = new LinkedHashMap<>();
-        Map<byte[], byte[]> rawFields = new LinkedHashMap<>();
+        CommandParsers.ByteArrayMap rawFields = new CommandParsers.ByteArrayMap();
         while (idx < command.length) {
             String field = objToString(command[idx]);
             byte[] rawField = objToBytes(command[idx]);
@@ -47,7 +47,7 @@ public class HMSetParser implements CommandParser<HMSetCommand> {
             byte[] rawValue = idx == command.length ? null : objToBytes(command[idx]);
             idx++;
             fields.put(field, value);
-            rawFields.put(rawField, rawValue);
+            rawFields.internalPut(rawField, rawValue);
         }
         return new HMSetCommand(key, fields, rawKey, rawFields);
     }

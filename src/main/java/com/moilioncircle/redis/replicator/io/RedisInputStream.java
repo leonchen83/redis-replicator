@@ -49,6 +49,10 @@ public class RedisInputStream extends InputStream {
         this.buf = new byte[len];
     }
 
+    /**
+     * @param rawByteListeners raw byte listeners
+     * @since 2.2.0
+     */
     public synchronized void setRawByteListeners(List<RawByteListener> rawByteListeners) {
         this.rawByteListeners = rawByteListeners;
     }
@@ -56,7 +60,7 @@ public class RedisInputStream extends InputStream {
     /**
      * @param rawByteListener raw bytes listener
      * @since 2.2.0
-     * @deprecated using {@link #setRawByteListeners} instead. will remove in version 3.0.0
+     * @deprecated use {@link #setRawByteListeners} instead. will remove in version 3.0.0
      */
     @Deprecated
     public synchronized void addRawByteListener(RawByteListener rawByteListener) {
@@ -66,7 +70,7 @@ public class RedisInputStream extends InputStream {
     /**
      * @param rawByteListener raw bytes listener
      * @since 2.2.0
-     * @deprecated using {@link #setRawByteListeners} instead. will remove in version 3.0.0
+     * @deprecated use {@link #setRawByteListeners} instead. will remove in version 3.0.0
      */
     @Deprecated
     public synchronized void removeRawByteListener(RawByteListener rawByteListener) {

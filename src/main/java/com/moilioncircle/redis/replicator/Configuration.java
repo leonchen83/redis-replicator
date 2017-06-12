@@ -101,6 +101,8 @@ public class Configuration {
 
     /**
      * use default exception handler
+     *
+     * @since 2.2.0
      */
     private boolean useDefaultExceptionListener = true;
 

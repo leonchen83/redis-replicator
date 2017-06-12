@@ -80,9 +80,9 @@ public class DefaultRdbModuleParser {
         return new String(bytes.first(), Constants.CHARSET);
     }
 
-    public String loadStringBuffer() throws IOException {
+    public byte[] loadStringBuffer() throws IOException {
         ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_PLAIN);
-        return new String(bytes.first(), Constants.CHARSET);
+        return bytes.first();
     }
 
     public double loadDouble() throws IOException {

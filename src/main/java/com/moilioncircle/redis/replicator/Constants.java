@@ -34,12 +34,6 @@ public class Constants {
     };
 
     public static final Charset CHARSET = Charset.forName("UTF-8");
-
-    /**
-     * @since 2.2.0
-     * @deprecated unused attribute
-     */
-    @Deprecated
     public static final String EMPTY = "";
 
     /**

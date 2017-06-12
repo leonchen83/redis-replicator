@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen

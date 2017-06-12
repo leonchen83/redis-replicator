@@ -22,7 +22,6 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -30,7 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen
@@ -50,7 +50,7 @@ public class RdbV8ParserTest {
         assertEquals(1000, zset.size());
         for (ZSetEntry entry : zset) {
             if (entry.getElement().equals("finalfield")) {
-                assertEquals(2.718d, entry.getScore());
+                assertEquals(2.718d, entry.getScore(), 0.0001);
             }
         }
     }
@@ -69,7 +69,7 @@ public class RdbV8ParserTest {
             });
             replicator.open();
         } catch (Exception e) {
-            TestCase.fail();
+            fail();
         }
     }
 }

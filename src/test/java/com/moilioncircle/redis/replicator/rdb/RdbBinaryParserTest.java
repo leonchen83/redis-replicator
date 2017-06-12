@@ -21,14 +21,13 @@ import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen
@@ -131,13 +130,13 @@ public class RdbBinaryParserTest {
 
         for (ZSetEntry entry : zset) {
             if (entry.getElement().equals("8b6ba6718a786daefa69438148361901")) {
-                assertEquals(1d, entry.getScore());
+                assertEquals(1d, entry.getScore(), 0.0001);
             }
             if (entry.getElement().equals("cb7a24bb7528f934b841b34c3a73e0c7")) {
-                assertEquals(2.37d, entry.getScore());
+                assertEquals(2.37d, entry.getScore(), 0.0001);
             }
             if (entry.getElement().equals("523af537946b79c4f8369ed39ba78605")) {
-                assertEquals(3.423d, entry.getScore());
+                assertEquals(3.423d, entry.getScore(), 0.0001);
             }
         }
 
@@ -243,7 +242,7 @@ public class RdbBinaryParserTest {
             });
             replicator.open();
         } catch (Exception e) {
-            TestCase.fail();
+            fail();
         }
     }
 }

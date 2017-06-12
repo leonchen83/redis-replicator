@@ -18,7 +18,6 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
@@ -34,12 +33,15 @@ import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
 @SuppressWarnings("resource")
-public class RedisSocketReplicatorSSLTest extends TestCase {
+public class RedisSocketReplicatorSSLTest {
 
     private static void setJvmTrustStore(String trustStoreFilePath, String trustStoreType) {
         Assert.assertTrue(String.format("Could not find trust store at '%s'.", trustStoreFilePath),

@@ -29,12 +29,14 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import junit.framework.TestCase;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen
@@ -60,33 +62,33 @@ public class RdbBinaryTest {
                 KeyStringValueString ksvs = (KeyStringValueString) kv;
                 try {
                     Test obj = (Test) toObject(ksvs.getRawValue());
-                    TestCase.assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
-                    TestCase.assertEquals(1000301032, obj.getB());
-                    TestCase.assertEquals(440910321039102L, obj.getC());
+                    assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
+                    assertEquals(1000301032, obj.getB());
+                    assertEquals(440910321039102L, obj.getC());
                 } catch (IOException | ClassNotFoundException e) {
-                    TestCase.fail();
+                    fail();
                 }
             }
             if (kv.getKey().equals("seri2")) {
                 KeyStringValueHash ksvs = (KeyStringValueHash) kv;
                 try {
                     Test obj = (Test) toObject(ksvs.getRawValue(), "field2".getBytes());
-                    TestCase.assertEquals("中文测试12131", obj.getA());
-                    TestCase.assertEquals(1000301032, obj.getB());
-                    TestCase.assertEquals(440910321039102L, obj.getC());
+                    assertEquals("中文测试12131", obj.getA());
+                    assertEquals(1000301032, obj.getB());
+                    assertEquals(440910321039102L, obj.getC());
                 } catch (IOException | ClassNotFoundException e) {
-                    TestCase.fail();
+                    fail();
                 }
             }
             if (kv.getKey().equals("seri3")) {
                 KeyStringValueList ksvs = (KeyStringValueList) kv;
                 try {
                     Test obj = (Test) toObject(ksvs.getRawValue());
-                    TestCase.assertEquals("中文测试jfskdfjslf", obj.getA());
-                    TestCase.assertEquals(1000301032, obj.getB());
-                    TestCase.assertEquals(440910321039102L, obj.getC());
+                    assertEquals("中文测试jfskdfjslf", obj.getA());
+                    assertEquals(1000301032, obj.getB());
+                    assertEquals(440910321039102L, obj.getC());
                 } catch (IOException | ClassNotFoundException e) {
-                    TestCase.fail();
+                    fail();
                 }
             }
         }
@@ -110,33 +112,33 @@ public class RdbBinaryTest {
                 SetCommand s = (SetCommand) cmd;
                 try {
                     Test obj = (Test) toObject(s.getRawValue());
-                    TestCase.assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
-                    TestCase.assertEquals(1000301032, obj.getB());
-                    TestCase.assertEquals(440910321039102L, obj.getC());
+                    assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
+                    assertEquals(1000301032, obj.getB());
+                    assertEquals(440910321039102L, obj.getC());
                 } catch (IOException | ClassNotFoundException e) {
-                    TestCase.fail();
+                    fail();
                 }
             }
             if (cmd instanceof HMSetCommand) {
                 HMSetCommand h = (HMSetCommand) cmd;
                 try {
                     Test obj = (Test) toObject(h.getRawFields(), "field2".getBytes());
-                    TestCase.assertEquals("中文测试12131", obj.getA());
-                    TestCase.assertEquals(1000301032, obj.getB());
-                    TestCase.assertEquals(440910321039102L, obj.getC());
+                    assertEquals("中文测试12131", obj.getA());
+                    assertEquals(1000301032, obj.getB());
+                    assertEquals(440910321039102L, obj.getC());
                 } catch (IOException | ClassNotFoundException e) {
-                    TestCase.fail();
+                    fail();
                 }
             }
             if (cmd instanceof SAddCommand) {
                 SAddCommand s = (SAddCommand) cmd;
                 try {
                     Test obj = (Test) toObject(s.getRawMembers()[0]);
-                    TestCase.assertEquals("中文测试jfskdfjslf", obj.getA());
-                    TestCase.assertEquals(1000301032, obj.getB());
-                    TestCase.assertEquals(440910321039102L, obj.getC());
+                    assertEquals("中文测试jfskdfjslf", obj.getA());
+                    assertEquals(1000301032, obj.getB());
+                    assertEquals(440910321039102L, obj.getC());
                 } catch (IOException | ClassNotFoundException e) {
-                    TestCase.fail();
+                    fail();
                 }
             }
         }

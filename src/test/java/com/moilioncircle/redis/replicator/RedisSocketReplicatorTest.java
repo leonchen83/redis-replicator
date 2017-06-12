@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.impl.*;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import junit.framework.TestCase;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ZParams;
@@ -33,12 +32,15 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
 @SuppressWarnings("resource")
-public class RedisSocketReplicatorTest extends TestCase {
+public class RedisSocketReplicatorTest {
 
     @Test
     public void testSet() throws Exception {
@@ -127,8 +129,8 @@ public class RedisSocketReplicatorTest extends TestCase {
                     assertEquals(2, zInterStoreCommand.getNumkeys());
                     assertEquals("zset1", zInterStoreCommand.getKeys()[0]);
                     assertEquals("zset2", zInterStoreCommand.getKeys()[1]);
-                    assertEquals(2.0, zInterStoreCommand.getWeights()[0]);
-                    assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
+                    assertEquals(2.0, zInterStoreCommand.getWeights()[0], 0.0001);
+                    assertEquals(3.0, zInterStoreCommand.getWeights()[1], 0.0001);
                     assertEquals(AggregateType.MIN, zInterStoreCommand.getAggregateType());
                     ref.compareAndSet(null, "ok");
                     try {
@@ -189,8 +191,8 @@ public class RedisSocketReplicatorTest extends TestCase {
                     assertEquals(2, zInterStoreCommand.getNumkeys());
                     assertEquals("zset3", zInterStoreCommand.getKeys()[0]);
                     assertEquals("zset4", zInterStoreCommand.getKeys()[1]);
-                    assertEquals(2.0, zInterStoreCommand.getWeights()[0]);
-                    assertEquals(3.0, zInterStoreCommand.getWeights()[1]);
+                    assertEquals(2.0, zInterStoreCommand.getWeights()[0], 0.0001);
+                    assertEquals(3.0, zInterStoreCommand.getWeights()[1], 0.0001);
                     assertEquals(AggregateType.SUM, zInterStoreCommand.getAggregateType());
                     ref.compareAndSet(null, "ok");
                     try {
@@ -264,7 +266,7 @@ public class RedisSocketReplicatorTest extends TestCase {
                 } else if (command instanceof ZAddCommand) {
                     ZAddCommand zaddCommand = (ZAddCommand) command;
                     assertEquals("zzlist", zaddCommand.getKey());
-                    assertEquals(1.5, zaddCommand.getZSetEntries()[0].getScore());
+                    assertEquals(1.5, zaddCommand.getZSetEntries()[0].getScore(), 0.0001);
                     assertEquals("member", zaddCommand.getZSetEntries()[0].getElement());
                     assertEquals(ExistType.NX, zaddCommand.getExistType());
                     ref.compareAndSet("1", "2");

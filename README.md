@@ -575,7 +575,7 @@ default `Configuration.getReadTimeout()` is 30 seconds
   
 ## 5.8. Handle raw bytes  
   
-* for any KeyValuePair type except KeyStringValueModule, we can get the raw bytes. In some cases(e.g. HyperLogLog),this is very useful.  
+* for any `KeyValuePair` type except `KeyStringValueModule`, we can get the raw bytes. In some cases(e.g. HyperLogLog),this is very useful.  
 
   
 ```java  

@@ -581,7 +581,7 @@ redis 2.4 - 4.0
   
 ## 5.8. 处理原始字节数组  
   
-* 除KeyStringValueModule以外的kv类型, 都可以得到原始的字节数组. 在某些情况(比如HyperLogLog)下会很有用.  
+* 除`KeyStringValueModule`以外的kv类型, 都可以得到原始的字节数组. 在某些情况(比如HyperLogLog)下会很有用.  
   
 ```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());

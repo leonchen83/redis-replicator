@@ -30,6 +30,7 @@ import java.util.TimerTask;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class TimerTaskExample {
     public static void main(String[] args) throws IOException {
         final Timer timer = new Timer("sync");

@@ -23,15 +23,24 @@ import java.io.Serializable;
  * @since 2.1.0
  */
 public class ZSetEntry implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private String element;
     private double score;
+    private byte[] rawElement;
 
     public ZSetEntry() {
     }
 
     public ZSetEntry(String element, double score) {
+        this(element, score, null);
+    }
+
+    public ZSetEntry(String element, double score, byte[] rawElement) {
         this.element = element;
         this.score = score;
+        this.rawElement = rawElement;
     }
 
     public String getElement() {
@@ -50,8 +59,37 @@ public class ZSetEntry implements Serializable {
         this.score = score;
     }
 
+    public byte[] getRawElement() {
+        return rawElement;
+    }
+
+    public void setRawElement(byte[] rawElement) {
+        this.rawElement = rawElement;
+    }
+
     @Override
     public String toString() {
         return "[" + element + ", " + score + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ZSetEntry zSetEntry = (ZSetEntry) o;
+
+        if (Double.compare(zSetEntry.score, score) != 0) return false;
+        return element.equals(zSetEntry.element);
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = element.hashCode();
+        temp = Double.doubleToLongBits(score);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 }

@@ -87,7 +87,7 @@ redis 2.4 - 4.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.1.2</version>
+        <version>2.2.0</version>
     </dependency>
 ```
 
@@ -325,7 +325,7 @@ redis 2.4 - 4.0
 
         @Override
         public YourAppendCommand parse(Object[] command) {
-            return new YourAppendCommand((String) command[1], (String) command[2]);
+            return new YourAppendCommand(new String((byte[]) command[1], CHARSET), new String((byte[]) command[2], CHARSET));
         }
     }
 
@@ -402,8 +402,8 @@ redis 2.4 - 4.0
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = (String) command[1];
-            long value = Long.parseLong((String) command[2]);
+            String key = new String((byte[])command[1],Constants.CHARSET);
+            long value = Long.parseLong(new String((byte[])command[2],Constants.CHARSET));
             return new HelloTypeCommand(key, value);
         }
     }
@@ -581,7 +581,7 @@ redis 2.4 - 4.0
   
 ## 5.8. 处理原始字节数组  
   
-* 当kv.getValueRdbType() == 0时, 可以得到原始的字节数组. 在某些情况(比如HyperLogLog)下会很有用.  
+* 除`KeyStringValueModule`以外的kv类型, 都可以得到原始的字节数组. 在某些情况(比如HyperLogLog)下会很有用.  
   
 ```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -590,16 +590,34 @@ redis 2.4 - 4.0
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof KeyStringValueString) {
                     KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    System.out.println(Arrays.toString(ksvs.getRawBytes()));
+                    byte[] rawValue = ksvs.getRawValue();
+                    // handle raw bytes value
+                } else if (kv instanceof KeyStringValueHash) {
+                    KeyStringValueHash ksvh = (KeyStringValueHash) kv;
+                    Map<byte[], byte[]> rawValue = ksvh.getRawValue();
+                    // handle raw bytes value
+                } else {
+                    ...
                 }
             }
         });
         replicator.open();
 ```  
   
+为了操作简便`KeyStringValueHash.getRawValue`返回的`Map<byte[], byte[]>`中的key可以当做值类型存取  
+
+```java  
+KeyStringValueHash ksvh = (KeyStringValueHash) kv;
+Map<byte[], byte[]> rawValue = ksvh.getRawValue();
+byte[] value = new byte[]{2};
+rawValue.put(new byte[]{1}, value);
+System.out.println(rawValue.get(new byte[]{1}) == value) //will print true 
+```
+  
 # 6. 贡献者  
 * Leon Chen  
 * Adrian Yao  
+* Trydofor  
   
 # 7. 相关引用  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

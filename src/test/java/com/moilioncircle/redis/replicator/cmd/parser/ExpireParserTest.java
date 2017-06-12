@@ -25,11 +25,11 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class ExpireParserTest {
+public class ExpireParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         ExpireParser parser = new ExpireParser();
-        ExpireCommand cmd = parser.parse("expire key 100".split(" "));
+        ExpireCommand cmd = parser.parse(toObjectArray("expire key 100".split(" ")));
         assertEquals("key", cmd.getKey());
         assertEquals(100, cmd.getEx());
         System.out.println(cmd);

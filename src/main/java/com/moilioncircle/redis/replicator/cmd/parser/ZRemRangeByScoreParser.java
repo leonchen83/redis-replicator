@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByScoreCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.1
@@ -28,9 +31,15 @@ public class ZRemRangeByScoreParser implements CommandParser<ZRemRangeByScoreCom
     @Override
     public ZRemRangeByScoreCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
-        String min = (String) command[idx++];
-        String max = (String) command[idx++];
-        return new ZRemRangeByScoreCommand(key, min, max);
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        String min = objToString(command[idx]);
+        byte[] rawMin = objToBytes(command[idx]);
+        idx++;
+        String max = objToString(command[idx]);
+        byte[] rawMax = objToBytes(command[idx]);
+        idx++;
+        return new ZRemRangeByScoreCommand(key, min, max, rawKey, rawMin, rawMax);
     }
 }

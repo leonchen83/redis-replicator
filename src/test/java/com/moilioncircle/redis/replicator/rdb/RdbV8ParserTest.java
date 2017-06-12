@@ -22,7 +22,6 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -30,7 +29,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen
@@ -40,22 +40,23 @@ import static junit.framework.TestCase.assertEquals;
 public class RdbV8ParserTest {
     @Test
     public void testParse() throws Exception {
-        ConcurrentHashMap<String, KeyValuePair> map = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
         String[] resources = new String[]{"rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb"};
         for (String resource : resources) {
             template(resource, map);
         }
         assertEquals("bar", map.get("foo").getValue());
-        List<ZSetEntry> zset = new ArrayList(((Set<ZSetEntry>) map.get("bigset").getValue()));
+        List<ZSetEntry> zset = new ArrayList<>(((Set<ZSetEntry>) map.get("bigset").getValue()));
         assertEquals(1000, zset.size());
         for (ZSetEntry entry : zset) {
             if (entry.getElement().equals("finalfield")) {
-                assertEquals(2.718d, entry.getScore());
+                assertEquals(2.718d, entry.getScore(), 0.0001);
             }
         }
     }
 
-    public void template(String filename, final ConcurrentHashMap<String, KeyValuePair> map) {
+    @SuppressWarnings("resource")
+    public void template(String filename, final ConcurrentHashMap<String, KeyValuePair<?>> map) {
         try {
             Replicator replicator = new RedisReplicator(RdbParserTest.class.
                     getClassLoader().getResourceAsStream(filename)
@@ -63,13 +64,12 @@ public class RdbV8ParserTest {
             replicator.addRdbListener(new RdbListener.Adaptor() {
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                    System.out.println(kv);
                     map.put(kv.getKey(), kv);
                 }
             });
             replicator.open();
         } catch (Exception e) {
-            TestCase.fail();
+            fail();
         }
     }
 }

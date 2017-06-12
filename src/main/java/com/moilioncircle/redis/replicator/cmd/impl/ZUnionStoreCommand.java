@@ -25,21 +25,32 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class ZUnionStoreCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String destination;
     private int numkeys;
     private String[] keys;
     private double[] weights;
     private AggregateType aggregateType;
+    private byte[] rawDestination;
+    private byte[][] rawKeys;
 
     public ZUnionStoreCommand() {
     }
 
     public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType) {
+        this(destination, numkeys, keys, weights, aggregateType, null, null);
+    }
+
+    public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType, byte[] rawDestination, byte[][] rawKeys) {
         this.destination = destination;
         this.numkeys = numkeys;
         this.keys = keys;
         this.weights = weights;
         this.aggregateType = aggregateType;
+        this.rawDestination = rawDestination;
+        this.rawKeys = rawKeys;
     }
 
     public String getDestination() {
@@ -80,6 +91,22 @@ public class ZUnionStoreCommand implements Command {
 
     public void setAggregateType(AggregateType aggregateType) {
         this.aggregateType = aggregateType;
+    }
+
+    public byte[] getRawDestination() {
+        return rawDestination;
+    }
+
+    public void setRawDestination(byte[] rawDestination) {
+        this.rawDestination = rawDestination;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
     }
 
     @Override

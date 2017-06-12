@@ -192,7 +192,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
 
     protected void doClose() throws IOException {
         if (inputStream != null) try {
-            this.inputStream.removeRawByteListener(this);
+            this.inputStream.setRawByteListeners(null);
             inputStream.close();
         } catch (IOException ignore) { /*NOP*/ }
         doCloseListener(this);

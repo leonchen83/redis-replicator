@@ -21,6 +21,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
 
 import java.math.BigDecimal;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,7 +30,7 @@ import java.math.BigDecimal;
 public class SelectParser implements CommandParser<SelectCommand> {
     @Override
     public SelectCommand parse(Object[] command) {
-        int index = new BigDecimal((String) command[1]).intValueExact();
+        int index = new BigDecimal(objToString(command[1])).intValueExact();
         return new SelectCommand(index);
     }
 

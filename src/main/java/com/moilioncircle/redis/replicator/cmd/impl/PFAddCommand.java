@@ -25,15 +25,26 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class PFAddCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
-    private String elements[];
+    private String[] elements;
+    private byte[] rawKey;
+    private byte[][] rawElements;
 
     public PFAddCommand() {
     }
 
-    public PFAddCommand(String key, String... elements) {
+    public PFAddCommand(String key, String[] elements) {
+        this(key, elements, null, null);
+    }
+
+    public PFAddCommand(String key, String[] elements, byte[] rawKey, byte[][] rawElements) {
         this.key = key;
         this.elements = elements;
+        this.rawKey = rawKey;
+        this.rawElements = rawElements;
     }
 
     public String getKey() {
@@ -50,6 +61,22 @@ public class PFAddCommand implements Command {
 
     public void setElements(String[] elements) {
         this.elements = elements;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[][] getRawElements() {
+        return rawElements;
+    }
+
+    public void setRawElements(byte[][] rawElements) {
+        this.rawElements = rawElements;
     }
 
     @Override

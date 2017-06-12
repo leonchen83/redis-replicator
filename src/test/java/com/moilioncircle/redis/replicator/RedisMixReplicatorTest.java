@@ -31,6 +31,7 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class RedisMixReplicatorTest {
     @Test
     public void testOpen() throws IOException {
@@ -54,11 +55,11 @@ public class RedisMixReplicatorTest {
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
-                System.out.println("close open");
-                assertEquals(244653, acc.get());
-                assertEquals(59259, acc1.get());
+                System.out.println("close testOpen");
             }
         });
         replicator.open();
+        assertEquals(244653, acc.get());
+        assertEquals(59259, acc1.get());
     }
 }

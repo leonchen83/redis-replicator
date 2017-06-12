@@ -25,14 +25,14 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class BitFieldParserTest {
+public class BitFieldParserTest extends AbstractParserTest {
 
     @Test
     public void testParse() throws Exception {
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
-                    new Object[]{"bitfield", "mykey", "overflow", "sat"});
+                    toObjectArray(new Object[]{"bitfield", "mykey", "overflow", "sat"}));
             assertEquals("mykey", command.getKey());
             assertEquals(0, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
@@ -44,7 +44,7 @@ public class BitFieldParserTest {
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
-                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "overflow", "sat"});
+                    toObjectArray(new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "overflow", "sat"}));
             assertEquals("mykey", command.getKey());
             assertEquals(1, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
@@ -55,7 +55,7 @@ public class BitFieldParserTest {
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
-                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "sat"});
+                    toObjectArray(new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "sat"}));
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
@@ -66,7 +66,7 @@ public class BitFieldParserTest {
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
-                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
+                    toObjectArray(new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"}));
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
@@ -76,7 +76,7 @@ public class BitFieldParserTest {
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
-                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
+                    toObjectArray(new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"}));
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(3, command.getOverFlows().size());
@@ -87,7 +87,7 @@ public class BitFieldParserTest {
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
-                    new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "get", "i8", "10", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"});
+                    toObjectArray(new Object[]{"bitfield", "mykey", "incrby", "i5", "100", "1", "get", "i8", "10", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "wrap", "incrby", "i5", "100", "1", "set", "i8", "#0", "100", "overflow", "fail"}));
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(3, command.getOverFlows().size());

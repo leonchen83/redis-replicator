@@ -23,15 +23,26 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class RenameCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private String newKey;
+    private byte[] rawKey;
+    private byte[] rawNewKey;
 
     public RenameCommand() {
     }
 
     public RenameCommand(String key, String newKey) {
+        this(key, newKey, null, null);
+    }
+
+    public RenameCommand(String key, String newKey, byte[] rawKey, byte[] rawNewKey) {
         this.key = key;
         this.newKey = newKey;
+        this.rawKey = rawKey;
+        this.rawNewKey = rawNewKey;
     }
 
     public String getKey() {
@@ -48,6 +59,22 @@ public class RenameCommand implements Command {
 
     public void setNewKey(String newKey) {
         this.newKey = newKey;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawNewKey() {
+        return rawNewKey;
+    }
+
+    public void setRawNewKey(byte[] rawNewKey) {
+        this.rawNewKey = rawNewKey;
     }
 
     @Override

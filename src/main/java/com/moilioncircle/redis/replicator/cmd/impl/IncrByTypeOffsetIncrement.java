@@ -21,17 +21,28 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @since 2.1.0
  */
 public class IncrByTypeOffsetIncrement implements Statement {
+
+    private static final long serialVersionUID = 1L;
+
     private String type;
     private String offset;
     private long increment;
+    private byte[] rawType;
+    private byte[] rawOffset;
 
     public IncrByTypeOffsetIncrement() {
     }
 
     public IncrByTypeOffsetIncrement(String type, String offset, long increment) {
+        this(type, offset, increment, null, null);
+    }
+
+    public IncrByTypeOffsetIncrement(String type, String offset, long increment, byte[] rawType, byte[] rawOffset) {
         this.type = type;
         this.offset = offset;
         this.increment = increment;
+        this.rawType = rawType;
+        this.rawOffset = rawOffset;
     }
 
     public String getType() {
@@ -56,6 +67,22 @@ public class IncrByTypeOffsetIncrement implements Statement {
 
     public void setIncrement(long increment) {
         this.increment = increment;
+    }
+
+    public byte[] getRawType() {
+        return rawType;
+    }
+
+    public void setRawType(byte[] rawType) {
+        this.rawType = rawType;
+    }
+
+    public byte[] getRawOffset() {
+        return rawOffset;
+    }
+
+    public void setRawOffset(byte[] rawOffset) {
+        this.rawOffset = rawOffset;
     }
 
     @Override

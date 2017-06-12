@@ -21,6 +21,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByRankCommand;
 
 import java.math.BigDecimal;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.1
@@ -30,9 +33,11 @@ public class ZRemRangeByRankParser implements CommandParser<ZRemRangeByRankComma
     @Override
     public ZRemRangeByRankCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
-        long start = new BigDecimal((String) command[idx++]).longValueExact();
-        long stop = new BigDecimal((String) command[idx++]).longValueExact();
-        return new ZRemRangeByRankCommand(key, start, stop);
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        long start = new BigDecimal(objToString(command[idx++])).longValueExact();
+        long stop = new BigDecimal(objToString(command[idx++])).longValueExact();
+        return new ZRemRangeByRankCommand(key, start, stop, rawKey);
     }
 }

@@ -25,19 +25,32 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class EvalCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String script;
     private int numkeys;
     private String[] keys;
     private String[] args;
+    private byte[] rawScript;
+    private byte[][] rawKeys;
+    private byte[][] rawArgs;
 
     public EvalCommand() {
     }
 
     public EvalCommand(String script, int numkeys, String[] keys, String[] args) {
+        this(script, numkeys, keys, args, null, null, null);
+    }
+
+    public EvalCommand(String script, int numkeys, String[] keys, String[] args, byte[] rawScript, byte[][] rawKeys, byte[][] rawArgs) {
         this.script = script;
         this.numkeys = numkeys;
         this.keys = keys;
         this.args = args;
+        this.rawScript = rawScript;
+        this.rawKeys = rawKeys;
+        this.rawArgs = rawArgs;
     }
 
     public String getScript() {
@@ -70,6 +83,30 @@ public class EvalCommand implements Command {
 
     public void setArgs(String[] args) {
         this.args = args;
+    }
+
+    public byte[] getRawScript() {
+        return rawScript;
+    }
+
+    public void setRawScript(byte[] rawScript) {
+        this.rawScript = rawScript;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
+    }
+
+    public byte[][] getRawArgs() {
+        return rawArgs;
+    }
+
+    public void setRawArgs(byte[][] rawArgs) {
+        this.rawArgs = rawArgs;
     }
 
     @Override

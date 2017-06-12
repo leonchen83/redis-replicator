@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SRemCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,12 +31,16 @@ public class SRemParser implements CommandParser<SRemCommand> {
     @Override
     public SRemCommand parse(Object[] command) {
         int idx = 1;
-        final String key = (String) command[idx++];
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
         final String[] members = new String[command.length - 2];
+        final byte[][] rawMembers = new byte[command.length - 2][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            members[j] = (String) command[i];
+            members[j] = objToString(command[i]);
+            rawMembers[j] = objToBytes(command[i]);
         }
-        return new SRemCommand(key, members);
+        return new SRemCommand(key, members, rawKey, rawMembers);
     }
 
 }

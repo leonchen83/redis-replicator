@@ -21,6 +21,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetExCommand;
 
 import java.math.BigDecimal;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -29,10 +32,14 @@ public class SetExParser implements CommandParser<SetExCommand> {
     @Override
     public SetExCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
-        int ex = new BigDecimal((String) command[idx++]).intValueExact();
-        String value = (String) command[idx++];
-        return new SetExCommand(key, ex, value);
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
+        int ex = new BigDecimal(objToString(command[idx++])).intValueExact();
+        String value = objToString(command[idx]);
+        byte[] rawValue = objToBytes(command[idx]);
+        idx++;
+        return new SetExCommand(key, ex, value, rawKey, rawValue);
     }
 
 }

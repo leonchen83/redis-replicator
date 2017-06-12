@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SMoveCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,10 +31,16 @@ public class SMoveParser implements CommandParser<SMoveCommand> {
     @Override
     public SMoveCommand parse(Object[] command) {
         int idx = 1;
-        String source = (String) command[idx++];
-        String destination = (String) command[idx++];
-        String member = (String) command[idx++];
-        return new SMoveCommand(source, destination, member);
+        String source = objToString(command[idx]);
+        byte[] rawSource = objToBytes(command[idx]);
+        idx++;
+        String destination = objToString(command[idx]);
+        byte[] rawDestination = objToBytes(command[idx]);
+        idx++;
+        String member = objToString(command[idx]);
+        byte[] rawMember = objToBytes(command[idx]);
+        idx++;
+        return new SMoveCommand(source, destination, member, rawSource, rawDestination, rawMember);
     }
 
 }

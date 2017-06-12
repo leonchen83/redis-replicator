@@ -24,10 +24,13 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
+import static com.moilioncircle.redis.replicator.Constants.CHARSET;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class CommandParserExample {
     public static void main(String[] args) throws Exception {
         final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -51,10 +54,14 @@ public class CommandParserExample {
 
         @Override
         public YourAppendCommand parse(Object[] command) {
-            return new YourAppendCommand((String) command[1], (String) command[2]);
+            return new YourAppendCommand(new String((byte[]) command[1], CHARSET), new String((byte[]) command[2], CHARSET));
         }
 
         public static class YourAppendCommand implements Command {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
             public final String key;
             public final String value;
 

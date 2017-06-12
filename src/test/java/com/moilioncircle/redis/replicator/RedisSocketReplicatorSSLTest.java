@@ -18,7 +18,6 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
@@ -34,11 +33,15 @@ import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class RedisSocketReplicatorSSLTest extends TestCase {
+@SuppressWarnings("resource")
+public class RedisSocketReplicatorSSLTest {
 
     private static void setJvmTrustStore(String trustStoreFilePath, String trustStoreType) {
         Assert.assertTrue(String.format("Could not find trust store at '%s'.", trustStoreFilePath),
@@ -157,12 +160,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                         .setSslParameters(new SSLParameters())
                         .setSslSocketFactory(createTrustStoreSslSocketFactory()));
         final AtomicInteger acc = new AtomicInteger(0);
-        Jedis jedis = null;
-        try {
-            jedis = new Jedis("127.0.0.1", 6379);
+        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
             jedis.set("ssl2", "true");
-        } finally {
-            jedis.close();
         }
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -176,17 +175,12 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                Jedis jedis = null;
-                try {
-                    jedis = new Jedis("127.0.0.1", 6379);
+                try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
                     jedis.del("ssl2");
-                } finally {
-                    jedis.close();
                 }
                 try {
                     replicator.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -194,10 +188,10 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testSsl2");
-                assertEquals(1, acc.get());
             }
         });
         replicator.open();
+        assertEquals(1, acc.get());
     }
 
     @Test
@@ -209,12 +203,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                         .setSslParameters(new SSLParameters())
                         .setSslSocketFactory(createTrustNoOneSslSocketFactory()));
         final AtomicInteger acc = new AtomicInteger(0);
-        Jedis jedis = null;
-        try {
-            jedis = new Jedis("127.0.0.1", 6379);
+        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
             jedis.set("ssl3", "true");
-        } finally {
-            jedis.close();
         }
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -225,24 +215,18 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv.getKey().equals("ssl3")) {
-                    System.out.println(kv);
                     acc.incrementAndGet();
                 }
             }
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                Jedis jedis = null;
-                try {
-                    jedis = new Jedis("127.0.0.1", 6379);
+                try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
                     jedis.del("ssl3");
-                } finally {
-                    jedis.close();
                 }
                 try {
                     replicator.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -256,7 +240,6 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             replicator.open();
             fail();
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -269,12 +252,8 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
                         .setSslParameters(new SSLParameters())
                         .setSslSocketFactory(createTrustStoreSslSocketFactory()));
         final AtomicInteger acc = new AtomicInteger(0);
-        Jedis jedis = null;
-        try {
-            jedis = new Jedis("127.0.0.1", 6379);
+        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
             jedis.set("ssl4", "true");
-        } finally {
-            jedis.close();
         }
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -288,17 +267,12 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                Jedis jedis = null;
-                try {
-                    jedis = new Jedis("127.0.0.1", 6379);
+                try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
                     jedis.del("ssl4");
-                } finally {
-                    jedis.close();
                 }
                 try {
                     replicator.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -306,21 +280,17 @@ public class RedisSocketReplicatorSSLTest extends TestCase {
             @Override
             public void handle(Replicator replicator) {
                 System.out.println("close testSsl4");
-                assertEquals(0, acc.get());
             }
         });
         replicator.open();
+        assertEquals(0, acc.get());
     }
 
     private static SSLSocketFactory createTrustStoreSslSocketFactory() throws Exception {
 
         KeyStore trustStore = KeyStore.getInstance("jceks");
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream("src/test/resources/keystore/truststore.jceks");
+        try (InputStream inputStream = new FileInputStream("src/test/resources/keystore/truststore.jceks")) {
             trustStore.load(inputStream, null);
-        } finally {
-            inputStream.close();
         }
 
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");

@@ -15,7 +15,9 @@ hs_err_pid*
 # Eclipse
 /.project
 /.classpath
+/.settings
 
 # Idea
 /redis-replicator.iml
 /.idea
+/bin/

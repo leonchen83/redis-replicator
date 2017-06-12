@@ -26,15 +26,27 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class LPushXCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private String[] values;
+    private byte[] rawKey;
+    private byte[][] rawValues;
+
 
     public LPushXCommand() {
     }
 
     public LPushXCommand(String key, String[] values) {
+        this(key, values, null, null);
+    }
+
+    public LPushXCommand(String key, String[] values, byte[] rawKey, byte[][] rawValues) {
         this.key = key;
         this.values = values;
+        this.rawKey = rawKey;
+        this.rawValues = rawValues;
     }
 
     public String getKey() {
@@ -51,6 +63,22 @@ public class LPushXCommand implements Command {
 
     public void setValues(String[] values) {
         this.values = values;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[][] getRawValues() {
+        return rawValues;
+    }
+
+    public void setRawValues(byte[][] rawValues) {
+        this.rawValues = rawValues;
     }
 
     @Override

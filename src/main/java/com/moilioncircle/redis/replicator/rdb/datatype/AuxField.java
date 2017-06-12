@@ -24,6 +24,8 @@ import com.moilioncircle.redis.replicator.event.Event;
  */
 public class AuxField implements Event {
 
+    private static final long serialVersionUID = 1L;
+
     private String auxKey;
     private String auxValue;
 

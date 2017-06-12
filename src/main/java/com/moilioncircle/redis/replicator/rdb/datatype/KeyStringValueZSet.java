@@ -23,4 +23,5 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class KeyStringValueZSet extends KeyValuePair<Set<ZSetEntry>> {
+    private static final long serialVersionUID = 1L;
 }

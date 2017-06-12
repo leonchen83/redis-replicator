@@ -26,11 +26,13 @@ import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
+import com.moilioncircle.redis.replicator.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
-import java.util.Arrays;
+
+import static com.moilioncircle.redis.replicator.Constants.CHARSET;
 
 /**
  * @author Leon Chen
@@ -48,10 +50,11 @@ public class RedisAofReplicator extends AbstractReplicator {
     public RedisAofReplicator(InputStream in, Configuration configuration) {
         this.configuration = configuration;
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
-        this.inputStream.addRawByteListener(this);
+        this.inputStream.setRawByteListeners(this.rawByteListeners);
         this.replyParser = new ReplyParser(inputStream);
         builtInCommandParserRegister();
-        addExceptionListener(new DefaultExceptionListener());
+        if (configuration.isUseDefaultExceptionListener())
+            addExceptionListener(new DefaultExceptionListener());
     }
 
     @Override
@@ -70,16 +73,15 @@ public class RedisAofReplicator extends AbstractReplicator {
             Object obj = replyParser.parse();
 
             if (obj instanceof Object[]) {
-                if (configuration.isVerbose() && logger.isDebugEnabled()) {
+                if (configuration.isVerbose() && logger.isDebugEnabled())
                     logger.debug(Arrays.deepToString((Object[]) obj));
-                }
                 Object[] command = (Object[]) obj;
-                CommandName cmdName = CommandName.name((String) command[0]);
+                CommandName cmdName = CommandName.name(new String((byte[]) command[0], CHARSET));
                 final CommandParser<? extends Command> operations;
                 //if command do not register. ignore
                 if ((operations = commands.get(cmdName)) == null) {
                     if (logger.isWarnEnabled()) {
-                        logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString((Object[]) obj) + "]");
+                        logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(command) + "]");
                     }
                     continue;
                 }

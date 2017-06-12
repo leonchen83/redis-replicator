@@ -25,11 +25,11 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class PublishParserTest {
+public class PublishParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         PublishParser parser = new PublishParser();
-        PublishCommand cmd = parser.parse("publish channel msg".split(" "));
+        PublishCommand cmd = parser.parse(toObjectArray("publish channel msg".split(" ")));
         assertEquals("channel", cmd.getChannel());
         assertEquals("msg", cmd.getMessage());
         System.out.println(cmd);

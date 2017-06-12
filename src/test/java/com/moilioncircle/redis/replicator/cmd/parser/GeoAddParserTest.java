@@ -25,11 +25,11 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class GeoAddParserTest {
+public class GeoAddParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         GeoAddParser parser = new GeoAddParser();
-        GeoAddCommand cmd = parser.parse("GEOADD Sicily 13.361389 38.115556 Palermo 15.087269 37.502669 Catania".split(" "));
+        GeoAddCommand cmd = parser.parse(toObjectArray("GEOADD Sicily 13.361389 38.115556 Palermo 15.087269 37.502669 Catania".split(" ")));
         assertEquals("Sicily", cmd.getKey());
         assertEquals(13.361389, cmd.getGeos()[0].getLongitude(), 0.000001);
         assertEquals(38.115556, cmd.getGeos()[0].getLatitude(), 0.000001);

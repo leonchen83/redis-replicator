@@ -23,6 +23,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -32,14 +35,16 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
     @Override
     public BitFieldCommand parse(Object[] command) {
         int idx = 1;
-        String key = (String) command[idx++];
+        String key = objToString(command[idx]);
+        byte[] rawKey = objToBytes(command[idx]);
+        idx++;
         List<Statement> list = new ArrayList<>();
         if (idx < command.length) {
             String token;
             do {
                 idx = parseStatement(idx, command, list);
                 if (idx >= command.length) break;
-                token = (String) command[idx];
+                token = objToString(command[idx]);
             }
             while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
         }
@@ -51,17 +56,17 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 idx = parseOverFlow(idx, command, overFlow);
                 overFlowList.add(overFlow);
                 if (idx >= command.length) break;
-            } while ("OVERFLOW".equalsIgnoreCase((String) command[idx]));
+            } while ("OVERFLOW".equalsIgnoreCase(objToString(command[idx])));
         }
 
-        return new BitFieldCommand(key, list, overFlowList);
+        return new BitFieldCommand(key, list, overFlowList, rawKey);
     }
 
     private int parseOverFlow(int i, Object[] params, OverFlow overFlow) {
         int idx = i;
-        accept((String) params[idx++], "OVERFLOW");
-        OverFlowType overFlowType = null;
-        String keyWord = (String) params[idx++];
+        accept(objToString(params[idx++]), "OVERFLOW");
+        OverFlowType overFlowType;
+        String keyWord = objToString(params[idx++]);
         if ("WRAP".equalsIgnoreCase(keyWord)) {
             overFlowType = OverFlowType.WRAP;
         } else if ("SAT".equalsIgnoreCase(keyWord)) {
@@ -77,7 +82,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
             do {
                 idx = parseStatement(idx, params, list);
                 if (idx >= params.length) break;
-                token = (String) params[idx];
+                token = objToString(params[idx]);
             }
             while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
         }
@@ -88,8 +93,8 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
 
     private int parseStatement(int i, Object[] params, List<Statement> list) {
         int idx = i;
-        String keyWord = (String) params[idx++];
-        Statement statement = null;
+        String keyWord = objToString(params[idx++]);
+        Statement statement;
         if ("GET".equalsIgnoreCase(keyWord)) {
             GetTypeOffset getTypeOffset = new GetTypeOffset();
             idx = parseGet(idx - 1, params, getTypeOffset);
@@ -111,35 +116,53 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
 
     private int parseIncrBy(int i, Object[] params, IncrByTypeOffsetIncrement incrByTypeOffsetIncrement) {
         int idx = i;
-        accept((String) params[idx++], "INCRBY");
-        String type = (String) params[idx++];
-        String offset = (String) params[idx++];
-        long increment = new BigDecimal((String) params[idx++]).longValueExact();
+        accept(objToString(params[idx++]), "INCRBY");
+        String type = objToString(params[idx]);
+        byte[] rawType = objToBytes(params[idx]);
+        idx++;
+        String offset = objToString(params[idx]);
+        byte[] rawOffset = objToBytes(params[idx]);
+        idx++;
+        long increment = new BigDecimal(objToString(params[idx++])).longValueExact();
         incrByTypeOffsetIncrement.setType(type);
         incrByTypeOffsetIncrement.setOffset(offset);
         incrByTypeOffsetIncrement.setIncrement(increment);
+        incrByTypeOffsetIncrement.setRawType(rawType);
+        incrByTypeOffsetIncrement.setRawOffset(rawOffset);
         return idx;
     }
 
     private int parseSet(int i, Object[] params, SetTypeOffsetValue setTypeOffsetValue) {
         int idx = i;
-        accept((String) params[idx++], "SET");
-        String type = (String) params[idx++];
-        String offset = (String) params[idx++];
-        long value = new BigDecimal((String) params[idx++]).longValueExact();
+        accept(objToString(params[idx++]), "SET");
+        String type = objToString(params[idx]);
+        byte[] rawType = objToBytes(params[idx]);
+        idx++;
+        String offset = objToString(params[idx]);
+        byte[] rawOffset = objToBytes(params[idx]);
+        idx++;
+        long value = new BigDecimal(objToString(params[idx++])).longValueExact();
         setTypeOffsetValue.setType(type);
         setTypeOffsetValue.setOffset(offset);
         setTypeOffsetValue.setValue(value);
+        setTypeOffsetValue.setRawType(rawType);
+        setTypeOffsetValue.setRawOffset(rawOffset);
         return idx;
     }
 
     private int parseGet(int i, Object[] params, GetTypeOffset getTypeOffset) {
         int idx = i;
-        accept((String) params[idx++], "GET");
-        String type = (String) params[idx++];
-        String offset = (String) params[idx++];
+        accept(objToString(params[idx++]), "GET");
+        String type = objToString(params[idx]);
+        byte[] rawType = objToBytes(params[idx]);
+        idx++;
+        String offset = objToString(params[idx]);
+        byte[] rawOffset = objToBytes(params[idx]);
+        idx++;
         getTypeOffset.setType(type);
         getTypeOffset.setOffset(offset);
+        getTypeOffset.setRawType(rawType);
+        getTypeOffset.setRawOffset(rawOffset);
         return idx;
     }
 

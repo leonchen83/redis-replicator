@@ -24,6 +24,8 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class MultiCommand implements Command {
 
+    private static final long serialVersionUID = 1L;
+
     public MultiCommand() {
     }
 

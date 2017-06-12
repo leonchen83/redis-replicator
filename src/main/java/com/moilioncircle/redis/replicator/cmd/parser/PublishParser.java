@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PublishCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -27,9 +30,13 @@ public class PublishParser implements CommandParser<PublishCommand> {
     @Override
     public PublishCommand parse(Object[] command) {
         int idx = 1;
-        String channel = (String) command[idx++];
-        String message = (String) command[idx++];
-        return new PublishCommand(channel, message);
+        String channel = objToString(command[idx]);
+        byte[] rawChannel = objToBytes(command[idx]);
+        idx++;
+        String message = objToString(command[idx]);
+        byte[] rawMessage = objToBytes(command[idx]);
+        idx++;
+        return new PublishCommand(channel, message, rawChannel, rawMessage);
     }
 
 }

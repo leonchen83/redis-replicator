@@ -26,11 +26,11 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class BitOpParserTest {
+public class BitOpParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         BitOpParser parser = new BitOpParser();
-        BitOpCommand cmd = parser.parse("bitop and des key1 key2".split(" "));
+        BitOpCommand cmd = parser.parse(toObjectArray("bitop and des key1 key2".split(" ")));
         assertEquals("des", cmd.getDestkey());
         assertEquals(Op.AND, cmd.getOp());
         assertEquals("key1", cmd.getKeys()[0]);

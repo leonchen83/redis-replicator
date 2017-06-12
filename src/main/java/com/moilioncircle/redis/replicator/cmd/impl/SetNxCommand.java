@@ -23,15 +23,26 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class SetNxCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private String value;
+    private byte[] rawKey;
+    private byte[] rawValue;
 
     public SetNxCommand() {
     }
 
     public SetNxCommand(String key, String value) {
+        this(key, value, null, null);
+    }
+
+    public SetNxCommand(String key, String value, byte[] rawKey, byte[] rawValue) {
         this.key = key;
         this.value = value;
+        this.rawKey = rawKey;
+        this.rawValue = rawValue;
     }
 
     public String getKey() {
@@ -48,6 +59,22 @@ public class SetNxCommand implements Command {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
     }
 
     @Override

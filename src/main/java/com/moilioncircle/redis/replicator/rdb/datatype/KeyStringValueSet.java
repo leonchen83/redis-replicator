@@ -23,4 +23,16 @@ import java.util.Set;
  * @since 2.1.0
  */
 public class KeyStringValueSet extends KeyValuePair<Set<String>> {
+
+    private static final long serialVersionUID = 1L;
+
+    protected Set<byte[]> rawValue;
+
+    public Set<byte[]> getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(Set<byte[]> rawValue) {
+        this.rawValue = rawValue;
+    }
 }

@@ -25,12 +25,12 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class MSetNxParserTest {
+public class MSetNxParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         {
             MSetNxParser parser = new MSetNxParser();
-            MSetNxCommand cmd = parser.parse("msetnx k1 v1 k2 v2".split(" "));
+            MSetNxCommand cmd = parser.parse(toObjectArray("msetnx k1 v1 k2 v2".split(" ")));
             assertEquals("v1", cmd.getKv().get("k1"));
             assertEquals("v2", cmd.getKv().get("k2"));
             System.out.println(cmd);
@@ -38,7 +38,7 @@ public class MSetNxParserTest {
 
         {
             MSetParser parser = new MSetParser();
-            MSetCommand cmd = parser.parse("mset k1 v1 k2 v2".split(" "));
+            MSetCommand cmd = parser.parse(toObjectArray("mset k1 v1 k2 v2".split(" ")));
             assertEquals("v1", cmd.getKv().get("k1"));
             assertEquals("v2", cmd.getKv().get("k2"));
             System.out.println(cmd);
@@ -46,14 +46,14 @@ public class MSetNxParserTest {
 
         {
             PersistParser parser = new PersistParser();
-            PersistCommand cmd = parser.parse("persist k1".split(" "));
+            PersistCommand cmd = parser.parse(toObjectArray("persist k1".split(" ")));
             assertEquals("k1", cmd.getKey());
             System.out.println(cmd);
         }
 
         {
             PFAddParser parser = new PFAddParser();
-            PFAddCommand cmd = parser.parse("pfadd k1 e1 e2".split(" "));
+            PFAddCommand cmd = parser.parse(toObjectArray("pfadd k1 e1 e2".split(" ")));
             assertEquals("k1", cmd.getKey());
             assertEquals("e1", cmd.getElements()[0]);
             assertEquals("e2", cmd.getElements()[1]);
@@ -62,7 +62,7 @@ public class MSetNxParserTest {
 
         {
             PFCountParser parser = new PFCountParser();
-            PFCountCommand cmd = parser.parse("pfcount k1 k2".split(" "));
+            PFCountCommand cmd = parser.parse(toObjectArray("pfcount k1 k2".split(" ")));
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
             System.out.println(cmd);
@@ -70,7 +70,7 @@ public class MSetNxParserTest {
 
         {
             PFMergeParser parser = new PFMergeParser();
-            PFMergeCommand cmd = parser.parse("pfmerge des k1 k2".split(" "));
+            PFMergeCommand cmd = parser.parse(toObjectArray("pfmerge des k1 k2".split(" ")));
             assertEquals("des", cmd.getDestkey());
             assertEquals("k1", cmd.getSourcekeys()[0]);
             assertEquals("k2", cmd.getSourcekeys()[1]);
@@ -79,7 +79,7 @@ public class MSetNxParserTest {
 
         {
             PSetExParser parser = new PSetExParser();
-            PSetExCommand cmd = parser.parse("psetex key 5 val".split(" "));
+            PSetExCommand cmd = parser.parse(toObjectArray("psetex key 5 val".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
             assertEquals("val", cmd.getValue());

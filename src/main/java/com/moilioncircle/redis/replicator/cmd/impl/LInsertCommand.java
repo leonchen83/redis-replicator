@@ -23,19 +23,32 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class LInsertCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private LInsertType lInsertType;
     private String pivot;
     private String value;
+    private byte[] rawKey;
+    private byte[] rawPivot;
+    private byte[] rawValue;
 
     public LInsertCommand() {
     }
 
     public LInsertCommand(String key, LInsertType lInsertType, String pivot, String value) {
+        this(key, lInsertType, pivot, value, null, null, null);
+    }
+
+    public LInsertCommand(String key, LInsertType lInsertType, String pivot, String value, byte[] rawKey, byte[] rawPivot, byte[] rawValue) {
         this.key = key;
+        this.lInsertType = lInsertType;
         this.pivot = pivot;
         this.value = value;
-        this.lInsertType = lInsertType;
+        this.rawKey = rawKey;
+        this.rawPivot = rawPivot;
+        this.rawValue = rawValue;
     }
 
     public String getKey() {
@@ -68,6 +81,30 @@ public class LInsertCommand implements Command {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawPivot() {
+        return rawPivot;
+    }
+
+    public void setRawPivot(byte[] rawPivot) {
+        this.rawPivot = rawPivot;
+    }
+
+    public byte[] getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
     }
 
     @Override

@@ -25,15 +25,26 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class ZRemCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private String[] members;
+    private byte[] rawKey;
+    private byte[][] rawMembers;
 
     public ZRemCommand() {
     }
 
-    public ZRemCommand(String key, String... members) {
+    public ZRemCommand(String key, String[] members) {
+        this(key, members, null, null);
+    }
+
+    public ZRemCommand(String key, String[] members, byte[] rawKey, byte[][] rawMembers) {
         this.key = key;
         this.members = members;
+        this.rawKey = rawKey;
+        this.rawMembers = rawMembers;
     }
 
     public String getKey() {
@@ -50,6 +61,22 @@ public class ZRemCommand implements Command {
 
     public void setMembers(String[] members) {
         this.members = members;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[][] getRawMembers() {
+        return rawMembers;
+    }
+
+    public void setRawMembers(byte[][] rawMembers) {
+        this.rawMembers = rawMembers;
     }
 
     @Override

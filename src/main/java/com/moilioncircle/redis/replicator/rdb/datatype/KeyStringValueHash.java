@@ -23,4 +23,16 @@ import java.util.Map;
  * @since 2.1.0
  */
 public class KeyStringValueHash extends KeyValuePair<Map<String, String>> {
+
+    private static final long serialVersionUID = 1L;
+
+    protected Map<byte[], byte[]> rawValue;
+
+    public Map<byte[], byte[]> getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(Map<byte[], byte[]> rawValue) {
+        this.rawValue = rawValue;
+    }
 }

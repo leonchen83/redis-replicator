@@ -21,4 +21,5 @@ package com.moilioncircle.redis.replicator.event;
  * @since 2.1.0
  */
 public class PreFullSyncEvent implements Event {
+    private static final long serialVersionUID = 1L;
 }

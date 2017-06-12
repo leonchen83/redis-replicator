@@ -25,13 +25,22 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class PFCountCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String[] keys;
+    private byte[][] rawKeys;
 
     public PFCountCommand() {
     }
 
-    public PFCountCommand(String... keys) {
+    public PFCountCommand(String[] keys) {
+        this(keys, null);
+    }
+
+    public PFCountCommand(String[] keys, byte[][] rawKeys) {
         this.keys = keys;
+        this.rawKeys = rawKeys;
     }
 
     public String[] getKeys() {
@@ -40,6 +49,14 @@ public class PFCountCommand implements Command {
 
     public void setKeys(String[] keys) {
         this.keys = keys;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
     }
 
     @Override

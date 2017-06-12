@@ -21,15 +21,26 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @since 2.1.0
  */
 public class GetTypeOffset implements Statement {
+
+    private static final long serialVersionUID = 1L;
+
     private String type;
     private String offset;
+    private byte[] rawType;
+    private byte[] rawOffset;
 
     public GetTypeOffset() {
     }
 
     public GetTypeOffset(String type, String offset) {
+        this(type, offset, null, null);
+    }
+
+    public GetTypeOffset(String type, String offset, byte[] rawType, byte[] rawOffset) {
         this.type = type;
         this.offset = offset;
+        this.rawType = rawType;
+        this.rawOffset = rawOffset;
     }
 
     public String getType() {
@@ -46,6 +57,22 @@ public class GetTypeOffset implements Statement {
 
     public void setOffset(String offset) {
         this.offset = offset;
+    }
+
+    public byte[] getRawType() {
+        return rawType;
+    }
+
+    public void setRawType(byte[] rawType) {
+        this.rawType = rawType;
+    }
+
+    public byte[] getRawOffset() {
+        return rawOffset;
+    }
+
+    public void setRawOffset(byte[] rawOffset) {
+        this.rawOffset = rawOffset;
     }
 
     @Override

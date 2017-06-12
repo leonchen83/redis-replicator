@@ -100,6 +100,13 @@ public class Configuration {
     private int heartBeatPeriod = 1000;
 
     /**
+     * use default exception handler
+     *
+     * @since 2.2.0
+     */
+    private boolean useDefaultExceptionListener = true;
+
+    /**
      * open ssl connection
      */
     private boolean ssl = false;
@@ -251,6 +258,15 @@ public class Configuration {
         return this;
     }
 
+    public boolean isUseDefaultExceptionListener() {
+        return useDefaultExceptionListener;
+    }
+
+    public Configuration setUseDefaultExceptionListener(boolean useDefaultExceptionListener) {
+        this.useDefaultExceptionListener = useDefaultExceptionListener;
+        return this;
+    }
+
     public int getRetryTimeInterval() {
         return retryTimeInterval;
     }
@@ -311,6 +327,7 @@ public class Configuration {
                 ", asyncCachedBytes=" + asyncCachedBytes +
                 ", verbose=" + verbose +
                 ", heartBeatPeriod=" + heartBeatPeriod +
+                ", useDefaultExceptionListener=" + useDefaultExceptionListener +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +
                 ", sslParameters=" + sslParameters +

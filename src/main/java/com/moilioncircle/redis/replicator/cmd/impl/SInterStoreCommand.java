@@ -25,15 +25,26 @@ import java.util.Arrays;
  * @since 2.1.0
  */
 public class SInterStoreCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String destination;
-    private String keys[];
+    private String[] keys;
+    private byte[] rawDestination;
+    private byte[][] rawKeys;
 
     public SInterStoreCommand() {
     }
 
-    public SInterStoreCommand(String destination, String... keys) {
+    public SInterStoreCommand(String destination, String[] keys) {
+        this(destination, keys, null, null);
+    }
+
+    public SInterStoreCommand(String destination, String[] keys, byte[] rawDestination, byte[][] rawKeys) {
         this.destination = destination;
         this.keys = keys;
+        this.rawDestination = rawDestination;
+        this.rawKeys = rawKeys;
     }
 
     public String getDestination() {
@@ -50,6 +61,22 @@ public class SInterStoreCommand implements Command {
 
     public void setKeys(String[] keys) {
         this.keys = keys;
+    }
+
+    public byte[] getRawDestination() {
+        return rawDestination;
+    }
+
+    public void setRawDestination(byte[] rawDestination) {
+        this.rawDestination = rawDestination;
+    }
+
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
+
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
     }
 
     @Override

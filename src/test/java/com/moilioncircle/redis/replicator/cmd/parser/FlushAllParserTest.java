@@ -26,27 +26,27 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class FlushAllParserTest {
+public class FlushAllParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         {
             FlushAllParser parser = new FlushAllParser();
-            FlushAllCommand cmd = parser.parse("flushall".split(" "));
+            FlushAllCommand cmd = parser.parse(toObjectArray("flushall".split(" ")));
             assertEquals(null, cmd.isAsync());
 
             parser = new FlushAllParser();
-            cmd = parser.parse("flushall async".split(" "));
+            cmd = parser.parse(toObjectArray("flushall async".split(" ")));
             assertEquals(Boolean.TRUE, cmd.isAsync());
             System.out.println(cmd);
         }
 
         {
             FlushDBParser parser = new FlushDBParser();
-            FlushDBCommand cmd = parser.parse("flushdb".split(" "));
+            FlushDBCommand cmd = parser.parse(toObjectArray("flushdb".split(" ")));
             assertEquals(null, cmd.isAsync());
 
             parser = new FlushDBParser();
-            cmd = parser.parse("flushdb async".split(" "));
+            cmd = parser.parse(toObjectArray("flushdb async".split(" ")));
             assertEquals(Boolean.TRUE, cmd.isAsync());
             System.out.println(cmd);
         }

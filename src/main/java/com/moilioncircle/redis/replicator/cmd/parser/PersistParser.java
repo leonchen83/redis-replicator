@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PersistCommand;
 
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -26,8 +29,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.PersistCommand;
 public class PersistParser implements CommandParser<PersistCommand> {
     @Override
     public PersistCommand parse(Object[] command) {
-        String key = (String) command[1];
-        return new PersistCommand(key);
+        String key = objToString(command[1]);
+        byte[] rawKey = objToBytes(command[1]);
+        return new PersistCommand(key, rawKey);
     }
 
 }

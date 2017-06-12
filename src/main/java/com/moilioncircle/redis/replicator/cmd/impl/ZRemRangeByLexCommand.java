@@ -23,17 +23,30 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.1
  */
 public class ZRemRangeByLexCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private String min;
     private String max;
+    private byte[] rawKey;
+    private byte[] rawMin;
+    private byte[] rawMax;
 
     public ZRemRangeByLexCommand() {
     }
 
     public ZRemRangeByLexCommand(String key, String min, String max) {
+        this(key, min, max, null, null, null);
+    }
+
+    public ZRemRangeByLexCommand(String key, String min, String max, byte[] rawKey, byte[] rawMin, byte[] rawMax) {
         this.key = key;
         this.min = min;
         this.max = max;
+        this.rawKey = rawKey;
+        this.rawMin = rawMin;
+        this.rawMax = rawMax;
     }
 
     public String getKey() {
@@ -58,6 +71,30 @@ public class ZRemRangeByLexCommand implements Command {
 
     public void setMax(String max) {
         this.max = max;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawMin() {
+        return rawMin;
+    }
+
+    public void setRawMin(byte[] rawMin) {
+        this.rawMin = rawMin;
+    }
+
+    public byte[] getRawMax() {
+        return rawMax;
+    }
+
+    public void setRawMax(byte[] rawMax) {
+        this.rawMax = rawMax;
     }
 
     @Override

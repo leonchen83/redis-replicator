@@ -30,6 +30,7 @@ import java.io.IOException;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class BroadcastEventExample {
     public static void main(String[] args) throws IOException {
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());

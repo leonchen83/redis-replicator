@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Leon Chen
@@ -39,7 +38,7 @@ public class RedisInputStream extends InputStream {
     protected final byte[] buf;
     protected boolean mark = false;
     protected final InputStream in;
-    protected final List<RawByteListener> listeners = new CopyOnWriteArrayList<>();
+    protected List<RawByteListener> rawByteListeners;
 
     public RedisInputStream(final InputStream in) {
         this(in, 8192);
@@ -50,16 +49,37 @@ public class RedisInputStream extends InputStream {
         this.buf = new byte[len];
     }
 
-    public void addRawByteListener(RawByteListener listener) {
-        this.listeners.add(listener);
+    /**
+     * @param rawByteListeners raw byte listeners
+     * @since 2.2.0
+     */
+    public synchronized void setRawByteListeners(List<RawByteListener> rawByteListeners) {
+        this.rawByteListeners = rawByteListeners;
     }
 
-    public void removeRawByteListener(RawByteListener listener) {
-        this.listeners.remove(listener);
+    /**
+     * @param rawByteListener raw bytes listener
+     * @since 2.2.0
+     * @deprecated use {@link #setRawByteListeners} instead. will remove in version 3.0.0
+     */
+    @Deprecated
+    public synchronized void addRawByteListener(RawByteListener rawByteListener) {
+        if (rawByteListeners != null) this.rawByteListeners.add(rawByteListener);
+    }
+
+    /**
+     * @param rawByteListener raw bytes listener
+     * @since 2.2.0
+     * @deprecated use {@link #setRawByteListeners} instead. will remove in version 3.0.0
+     */
+    @Deprecated
+    public synchronized void removeRawByteListener(RawByteListener rawByteListener) {
+        if (rawByteListeners != null) this.rawByteListeners.remove(rawByteListener);
     }
 
     protected void notify(byte... bytes) {
-        for (RawByteListener listener : listeners) {
+        if (rawByteListeners == null || rawByteListeners.isEmpty()) return;
+        for (RawByteListener listener : rawByteListeners) {
             listener.handle(bytes);
         }
     }
@@ -205,6 +225,16 @@ public class RedisInputStream extends InputStream {
             notify(b);
         }
         return len;
+    }
+
+    @Override
+    public int read(byte[] b) throws IOException {
+        return read(b, 0, b.length);
+    }
+
+    @Override
+    public int read(byte[] b, int off, int len) throws IOException {
+        return (int) read(new ByteArray(b), off, len);
     }
 
     @Override

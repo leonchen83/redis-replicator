@@ -25,13 +25,22 @@ import java.util.Map;
  * @since 2.1.0
  */
 public class MSetCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private Map<String, String> kv;
+    private Map<byte[], byte[]> rawKv;
 
     public MSetCommand() {
     }
 
     public MSetCommand(Map<String, String> kv) {
+        this(kv, null);
+    }
+
+    public MSetCommand(Map<String, String> kv, Map<byte[], byte[]> rawKv) {
         this.kv = kv;
+        this.rawKv = rawKv;
     }
 
     public Map<String, String> getKv() {
@@ -40,6 +49,14 @@ public class MSetCommand implements Command {
 
     public void setKv(Map<String, String> kv) {
         this.kv = kv;
+    }
+
+    public Map<byte[], byte[]> getRawKv() {
+        return rawKv;
+    }
+
+    public void setRawKv(Map<byte[], byte[]> rawKv) {
+        this.rawKv = rawKv;
     }
 
     @Override

@@ -23,17 +23,30 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class SMoveCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String source;
     private String destination;
     private String member;
+    private byte[] rawSource;
+    private byte[] rawDestination;
+    private byte[] rawMember;
 
     public SMoveCommand() {
     }
 
     public SMoveCommand(String source, String destination, String member) {
+        this(source, destination, member, null, null, null);
+    }
+
+    public SMoveCommand(String source, String destination, String member, byte[] rawSource, byte[] rawDestination, byte[] rawMember) {
         this.source = source;
         this.destination = destination;
         this.member = member;
+        this.rawSource = rawSource;
+        this.rawDestination = rawDestination;
+        this.rawMember = rawMember;
     }
 
     public String getSource() {
@@ -58,6 +71,30 @@ public class SMoveCommand implements Command {
 
     public void setMember(String member) {
         this.member = member;
+    }
+
+    public byte[] getRawSource() {
+        return rawSource;
+    }
+
+    public void setRawSource(byte[] rawSource) {
+        this.rawSource = rawSource;
+    }
+
+    public byte[] getRawDestination() {
+        return rawDestination;
+    }
+
+    public void setRawDestination(byte[] rawDestination) {
+        this.rawDestination = rawDestination;
+    }
+
+    public byte[] getRawMember() {
+        return rawMember;
+    }
+
+    public void setRawMember(byte[] rawMember) {
+        this.rawMember = rawMember;
     }
 
     @Override

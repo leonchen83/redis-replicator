@@ -99,54 +99,67 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         return exceptionListeners.remove(listener);
     }
 
-    @Override
+    /**
+     * @param rawBytes input stream raw bytes
+     * @since 2.2.0
+     * @deprecated notice that this method will remove in version 3.0.0
+     */
+    @Deprecated
     public void handle(byte... rawBytes) {
         doRawByteListener(rawBytes);
     }
 
     protected void doCommandListener(Replicator replicator, Command command) {
+        if (commandListeners.isEmpty()) return;
         for (CommandListener listener : commandListeners) {
             listener.handle(replicator, command);
         }
     }
 
     protected void doRdbListener(Replicator replicator, KeyValuePair<?> kv) {
+        if (rdbListeners.isEmpty()) return;
         for (RdbListener listener : rdbListeners) {
             listener.handle(replicator, kv);
         }
     }
 
     protected void doAuxFieldListener(Replicator replicator, AuxField auxField) {
+        if (auxFieldListeners.isEmpty()) return;
         for (AuxFieldListener listener : auxFieldListeners) {
             listener.handle(replicator, auxField);
         }
     }
 
     protected void doPreFullSync(Replicator replicator) {
+        if (rdbListeners.isEmpty()) return;
         for (RdbListener listener : rdbListeners) {
             listener.preFullSync(replicator);
         }
     }
 
     protected void doPostFullSync(Replicator replicator, final long checksum) {
+        if (rdbListeners.isEmpty()) return;
         for (RdbListener listener : rdbListeners) {
             listener.postFullSync(replicator, checksum);
         }
     }
 
     protected void doCloseListener(Replicator replicator) {
+        if (closeListeners.isEmpty()) return;
         for (CloseListener listener : closeListeners) {
             listener.handle(replicator);
         }
     }
 
     protected void doExceptionListener(Replicator replicator, Throwable throwable, Object event) {
+        if (exceptionListeners.isEmpty()) return;
         for (ExceptionListener listener : exceptionListeners) {
             listener.handle(replicator, throwable, event);
         }
     }
 
     protected void doRawByteListener(byte... bytes) {
+        if (rawByteListeners.isEmpty()) return;
         for (RawByteListener listener : rawByteListeners) {
             listener.handle(bytes);
         }

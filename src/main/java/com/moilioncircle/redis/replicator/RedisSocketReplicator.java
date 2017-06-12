@@ -22,18 +22,17 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
+import com.moilioncircle.redis.replicator.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
-import static com.moilioncircle.redis.replicator.Constants.STAR;
+import static com.moilioncircle.redis.replicator.Constants.*;
 
 /**
  * @author Leon Chen
@@ -58,7 +57,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
         this.configuration = configuration;
         this.socketFactory = new RedisSocketFactory(configuration);
         builtInCommandParserRegister();
-        addExceptionListener(new DefaultExceptionListener());
+        if (configuration.isUseDefaultExceptionListener())
+            addExceptionListener(new DefaultExceptionListener());
     }
 
     /**
@@ -93,7 +93,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     logger.info("PSYNC " + configuration.getReplId() + " " + String.valueOf(configuration.getReplOffset()));
                 }
                 send("PSYNC".getBytes(), configuration.getReplId().getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
-                final String reply = (String) reply();
+                final String reply = new String((byte[]) reply(), CHARSET);
 
                 SyncMode syncMode = trySync(reply);
                 //bug fix.
@@ -124,12 +124,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         if (configuration.isVerbose() && logger.isDebugEnabled())
                             logger.debug(Arrays.deepToString((Object[]) obj));
                         Object[] command = (Object[]) obj;
-                        CommandName cmdName = CommandName.name((String) command[0]);
+                        CommandName cmdName = CommandName.name(new String((byte[]) command[0], CHARSET));
                         final CommandParser<? extends Command> operations;
                         //if command do not register. ignore
                         if ((operations = commands.get(cmdName)) == null) {
                             if (logger.isWarnEnabled()) {
-                                logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString((Object[]) obj) + "]");
+                                logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(command) + "]");
                             }
                             continue;
                         }
@@ -193,9 +193,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     protected void parseDump(final AbstractReplicator replicator) throws IOException {
         //sync dump
-        String reply = (String) replyParser.parse(new BulkReplyHandler() {
+        byte[] reply = reply(new BulkReplyHandler() {
             @Override
-            public String handle(long len, RedisInputStream in) throws IOException {
+            public byte[] handle(long len, RedisInputStream in) throws IOException {
                 if (logger.isInfoEnabled()) {
                     logger.info("RDB dump file size:" + len);
                 }
@@ -208,12 +208,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     RdbParser parser = new RdbParser(in, replicator);
                     parser.parse();
                 }
-                return "OK";
+                return "OK".getBytes();
             }
         });
         //sync command
-        if ("OK".equals(reply)) return;
-        throw new AssertionError("SYNC failed." + reply);
+        if ("OK".equals(new String(reply, CHARSET))) return;
+        throw new AssertionError("SYNC failed." + new String(reply, CHARSET));
     }
 
     protected void establishConnection() throws IOException {
@@ -231,7 +231,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 logger.info("AUTH " + password);
             }
             send("AUTH".getBytes(), password.getBytes());
-            final String reply = (String) reply();
+            final String reply = new String((byte[]) reply(), CHARSET);
             logger.info(reply);
             if ("OK".equals(reply)) return;
             throw new AssertionError("[AUTH " + password + "] failed." + reply);
@@ -244,7 +244,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             logger.info("REPLCONF listening-port " + socket.getLocalPort());
         }
         send("REPLCONF".getBytes(), "listening-port".getBytes(), String.valueOf(socket.getLocalPort()).getBytes());
-        final String reply = (String) reply();
+        final String reply = new String((byte[]) reply(), CHARSET);
         logger.info(reply);
         if ("OK".equals(reply)) return;
         if (logger.isWarnEnabled()) {
@@ -258,7 +258,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             logger.info("REPLCONF ip-address " + socket.getLocalAddress().getHostAddress());
         }
         send("REPLCONF".getBytes(), "ip-address".getBytes(), socket.getLocalAddress().getHostAddress().getBytes());
-        final String reply = (String) reply();
+        final String reply = new String((byte[]) reply(), CHARSET);
         logger.info(reply);
         if ("OK".equals(reply)) return;
         //redis 3.2+
@@ -273,7 +273,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             logger.info("REPLCONF capa " + cmd);
         }
         send("REPLCONF".getBytes(), "capa".getBytes(), cmd.getBytes());
-        final String reply = (String) reply();
+        final String reply = new String((byte[]) reply(), CHARSET);
         logger.info(reply);
         if ("OK".equals(reply)) return;
         if (logger.isWarnEnabled()) {
@@ -320,20 +320,24 @@ public class RedisSocketReplicator extends AbstractReplicator {
         outputStream.flush();
     }
 
-    protected Object reply() throws IOException {
-        return replyParser.parse();
+    @SuppressWarnings("unchecked")
+    protected <T> T reply() throws IOException {
+        return (T) replyParser.parse();
     }
 
-    protected Object reply(BulkReplyHandler handler) throws IOException {
-        return replyParser.parse(handler);
+    @SuppressWarnings("unchecked")
+    protected <T> T reply(BulkReplyHandler handler) throws IOException {
+        return (T) replyParser.parse(handler);
     }
 
     protected void connect() throws IOException {
         if (!connected.compareAndSet(false, true)) return;
         socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
         outputStream = new RedisOutputStream(socket.getOutputStream());
-        inputStream = new RedisInputStream(configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream(), configuration.getAsyncCachedBytes()) : socket.getInputStream(), configuration.getBufferSize());
-        inputStream.addRawByteListener(this);
+        inputStream = new RedisInputStream(
+                configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream(), configuration.getAsyncCachedBytes()) : socket.getInputStream(),
+                configuration.getBufferSize());
+        inputStream.setRawByteListeners(this.rawByteListeners);
         replyParser = new ReplyParser(inputStream);
     }
 
@@ -351,7 +355,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
         try {
             if (inputStream != null) {
-                inputStream.removeRawByteListener(this);
+                inputStream.setRawByteListeners(null);
                 inputStream.close();
             }
         } catch (IOException e) {

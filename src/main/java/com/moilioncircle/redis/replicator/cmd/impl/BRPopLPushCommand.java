@@ -23,17 +23,28 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class BRPopLPushCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String source;
     private String destination;
     private int timeout;
+    private byte[] rawSource;
+    private byte[] rawDestination;
 
     public BRPopLPushCommand() {
     }
 
     public BRPopLPushCommand(String source, String destination, int timeout) {
+        this(source, destination, timeout, null, null);
+    }
+
+    public BRPopLPushCommand(String source, String destination, int timeout, byte[] rawSource, byte[] rawDestination) {
         this.source = source;
         this.destination = destination;
         this.timeout = timeout;
+        this.rawSource = rawSource;
+        this.rawDestination = rawDestination;
     }
 
     public String getSource() {
@@ -58,6 +69,22 @@ public class BRPopLPushCommand implements Command {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    public byte[] getRawSource() {
+        return rawSource;
+    }
+
+    public void setRawSource(byte[] rawSource) {
+        this.rawSource = rawSource;
+    }
+
+    public byte[] getRawDestination() {
+        return rawDestination;
+    }
+
+    public void setRawDestination(byte[] rawDestination) {
+        this.rawDestination = rawDestination;
     }
 
     @Override

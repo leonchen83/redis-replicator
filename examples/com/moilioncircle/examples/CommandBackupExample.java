@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class CommandBackupExample {
     public static void main(String[] args) throws IOException {
         final FileOutputStream out = new FileOutputStream(new File("./appendonly.aof"));

@@ -34,10 +34,13 @@ import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static com.moilioncircle.redis.replicator.Constants.CHARSET;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class ModuleParserExample {
     public static void main(String[] args) throws IOException {
         RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -80,6 +83,10 @@ public class ModuleParserExample {
     }
 
     public static class HelloTypeModule implements Module {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
         private final long[] value;
 
         public HelloTypeModule(long[] value) {
@@ -101,13 +108,17 @@ public class ModuleParserExample {
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = (String) command[1];
-            long value = Long.parseLong((String) command[2]);
+            String key = new String((byte[]) command[1], CHARSET);
+            long value = Long.parseLong(new String((byte[]) command[2], CHARSET));
             return new HelloTypeCommand(key, value);
         }
     }
 
     public static class HelloTypeCommand implements Command {
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
         private final String key;
         private final long value;
 

@@ -23,13 +23,22 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class PingCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String message;
+    private byte[] rawMessage;
 
     public PingCommand() {
     }
 
     public PingCommand(String message) {
+        this(message, null);
+    }
+
+    public PingCommand(String message, byte[] rawMessage) {
         this.message = message;
+        this.rawMessage = rawMessage;
     }
 
     public String getMessage() {
@@ -38,6 +47,14 @@ public class PingCommand implements Command {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public byte[] getRawMessage() {
+        return rawMessage;
+    }
+
+    public void setRawMessage(byte[] rawMessage) {
+        this.rawMessage = rawMessage;
     }
 
     @Override

@@ -23,13 +23,22 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class LPopCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
+    private byte[] rawKey;
 
     public LPopCommand() {
     }
 
     public LPopCommand(String key) {
+        this(key, null);
+    }
+
+    public LPopCommand(String key, byte[] rawKey) {
         this.key = key;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -38,6 +47,14 @@ public class LPopCommand implements Command {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

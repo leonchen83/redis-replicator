@@ -26,7 +26,7 @@ import java.util.List;
  * @author Leon Chen
  * @since 2.1.0
  */
-//NonThreadSafe
+//@NonThreadSafe
 public class ByteBuilder {
 
     private final ByteBuffer buffer;
@@ -59,10 +59,12 @@ public class ByteBuilder {
     }
 
     public byte[] array() {
-        int len = total;
-        if (len < buffer.capacity()) return buffer.array();
-        int offset = 0;
+        int len = total, offset = 0;
         byte[] ary = new byte[len];
+        if (len < buffer.capacity()) {
+            System.arraycopy(buffer.array(), 0, ary, offset, len);
+            return ary;
+        }
         for (byte[] ba : list) {
             System.arraycopy(ba, 0, ary, offset, ba.length);
             offset += ba.length;
@@ -74,6 +76,6 @@ public class ByteBuilder {
 
     @Override
     public String toString() {
-        return new String(array(), 0, total, Constants.CHARSET);
+        return new String(array(), Constants.CHARSET);
     }
 }

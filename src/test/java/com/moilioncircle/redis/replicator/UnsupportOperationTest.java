@@ -37,6 +37,7 @@ import static org.junit.Assert.fail;
  * @author Leon Chen
  * @since 2.1.0
  */
+@SuppressWarnings("resource")
 public class UnsupportOperationTest {
 
     @Test

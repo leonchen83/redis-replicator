@@ -25,12 +25,12 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class DecrByParserTest {
+public class DecrByParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         {
             DecrByParser parser = new DecrByParser();
-            DecrByCommand cmd = parser.parse("decrby key 5".split(" "));
+            DecrByCommand cmd = parser.parse(toObjectArray("decrby key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getValue());
             System.out.println(cmd);
@@ -38,7 +38,7 @@ public class DecrByParserTest {
 
         {
             IncrByParser parser = new IncrByParser();
-            IncrByCommand cmd = parser.parse("incrby key 5".split(" "));
+            IncrByCommand cmd = parser.parse(toObjectArray("incrby key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getValue());
             System.out.println(cmd);
@@ -46,21 +46,21 @@ public class DecrByParserTest {
 
         {
             DecrParser parser = new DecrParser();
-            DecrCommand cmd = parser.parse("decr key".split(" "));
+            DecrCommand cmd = parser.parse(toObjectArray("decr key".split(" ")));
             assertEquals("key", cmd.getKey());
             System.out.println(cmd);
         }
 
         {
             IncrParser parser = new IncrParser();
-            IncrCommand cmd = parser.parse("incr key".split(" "));
+            IncrCommand cmd = parser.parse(toObjectArray("incr key".split(" ")));
             assertEquals("key", cmd.getKey());
             System.out.println(cmd);
         }
 
         {
             ZIncrByParser parser = new ZIncrByParser();
-            ZIncrByCommand cmd = parser.parse("zincrby key 5 mem".split(" "));
+            ZIncrByCommand cmd = parser.parse(toObjectArray("zincrby key 5 mem".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getIncrement(), 0);
             assertEquals("mem", cmd.getMember());
@@ -69,7 +69,7 @@ public class DecrByParserTest {
 
         {
             HIncrByParser parser = new HIncrByParser();
-            HIncrByCommand cmd = parser.parse("hincrby key mem 5".split(" "));
+            HIncrByCommand cmd = parser.parse(toObjectArray("hincrby key mem 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getIncrement());
             assertEquals("mem", cmd.getField());

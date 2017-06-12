@@ -1,4 +1,4 @@
-package com.moilioncircle.redis.replicator;
+package com.moilioncircle.redis.replicator.rdb;
 /*
  * Copyright 2016 leon chen
  *
@@ -15,12 +15,12 @@ package com.moilioncircle.redis.replicator;
  * limitations under the License.
  */
 
+import com.moilioncircle.redis.replicator.*;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
@@ -40,6 +40,7 @@ import static org.junit.Assert.assertEquals;
 public class ModuleTest {
     @Test
     public void testModule() throws IOException {
+        @SuppressWarnings("resource")
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
@@ -90,6 +91,9 @@ public class ModuleTest {
     }
 
     public static class HelloTypeModule implements Module {
+
+        private static final long serialVersionUID = 1L;
+
         private final long[] value;
 
         public HelloTypeModule(long[] value) {
@@ -111,13 +115,14 @@ public class ModuleTest {
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = (String) command[1];
-            long value = Long.parseLong((String) command[2]);
+            String key = new String((byte[]) command[1], Constants.CHARSET);
+            long value = Long.parseLong(new String((byte[]) command[2], Constants.CHARSET));
             return new HelloTypeCommand(key, value);
         }
     }
 
     public static class HelloTypeCommand implements Command {
+        private static final long serialVersionUID = 1L;
         private final String key;
         private final long value;
 

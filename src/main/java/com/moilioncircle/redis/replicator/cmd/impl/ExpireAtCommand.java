@@ -23,15 +23,24 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class ExpireAtCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private long ex;
+    private byte[] rawKey;
 
     public ExpireAtCommand() {
     }
 
     public ExpireAtCommand(String key, long ex) {
+        this(key, ex, null);
+    }
+
+    public ExpireAtCommand(String key, long ex, byte[] rawKey) {
         this.key = key;
         this.ex = ex;
+        this.rawKey = rawKey;
     }
 
     public String getKey() {
@@ -48,6 +57,14 @@ public class ExpireAtCommand implements Command {
 
     public void setEx(long ex) {
         this.ex = ex;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     @Override

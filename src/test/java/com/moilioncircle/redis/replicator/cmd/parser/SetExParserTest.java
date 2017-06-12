@@ -25,11 +25,11 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class SetExParserTest {
+public class SetExParserTest extends AbstractParserTest {
     @Test
     public void parse() throws Exception {
         SetExParser parser = new SetExParser();
-        SetExCommand cmd = parser.parse("setex key 100 value".split(" "));
+        SetExCommand cmd = parser.parse(toObjectArray("setex key 100 value".split(" ")));
         assertEquals("key", cmd.getKey());
         assertEquals(100, cmd.getEx());
         assertEquals("value", cmd.getValue());

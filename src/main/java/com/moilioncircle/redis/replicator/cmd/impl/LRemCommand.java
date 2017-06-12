@@ -23,17 +23,29 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.1.0
  */
 public class LRemCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
     private long index;
     private String value;
+    private byte[] rawKey;
+    private byte[] rawValue;
+
 
     public LRemCommand() {
     }
 
     public LRemCommand(String key, long index, String value) {
+        this(key, index, value, null, null);
+    }
+
+    public LRemCommand(String key, long index, String value, byte[] rawKey, byte[] rawValue) {
         this.key = key;
         this.index = index;
         this.value = value;
+        this.rawKey = rawKey;
+        this.rawValue = rawValue;
     }
 
     public String getKey() {
@@ -58,6 +70,22 @@ public class LRemCommand implements Command {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
+
+    public byte[] getRawValue() {
+        return rawValue;
+    }
+
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
     }
 
     @Override

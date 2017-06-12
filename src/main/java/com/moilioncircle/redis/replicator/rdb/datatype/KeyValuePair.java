@@ -28,12 +28,16 @@ import java.util.Set;
  */
 @SuppressWarnings("unchecked")
 public class KeyValuePair<T> implements Event {
+
+    private static final long serialVersionUID = 1L;
+
     protected DB db;
     protected int valueRdbType;
     protected ExpiredType expiredType = ExpiredType.NONE;
     protected Long expiredValue;
     protected String key;
     protected T value;
+    protected byte[] rawKey;
 
     public int getValueRdbType() {
         return valueRdbType;
@@ -81,6 +85,14 @@ public class KeyValuePair<T> implements Event {
 
     public void setDb(DB db) {
         this.db = db;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     /**

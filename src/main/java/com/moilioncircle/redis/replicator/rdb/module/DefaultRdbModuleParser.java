@@ -54,7 +54,7 @@ public class DefaultRdbModuleParser {
      * @return signed long
      * @throws IOException IOException
      * @since 2.1.2
-     * @deprecated cause typo and return signed long. Use {@link #loadUnsigned()} instead.
+     * @deprecated cause typo and return signed long. Use {@link #loadUnsigned()} instead. will remove this method in 3.0.0
      */
     @Deprecated
     public long loadUnSigned() throws IOException {
@@ -76,16 +76,25 @@ public class DefaultRdbModuleParser {
     }
 
     public String loadString() throws IOException {
-        ByteArray bytes = (ByteArray) parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_NONE);
+        ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_NONE);
         return new String(bytes.first(), Constants.CHARSET);
     }
 
-    public String loadStringBuffer() throws IOException {
-        ByteArray bytes = (ByteArray) parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_PLAIN);
-        return new String(bytes.first(), Constants.CHARSET);
+    public byte[] loadStringBuffer() throws IOException {
+        ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_PLAIN);
+        return bytes.first();
     }
 
     public double loadDouble() throws IOException {
         return parser.rdbLoadBinaryDoubleValue();
+    }
+
+    /**
+     * @return single precision float
+     * @throws IOException io exception
+     * @since 2.2.0
+     */
+    public float loadFloat() throws IOException {
+        return parser.rdbLoadBinaryFloatValue();
     }
 }

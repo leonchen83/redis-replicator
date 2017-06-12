@@ -25,7 +25,11 @@ import java.util.List;
  * @since 2.1.0
  */
 public class BitFieldCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
     private String key;
+    private byte[] rawKey;
     private List<Statement> statements;
     private List<OverFlow> overFlows;
 
@@ -33,7 +37,12 @@ public class BitFieldCommand implements Command {
     }
 
     public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows) {
+        this(key, statements, overFlows, null);
+    }
+
+    public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows, byte[] rawKey) {
         this.key = key;
+        this.rawKey = rawKey;
         this.statements = statements;
         this.overFlows = overFlows;
     }
@@ -44,6 +53,14 @@ public class BitFieldCommand implements Command {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public byte[] getRawKey() {
+        return rawKey;
+    }
+
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
     }
 
     public List<Statement> getStatements() {

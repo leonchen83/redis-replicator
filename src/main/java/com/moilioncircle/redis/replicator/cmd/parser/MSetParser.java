@@ -18,9 +18,13 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.MSetCommand;
+import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
 
 /**
  * @author Leon Chen
@@ -29,15 +33,21 @@ import java.util.Map;
 public class MSetParser implements CommandParser<MSetCommand> {
     @Override
     public MSetCommand parse(Object[] command) {
-        if (command.length == 1) return new MSetCommand(null);
+        if (command.length == 1) return new MSetCommand(null, null);
         int idx = 1;
         Map<String, String> kv = new LinkedHashMap<>();
+        ByteArrayMap<byte[]> rawKv = new ByteArrayMap<>();
         while (idx < command.length) {
-            String key = (String) command[idx++];
-            String value = idx == command.length ? null : (String) command[idx++];
+            String key = objToString(command[idx]);
+            byte[] rawKey = objToBytes(command[idx]);
+            idx++;
+            String value = idx == command.length ? null : objToString(command[idx]);
+            byte[] rawValue = idx == command.length ? null : objToBytes(command[idx]);
+            idx++;
             kv.put(key, value);
+            rawKv.put(rawKey, rawValue);
         }
-        return new MSetCommand(kv);
+        return new MSetCommand(kv, rawKv);
     }
 
 }

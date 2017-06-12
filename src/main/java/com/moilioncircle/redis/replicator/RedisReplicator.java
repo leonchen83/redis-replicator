@@ -200,8 +200,14 @@ public class RedisReplicator implements Replicator {
         replicator.close();
     }
 
-    @Override
+    /**
+     * @param rawBytes input stream raw bytes
+     * @since 2.2.0
+     * @deprecated notice that this method will remove in version 3.0.0
+     */
+    @Deprecated
     public void handle(byte... rawBytes) {
-        replicator.handle(rawBytes);
+        if (!(replicator instanceof AbstractReplicatorListener)) return;
+        ((AbstractReplicatorListener) replicator).doRawByteListener(rawBytes);
     }
 }

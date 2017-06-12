@@ -293,7 +293,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         Map<String, String> map = new LinkedHashMap<>();
-        ByteArrayMap rawMap = new ByteArrayMap();
+        ByteArrayMap<byte[]> rawMap = new ByteArrayMap<>();
         while (len > 0) {
             byte[] field = parser.rdbLoadEncodedStringObject().first();
             byte[] value = parser.rdbLoadEncodedStringObject().first();
@@ -322,7 +322,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         ByteArray aux = parser.rdbLoadPlainStringObject();
         RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
         Map<String, String> map = new LinkedHashMap<>();
-        ByteArrayMap rawMap = new ByteArrayMap();
+        ByteArrayMap<byte[]> rawMap = new ByteArrayMap<>();
         BaseRdbParser.LenHelper.zmlen(stream); // zmlen
         while (true) {
             int zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
@@ -483,7 +483,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
 
         Map<String, String> map = new LinkedHashMap<>();
-        ByteArrayMap rawMap = new ByteArrayMap();
+        ByteArrayMap<byte[]> rawMap = new ByteArrayMap<>();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
         int zllen = BaseRdbParser.LenHelper.zllen(stream);

@@ -36,7 +36,7 @@ public class MSetNxParser implements CommandParser<MSetNxCommand> {
         if (command.length == 1) return new MSetNxCommand(null, null);
         int idx = 1;
         Map<String, String> kv = new LinkedHashMap<>();
-        ByteArrayMap rawKv = new ByteArrayMap();
+        ByteArrayMap<byte[]> rawKv = new ByteArrayMap<>();
         while (idx < command.length) {
             String key = objToString(command[idx]);
             byte[] rawKey = objToBytes(command[idx]);

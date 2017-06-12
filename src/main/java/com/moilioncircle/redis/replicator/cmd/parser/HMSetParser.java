@@ -39,7 +39,7 @@ public class HMSetParser implements CommandParser<HMSetCommand> {
         byte[] rawKey = objToBytes(command[idx]);
         idx++;
         Map<String, String> fields = new LinkedHashMap<>();
-        ByteArrayMap rawFields = new ByteArrayMap();
+        ByteArrayMap<byte[]> rawFields = new ByteArrayMap<>();
         while (idx < command.length) {
             String field = objToString(command[idx]);
             byte[] rawField = objToBytes(command[idx]);

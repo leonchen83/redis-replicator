@@ -36,7 +36,7 @@ public class MSetParser implements CommandParser<MSetCommand> {
         if (command.length == 1) return new MSetCommand(null, null);
         int idx = 1;
         Map<String, String> kv = new LinkedHashMap<>();
-        ByteArrayMap rawKv = new ByteArrayMap();
+        ByteArrayMap<byte[]> rawKv = new ByteArrayMap<>();
         while (idx < command.length) {
             String key = objToString(command[idx]);
             byte[] rawKey = objToBytes(command[idx]);

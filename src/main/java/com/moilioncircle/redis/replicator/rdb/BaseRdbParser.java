@@ -246,6 +246,15 @@ public class BaseRdbParser {
     }
 
     /**
+     * @return single precision float
+     * @throws IOException io exception
+     * @since 2.2.0
+     */
+    public float rdbLoadBinaryFloatValue() throws IOException {
+        return Float.intBitsToFloat(in.readInt(4));
+    }
+
+    /**
      * @see #rdbLoadLen
      */
     public static class Len {

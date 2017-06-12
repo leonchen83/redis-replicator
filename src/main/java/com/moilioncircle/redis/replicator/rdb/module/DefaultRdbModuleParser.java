@@ -88,4 +88,13 @@ public class DefaultRdbModuleParser {
     public double loadDouble() throws IOException {
         return parser.rdbLoadBinaryDoubleValue();
     }
+
+    /**
+     * @return single precision float
+     * @throws IOException io exception
+     * @since 2.2.0
+     */
+    public float loadFloat() throws IOException {
+        return parser.rdbLoadBinaryFloatValue();
+    }
 }

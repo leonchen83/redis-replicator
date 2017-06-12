@@ -20,8 +20,6 @@ import java.util.*;
 import java.util.Arrays;
 
 /**
- * read only byte[] map
- *
  * @author Leon Chen
  * @since 2.2.0
  */
@@ -35,22 +33,22 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
 
     public ByteArrayMap(boolean ordered, Map<? extends byte[], ? extends V> m) {
         this(ordered, m == null ? 0 : m.size(), 0.75f);
-        internalPutAll(m);
+        putAll(m);
     }
 
-    protected ByteArrayMap() {
+    public ByteArrayMap() {
         this(true);
     }
 
-    protected ByteArrayMap(boolean ordered) {
+    public ByteArrayMap(boolean ordered) {
         this(ordered, 16);
     }
 
-    protected ByteArrayMap(boolean ordered, int initialCapacity) {
+    public ByteArrayMap(boolean ordered, int initialCapacity) {
         this(ordered, initialCapacity, 0.75f);
     }
 
-    protected ByteArrayMap(boolean ordered, int initialCapacity, float loadFactor) {
+    public ByteArrayMap(boolean ordered, int initialCapacity, float loadFactor) {
         if (ordered) map = new LinkedHashMap<>(initialCapacity, loadFactor);
         else map = new HashMap<>(initialCapacity, loadFactor);
     }
@@ -84,48 +82,41 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
 
     @Override
     public V put(byte[] key, V value) {
-        throw new UnsupportedOperationException();
+        return map.put(new Key(key), value);
     }
 
     @Override
     public void putAll(Map<? extends byte[], ? extends V> m) {
-        throw new UnsupportedOperationException();
+        if (m == null) return;
+        for (Map.Entry<? extends byte[], ? extends V> entry : m.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
     }
 
     @Override
     public V remove(Object key) {
-        throw new UnsupportedOperationException();
+        if (key != null && !(key instanceof byte[])) return null;
+        return map.remove(new Key((byte[]) key));
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException();
+        map.clear();
     }
 
     @Override
     public Set<byte[]> keySet() {
-        return Collections.unmodifiableSet(new KeySet());
+        return new KeySet();
     }
 
     @Override
     public Collection<V> values() {
-        return Collections.unmodifiableCollection(map.values());
+        return map.values();
     }
 
     @Override
     public Set<Entry<byte[], V>> entrySet() {
-        return Collections.unmodifiableSet(new EntrySet());
-    }
-
-    protected V internalPut(byte[] key, V v) {
-        return map.put(new Key(key), v);
-    }
-
-    protected void internalPutAll(Map<? extends byte[], ? extends V> m) {
-        if (m == null) return;
-        for (Map.Entry<? extends byte[], ? extends V> entry : m.entrySet()) {
-            internalPut(entry.getKey(), entry.getValue());
-        }
+        return new EntrySet();
     }
 
     private static final class Key {
@@ -152,8 +143,14 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
 
     private final class EntrySet extends AbstractSet<Entry<byte[], V>> {
 
+        @Override
         public final int size() {
             return ByteArrayMap.this.size();
+        }
+
+        @Override
+        public final void clear() {
+            ByteArrayMap.this.clear();
         }
 
         @Override
@@ -172,6 +169,21 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
             V v = ByteArrayMap.this.get(key);
             return v != null ? v.equals(e.getValue()) : e.getValue() == v;
         }
+
+        @Override
+        public final boolean remove(Object o) {
+            if (!(o instanceof Map.Entry)) return false;
+            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
+            Object obj = e.getKey();
+            Object value = e.getValue();
+            if (obj != null && !(obj instanceof byte[])) return false;
+            byte[] key = (byte[]) obj;
+            if (!ByteArrayMap.this.containsKey(key)) return false;
+            V v = ByteArrayMap.this.get(key);
+            if ((value == null && value == v) || (value != null && value.equals(v)))
+                return ByteArrayMap.this.remove(key) != null;
+            return false;
+        }
     }
 
     private final class KeySet extends AbstractSet<byte[]> {
@@ -182,6 +194,11 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
         }
 
         @Override
+        public final void clear() {
+            ByteArrayMap.this.clear();
+        }
+
+        @Override
         public final Iterator<byte[]> iterator() {
             return new KeyIterator();
         }
@@ -189,6 +206,11 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
         @Override
         public final boolean contains(Object o) {
             return ByteArrayMap.this.containsKey(o);
+        }
+
+        @Override
+        public final boolean remove(Object key) {
+            return ByteArrayMap.this.remove(key) != null;
         }
     }
 
@@ -208,7 +230,7 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException();
+            iterator.remove();
         }
     }
 
@@ -229,18 +251,18 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException();
+            iterator.remove();
         }
     }
 
     private final class Node implements Map.Entry<byte[], V> {
 
-        private final V v;
+        private V value;
         private final byte[] bytes;
 
-        private Node(byte[] bytes, V v) {
+        private Node(byte[] bytes, V value) {
             this.bytes = bytes;
-            this.v = v;
+            this.value = value;
         }
 
         @Override
@@ -250,12 +272,14 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
 
         @Override
         public V getValue() {
-            return v;
+            return this.value;
         }
 
         @Override
         public V setValue(V value) {
-            throw new UnsupportedOperationException();
+            V oldValue = this.value;
+            this.value = value;
+            return oldValue;
         }
 
         @Override
@@ -264,13 +288,13 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Node node = (Node) o;
-            if (v != null ? !v.equals(node.v) : node.v != null) return false;
+            if (value != null ? !value.equals(node.value) : node.value != null) return false;
             return Arrays.equals(bytes, node.bytes);
         }
 
         @Override
         public int hashCode() {
-            int result = v != null ? v.hashCode() : 0;
+            int result = value != null ? value.hashCode() : 0;
             result = 31 * result + Arrays.hashCode(bytes);
             return result;
         }

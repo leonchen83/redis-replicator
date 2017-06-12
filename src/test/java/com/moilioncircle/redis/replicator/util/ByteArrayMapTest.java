@@ -1,14 +1,31 @@
+/*
+ * Copyright 2016 leon chen
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.moilioncircle.redis.replicator.util;
 
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.*;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Created by Baoyi Chen on 2017/6/9.
+ * @author Leon Chen
+ * @since 2.2.0
  */
 public class ByteArrayMapTest {
     @Test
@@ -73,12 +90,60 @@ public class ByteArrayMapTest {
         bytes = new ByteArrayMap<>(new HashMap<byte[], byte[]>());
         assertEquals(0, bytes.size());
         assertEquals(true, bytes.isEmpty());
+
+        bytes = new ByteArrayMap<>(m);
+        bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
+        bytes.put(null, new byte[]{4});
+        bytes.put(new byte[]{4, 5, 6}, null);
+        s = bytes.keySet();
+        s.remove(new byte[]{1, 2, 3});
+        s.remove(null);
+        s.remove(new byte[]{4, 5, 6});
+        assertEquals(0, s.size());
+        assertEquals(0, bytes.size());
+
+        bytes = new ByteArrayMap<>(m);
+        bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
+        bytes.put(null, new byte[]{4});
+        bytes.put(new byte[]{4, 5, 6}, null);
+        ss = bytes.entrySet();
+        List<Map.Entry<byte[], byte[]>> list = new ArrayList<>();
+        for (Map.Entry<byte[], byte[]> entry : ss) {
+            list.add(new TestEntry(entry.getKey(), entry.getValue()));
+        }
+        for (Map.Entry<byte[], byte[]> entry : list) {
+            ss.remove(entry);
+        }
+        assertEquals(0, ss.size());
+        assertEquals(0, bytes.size());
+
+        bytes = new ByteArrayMap<>(m);
+        bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
+        bytes.put(null, new byte[]{4});
+        bytes.put(new byte[]{4, 5, 6}, null);
+        Iterator<byte[]> a = bytes.keySet().iterator();
+        while (a.hasNext()) {
+            a.next();
+            a.remove();
+        }
+        assertEquals(0, bytes.size());
+
+        bytes = new ByteArrayMap<>(m);
+        bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
+        bytes.put(null, new byte[]{4});
+        bytes.put(new byte[]{4, 5, 6}, null);
+        Iterator<Map.Entry<byte[], byte[]>> aa = bytes.entrySet().iterator();
+        while (aa.hasNext()) {
+            aa.next();
+            aa.remove();
+        }
+        assertEquals(0, bytes.size());
     }
 
     private final class TestEntry implements Map.Entry<byte[], byte[]> {
 
+        private byte[] value;
         private final byte[] key;
-        private final byte[] value;
 
         private TestEntry(byte[] key, byte[] value) {
             this.key = key;
@@ -97,7 +162,9 @@ public class ByteArrayMapTest {
 
         @Override
         public byte[] setValue(byte[] value) {
-            throw new UnsupportedOperationException();
+            byte[] oldValue = this.value;
+            this.value = value;
+            return oldValue;
         }
     }
 

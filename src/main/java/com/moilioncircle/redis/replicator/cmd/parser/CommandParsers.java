@@ -16,8 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import java.util.Map;
-
 import static com.moilioncircle.redis.replicator.Constants.CHARSET;
 
 /**
@@ -36,16 +34,4 @@ class CommandParsers {
         return (byte[]) object;
     }
 
-    static class ByteArrayMap extends com.moilioncircle.redis.replicator.util.ByteArrayMap<byte[]> {
-
-        @Override
-        protected byte[] internalPut(byte[] key, byte[] value) {
-            return super.internalPut(key, value);
-        }
-
-        @Override
-        protected void internalPutAll(Map<? extends byte[], ? extends byte[]> m) {
-            super.internalPutAll(m);
-        }
-    }
 }

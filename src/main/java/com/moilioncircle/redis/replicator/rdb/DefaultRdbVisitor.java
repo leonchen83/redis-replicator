@@ -23,6 +23,7 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.*;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
+import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -297,7 +298,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             byte[] field = parser.rdbLoadEncodedStringObject().first();
             byte[] value = parser.rdbLoadEncodedStringObject().first();
             map.put(new String(field, CHARSET), new String(value, CHARSET));
-            rawMap.internalPut(field, value);
+            rawMap.put(field, value);
             len--;
         }
         o4.setValueRdbType(RDB_TYPE_HASH);
@@ -349,7 +350,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             byte[] value = BaseRdbParser.StringHelper.bytes(stream, zmEleLen);
             BaseRdbParser.StringHelper.skip(stream, free);
             map.put(new String(field, CHARSET), new String(value, CHARSET));
-            rawMap.internalPut(field, value);
+            rawMap.put(field, value);
         }
     }
 
@@ -492,7 +493,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             byte[] value = BaseRdbParser.StringHelper.zipListEntry(stream);
             zllen--;
             map.put(new String(field, CHARSET), new String(value, CHARSET));
-            rawMap.internalPut(field, value);
+            rawMap.put(field, value);
         }
         int zlend = BaseRdbParser.LenHelper.zlend(stream);
         if (zlend != 255) {
@@ -607,19 +608,6 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?>) applyModule(in, db, version);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
-        }
-    }
-
-    private class ByteArrayMap extends com.moilioncircle.redis.replicator.util.ByteArrayMap<byte[]> {
-
-        @Override
-        protected byte[] internalPut(byte[] key, byte[] value) {
-            return super.internalPut(key, value);
-        }
-
-        @Override
-        protected void internalPutAll(Map<? extends byte[], ? extends byte[]> m) {
-            super.internalPutAll(m);
         }
     }
 }

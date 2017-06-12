@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.MSetNxCommand;
+import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class MSetNxParser implements CommandParser<MSetNxCommand> {
         if (command.length == 1) return new MSetNxCommand(null, null);
         int idx = 1;
         Map<String, String> kv = new LinkedHashMap<>();
-        CommandParsers.ByteArrayMap rawKv = new CommandParsers.ByteArrayMap();
+        ByteArrayMap rawKv = new ByteArrayMap();
         while (idx < command.length) {
             String key = objToString(command[idx]);
             byte[] rawKey = objToBytes(command[idx]);
@@ -44,7 +45,7 @@ public class MSetNxParser implements CommandParser<MSetNxCommand> {
             byte[] rawValue = idx == command.length ? null : objToBytes(command[idx]);
             idx++;
             kv.put(key, value);
-            rawKv.internalPut(rawKey, rawValue);
+            rawKv.put(rawKey, rawValue);
         }
         return new MSetNxCommand(kv, rawKv);
     }

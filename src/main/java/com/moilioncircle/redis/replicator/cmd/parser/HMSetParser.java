@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.HMSetCommand;
+import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class HMSetParser implements CommandParser<HMSetCommand> {
         byte[] rawKey = objToBytes(command[idx]);
         idx++;
         Map<String, String> fields = new LinkedHashMap<>();
-        CommandParsers.ByteArrayMap rawFields = new CommandParsers.ByteArrayMap();
+        ByteArrayMap rawFields = new ByteArrayMap();
         while (idx < command.length) {
             String field = objToString(command[idx]);
             byte[] rawField = objToBytes(command[idx]);
@@ -47,7 +48,7 @@ public class HMSetParser implements CommandParser<HMSetCommand> {
             byte[] rawValue = idx == command.length ? null : objToBytes(command[idx]);
             idx++;
             fields.put(field, value);
-            rawFields.internalPut(rawField, rawValue);
+            rawFields.put(rawField, rawValue);
         }
         return new HMSetCommand(key, fields, rawKey, rawFields);
     }

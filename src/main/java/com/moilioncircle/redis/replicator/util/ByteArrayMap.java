@@ -23,6 +23,7 @@ import java.util.Arrays;
  * @author Leon Chen
  * @since 2.2.0
  */
+//@NonThreadSafe
 public class ByteArrayMap<V> implements Map<byte[], V> {
 
     protected final Map<Key, V> map;

@@ -26,7 +26,7 @@ import java.util.List;
  * @author Leon Chen
  * @since 2.1.0
  */
-//NonThreadSafe
+//@NonThreadSafe
 public class ByteBuilder {
 
     private final ByteBuffer buffer;

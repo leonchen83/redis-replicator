@@ -22,6 +22,7 @@ import java.util.Iterator;
  * @author Leon Chen
  * @since 2.1.0
  */
+//@NonThreadSafe
 public class ByteArray implements Iterable<byte[]> {
 
     protected static final int BITS = 30;

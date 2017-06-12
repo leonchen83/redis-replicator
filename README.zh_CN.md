@@ -617,6 +617,7 @@ System.out.println(rawValue.get(new byte[]{1}) == value) //will print true
 # 6. 贡献者  
 * Leon Chen  
 * Adrian Yao  
+* Trydofor  
   
 # 7. 相关引用  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

@@ -56,6 +56,17 @@
             <organization>unstudy</organization>
             <timezone>+8</timezone>
         </developer>
+
+        <developer>
+            <name>Trydofor</name>
+            <email>trydofor@gmail.com</email>
+            <organization>moilioncircle</organization>
+            <organizationUrl>http://www.moilioncircle.com/</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
     </developers>
 
     <scm>

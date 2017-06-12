@@ -575,7 +575,8 @@ default `Configuration.getReadTimeout()` is 30 seconds
   
 ## 5.8. Handle raw bytes  
   
-* when kv.getValueRdbType() == 0, you can get the raw bytes of value. In some cases(e.g. HyperLogLog),this is very useful.  
+* for any KeyValuePair type except KeyStringValueModule, we can get the raw bytes. In some cases(e.g. HyperLogLog),this is very useful.  
+
   
 ```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -584,13 +585,30 @@ default `Configuration.getReadTimeout()` is 30 seconds
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof KeyStringValueString) {
                     KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    System.out.println(Arrays.toString(ksvs.getRawValue()));
+                    byte[] rawValue = ksvs.getRawValue();
+                    // handle raw bytes value
+                } else if (kv instanceof KeyStringValueHash) {
+                    KeyStringValueHash ksvh = (KeyStringValueHash) kv;
+                    Map<byte[], byte[]> rawValue = ksvh.getRawValue();
+                    // handle raw bytes value
+                } else {
+                    ...
                 }
             }
         });
         replicator.open();
 ```  
+  
+for easy operation, the key of return type `Map<byte[], byte[]>` of `KeyStringValueHash.getRawValue`, we can `get` and `put` the key as `value type`  
 
+```java  
+KeyStringValueHash ksvh = (KeyStringValueHash) kv;
+Map<byte[], byte[]> rawValue = ksvh.getRawValue();
+byte[] value = new byte[]{2};
+rawValue.put(new byte[]{1}, value);
+System.out.println(rawValue.get(new byte[]{1}) == value) //will print true 
+```
+  
 # 6. Contributors  
 * Leon Chen  
 * Adrian Yao  

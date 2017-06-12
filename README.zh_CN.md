@@ -581,7 +581,7 @@ redis 2.4 - 4.0
   
 ## 5.8. 处理原始字节数组  
   
-* 当kv.getValueRdbType() == 0时, 可以得到原始的字节数组. 在某些情况(比如HyperLogLog)下会很有用.  
+* 除KeyStringValueModule以外的kv类型, 都可以得到原始的字节数组. 在某些情况(比如HyperLogLog)下会很有用.  
   
 ```java  
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -590,12 +590,29 @@ redis 2.4 - 4.0
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof KeyStringValueString) {
                     KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    System.out.println(Arrays.toString(ksvs.getRawValue()));
+                    byte[] rawValue = ksvs.getRawValue();
+                    // handle raw bytes value
+                } else if (kv instanceof KeyStringValueHash) {
+                    KeyStringValueHash ksvh = (KeyStringValueHash) kv;
+                    Map<byte[], byte[]> rawValue = ksvh.getRawValue();
+                    // handle raw bytes value
+                } else {
+                    ...
                 }
             }
         });
         replicator.open();
 ```  
+  
+为了操作简便`KeyStringValueHash.getRawValue`返回的`Map<byte[], byte[]>`中的key可以当做值类型存取  
+
+```java  
+KeyStringValueHash ksvh = (KeyStringValueHash) kv;
+Map<byte[], byte[]> rawValue = ksvh.getRawValue();
+byte[] value = new byte[]{2};
+rawValue.put(new byte[]{1}, value);
+System.out.println(rawValue.get(new byte[]{1}) == value) //will print true 
+```
   
 # 6. 贡献者  
 * Leon Chen  

@@ -613,6 +613,15 @@ byte[] value = new byte[]{2};
 rawValue.put(new byte[]{1}, value);
 System.out.println(rawValue.get(new byte[]{1}) == value) //will print true 
 ```
+
+命令解析同样支持原始字节数组.    
+
+```java  
+SetCommand set = (SetCommand) command;
+byte[] rawKey = set.getRawKey();
+byte[] rawValue = set.getRawValue();
+
+```
   
 # 6. 贡献者  
 * Leon Chen  

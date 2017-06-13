@@ -608,6 +608,15 @@ byte[] value = new byte[]{2};
 rawValue.put(new byte[]{1}, value);
 System.out.println(rawValue.get(new byte[]{1}) == value) //will print true 
 ```
+
+commands also support raw bytes.  
+
+```java  
+SetCommand set = (SetCommand) command;
+byte[] rawKey = set.getRawKey();
+byte[] rawValue = set.getRawValue();
+
+```
   
 # 6. Contributors  
 * Leon Chen  

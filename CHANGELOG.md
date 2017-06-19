@@ -1,3 +1,6 @@
+### 2.2.0
+raw bytes support.
+
 ### 2.1.2  
 
 ```java  

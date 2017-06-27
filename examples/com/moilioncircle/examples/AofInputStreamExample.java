@@ -33,7 +33,7 @@ import java.io.IOException;
 public class AofInputStreamExample {
     public static void main(String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(
-                AofInputStreamExample.class.getClassLoader().getResourceAsStream("appendonly.aof"), FileType.AOF,
+                AofInputStreamExample.class.getResourceAsStream("/appendonly1.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override

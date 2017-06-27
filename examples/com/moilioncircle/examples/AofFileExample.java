@@ -35,7 +35,7 @@ public class AofFileExample {
 
     public static void main(String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(
-                new File("appendonly.aof"),
+                new File("./src/test/resources/appendonly1.aof"),
                 FileType.AOF, Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override

@@ -36,7 +36,7 @@ import java.io.IOException;
 public class RdbBackupExample {
     public static void main(String[] args) throws IOException {
 
-        final FileOutputStream out = new FileOutputStream(new File("./dump.rdb"));
+        final FileOutputStream out = new FileOutputStream(new File("./src/test/resources/dump.rdb"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -72,7 +72,7 @@ public class RdbBackupExample {
         replicator.open();
 
         //check rdb file
-        replicator = new RedisReplicator(new File("./dump.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator = new RedisReplicator(new File("./src/test/resources/dump.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

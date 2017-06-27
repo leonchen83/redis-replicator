@@ -34,7 +34,7 @@ import java.io.IOException;
 public class RdbFileExample {
     public static void main(String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(
-                new File("dumpV7.rdb"), FileType.RDB,
+                new File("./src/test/resources/dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

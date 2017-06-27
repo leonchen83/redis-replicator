@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("resource")
 public class CommandBackupExample {
     public static void main(String[] args) throws IOException {
-        final FileOutputStream out = new FileOutputStream(new File("./appendonly.aof"));
+        final FileOutputStream out = new FileOutputStream(new File("./src/test/resources/appendonly.aof"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -83,7 +83,7 @@ public class CommandBackupExample {
         replicator.open();
 
         //check aof file
-        replicator = new RedisReplicator(new File("./appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
+        replicator = new RedisReplicator(new File("./src/test/resources/appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {

@@ -35,7 +35,7 @@ import java.io.IOException;
 @SuppressWarnings("resource")
 public class MixFileExample {
     public static void main(String[] args) throws IOException {
-        final Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.MIXED,
+        final Replicator replicator = new RedisReplicator(new File("./src/test/resources/appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

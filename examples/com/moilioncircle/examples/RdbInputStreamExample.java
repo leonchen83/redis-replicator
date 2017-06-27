@@ -33,7 +33,7 @@ import java.io.IOException;
 public class RdbInputStreamExample {
     public static void main(String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(
-                RdbInputStreamExample.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), FileType.RDB,
+                RdbInputStreamExample.class.getResourceAsStream("/dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

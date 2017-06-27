@@ -611,7 +611,7 @@ KeyStringValueHash ksvh = (KeyStringValueHash) kv;
 Map<byte[], byte[]> rawValue = ksvh.getRawValue();
 byte[] value = new byte[]{2};
 rawValue.put(new byte[]{1}, value);
-System.out.println(rawValue.get(new byte[]{1}) == value) //will print true 
+System.out.println(rawValue.get(new byte[]{1}) == value) // 会打印true
 ```
 
 命令解析同样支持原始字节数组.    

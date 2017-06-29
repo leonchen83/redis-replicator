@@ -47,7 +47,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
    * [8. Supported by](#8-supported-by)
       * [8.1. YourKit](#81-yourkit)
       * [8.2. IntelliJ IDEA](#82-intellij-idea)
-      * [8.3. Redisson](#82-redisson)
+      * [8.3. Redisson](#83-redisson)
   
 # 1. Redis-replicator  
 

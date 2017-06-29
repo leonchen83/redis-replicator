@@ -650,3 +650,7 @@ Java and .NET applications. Take a look at YourKit's leading software products:
 IntelliJ IDEA is a Java integrated development environment (IDE) for developing computer software.  
 It is developed by JetBrains (formerly known as IntelliJ), and is available as an Apache 2 Licensed community edition,  
 and in a proprietary commercial edition. Both can be used for commercial development.  
+
+## 8.3. Redisson
+
+Redisson is Redis based In-Memory Data Grid for Java offers distributed objects and services (`BitSet`, `Set`, `Multimap`, `SortedSet`, `Map`, `List`, `Queue`, `BlockingQueue`, `Deque`, `BlockingDeque`, `Semaphore`, `Lock`, `AtomicLong`, `CountDownLatch`, `Publish / Subscribe`, `Bloom filter`, `Remote service`, `Spring cache`, `Executor service`, `Live Object service`, `Scheduler service`) backed by Redis server. Redisson provides more convenient and easiest way to work with Redis. Redisson objects provides a separation of concern, which allows you to keep focus on the data modeling and application logic.

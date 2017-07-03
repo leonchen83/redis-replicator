@@ -129,4 +129,16 @@ public abstract class RdbVisitor {
     public Event applyModule(RedisInputStream in, DB db, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
+
+    /**
+     * @param in      input stream
+     * @param db      redis db
+     * @param version rdb version
+     * @return module object
+     * @throws IOException IOException
+     * @since 2.3.0
+     */
+    public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
 }

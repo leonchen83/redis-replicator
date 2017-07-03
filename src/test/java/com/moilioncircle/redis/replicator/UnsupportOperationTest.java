@@ -154,7 +154,7 @@ public class UnsupportOperationTest {
                     Configuration.defaultSetting());
             replicator.addModuleParser("hellotype", 0, new ModuleParser<Module>() {
                 @Override
-                public Module parse(RedisInputStream in) throws IOException {
+                public Module parse(RedisInputStream in, int version) throws IOException {
                     return null;
                 }
             });

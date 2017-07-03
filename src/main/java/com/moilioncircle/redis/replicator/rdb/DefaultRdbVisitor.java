@@ -560,11 +560,50 @@ public class DefaultRdbVisitor extends RdbVisitor {
             throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
         }
         o6.setValueRdbType(RDB_TYPE_MODULE);
-        o6.setValue(moduleParser.parse(in));
+        o6.setValue(moduleParser.parse(in, 1));
         o6.setDb(db);
         o6.setKey(new String(key, CHARSET));
         o6.setRawKey(key);
         return o6;
+    }
+
+    /**
+     * @param in      input stream
+     * @param db      redis db
+     * @param version rdb version
+     * @return module object
+     * @throws IOException IOException
+     * @since 2.3.0
+     */
+    @Override
+    public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
+        //|6|6|6|6|6|6|6|6|6|10|
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyStringValueModule o7 = new KeyStringValueModule();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        char[] c = new char[9];
+        long moduleid = parser.rdbLoadLen().len;
+        for (int i = 0; i < c.length; i++) {
+            c[i] = MODULE_SET[(int) (moduleid >>> (10 + (c.length - 1 - i) * 6) & 63)];
+        }
+        String moduleName = new String(c);
+        int moduleVersion = (int) (moduleid & 1023);
+        ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
+        if (moduleParser == null) {
+            throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
+        }
+        o7.setValueRdbType(RDB_TYPE_MODULE);
+        o7.setValue(moduleParser.parse(in, 2));
+        o7.setDb(db);
+        o7.setKey(new String(key, CHARSET));
+        o7.setRawKey(key);
+
+        /* Module v2 serialization has an EOF mark at the end. */
+        long eof = parser.rdbLoadLen().len;
+        if (eof != RDB_MODULE_OPCODE_EOF) {
+            throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName + "' that is not terminated by the proper module value EOF marker");
+        }
+        return o7;
     }
 
     protected ModuleParser<? extends Module> lookupModuleParser(String moduleName, int moduleVersion) {
@@ -606,6 +645,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?>) applyListQuickList(in, db, version);
             case RDB_TYPE_MODULE:
                 return (KeyValuePair<?>) applyModule(in, db, version);
+            case RDB_TYPE_MODULE_2:
+                return (KeyValuePair<?>) applyModule2(in, db, version);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
         }

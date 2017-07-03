@@ -183,6 +183,9 @@ public class RdbParser {
                 case RDB_TYPE_MODULE:
                     event = rdbVisitor.applyModule(in, db, version);
                     break;
+                case RDB_TYPE_MODULE_2:
+                    event = rdbVisitor.applyModule2(in, db, version);
+                    break;
                 default:
                     throw new AssertionError("unexpected value type:" + type + ", please check your self-defined ModuleParser");
             }

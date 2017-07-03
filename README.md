@@ -83,7 +83,7 @@ redis 2.4 - 4.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.2.0</version>
+        <version>2.3.0</version>
     </dependency>
 ```
 
@@ -361,13 +361,13 @@ redis 2.4 - 4.0
     public class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
 
         @Override
-        public HelloTypeModule parse(RedisInputStream in) throws IOException {
+        public HelloTypeModule parse(RedisInputStream in, int version) throws IOException {
             DefaultRdbModuleParser parser = new DefaultRdbModuleParser(in);
-            int elements = parser.loadUnsigned().intValue();
+            int elements = parser.loadUnsigned(version).intValue();
             long[] ary = new long[elements];
             int i = 0;
             while (elements-- > 0) {
-                ary[i++] = parser.loadSigned();
+                ary[i++] = parser.loadSigned(version);
             }
             return new HelloTypeModule(ary);
         }
@@ -494,7 +494,7 @@ redis 2.4 - 4.0
   
 ## 5.2. EOFException
   
-* adjust redis server setting below.more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
+* adjust redis server setting as following.more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
   
 ```java  
     client-output-buffer-limit slave 0 0 0
@@ -504,7 +504,7 @@ redis 2.4 - 4.0
 ## 5.3. Trace event log  
   
 * set log level to **debug**
-* if you are using log4j2,add logger below:
+* if you are using log4j2,add logger as following:
 
 ```xml  
     <Logger name="com.moilioncircle" level="debug">
@@ -537,7 +537,7 @@ redis 2.4 - 4.0
 
 ## 5.6. Avoid full sync  
   
-* adjust redis server setting below  
+* adjust redis server setting as following  
   
 ```java  
     repl-backlog-size

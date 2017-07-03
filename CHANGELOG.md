@@ -1,3 +1,19 @@
+### 2.3.0
+module_2 support.  
+
+**api changes** :  
+
+```java  
+ModuleParser.parse(RedisInputStream in) -> ModuleParser.parse(RedisInputStream in, int version)  
+DefaultRdbModuleParser add following methods for module_2
+loadSigned(int version)
+loadUnsigned(int version)
+loadString(int version)
+loadStringBuffer(int version)
+loadDouble(int version)
+loadFloat(int version)
+```
+
 ### 2.2.0
 raw bytes support.
 

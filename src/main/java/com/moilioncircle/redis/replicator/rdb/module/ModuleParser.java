@@ -26,5 +26,15 @@ import java.io.IOException;
  * @since 2.1.0
  */
 public interface ModuleParser<T extends Module> {
-    T parse(RedisInputStream in) throws IOException;
+
+    /**
+     * @param in      input stream
+     * @param version module version : 1 or 2 <p>
+     *                {@link com.moilioncircle.redis.replicator.Constants#RDB_TYPE_MODULE} : 1 <p>
+     *                {@link com.moilioncircle.redis.replicator.Constants#RDB_TYPE_MODULE_2} : 2
+     * @return module object
+     * @throws IOException IOException
+     * @since 2.3.0
+     */
+    T parse(RedisInputStream in, int version) throws IOException;
 }

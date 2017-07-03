@@ -26,6 +26,8 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import static com.moilioncircle.redis.replicator.Constants.*;
+
 /**
  * @author Leon Chen
  * @version 2.1.2
@@ -46,55 +48,164 @@ public class DefaultRdbModuleParser {
         return this.in;
     }
 
+    /* module_1 */
+
+    /**
+     * @return signed long
+     * @throws IOException IOException
+     * @since 2.3.0
+     * @deprecated Use {@link #loadSigned(int)} instead. will remove this method in 3.0.0
+     */
     public long loadSigned() throws IOException {
-        return parser.rdbLoadLen().len;
+        return loadSigned(1);
     }
 
     /**
      * @return signed long
      * @throws IOException IOException
-     * @since 2.1.2
-     * @deprecated cause typo and return signed long. Use {@link #loadUnsigned()} instead. will remove this method in 3.0.0
+     * @since 2.3.0
+     * @deprecated Use {@link #loadUnsigned(int)} instead. will remove this method in 3.0.0
      */
     @Deprecated
     public long loadUnSigned() throws IOException {
-        return loadSigned();
+        return loadSigned(1);
     }
 
     /**
      * @return unsigned long
      * @throws IOException IOException
-     * @since 2.1.2
+     * @since 2.3.0
+     * @deprecated Use {@link #loadUnsigned(int)} instead. will remove this method in 3.0.0
      */
     public BigInteger loadUnsigned() throws IOException {
+        return loadUnsigned(1);
+    }
+
+    /**
+     * @return string
+     * @throws IOException IOException
+     * @since 2.3.0
+     * @deprecated Use {@link #loadString(int)} instead. will remove this method in 3.0.0
+     */
+    public String loadString() throws IOException {
+        return loadString(1);
+    }
+
+    /**
+     * @return string buffer
+     * @throws IOException IOException
+     * @since 2.3.0
+     * @deprecated Use {@link #loadStringBuffer(int)} instead. will remove this method in 3.0.0
+     */
+    public byte[] loadStringBuffer() throws IOException {
+        return loadStringBuffer(1);
+    }
+
+    /**
+     * @return double
+     * @throws IOException IOException
+     * @since 2.3.0
+     * @deprecated Use {@link #loadDouble(int)} instead. will remove this method in 3.0.0
+     */
+    public double loadDouble() throws IOException {
+        return loadDouble(1);
+    }
+
+    /**
+     * @return single precision float
+     * @throws IOException IOException
+     * @since 2.3.0
+     * @deprecated Use {@link #loadFloat(int)} instead. will remove this method in 3.0.0
+     */
+    public float loadFloat() throws IOException {
+        return loadFloat(1);
+    }
+
+    /* module_2 */
+
+    /**
+     * @return signed long
+     * @throws IOException IOException
+     * @since 2.3.0
+     */
+    public long loadSigned(int version) throws IOException {
+        if (version == 2) {
+            long opcode = parser.rdbLoadLen().len;
+            if (opcode != RDB_MODULE_OPCODE_UINT)
+                throw new UnsupportedOperationException("Error loading signed or unsigned long from RDB.");
+        }
+        return parser.rdbLoadLen().len;
+    }
+
+    /**
+     * @return unsigned long
+     * @throws IOException IOException
+     * @since 2.3.0
+     */
+    public BigInteger loadUnsigned(int version) throws IOException {
         byte[] ary = new byte[8];
-        long value = loadSigned();
+        long value = loadSigned(version);
         for (int i = 0; i < 8; i++) {
             ary[7 - i] = (byte) ((value >>> (i << 3)) & 0xFF);
         }
         return new BigInteger(1, ary);
     }
 
-    public String loadString() throws IOException {
+    /**
+     * @return string
+     * @throws IOException IOException
+     * @since 2.3.0
+     */
+    public String loadString(int version) throws IOException {
+        if (version == 2) {
+            long opcode = parser.rdbLoadLen().len;
+            if (opcode != RDB_MODULE_OPCODE_STRING)
+                throw new UnsupportedOperationException("Error loading string from RDB.");
+        }
         ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_NONE);
         return new String(bytes.first(), Constants.CHARSET);
     }
 
-    public byte[] loadStringBuffer() throws IOException {
+    /**
+     * @return string buffer
+     * @throws IOException IOException
+     * @since 2.3.0
+     */
+    public byte[] loadStringBuffer(int version) throws IOException {
+        if (version == 2) {
+            long opcode = parser.rdbLoadLen().len;
+            if (opcode != RDB_MODULE_OPCODE_STRING)
+                throw new UnsupportedOperationException("Error loading string from RDB.");
+        }
         ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_PLAIN);
         return bytes.first();
     }
 
-    public double loadDouble() throws IOException {
+    /**
+     * @return double
+     * @throws IOException IOException
+     * @since 2.3.0
+     */
+    public double loadDouble(int version) throws IOException {
+        if (version == 2) {
+            long opcode = parser.rdbLoadLen().len;
+            if (opcode != RDB_MODULE_OPCODE_DOUBLE)
+                throw new UnsupportedOperationException("Error loading double from RDB.");
+        }
         return parser.rdbLoadBinaryDoubleValue();
     }
 
     /**
      * @return single precision float
      * @throws IOException io exception
-     * @since 2.2.0
+     * @since 2.3.0
      */
-    public float loadFloat() throws IOException {
+    public float loadFloat(int version) throws IOException {
+        if (version == 2) {
+            long opcode = parser.rdbLoadLen().len;
+            if (opcode != RDB_MODULE_OPCODE_FLOAT)
+                throw new UnsupportedOperationException("Error loading float from RDB.");
+        }
         return parser.rdbLoadBinaryFloatValue();
     }
 }

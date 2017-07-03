@@ -78,13 +78,13 @@ public class ModuleTest {
     public static class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
 
         @Override
-        public HelloTypeModule parse(RedisInputStream in) throws IOException {
+        public HelloTypeModule parse(RedisInputStream in, int version) throws IOException {
             DefaultRdbModuleParser parser = new DefaultRdbModuleParser(in);
-            int elements = parser.loadUnsigned().intValue();
+            int elements = parser.loadUnsigned(version).intValue();
             long[] ary = new long[elements];
             int i = 0;
             while (elements-- > 0) {
-                ary[i++] = parser.loadSigned();
+                ary[i++] = parser.loadSigned(version);
             }
             return new HelloTypeModule(ary);
         }

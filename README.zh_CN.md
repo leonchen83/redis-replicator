@@ -88,7 +88,7 @@ redis 2.4 - 4.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.2.0</version>
+        <version>2.3.0</version>
     </dependency>
 ```
 
@@ -367,13 +367,13 @@ redis 2.4 - 4.0
     public class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
 
         @Override
-        public HelloTypeModule parse(RedisInputStream in) throws IOException {
+        public HelloTypeModule parse(RedisInputStream in, int version) throws IOException {
             DefaultRdbModuleParser parser = new DefaultRdbModuleParser(in);
-            int elements = parser.loadUnsigned().intValue();
+            int elements = parser.loadUnsigned(version).intValue();
             long[] ary = new long[elements];
             int i = 0;
             while (elements-- > 0) {
-                ary[i++] = parser.loadSigned();
+                ary[i++] = parser.loadSigned(version);
             }
             return new HelloTypeModule(ary);
         }

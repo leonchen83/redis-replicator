@@ -80,12 +80,23 @@ public class Constants {
     public static final int RDB_TYPE_HASH = 4;
     public static final int RDB_TYPE_ZSET_2 = 5;
     public static final int RDB_TYPE_MODULE = 6;
+    public static final int RDB_TYPE_MODULE_2 = 7;
     public static final int RDB_TYPE_HASH_ZIPMAP = 9;
     public static final int RDB_TYPE_LIST_ZIPLIST = 10;
     public static final int RDB_TYPE_SET_INTSET = 11;
     public static final int RDB_TYPE_ZSET_ZIPLIST = 12;
     public static final int RDB_TYPE_HASH_ZIPLIST = 13;
     public static final int RDB_TYPE_LIST_QUICKLIST = 14;
+
+    /**
+     * Module serialized values sub opcodes
+     */
+    public static final int RDB_MODULE_OPCODE_EOF = 0; /* End of module value. */
+    public static final int RDB_MODULE_OPCODE_SINT = 1; /* Signed integer. */
+    public static final int RDB_MODULE_OPCODE_UINT = 2; /* Unsigned integer. */
+    public static final int RDB_MODULE_OPCODE_FLOAT = 3; /* Float. */
+    public static final int RDB_MODULE_OPCODE_DOUBLE = 4; /* Double. */
+    public static final int RDB_MODULE_OPCODE_STRING = 5; /* String. */
 
     /**
      * zip entry

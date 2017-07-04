@@ -124,6 +124,7 @@ public class DefaultRdbModuleParser {
     /* module_2 */
 
     /**
+     * @param version param version of {@link ModuleParser#parse(RedisInputStream, int)}
      * @return signed long
      * @throws IOException IOException
      * @since 2.3.0
@@ -138,6 +139,7 @@ public class DefaultRdbModuleParser {
     }
 
     /**
+     * @param version param version of {@link ModuleParser#parse(RedisInputStream, int)}
      * @return unsigned long
      * @throws IOException IOException
      * @since 2.3.0
@@ -152,6 +154,7 @@ public class DefaultRdbModuleParser {
     }
 
     /**
+     * @param version param version of {@link ModuleParser#parse(RedisInputStream, int)}
      * @return string
      * @throws IOException IOException
      * @since 2.3.0
@@ -167,6 +170,7 @@ public class DefaultRdbModuleParser {
     }
 
     /**
+     * @param version param version of {@link ModuleParser#parse(RedisInputStream, int)}
      * @return string buffer
      * @throws IOException IOException
      * @since 2.3.0
@@ -182,6 +186,7 @@ public class DefaultRdbModuleParser {
     }
 
     /**
+     * @param version param version of {@link ModuleParser#parse(RedisInputStream, int)}
      * @return double
      * @throws IOException IOException
      * @since 2.3.0
@@ -196,6 +201,7 @@ public class DefaultRdbModuleParser {
     }
 
     /**
+     * @param version param version of {@link ModuleParser#parse(RedisInputStream, int)}
      * @return single precision float
      * @throws IOException io exception
      * @since 2.3.0

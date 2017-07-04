@@ -92,6 +92,7 @@ public class Constants {
      * Module serialized values sub opcodes
      */
     public static final int RDB_MODULE_OPCODE_EOF = 0; /* End of module value. */
+    // this variable only used in rdb check tool. useless for now.
     public static final int RDB_MODULE_OPCODE_SINT = 1; /* Signed integer. */
     public static final int RDB_MODULE_OPCODE_UINT = 2; /* Unsigned integer. */
     public static final int RDB_MODULE_OPCODE_FLOAT = 3; /* Float. */

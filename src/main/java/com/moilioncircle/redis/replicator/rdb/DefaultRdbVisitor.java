@@ -592,7 +592,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         if (moduleParser == null) {
             throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
         }
-        o7.setValueRdbType(RDB_TYPE_MODULE);
+        o7.setValueRdbType(RDB_TYPE_MODULE_2);
         o7.setValue(moduleParser.parse(in, 2));
         o7.setDb(db);
         o7.setKey(new String(key, CHARSET));

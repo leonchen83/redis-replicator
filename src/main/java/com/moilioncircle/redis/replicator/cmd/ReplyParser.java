@@ -57,98 +57,100 @@ public class ReplyParser {
      * @throws IOException when read timeout
      */
     public Object parse(BulkReplyHandler handler) throws IOException {
-        int c = in.read();
-        switch (c) {
-            case DOLLAR:
-                //RESP Bulk Strings
-                ByteBuilder builder = ByteBuilder.allocate(128);
-                while (true) {
-                    while ((c = in.read()) != '\r') {
-                        builder.put((byte) c);
+        while (true) {
+            int c = in.read();
+            switch (c) {
+                case DOLLAR:
+                    //RESP Bulk Strings
+                    ByteBuilder builder = ByteBuilder.allocate(128);
+                    while (true) {
+                        while ((c = in.read()) != '\r') {
+                            builder.put((byte) c);
+                        }
+                        if ((c = in.read()) == '\n') {
+                            break;
+                        } else {
+                            builder.put((byte) c);
+                        }
                     }
-                    if ((c = in.read()) == '\n') {
-                        break;
-                    } else {
-                        builder.put((byte) c);
+                    long len = Long.parseLong(builder.toString());
+                    // $-1\r\n. this is called null string.
+                    // see http://redis.io/topics/protocol
+                    if (len == -1) return null;
+                    if (handler != null) return handler.handle(len, in);
+                    throw new AssertionError("callback is null");
+                case COLON:
+                    // RESP Integers
+                    builder = ByteBuilder.allocate(128);
+                    while (true) {
+                        while ((c = in.read()) != '\r') {
+                            builder.put((byte) c);
+                        }
+                        if ((c = in.read()) == '\n') {
+                            break;
+                        } else {
+                            builder.put((byte) c);
+                        }
                     }
-                }
-                long len = Long.parseLong(builder.toString());
-                // $-1\r\n. this is called null string.
-                // see http://redis.io/topics/protocol
-                if (len == -1) return null;
-                if (handler != null) return handler.handle(len, in);
-                throw new AssertionError("callback is null");
-            case COLON:
-                // RESP Integers
-                builder = ByteBuilder.allocate(128);
-                while (true) {
-                    while ((c = in.read()) != '\r') {
-                        builder.put((byte) c);
+                    //as integer
+                    return Long.parseLong(builder.toString());
+                case STAR:
+                    // RESP Arrays
+                    builder = ByteBuilder.allocate(128);
+                    while (true) {
+                        while ((c = in.read()) != '\r') {
+                            builder.put((byte) c);
+                        }
+                        if ((c = in.read()) == '\n') {
+                            break;
+                        } else {
+                            builder.put((byte) c);
+                        }
                     }
-                    if ((c = in.read()) == '\n') {
-                        break;
-                    } else {
-                        builder.put((byte) c);
+                    len = Long.parseLong(builder.toString());
+                    if (len == -1) return null;
+                    Object[] ary = new Object[(int) len];
+                    for (int i = 0; i < len; i++) {
+                        Object obj = parse(new BulkReplyHandler.SimpleBulkReplyHandler());
+                        ary[i] = obj;
                     }
-                }
-                //as integer
-                return Long.parseLong(builder.toString());
-            case STAR:
-                // RESP Arrays
-                builder = ByteBuilder.allocate(128);
-                while (true) {
-                    while ((c = in.read()) != '\r') {
-                        builder.put((byte) c);
+                    return ary;
+                case PLUS:
+                    // RESP Simple Strings
+                    builder = ByteBuilder.allocate(128);
+                    while (true) {
+                        while ((c = in.read()) != '\r') {
+                            builder.put((byte) c);
+                        }
+                        if ((c = in.read()) == '\n') {
+                            return builder.array();
+                        } else {
+                            builder.put((byte) c);
+                        }
                     }
-                    if ((c = in.read()) == '\n') {
-                        break;
-                    } else {
-                        builder.put((byte) c);
+                case MINUS:
+                    // RESP Errors
+                    builder = ByteBuilder.allocate(128);
+                    while (true) {
+                        while ((c = in.read()) != '\r') {
+                            builder.put((byte) c);
+                        }
+                        if ((c = in.read()) == '\n') {
+                            return builder.array();
+                        } else {
+                            builder.put((byte) c);
+                        }
                     }
-                }
-                len = Long.parseLong(builder.toString());
-                if (len == -1) return null;
-                Object[] ary = new Object[(int) len];
-                for (int i = 0; i < len; i++) {
-                    Object obj = parse(new BulkReplyHandler.SimpleBulkReplyHandler());
-                    ary[i] = obj;
-                }
-                return ary;
-            case PLUS:
-                // RESP Simple Strings
-                builder = ByteBuilder.allocate(128);
-                while (true) {
-                    while ((c = in.read()) != '\r') {
-                        builder.put((byte) c);
-                    }
-                    if ((c = in.read()) == '\n') {
-                        return builder.array();
-                    } else {
-                        builder.put((byte) c);
-                    }
-                }
-            case MINUS:
-                // RESP Errors
-                builder = ByteBuilder.allocate(128);
-                while (true) {
-                    while ((c = in.read()) != '\r') {
-                        builder.put((byte) c);
-                    }
-                    if ((c = in.read()) == '\n') {
-                        return builder.array();
-                    } else {
-                        builder.put((byte) c);
-                    }
-                }
-            case '\n':
-                //skip +CONTINUE\r\n[\n]
-                //skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
-                //At this stage just a newline works as a PING in order to take the connection live
-                //bug fix
-                return parse(handler);
-            default:
-                throw new AssertionError("expect [$,:,*,+,-] but: " + (char) c);
+                case '\n':
+                    //skip +CONTINUE\r\n[\n]
+                    //skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
+                    //At this stage just a newline works as a PING in order to take the connection live
+                    //bug fix
+                    break;
+                default:
+                    throw new AssertionError("expect [$,:,*,+,-] but: " + (char) c);
 
+            }
         }
     }
 }

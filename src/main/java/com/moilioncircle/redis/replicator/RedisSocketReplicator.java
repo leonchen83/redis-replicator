@@ -145,7 +145,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
                 //connected = false
                 break;
-            } catch (/*bug fix*/IOException e) {
+            } catch (IOException | UncheckedIOException e) {
                 //close socket manual
                 if (!connected.get()) break;
                 logger.error("socket error", e);

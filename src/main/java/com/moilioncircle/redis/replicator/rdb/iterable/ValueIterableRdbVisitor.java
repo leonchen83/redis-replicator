@@ -31,10 +31,10 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZS
 import com.moilioncircle.redis.replicator.util.ByteArray;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
 
@@ -485,7 +485,10 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         public Map.Entry<byte[], byte[]> next() {
             try {
                 byte[] field = BaseRdbParser.StringHelper.bytes(stream, zmEleLen);
-                int zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
+                this.zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
+                if (this.zmEleLen == 255) {
+                    return new AbstractMap.SimpleEntry<>(field, null);
+                }
                 int free = BaseRdbParser.LenHelper.free(stream);
                 byte[] value = BaseRdbParser.StringHelper.bytes(stream, zmEleLen);
                 BaseRdbParser.StringHelper.skip(stream, free);
@@ -528,7 +531,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
                         condition--;
                     }
                     if (hasNext()) return next();
-                    throw new NoSuchElementException();
+                    throw new InvalidObjectException("end of iterator");
                 } else {
                     byte[] e = BaseRdbParser.StringHelper.zipListEntry(stream);
                     zllen--;

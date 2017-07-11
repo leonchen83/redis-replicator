@@ -1,4 +1,3 @@
-package com.moilioncircle.redis.replicator.rdb;
 /*
  * Copyright 2016 leon chen
  *
@@ -14,6 +13,8 @@ package com.moilioncircle.redis.replicator.rdb;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.*;
 import com.moilioncircle.redis.replicator.cmd.Command;

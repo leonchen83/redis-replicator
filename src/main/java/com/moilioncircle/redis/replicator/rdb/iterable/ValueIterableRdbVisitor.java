@@ -31,7 +31,6 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZS
 import com.moilioncircle.redis.replicator.util.ByteArray;
 
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -540,7 +539,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
                         condition--;
                     }
                     if (hasNext()) return next();
-                    throw new InvalidObjectException("end of iterator");
+                    throw new IllegalStateException("end of iterator");
                 } else {
                     byte[] e = BaseRdbParser.StringHelper.zipListEntry(stream);
                     zllen--;

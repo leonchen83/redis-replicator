@@ -38,7 +38,6 @@ import static org.junit.Assert.fail;
  * @author Leon Chen
  * @since 2.3.0
  */
-@SuppressWarnings("unchecked")
 public class ValueIterableRdbParserTest {
 
     @Test
@@ -100,8 +99,10 @@ public class ValueIterableRdbParserTest {
         return acc.get();
     }
 
+    @SuppressWarnings("unused")
     private int testFile1(String fileName) {
         final AtomicInteger acc = new AtomicInteger(0);
+        @SuppressWarnings("resource")
         Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB, Configuration.defaultSetting());
         r.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
         r.addRdbListener(new RdbListener.Adaptor() {

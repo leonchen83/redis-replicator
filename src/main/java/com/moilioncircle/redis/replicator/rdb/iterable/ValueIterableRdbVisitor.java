@@ -263,6 +263,9 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
                 if (condition > 0) return true;
                 try {
                     int zlend = BaseRdbParser.LenHelper.zlend(stream);
+                    if (zlend != 255) {
+                        throw new AssertionError("zlend expect 255 but " + zlend);
+                    }
                     return false;
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
@@ -359,6 +362,9 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
                 if (condition > 0) return true;
                 try {
                     int zlend = BaseRdbParser.LenHelper.zlend(stream);
+                    if (zlend != 255) {
+                        throw new AssertionError("zlend expect 255 but " + zlend);
+                    }
                     return false;
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
@@ -406,6 +412,9 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
                 if (condition > 0) return true;
                 try {
                     int zlend = BaseRdbParser.LenHelper.zlend(stream);
+                    if (zlend != 255) {
+                        throw new AssertionError("zlend expect 255 but " + zlend);
+                    }
                     return false;
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);

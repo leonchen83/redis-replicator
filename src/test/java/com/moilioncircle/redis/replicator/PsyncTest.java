@@ -40,7 +40,6 @@ import static org.junit.Assert.assertEquals;
  * @author Leon Chen
  * @since 2.1.0
  */
-@SuppressWarnings("resource")
 public class PsyncTest {
 
     @Test
@@ -59,6 +58,7 @@ public class PsyncTest {
                 setRetryTimeInterval(1000).
                 setUseDefaultExceptionListener(false);
         System.out.println(configuration);
+        @SuppressWarnings("resource")
         Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
         final AtomicBoolean flag = new AtomicBoolean(false);
         final Set<AuxField> set = new LinkedHashSet<>();

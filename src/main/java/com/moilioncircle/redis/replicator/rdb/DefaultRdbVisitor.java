@@ -338,6 +338,9 @@ public class DefaultRdbVisitor extends RdbVisitor {
             byte[] field = BaseRdbParser.StringHelper.bytes(stream, zmEleLen);
             zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
             if (zmEleLen == 255) {
+                //value is null
+                map.put(new String(field, CHARSET), null);
+                rawMap.put(field, null);
                 o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
                 o9.setValue(map);
                 o9.setRawValue(rawMap);

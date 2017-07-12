@@ -187,7 +187,7 @@ public class RdbParser {
                     event = rdbVisitor.applyModule2(in, db, version);
                     break;
                 default:
-                    throw new AssertionError("unexpected value type:" + type + ", please check your self-defined ModuleParser");
+                    throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");
             }
             if (event == null) continue;
             if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(event);

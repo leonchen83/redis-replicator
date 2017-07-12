@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author Leon Chen
@@ -26,11 +27,11 @@ public class UncheckedIOException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public UncheckedIOException(String message, IOException cause) {
-        super(message, cause);
+        super(message, Objects.requireNonNull(cause));
     }
 
     public UncheckedIOException(IOException cause) {
-        super(cause);
+        super(Objects.requireNonNull(cause));
     }
 
     @Override

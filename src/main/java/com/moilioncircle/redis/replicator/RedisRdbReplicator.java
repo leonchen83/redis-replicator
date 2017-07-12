@@ -24,6 +24,7 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 
 import java.io.*;
+import java.util.Objects;
 
 /**
  * @author Leon Chen
@@ -37,6 +38,8 @@ public class RedisRdbReplicator extends AbstractReplicator {
     }
 
     public RedisRdbReplicator(InputStream in, Configuration configuration) {
+        Objects.requireNonNull(in);
+        Objects.requireNonNull(configuration);
         this.configuration = configuration;
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
         this.inputStream.setRawByteListeners(this.rawByteListeners);
@@ -49,6 +52,8 @@ public class RedisRdbReplicator extends AbstractReplicator {
         try {
             doOpen();
         } catch (EOFException ignore) {
+        } catch (UncheckedIOException e) {
+            if (!(e.getCause() instanceof EOFException)) throw e;
         } finally {
             close();
         }

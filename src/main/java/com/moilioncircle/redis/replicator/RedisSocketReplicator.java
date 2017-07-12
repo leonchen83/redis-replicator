@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,6 +53,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected final AtomicBoolean connected = new AtomicBoolean(false);
 
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
+        Objects.requireNonNull(host);
+        if (port <= 0) throw new IllegalArgumentException("illegal argument port: " + port);
+        Objects.requireNonNull(configuration);
         this.host = host;
         this.port = port;
         this.configuration = configuration;

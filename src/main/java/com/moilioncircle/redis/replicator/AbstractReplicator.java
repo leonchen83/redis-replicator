@@ -91,6 +91,9 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
             } else if (event instanceof AuxField) {
                 doAuxFieldListener(this, (AuxField) event);
             }
+        } catch (UncheckedIOException e) {
+            throw e;
+            //ignore UncheckedIOException so that to propagate to caller.
         } catch (Throwable e) {
             doExceptionListener(this, e, event);
         }

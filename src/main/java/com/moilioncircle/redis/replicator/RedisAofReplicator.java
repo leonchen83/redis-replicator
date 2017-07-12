@@ -31,6 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
+import java.util.Objects;
 
 import static com.moilioncircle.redis.replicator.Constants.CHARSET;
 
@@ -48,6 +49,8 @@ public class RedisAofReplicator extends AbstractReplicator {
     }
 
     public RedisAofReplicator(InputStream in, Configuration configuration) {
+        Objects.requireNonNull(in);
+        Objects.requireNonNull(configuration);
         this.configuration = configuration;
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
         this.inputStream.setRawByteListeners(this.rawByteListeners);
@@ -62,6 +65,8 @@ public class RedisAofReplicator extends AbstractReplicator {
         try {
             doOpen();
         } catch (EOFException ignore) {
+        } catch (UncheckedIOException e) {
+            if (!(e.getCause() instanceof EOFException)) throw e;
         } finally {
             close();
         }

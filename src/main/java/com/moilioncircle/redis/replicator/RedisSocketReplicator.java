@@ -54,7 +54,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         Objects.requireNonNull(host);
-        if (port <= 0) throw new IllegalArgumentException("illegal argument port: " + port);
+        if (port <= 0 || port > 65535) throw new IllegalArgumentException("illegal argument port: " + port);
         Objects.requireNonNull(configuration);
         this.host = host;
         this.port = port;

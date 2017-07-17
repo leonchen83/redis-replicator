@@ -1,6 +1,8 @@
 ### 2.3.0
 module_2 support.  
 
+add a new RdbVisitor : `ValueIterableRdbVisitor`  
+
 **api changes** :  
 
 ```java  

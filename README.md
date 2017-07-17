@@ -9,6 +9,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
       * [2.1. Requirements](#21-requirements)
       * [2.2. Maven dependency](#22-maven-dependency)
       * [2.3. Install from source code](#23-install-from-source-code)
+      * [2.4. Select a version](#24-select-a-version)
    * [3. Simple usage](#3-simple-usage)
       * [3.1. Replication via socket](#31-replication-via-socket)
       * [3.2. Read rdb file](#32-read-rdb-file)
@@ -92,6 +93,15 @@ redis 2.4 - 4.0
 ```
     $mvn clean install package -Dmaven.test.skip=true
 ```  
+
+## 2.4. Select a version
+
+|     **redis version**        |**redis-replicator version**  |  
+| ---------------------------- | ---------------------------- |  
+|  \[2.4, 4.0.0\]              |           \[2.3.0\]          |  
+|  \[2.4, 4.0-RC3\]            |       \[2.1.0, 2.2.0\]       |  
+|  \[2.4, 3.2.x\]              |  \[1.0.18\](not supported)   |  
+
 
 # 3. Simple usage  
   

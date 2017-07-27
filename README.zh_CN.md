@@ -336,7 +336,7 @@ redis 2.4 - 4.0
 
         @Override
         public YourAppendCommand parse(Object[] command) {
-            return new YourAppendCommand(new String((byte[]) command[1], CHARSET), new String((byte[]) command[2], CHARSET));
+            return new YourAppendCommand(new String((byte[]) command[1], UTF_8), new String((byte[]) command[2], UTF_8));
         }
     }
 
@@ -413,8 +413,8 @@ redis 2.4 - 4.0
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = new String((byte[])command[1],Constants.CHARSET);
-            long value = Long.parseLong(new String((byte[])command[2],Constants.CHARSET));
+            String key = new String((byte[])command[1],Constants.UTF_8);
+            long value = Long.parseLong(new String((byte[])command[2],Constants.UTF_8));
             return new HelloTypeCommand(key, value);
         }
     }

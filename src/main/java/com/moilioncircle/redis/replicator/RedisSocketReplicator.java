@@ -33,7 +33,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.moilioncircle.redis.replicator.Constants.*;
+import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
+import static com.moilioncircle.redis.replicator.Constants.STAR;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -97,7 +99,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     logger.info("PSYNC " + configuration.getReplId() + " " + String.valueOf(configuration.getReplOffset()));
                 }
                 send("PSYNC".getBytes(), configuration.getReplId().getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
-                final String reply = new String((byte[]) reply(), CHARSET);
+                final String reply = new String((byte[]) reply(), UTF_8);
 
                 SyncMode syncMode = trySync(reply);
                 //bug fix.
@@ -128,7 +130,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         if (configuration.isVerbose() && logger.isDebugEnabled())
                             logger.debug(Arrays.deepToString((Object[]) obj));
                         Object[] command = (Object[]) obj;
-                        CommandName cmdName = CommandName.name(new String((byte[]) command[0], CHARSET));
+                        CommandName cmdName = CommandName.name(new String((byte[]) command[0], UTF_8));
                         final CommandParser<? extends Command> operations;
                         //if command do not register. ignore
                         if ((operations = commands.get(cmdName)) == null) {
@@ -216,8 +218,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
         });
         //sync command
-        if ("OK".equals(new String(reply, CHARSET))) return;
-        throw new AssertionError("SYNC failed. reason : [" + new String(reply, CHARSET) + "]");
+        if ("OK".equals(new String(reply, UTF_8))) return;
+        throw new AssertionError("SYNC failed. reason : [" + new String(reply, UTF_8) + "]");
     }
 
     protected void establishConnection() throws IOException {
@@ -235,7 +237,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 logger.info("AUTH " + password);
             }
             send("AUTH".getBytes(), password.getBytes());
-            final String reply = new String((byte[]) reply(), CHARSET);
+            final String reply = new String((byte[]) reply(), UTF_8);
             logger.info(reply);
             if ("OK".equals(reply)) return;
             throw new AssertionError("[AUTH " + password + "] failed." + reply);
@@ -248,7 +250,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             logger.info("REPLCONF listening-port " + socket.getLocalPort());
         }
         send("REPLCONF".getBytes(), "listening-port".getBytes(), String.valueOf(socket.getLocalPort()).getBytes());
-        final String reply = new String((byte[]) reply(), CHARSET);
+        final String reply = new String((byte[]) reply(), UTF_8);
         logger.info(reply);
         if ("OK".equals(reply)) return;
         if (logger.isWarnEnabled()) {
@@ -262,7 +264,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             logger.info("REPLCONF ip-address " + socket.getLocalAddress().getHostAddress());
         }
         send("REPLCONF".getBytes(), "ip-address".getBytes(), socket.getLocalAddress().getHostAddress().getBytes());
-        final String reply = new String((byte[]) reply(), CHARSET);
+        final String reply = new String((byte[]) reply(), UTF_8);
         logger.info(reply);
         if ("OK".equals(reply)) return;
         //redis 3.2+
@@ -277,7 +279,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             logger.info("REPLCONF capa " + cmd);
         }
         send("REPLCONF".getBytes(), "capa".getBytes(), cmd.getBytes());
-        final String reply = new String((byte[]) reply(), CHARSET);
+        final String reply = new String((byte[]) reply(), UTF_8);
         logger.info(reply);
         if ("OK".equals(reply)) return;
         if (logger.isWarnEnabled()) {

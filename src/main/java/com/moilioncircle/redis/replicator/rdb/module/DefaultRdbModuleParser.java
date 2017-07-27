@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -166,7 +167,7 @@ public class DefaultRdbModuleParser {
                 throw new UnsupportedOperationException("Error loading string from RDB.");
         }
         ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_NONE);
-        return new String(bytes.first(), Constants.CHARSET);
+        return new String(bytes.first(), UTF_8);
     }
 
     /**

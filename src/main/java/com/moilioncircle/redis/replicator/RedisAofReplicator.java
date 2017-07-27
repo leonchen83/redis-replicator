@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.*;
 import java.util.Objects;
 
-import static com.moilioncircle.redis.replicator.Constants.CHARSET;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -81,7 +81,7 @@ public class RedisAofReplicator extends AbstractReplicator {
                 if (configuration.isVerbose() && logger.isDebugEnabled())
                     logger.debug(Arrays.deepToString((Object[]) obj));
                 Object[] command = (Object[]) obj;
-                CommandName cmdName = CommandName.name(new String((byte[]) command[0], CHARSET));
+                CommandName cmdName = CommandName.name(new String((byte[]) command[0], UTF_8));
                 final CommandParser<? extends Command> operations;
                 //if command do not register. ignore
                 if ((operations = commands.get(cmdName)) == null) {

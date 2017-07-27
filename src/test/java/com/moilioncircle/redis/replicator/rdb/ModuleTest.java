@@ -32,6 +32,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -116,8 +117,8 @@ public class ModuleTest {
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = new String((byte[]) command[1], Constants.CHARSET);
-            long value = Long.parseLong(new String((byte[]) command[2], Constants.CHARSET));
+            String key = new String((byte[]) command[1], UTF_8);
+            long value = Long.parseLong(new String((byte[]) command[2], UTF_8));
             return new HelloTypeCommand(key, value);
         }
     }

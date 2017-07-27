@@ -34,7 +34,7 @@ import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static com.moilioncircle.redis.replicator.Constants.CHARSET;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -108,8 +108,8 @@ public class ModuleParserExample {
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = new String((byte[]) command[1], CHARSET);
-            long value = Long.parseLong(new String((byte[]) command[2], CHARSET));
+            String key = new String((byte[]) command[1], UTF_8);
+            long value = Long.parseLong(new String((byte[]) command[2], UTF_8));
             return new HelloTypeCommand(key, value);
         }
     }

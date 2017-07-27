@@ -16,11 +16,11 @@
 
 package com.moilioncircle.redis.replicator.util;
 
-import com.moilioncircle.redis.replicator.Constants;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -76,6 +76,6 @@ public class ByteBuilder {
 
     @Override
     public String toString() {
-        return new String(array(), Constants.CHARSET);
+        return new String(array(), UTF_8);
     }
 }

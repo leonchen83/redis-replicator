@@ -220,7 +220,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         //sync command
         String reply = new String(rawReply, UTF_8);
         if ("OK".equals(reply)) return;
+        //redis 2.8+
         if (reply.contains("NOAUTH")) throw new AssertionError(reply);
+        //redis 2.4 - 2.6
+        if (reply.contains("operation not permitted")) throw new AssertionError(reply);
         throw new IOException("SYNC failed. reason : [" + reply + "]");
     }
 

@@ -199,7 +199,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     protected void parseDump(final AbstractReplicator replicator) throws IOException {
         //sync dump
-        byte[] reply = reply(new BulkReplyHandler() {
+        byte[] rawReply = reply(new BulkReplyHandler() {
             @Override
             public byte[] handle(long len, RedisInputStream in) throws IOException {
                 if (logger.isInfoEnabled()) {
@@ -218,8 +218,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
         });
         //sync command
-        if ("OK".equals(new String(reply, UTF_8))) return;
-        throw new IOException("SYNC failed. reason : [" + new String(reply, UTF_8) + "]");
+        String reply = new String(rawReply, UTF_8);
+        if ("OK".equals(reply)) return;
+        if (reply.contains("NOAUTH")) throw new AssertionError(reply);
+        throw new IOException("SYNC failed. reason : [" + reply + "]");
     }
 
     protected void establishConnection() throws IOException {
@@ -240,7 +242,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             final String reply = new String((byte[]) reply(), UTF_8);
             logger.info(reply);
             if ("OK".equals(reply)) return;
-            throw new AssertionError("[AUTH " + password + "] failed." + reply);
+            throw new AssertionError("[AUTH " + password + "] failed. " + reply);
         }
     }
 

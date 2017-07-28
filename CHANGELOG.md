@@ -1,3 +1,17 @@
+### 2.3.1
+
+add 3 commands
+
+```java  
+
+LTRIM
+RPOPLPUSH
+SORT
+
+```
+
+fix reconnect bug.
+
 ### 2.3.0
 module_2 support.  
 

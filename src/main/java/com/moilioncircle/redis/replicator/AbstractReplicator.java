@@ -191,6 +191,9 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("ZREMRANGEBYSCORE"), new ZRemRangeByScoreParser());
         addCommandParser(CommandName.name("ZREMRANGEBYRANK"), new ZRemRangeByRankParser());
         addCommandParser(CommandName.name("ZREMRANGEBYLEX"), new ZRemRangeByLexParser());
+        addCommandParser(CommandName.name("LTRIM"), new LTrimParser());
+        addCommandParser(CommandName.name("SORT"), new SortParser());
+        addCommandParser(CommandName.name("RPOPLPUSH"), new RPopLPushParser());
     }
 
     protected void doClose() throws IOException {

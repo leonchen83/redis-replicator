@@ -152,7 +152,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             } catch (IOException | UncheckedIOException e) {
                 //close socket manual
                 if (!connected.get()) break;
-                logger.error("socket error", e);
+                logger.error("[redis-replicator] socket error", e);
                 //connect refused,connect timeout,read timeout,connect abort,server disconnect,connection EOFException
                 close();
                 //retry psync in next loop.
@@ -217,7 +217,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         });
         //sync command
         if ("OK".equals(new String(reply, CHARSET))) return;
-        throw new AssertionError("SYNC failed. reason : [" + new String(reply, CHARSET) + "]");
+        throw new IOException("SYNC failed. reason : [" + new String(reply, CHARSET) + "]");
     }
 
     protected void establishConnection() throws IOException {

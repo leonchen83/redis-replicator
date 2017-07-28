@@ -16,7 +16,7 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import static com.moilioncircle.redis.replicator.Constants.CHARSET;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -27,7 +27,7 @@ class CommandParsers {
     public static String objToString(Object object) {
         if (object == null) return null;
         byte[] bytes = (byte[]) object;
-        return new String(bytes, CHARSET);
+        return new String(bytes, UTF_8);
     }
 
     public static byte[] objToBytes(Object object) {

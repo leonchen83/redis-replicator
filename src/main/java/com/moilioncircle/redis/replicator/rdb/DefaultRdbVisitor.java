@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.moilioncircle.redis.replicator.Constants.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -145,8 +146,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
     @Override
     public Event applyAux(RedisInputStream in, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        String auxKey = new String(parser.rdbLoadEncodedStringObject().first(), CHARSET);
-        String auxValue = new String(parser.rdbLoadEncodedStringObject().first(), CHARSET);
+        String auxKey = new String(parser.rdbLoadEncodedStringObject().first(), UTF_8);
+        String auxValue = new String(parser.rdbLoadEncodedStringObject().first(), UTF_8);
         if (!auxKey.startsWith("%")) {
             if (logger.isInfoEnabled()) {
                 logger.info("RDB " + auxKey + ": " + auxValue);
@@ -171,10 +172,10 @@ public class DefaultRdbVisitor extends RdbVisitor {
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         byte[] val = parser.rdbLoadEncodedStringObject().first();
         o0.setValueRdbType(RDB_TYPE_STRING);
-        o0.setValue(new String(val, CHARSET));
+        o0.setValue(new String(val, UTF_8));
         o0.setRawValue(val);
         o0.setDb(db);
-        o0.setKey(new String(key, CHARSET));
+        o0.setKey(new String(key, UTF_8));
         o0.setRawKey(key);
         return o0;
     }
@@ -193,14 +194,14 @@ public class DefaultRdbVisitor extends RdbVisitor {
         List<byte[]> rawList = new ArrayList<>();
         for (int i = 0; i < len; i++) {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
-            list.add(new String(element, CHARSET));
+            list.add(new String(element, UTF_8));
             rawList.add(element);
         }
         o1.setValueRdbType(RDB_TYPE_LIST);
         o1.setValue(list);
         o1.setRawValue(rawList);
         o1.setDb(db);
-        o1.setKey(new String(key, CHARSET));
+        o1.setKey(new String(key, UTF_8));
         o1.setRawKey(key);
         return o1;
     }
@@ -219,14 +220,14 @@ public class DefaultRdbVisitor extends RdbVisitor {
         Set<byte[]> rawSet = new LinkedHashSet<>();
         for (int i = 0; i < len; i++) {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
-            set.add(new String(element, CHARSET));
+            set.add(new String(element, UTF_8));
             rawSet.add(element);
         }
         o2.setValueRdbType(RDB_TYPE_SET);
         o2.setValue(set);
         o2.setRawValue(rawSet);
         o2.setDb(db);
-        o2.setKey(new String(key, CHARSET));
+        o2.setKey(new String(key, UTF_8));
         o2.setRawKey(key);
         return o2;
     }
@@ -245,13 +246,13 @@ public class DefaultRdbVisitor extends RdbVisitor {
         while (len > 0) {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
             double score = parser.rdbLoadDoubleValue();
-            zset.add(new ZSetEntry(new String(element, CHARSET), score, element));
+            zset.add(new ZSetEntry(new String(element, UTF_8), score, element));
             len--;
         }
         o3.setValueRdbType(RDB_TYPE_ZSET);
         o3.setValue(zset);
         o3.setDb(db);
-        o3.setKey(new String(key, CHARSET));
+        o3.setKey(new String(key, UTF_8));
         o3.setRawKey(key);
         return o3;
     }
@@ -271,13 +272,13 @@ public class DefaultRdbVisitor extends RdbVisitor {
         while (len > 0) {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
             double score = parser.rdbLoadBinaryDoubleValue();
-            zset.add(new ZSetEntry(new String(element, CHARSET), score, element));
+            zset.add(new ZSetEntry(new String(element, UTF_8), score, element));
             len--;
         }
         o5.setValueRdbType(RDB_TYPE_ZSET_2);
         o5.setValue(zset);
         o5.setDb(db);
-        o5.setKey(new String(key, CHARSET));
+        o5.setKey(new String(key, UTF_8));
         o5.setRawKey(key);
         return o5;
     }
@@ -297,7 +298,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         while (len > 0) {
             byte[] field = parser.rdbLoadEncodedStringObject().first();
             byte[] value = parser.rdbLoadEncodedStringObject().first();
-            map.put(new String(field, CHARSET), new String(value, CHARSET));
+            map.put(new String(field, UTF_8), new String(value, UTF_8));
             rawMap.put(field, value);
             len--;
         }
@@ -305,7 +306,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o4.setValue(map);
         o4.setRawValue(rawMap);
         o4.setDb(db);
-        o4.setKey(new String(key, CHARSET));
+        o4.setKey(new String(key, UTF_8));
         o4.setRawKey(key);
         return o4;
     }
@@ -331,7 +332,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 o9.setValue(map);
                 o9.setRawValue(rawMap);
                 o9.setDb(db);
-                o9.setKey(new String(key, CHARSET));
+                o9.setKey(new String(key, UTF_8));
                 o9.setRawKey(key);
                 return o9;
             }
@@ -339,20 +340,20 @@ public class DefaultRdbVisitor extends RdbVisitor {
             zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
             if (zmEleLen == 255) {
                 //value is null
-                map.put(new String(field, CHARSET), null);
+                map.put(new String(field, UTF_8), null);
                 rawMap.put(field, null);
                 o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
                 o9.setValue(map);
                 o9.setRawValue(rawMap);
                 o9.setDb(db);
-                o9.setKey(new String(key, CHARSET));
+                o9.setKey(new String(key, UTF_8));
                 o9.setRawKey(key);
                 return o9;
             }
             int free = BaseRdbParser.LenHelper.free(stream);
             byte[] value = BaseRdbParser.StringHelper.bytes(stream, zmEleLen);
             BaseRdbParser.StringHelper.skip(stream, free);
-            map.put(new String(field, CHARSET), new String(value, CHARSET));
+            map.put(new String(field, UTF_8), new String(value, UTF_8));
             rawMap.put(field, value);
         }
     }
@@ -376,7 +377,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         int zllen = BaseRdbParser.LenHelper.zllen(stream);
         for (int i = 0; i < zllen; i++) {
             byte[] e = BaseRdbParser.StringHelper.zipListEntry(stream);
-            list.add(new String(e, CHARSET));
+            list.add(new String(e, UTF_8));
             rawList.add(e);
         }
         int zlend = BaseRdbParser.LenHelper.zlend(stream);
@@ -387,7 +388,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o10.setValue(list);
         o10.setRawValue(rawList);
         o10.setDb(db);
-        o10.setKey(new String(key, CHARSET));
+        o10.setKey(new String(key, UTF_8));
         o10.setRawKey(key);
         return o10;
     }
@@ -433,7 +434,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o11.setValue(set);
         o11.setRawValue(rawSet);
         o11.setDb(db);
-        o11.setKey(new String(key, CHARSET));
+        o11.setKey(new String(key, UTF_8));
         o11.setRawKey(key);
         return o11;
     }
@@ -457,9 +458,9 @@ public class DefaultRdbVisitor extends RdbVisitor {
         while (zllen > 0) {
             byte[] element = BaseRdbParser.StringHelper.zipListEntry(stream);
             zllen--;
-            double score = Double.valueOf(new String(BaseRdbParser.StringHelper.zipListEntry(stream), CHARSET));
+            double score = Double.valueOf(new String(BaseRdbParser.StringHelper.zipListEntry(stream), UTF_8));
             zllen--;
-            zset.add(new ZSetEntry(new String(element, CHARSET), score, element));
+            zset.add(new ZSetEntry(new String(element, UTF_8), score, element));
         }
         int zlend = BaseRdbParser.LenHelper.zlend(stream);
         if (zlend != 255) {
@@ -468,7 +469,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
         o12.setValue(zset);
         o12.setDb(db);
-        o12.setKey(new String(key, CHARSET));
+        o12.setKey(new String(key, UTF_8));
         o12.setRawKey(key);
         return o12;
     }
@@ -495,7 +496,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             zllen--;
             byte[] value = BaseRdbParser.StringHelper.zipListEntry(stream);
             zllen--;
-            map.put(new String(field, CHARSET), new String(value, CHARSET));
+            map.put(new String(field, UTF_8), new String(value, UTF_8));
             rawMap.put(field, value);
         }
         int zlend = BaseRdbParser.LenHelper.zlend(stream);
@@ -506,7 +507,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o13.setValue(map);
         o13.setRawValue(rawMap);
         o13.setDb(db);
-        o13.setKey(new String(key, CHARSET));
+        o13.setKey(new String(key, UTF_8));
         o13.setRawKey(key);
         return o13;
     }
@@ -528,7 +529,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             int zllen = BaseRdbParser.LenHelper.zllen(stream);
             for (int j = 0; j < zllen; j++) {
                 byte[] e = BaseRdbParser.StringHelper.zipListEntry(stream);
-                list.add(new String(e, CHARSET));
+                list.add(new String(e, UTF_8));
                 rawList.add(e);
             }
             int zlend = BaseRdbParser.LenHelper.zlend(stream);
@@ -540,7 +541,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o14.setValue(list);
         o14.setRawValue(rawList);
         o14.setDb(db);
-        o14.setKey(new String(key, CHARSET));
+        o14.setKey(new String(key, UTF_8));
         o14.setRawKey(key);
         return o14;
     }
@@ -565,7 +566,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o6.setValueRdbType(RDB_TYPE_MODULE);
         o6.setValue(moduleParser.parse(in, 1));
         o6.setDb(db);
-        o6.setKey(new String(key, CHARSET));
+        o6.setKey(new String(key, UTF_8));
         o6.setRawKey(key);
         return o6;
     }
@@ -598,7 +599,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o7.setValueRdbType(RDB_TYPE_MODULE_2);
         o7.setValue(moduleParser.parse(in, 2));
         o7.setDb(db);
-        o7.setKey(new String(key, CHARSET));
+        o7.setKey(new String(key, UTF_8));
         o7.setRawKey(key);
 
         /* Module v2 serialization has an EOF mark at the end. */

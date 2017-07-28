@@ -16,10 +16,10 @@
 
 package com.moilioncircle.redis.replicator.util;
 
-import com.moilioncircle.redis.replicator.Constants;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -102,7 +102,7 @@ public class Arrays {
         if (a == null) return "null";
         int iMax = a.length - 1;
         if (iMax == -1) return "";
-        return new String(a, Constants.CHARSET);
+        return new String(a, UTF_8);
     }
 
 }

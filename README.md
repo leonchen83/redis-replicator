@@ -77,7 +77,7 @@ The following I mentioned `Command` which means `Writable Command` in redis and 
 ## 2.1. Requirements  
 jdk 1.7+  
 maven-3.2.3+  
-redis 2.4 - 4.0  
+redis 2.6 - 4.0  
 
 ## 2.2. Maven dependency  
 ```java  
@@ -98,9 +98,9 @@ redis 2.4 - 4.0
 
 |     **redis version**        |**redis-replicator version**  |  
 | ---------------------------- | ---------------------------- |  
-|  \[2.4, 4.0.0\]              |           \[2.3.0\]          |  
-|  \[2.4, 4.0-RC3\]            |       \[2.1.0, 2.2.0\]       |  
-|  \[2.4, 3.2.x\]              |  \[1.0.18\](not supported)   |  
+|  \[2.6, 4.0.0\]              |           \[2.3.0\]          |  
+|  \[2.6, 4.0-RC3\]            |       \[2.1.0, 2.2.0\]       |  
+|  \[2.6, 3.2.x\]              |  \[1.0.18\](not supported)   |  
 
 
 # 3. Simple usage  

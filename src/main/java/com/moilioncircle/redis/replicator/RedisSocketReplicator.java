@@ -220,16 +220,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
         //sync command
         String reply = new String(rawReply, UTF_8);
         if ("OK".equals(reply)) return;
-        //redis 2.8+
-        if (reply.contains("NOAUTH")) throw new AssertionError(reply);
-        //redis 2.4 - 2.6
-        if (reply.contains("operation not permitted")) throw new AssertionError(reply);
         throw new IOException("SYNC failed. reason : [" + reply + "]");
     }
 
     protected void establishConnection() throws IOException {
         connect();
         if (configuration.getAuthPassword() != null) auth(configuration.getAuthPassword());
+        sendPing();
         sendSlavePort();
         sendSlaveIp();
         sendSlaveCapa("eof");
@@ -245,8 +242,25 @@ public class RedisSocketReplicator extends AbstractReplicator {
             final String reply = new String((byte[]) reply(), UTF_8);
             logger.info(reply);
             if ("OK".equals(reply)) return;
+            if (reply.contains("no password")) {
+                logger.warn("[AUTH " + password + "] failed. " + reply);
+                return;
+            }
             throw new AssertionError("[AUTH " + password + "] failed. " + reply);
         }
+    }
+
+    protected void sendPing() throws IOException {
+        if (logger.isInfoEnabled()) {
+            logger.info("PING");
+        }
+        send("PING".getBytes());
+        final String reply = new String((byte[]) reply(), UTF_8);
+        logger.info(reply);
+        if ("PONG".equalsIgnoreCase(reply)) return;
+        if (reply.contains("NOAUTH")) throw new AssertionError(reply);
+        if (reply.contains("operation not permitted")) throw new AssertionError("-NOAUTH Authentication required.");
+        logger.warn("[PING] failed. " + reply);
     }
 
     protected void sendSlavePort() throws IOException {
@@ -259,7 +273,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.info(reply);
         if ("OK".equals(reply)) return;
         if (logger.isWarnEnabled()) {
-            logger.warn("[REPLCONF listening-port " + socket.getLocalPort() + "] failed." + reply);
+            logger.warn("[REPLCONF listening-port " + socket.getLocalPort() + "] failed. " + reply);
         }
     }
 
@@ -274,7 +288,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if ("OK".equals(reply)) return;
         //redis 3.2+
         if (logger.isWarnEnabled()) {
-            logger.warn("[REPLCONF ip-address " + socket.getLocalAddress().getHostAddress() + "] failed." + reply);
+            logger.warn("[REPLCONF ip-address " + socket.getLocalAddress().getHostAddress() + "] failed. " + reply);
         }
     }
 
@@ -288,7 +302,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.info(reply);
         if ("OK".equals(reply)) return;
         if (logger.isWarnEnabled()) {
-            logger.warn("[REPLCONF capa " + cmd + "] failed." + reply);
+            logger.warn("[REPLCONF capa " + cmd + "] failed. " + reply);
         }
     }
 

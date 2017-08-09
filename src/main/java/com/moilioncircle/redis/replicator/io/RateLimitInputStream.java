@@ -239,7 +239,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
 
         @Override
         public boolean update() {
-            double p = release();
+            double p = generate();
             if (p < this.gap) {
                 this.gap -= p;
                 return false;
@@ -251,7 +251,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
 
         @Override
         public boolean acquire(int permits) {
-            release();
+            generate();
             if (this.permits < permits) {
                 this.gap = permits - this.permits;
                 return false;
@@ -262,7 +262,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
             }
         }
 
-        private double release() {
+        private double generate() {
             long access = currentTimeMillis();
             if (access <= this.access) return 0;
             double p = (access - this.access) * size / 1000d;

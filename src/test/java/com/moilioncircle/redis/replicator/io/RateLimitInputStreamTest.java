@@ -19,6 +19,7 @@ public class RateLimitInputStreamTest {
         in.read(b);
         assertEquals(10, in.available());
         long ed = System.currentTimeMillis();
+        System.out.println(ed - st);
         assertEquals(true, (ed - st) > 3900 && (ed - st) < 4100);
         in.close();
     }
@@ -31,6 +32,7 @@ public class RateLimitInputStreamTest {
         in.read();
         assertEquals(59, in.available());
         long ed = System.currentTimeMillis();
+        System.out.println(ed - st);
         assertEquals(true, (ed - st) >= 0 && (ed - st) <= 1);
         in.close();
     }
@@ -43,6 +45,7 @@ public class RateLimitInputStreamTest {
         in.skip(60);
         assertEquals(0, in.available());
         long ed = System.currentTimeMillis();
+        System.out.println(ed - st);
         assertEquals(true, (ed - st) > 4900 && (ed - st) < 5100);
         in.close();
     }

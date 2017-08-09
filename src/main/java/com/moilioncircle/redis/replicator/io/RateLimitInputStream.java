@@ -47,7 +47,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
     private final ThreadFactory factory;
     private final ReentrantLock lock = new ReentrantLock(false);
     private final AtomicBoolean closed = new AtomicBoolean(false);
-    private final Condition limiterLock = this.lock.newCondition();
+    private final Condition reader = this.lock.newCondition();
 
     public RateLimitInputStream(InputStream in) {
         this(in, DEFAULT_PERMITS);
@@ -59,9 +59,11 @@ public class RateLimitInputStream extends InputStream implements Runnable {
 
     public RateLimitInputStream(InputStream in, int permits, ThreadFactory factory) {
         this.in = in;
-        this.factory = factory; this.permits = permits;
+        this.factory = factory;
+        this.permits = permits;
         this.limiter = new TokenBucketRateLimiter(permits);
-        this.worker = this.factory.newThread(this); this.worker.start();
+        this.worker = this.factory.newThread(this);
+        this.worker.start();
     }
 
     @Override
@@ -69,7 +71,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
         lock.lock();
         try {
             while (!limiter.acquire(1)) {
-                this.limiterLock.awaitUninterruptibly();
+                this.reader.awaitUninterruptibly();
                 if (this.closed.get()) throw new EOFException();
             }
             return in.read();
@@ -91,11 +93,12 @@ public class RateLimitInputStream extends InputStream implements Runnable {
             while (total > 0) {
                 int len = Math.min(permits, total);
                 while (!limiter.acquire(len)) {
-                    this.limiterLock.awaitUninterruptibly();
+                    this.reader.awaitUninterruptibly();
                     if (this.closed.get()) throw new EOFException();
                 }
                 if (in.read(b, index, len) == -1) return -1;
-                index += len; total -= len;
+                index += len;
+                total -= len;
             }
             assert total == 0;
             return total;
@@ -112,7 +115,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
             while (total > 0) {
                 int skip = (int) Math.min(permits, total);
                 while (!limiter.acquire(skip)) {
-                    this.limiterLock.awaitUninterruptibly();
+                    this.reader.awaitUninterruptibly();
                     if (this.closed.get()) throw new EOFException();
                 }
                 in.skip(skip);
@@ -138,7 +141,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
         } finally {
             this.lock.lock();
             try {
-                this.limiterLock.signalAll();
+                this.reader.signalAll();
             } finally {
                 this.lock.unlock();
             }
@@ -153,12 +156,13 @@ public class RateLimitInputStream extends InputStream implements Runnable {
                 this.lock.lock();
                 try {
                     this.limiter.update();
+                    this.reader.signalAll();
                 } finally {
                     this.lock.unlock();
                 }
                 if (idx++ == yield) {
-                    Thread.yield();
                     idx = 0;
+                    Thread.yield();
                 }
             }
         } finally {
@@ -173,13 +177,14 @@ public class RateLimitInputStream extends InputStream implements Runnable {
     }
 
     private interface RateLimiter {
-        void update();
+        boolean update();
 
         boolean acquire(int permits);
     }
 
     private class TokenBucketRateLimiter implements RateLimiter {
 
+        private int gap;
         private long access;
         private int permits;
         private final int size;
@@ -190,19 +195,27 @@ public class RateLimitInputStream extends InputStream implements Runnable {
         }
 
         /**
+         * @return release() >= gap
          * @see {@link RateLimitInputStream#run()}
          */
         @Override
-        public void update() {
-            release(); RateLimitInputStream.this.limiterLock.signalAll();
+        public boolean update() {
+            int p = release();
+            if (p < this.gap) {
+                this.gap -= p;
+                return false;
+            }
+            return true;
         }
 
-        private void release() {
+        private int release() {
             long access = currentTimeMillis();
-            if (access <= this.access) return;
-            long p = (access - this.access) * size / 1000;
-            if (p == 0) return; this.permits = Math.min(permits + (int) p, size);
+            if (access <= this.access) return 0;
+            int p = (int) ((access - this.access) * size / 1000);
+            if (p == 0) return 0;
+            this.permits = Math.min(permits + p, size);
             this.access = access;
+            return p;
         }
 
         /**
@@ -216,8 +229,14 @@ public class RateLimitInputStream extends InputStream implements Runnable {
         @Override
         public boolean acquire(int permits) {
             release();
-            if (this.permits < permits) return false;
-            else { this.permits -= permits; return true; }
+            if (this.permits < permits) {
+                this.gap = permits - this.permits;
+                return false;
+            } else {
+                this.permits -= permits;
+                this.gap = 0;
+                return true;
+            }
         }
     }
 }

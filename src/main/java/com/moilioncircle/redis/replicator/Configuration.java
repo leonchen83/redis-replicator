@@ -90,6 +90,11 @@ public class Configuration {
     private int asyncCachedBytes = 512 * 1024;
 
     /**
+     * rate limit (unit : bytes/second)
+     */
+    private int rateLimit = 0;
+
+    /**
      * trace event log
      */
     private boolean verbose = false;
@@ -240,6 +245,15 @@ public class Configuration {
         return this;
     }
 
+    public int getRateLimit() {
+        return rateLimit;
+    }
+
+    public Configuration setRateLimit(int rateLimit) {
+        this.rateLimit = rateLimit;
+        return this;
+    }
+
     public boolean isVerbose() {
         return verbose;
     }
@@ -325,6 +339,7 @@ public class Configuration {
                 ", authPassword='" + authPassword + '\'' +
                 ", discardRdbEvent=" + discardRdbEvent +
                 ", asyncCachedBytes=" + asyncCachedBytes +
+                ", rateLimit=" + rateLimit +
                 ", verbose=" + verbose +
                 ", heartBeatPeriod=" + heartBeatPeriod +
                 ", useDefaultExceptionListener=" + useDefaultExceptionListener +

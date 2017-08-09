@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.*;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
+import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
@@ -27,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.util.Objects;
 import java.util.Timer;
@@ -359,11 +361,16 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (!connected.compareAndSet(false, true)) return;
         socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
         outputStream = new RedisOutputStream(socket.getOutputStream());
-        inputStream = new RedisInputStream(
-                configuration.getAsyncCachedBytes() > 0 ? new AsyncBufferedInputStream(socket.getInputStream(), configuration.getAsyncCachedBytes()) : socket.getInputStream(),
-                configuration.getBufferSize());
-        inputStream.setRawByteListeners(this.rawByteListeners);
-        replyParser = new ReplyParser(inputStream);
+        InputStream inputStream = socket.getInputStream();
+        if (configuration.getAsyncCachedBytes() > 0) {
+            inputStream = new AsyncBufferedInputStream(inputStream, configuration.getAsyncCachedBytes());
+        }
+        if (configuration.getRateLimit() > 0) {
+            inputStream = new RateLimitInputStream(inputStream, configuration.getRateLimit());
+        }
+        this.inputStream = new RedisInputStream(inputStream, configuration.getBufferSize());
+        this.inputStream.setRawByteListeners(this.rawByteListeners);
+        replyParser = new ReplyParser(this.inputStream);
     }
 
     @Override

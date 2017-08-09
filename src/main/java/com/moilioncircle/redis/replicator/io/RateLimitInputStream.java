@@ -194,11 +194,15 @@ public class RateLimitInputStream extends InputStream implements Runnable {
          */
         @Override
         public void update() {
+            release(); RateLimitInputStream.this.limiterLock.signalAll();
+        }
+
+        private void release() {
             long access = currentTimeMillis();
-            if (access - this.access == 0) return;
+            if (access <= this.access) return;
             long p = (access - this.access) * size / 1000;
             if (p == 0) return; this.permits = Math.min(permits + (int) p, size);
-            this.access = access; RateLimitInputStream.this.limiterLock.signalAll();
+            this.access = access;
         }
 
         /**
@@ -211,6 +215,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
          */
         @Override
         public boolean acquire(int permits) {
+            release();
             if (this.permits < permits) return false;
             else { this.permits -= permits; return true; }
         }

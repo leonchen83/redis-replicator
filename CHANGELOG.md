@@ -1,3 +1,7 @@
+### 2.3.2
+
+add `Configuration.rateLimit`  
+
 ### 2.3.1
 
 add 3 commands

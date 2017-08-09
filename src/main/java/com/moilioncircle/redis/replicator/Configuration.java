@@ -91,6 +91,8 @@ public class Configuration {
 
     /**
      * rate limit (unit : bytes/second)
+     *
+     * @since 2.3.2
      */
     private int rateLimit = 0;
 

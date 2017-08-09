@@ -3,6 +3,8 @@ package com.moilioncircle.redis.replicator.io;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -12,15 +14,16 @@ import static org.junit.Assert.assertEquals;
 public class RateLimitInputStreamTest {
     @Test
     public void read() throws Exception {
-        String str = "sfajfklfjkljflsfjs;djfsldfjsklfjsdfjkdsfjksdjfdskfjdfsdfsfff";
-        RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(str.getBytes())), 10);
-        byte[] b = new byte[50];
+        byte[] bytes = new byte[9000];
+        Arrays.fill(bytes, (byte)100);
+        RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(bytes)), 1000);
+        byte[] b = new byte[bytes.length - 1000];
         long st = System.currentTimeMillis();
         in.read(b);
-        assertEquals(10, in.available());
+        assertEquals(1000, in.available());
         long ed = System.currentTimeMillis();
         System.out.println(ed - st);
-        assertEquals(true, (ed - st) > 3900 && (ed - st) < 4100);
+        assertEquals(true, (ed - st) > 6900 && (ed - st) < 7100);
         in.close();
     }
 

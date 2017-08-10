@@ -105,23 +105,24 @@ public class RateLimitInputStream extends InputStream implements Runnable {
                     this.reader.awaitUninterruptibly();
                     if (this.closed.get()) throw new EOFException();
                 }
-                if (in.read(b, index, len) == -1) return -1;
-                index += len;
-                total -= len;
+                int r = in.read(b, index, len);
                 this.writer.signalAll();
+                index += r; total -= r;
+                if (r < 0) return r;
+                if (r < len) return length - total;
             }
             assert total == 0;
-            return total;
+            return length;
         } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public long skip(long len) throws IOException {
+    public long skip(long length) throws IOException {
         lock.lock();
         try {
-            long total = len;
+            long total = length;
             while (total > 0) {
                 int skip = (int) Math.min(permits, total);
                 while (!limiter.acquire(skip)) {
@@ -129,12 +130,13 @@ public class RateLimitInputStream extends InputStream implements Runnable {
                     this.reader.awaitUninterruptibly();
                     if (this.closed.get()) throw new EOFException();
                 }
-                in.skip(skip);
-                total -= skip;
+                long r = in.skip(skip);
                 this.writer.signalAll();
+                total -= r;
+                if (r < skip) return length - total;
             }
             assert total == 0;
-            return len;
+            return length;
         } finally {
             lock.unlock();
         }
@@ -168,19 +170,15 @@ public class RateLimitInputStream extends InputStream implements Runnable {
             while (!this.closed.get()) {
                 this.lock.lock();
                 try {
-                    while (this.limiter.full()) {
+                    while (limiter.full()) {
                         this.writer.awaitUninterruptibly();
                         if (this.closed.get()) throw new EOFException();
                     }
-                    boolean signal = false;
-                    while (!this.limiter.update()) {
-                        if (!signal) signal = true;
-                        if (idx++ == yield) {
-                            idx = 0;
-                            Thread.yield();
-                        }
+                    while (!limiter.update()) {
+                        if (idx++ == yield) { idx = 0; Thread.yield(); }
                     }
-                    if (signal) this.reader.signalAll();
+                    if (lock.hasWaiters(this.reader))
+                        this.reader.signalAll();
                 } finally {
                     this.lock.unlock();
                 }

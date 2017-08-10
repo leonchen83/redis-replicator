@@ -19,7 +19,7 @@ public class RateLimitInputStreamTest {
         RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(bytes)), 2000);
         byte[] b = new byte[bytes.length - 1000];
         long st = System.currentTimeMillis();
-        in.read(b);
+        assertEquals(8000, in.read(b));
         assertEquals(1000, in.available());
         long ed = System.currentTimeMillis();
         System.out.println(ed - st);
@@ -47,7 +47,8 @@ public class RateLimitInputStreamTest {
         Arrays.fill(bytes, (byte)100);
         RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(bytes)), 10);
         long st = System.currentTimeMillis();
-        in.skip(bytes.length);
+        assertEquals(9000, in.skip(bytes.length));
+        assertEquals(0, in.skip(0));
         assertEquals(0, in.available());
         long ed = System.currentTimeMillis();
         System.out.println(ed - st);

@@ -38,7 +38,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
 
     private static final Log logger = LogFactory.getLog(RateLimitInputStream.class);
 
-    private static final int DEFAULT_PERMITS = 2 * 1024 * 1024;
+    private static final int DEFAULT_PERMITS = 100 * 1024 * 1000; // 100MB/sec
 
     private final int permits;
     private final Thread worker;
@@ -60,10 +60,14 @@ public class RateLimitInputStream extends InputStream implements Runnable {
     }
 
     public RateLimitInputStream(InputStream in, int permits, ThreadFactory factory) {
+        if (permits <= 1000) permits = 1000;
+        else if (permits > 1000) permits = permits / 1000 * 1000;
+        logger.info("rate limit force set to " + permits);
+        //
         this.in = in;
         this.factory = factory;
         this.permits = permits;
-        this.limiter = new TokenBucketRateLimiter(permits);
+        this.limiter = new TokenBucketRateLimiter(this.permits);
         this.worker = this.factory.newThread(this); this.worker.start();
     }
 
@@ -216,25 +220,24 @@ public class RateLimitInputStream extends InputStream implements Runnable {
          * @see {@link RateLimitInputStream#read(byte[], int, int)}
          * @see {@link RateLimitInputStream#skip(long)}
          */
-        boolean acquire(int permits);
+        boolean acquire(long permits);
     }
 
     private class TokenBucketRateLimiter implements RateLimiter {
 
-        private double gap;
+        private long gap;
         private long access;
-        private double permits;
-        private final int size;
+        private long permits;
+        private final long size;
 
         private TokenBucketRateLimiter(int permits) {
-            this.size = permits;
-            this.permits = permits;
             this.access = currentTimeMillis();
+            this.size = this.permits = permits;
         }
 
         @Override
         public boolean full() {
-            return (int)permits == size;
+            return permits == size;
         }
 
         @Override
@@ -250,7 +253,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
         }
 
         @Override
-        public boolean acquire(int permits) {
+        public boolean acquire(long permits) {
             generate();
             if (this.permits < permits) {
                 this.gap = permits - this.permits;
@@ -262,10 +265,10 @@ public class RateLimitInputStream extends InputStream implements Runnable {
             }
         }
 
-        private double generate() {
+        private long generate() {
             long access = currentTimeMillis();
-            if (access <= this.access) return 0;
-            double p = (access - this.access) * size / 1000d;
+            if (access <= this.access) return 0L;
+            long p = (access - this.access) * size / 1000L;
             this.permits += p; if (this.permits > size) this.permits = size;
             this.access = access; return p;
         }

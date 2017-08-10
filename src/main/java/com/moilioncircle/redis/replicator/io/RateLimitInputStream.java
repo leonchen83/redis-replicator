@@ -65,9 +65,11 @@ public class RateLimitInputStream extends InputStream implements Runnable {
         logger.info("rate limit force set to " + permits);
         //
         this.in = in;
-        this.factory = factory; this.permits = permits;
+        this.factory = factory;
+        this.permits = permits;
         this.limiter = new TokenBucketRateLimiter(this.permits);
-        this.worker = this.factory.newThread(this); this.worker.start();
+        this.worker = this.factory.newThread(this);
+        this.worker.start();
     }
 
     @Override
@@ -106,7 +108,8 @@ public class RateLimitInputStream extends InputStream implements Runnable {
                 }
                 int r = in.read(b, index, len);
                 this.writer.signalAll();
-                index += r; total -= r;
+                index += r;
+                total -= r;
                 if (r < 0) return r;
                 if (r < len) return length - total;
             }
@@ -174,7 +177,10 @@ public class RateLimitInputStream extends InputStream implements Runnable {
                         if (this.closed.get()) throw new EOFException();
                     }
                     while (!limiter.update()) {
-                        if (idx++ == yield) { idx = 0; Thread.yield(); }
+                        if (idx++ >= yield) {
+                            idx = 0;
+                            Thread.yield();
+                        }
                     }
                     if (lock.hasWaiters(this.reader))
                         this.reader.signalAll();
@@ -266,8 +272,10 @@ public class RateLimitInputStream extends InputStream implements Runnable {
             long access = currentTimeMillis();
             if (access <= this.access) return 0L;
             long p = (access - this.access) * size / 1000L;
-            this.permits += p; if (this.permits > size) this.permits = size;
-            this.access = access; return p;
+            this.permits += p;
+            if (this.permits > size) this.permits = size;
+            this.access = access;
+            return p;
         }
     }
 }

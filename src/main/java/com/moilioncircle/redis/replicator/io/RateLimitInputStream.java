@@ -46,10 +46,10 @@ public class RateLimitInputStream extends InputStream implements Runnable {
     private final RateLimiter limiter;
     private final ThreadFactory factory;
     private volatile IOException exception;
-    private final ReentrantLock lock = new ReentrantLock(false);
-    private final AtomicBoolean closed = new AtomicBoolean(false);
+    private final ReentrantLock lock = new ReentrantLock();
     private final Condition reader = this.lock.newCondition();
     private final Condition writer = this.lock.newCondition();
+    private final AtomicBoolean closed = new AtomicBoolean(false);
 
     public RateLimitInputStream(InputStream in) {
         this(in, DEFAULT_PERMITS);
@@ -65,8 +65,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
         logger.info("rate limit force set to " + permits);
         //
         this.in = in;
-        this.factory = factory;
-        this.permits = permits;
+        this.factory = factory; this.permits = permits;
         this.limiter = new TokenBucketRateLimiter(this.permits);
         this.worker = this.factory.newThread(this); this.worker.start();
     }

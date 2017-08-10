@@ -38,7 +38,7 @@ public class RateLimitInputStream extends InputStream implements Runnable {
 
     private static final Log logger = LogFactory.getLog(RateLimitInputStream.class);
 
-    private static final int DEFAULT_PERMITS = 100 * 1024 * 1000; // 100MB/sec
+    private static final int DEFAULT_PERMITS = 100 * 1024 * 1000; // 97.65MB/sec
 
     private final int permits;
     private final Thread worker;

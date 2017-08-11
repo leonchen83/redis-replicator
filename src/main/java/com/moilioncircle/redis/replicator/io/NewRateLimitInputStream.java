@@ -42,6 +42,10 @@ public class NewRateLimitInputStream extends InputStream {
     }
 
     public NewRateLimitInputStream(InputStream in, int permits) {
+        if (permits <= 1000) permits = 1000;
+        else if (permits > 1000) permits = permits / 1000 * 1000;
+        logger.info("rate limit force set to " + permits);
+
         this.in = in;
         this.permits = permits;
         this.limiter = new TokenBucketRateLimiter(this.permits);

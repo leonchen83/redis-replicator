@@ -117,7 +117,7 @@ public class RateLimitInputStream extends InputStream {
         private TokenBucketRateLimiter(int permits) {
             this.access = currentTimeMillis();
             this.size = this.permits = permits;
-            this.sleep = 1 * this.size / 1000L;
+            this.sleep = 1 * this.size / 1000d;
         }
 
         @Override

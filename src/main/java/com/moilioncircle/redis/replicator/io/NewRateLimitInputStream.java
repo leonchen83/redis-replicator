@@ -122,31 +122,28 @@ public class NewRateLimitInputStream extends InputStream {
 
         @Override
         public void acquire(long permits) {
-            try{
-                generate();
-                long gap;
-                if (this.permits < permits) {
-                    gap = permits - this.permits;
-                } else {
-                    this.permits -= permits;
-                    gap = 0;
-                }
-                double r = gap / sleep;
+            try {
                 while (true) {
+                    generate();
+                    if (this.permits < permits) {
+                        permits -= this.permits;
+                    } else {
+                        this.permits -= permits;
+                        return;
+                    }
+                    double r = permits / sleep;
                     if (r < 1) {
-                        this.borrow += gap;
+                        this.borrow += permits;
                         while (this.borrow >= sleep) {
                             Thread.sleep(1);
                             this.borrow -= sleep;
                         }
                         return;
                     } else {
-                        r -= 1;
-                        gap -= sleep;
-                        Thread.sleep(1);
+                        Thread.sleep((int) r);
                     }
                 }
-            }catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }

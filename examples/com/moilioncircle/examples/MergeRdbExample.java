@@ -51,8 +51,8 @@ public class MergeRdbExample {
                     if (tuple.getT1() != null) {
                         try {
                             byte[] ary = tuple.getT2().array();
-                            byte[] head = Arrays.copyOfRange(ary, 0, 9);
-                            if (Arrays.equals("REDIS0007".getBytes(), head)) {
+                            byte[] head = Arrays.copyOfRange(ary, 0, 5);
+                            if (Arrays.equals("REDIS".getBytes(), head)) {
                                 out.write(ary, 9, ary.length - 9);
                             } else {
                                 out.write(ary);

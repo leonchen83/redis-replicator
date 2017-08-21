@@ -36,63 +36,63 @@ import java.util.Arrays;
 @SuppressWarnings("resource")
 public class MergeRdbExample {
     public static void main(String[] args) throws IOException {
-        final FileOutputStream out = new FileOutputStream(new File("./src/test/resources/dump-merged.rdb"));
-        // you know your redis version. so you know your rdb version.
-        out.write("REDIS0007".getBytes());
-        for (int i = 0; i < 4; i++) {
-            Replicator replicator = new RedisReplicator(new File("./src/test/resources/dump-split-" + i + ".rdb"),
-                    FileType.RDB, Configuration.defaultSetting());
-            final Tuple2<String, ByteBuilder> tuple = new Tuple2<>();
-            tuple.setT2(ByteBuilder.allocate(128));
+        try (FileOutputStream out = new FileOutputStream(new File("./src/test/resources/dump-merged.rdb"))) {
+            // you know your redis version. so you know your rdb version.
+            out.write("REDIS0007".getBytes());
+            for (int i = 0; i < 4; i++) {
+                Replicator replicator = new RedisReplicator(new File("./src/test/resources/dump-split-" + i + ".rdb"),
+                        FileType.RDB, Configuration.defaultSetting());
+                final Tuple2<String, ByteBuilder> tuple = new Tuple2<>();
+                tuple.setT2(ByteBuilder.allocate(128));
 
-            final RawByteListener rawByteListener = new RawByteListener() {
-                @Override
-                public void handle(byte... rawBytes) {
-                    if (tuple.getT1() != null) {
-                        try {
-                            byte[] ary = tuple.getT2().array();
-                            byte[] head = Arrays.copyOfRange(ary, 0, 5);
-                            if (Arrays.equals("REDIS".getBytes(), head)) {
-                                out.write(ary, 9, ary.length - 9);
-                            } else {
-                                out.write(ary);
+                final RawByteListener rawByteListener = new RawByteListener() {
+                    @Override
+                    public void handle(byte... rawBytes) {
+                        if (tuple.getT1() != null) {
+                            try {
+                                byte[] ary = tuple.getT2().array();
+                                byte[] head = Arrays.copyOfRange(ary, 0, 5);
+                                if (Arrays.equals("REDIS".getBytes(), head)) {
+                                    out.write(ary, 9, ary.length - 9);
+                                } else {
+                                    out.write(ary);
+                                }
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
                             }
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
+                            tuple.setT1(null);
+                            tuple.setT2(ByteBuilder.allocate(128));
                         }
-                        tuple.setT1(null);
+                        for (byte b : rawBytes) tuple.getT2().put(b);
+                    }
+                };
+                replicator.addRawByteListener(rawByteListener);
+                replicator.addAuxFieldListener(new AuxFieldListener() {
+                    @Override
+                    public void handle(Replicator replicator, AuxField auxField) {
+                        // clear aux field
                         tuple.setT2(ByteBuilder.allocate(128));
                     }
-                    for (byte b : rawBytes) tuple.getT2().put(b);
-                }
-            };
-            replicator.addRawByteListener(rawByteListener);
-            replicator.addAuxFieldListener(new AuxFieldListener() {
-                @Override
-                public void handle(Replicator replicator, AuxField auxField) {
-                    // clear aux field
-                    tuple.setT2(ByteBuilder.allocate(128));
-                }
-            });
-            replicator.addRdbListener(new RdbListener.Adaptor() {
-                @Override
-                public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                    tuple.setT1(kv.getKey());
-                }
+                });
+                replicator.addRdbListener(new RdbListener.Adaptor() {
+                    @Override
+                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                        tuple.setT1(kv.getKey());
+                    }
 
-                public void postFullSync(Replicator replicator, long checksum) {
-                    tuple.setT2(ByteBuilder.allocate(128));
-                }
-            });
+                    public void postFullSync(Replicator replicator, long checksum) {
+                        tuple.setT2(ByteBuilder.allocate(128));
+                    }
+                });
 
-            replicator.open();
+                replicator.open();
+            }
+            out.write(Constants.RDB_OPCODE_EOF);
+            // if you want to load data from split rdb file which we generated.
+            // You MUST close rdbchecksum in redis.conf.
+            // Because this checksum is not correct.
+            out.write(longToByteArray(0L));
         }
-        out.write(Constants.RDB_OPCODE_EOF);
-        // if you want to load data from split rdb file which we generated.
-        // You MUST close rdbchecksum in redis.conf.
-        // Because this checksum is not correct.
-        out.write(longToByteArray(0L));
-        out.close();
     }
 
     private static class Tuple2<T1, T2> {

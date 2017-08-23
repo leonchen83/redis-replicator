@@ -93,6 +93,19 @@ public class SplitAofExample {
             }
         });
 
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                for (FileOutputStream out : outs) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
         replicator.open();
     }
 

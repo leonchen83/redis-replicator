@@ -66,7 +66,7 @@ public class SplitAofExample {
 
         replicator.addRawByteListener(rawByteListener);
 
-        //if using socket replication , open following comment so that big ByteBuilder.
+        //if you are using socket replication, open following comment so that avoid very big ByteBuilder.
 
 //        replicator.addAuxFieldListener(new AuxFieldListener() {
 //            @Override

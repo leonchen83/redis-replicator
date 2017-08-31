@@ -20,6 +20,6 @@ package com.moilioncircle.redis.replicator;
  * @author Leon Chen
  * @since 2.3.3
  */
-public enum  Status {
+public enum Status {
     CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED
 }

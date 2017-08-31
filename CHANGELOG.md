@@ -1,6 +1,7 @@
 ### 2.3.3  
 
-add `RedisSocketReplicator.getStatus`
+add `RedisSocketReplicator.getStatus`  
+fix offset bug. only add heart beat offset after event consumed.  
 
 ### 2.3.2
 

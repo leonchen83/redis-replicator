@@ -152,8 +152,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
                             logger.info("redis reply:" + obj);
                         }
                     }
-                    // add offset after event consumed.
+                    // add offset after event consumed. after that reset offset to 0L.
                     configuration.addOffset(offset[0]);
+                    offset[0] = 0L;
                 }
                 //connected = false
                 break;

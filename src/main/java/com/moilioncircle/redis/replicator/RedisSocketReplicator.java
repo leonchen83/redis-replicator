@@ -379,8 +379,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     /**
-     * @since 2.3.3
      * @return connection status
+     * @since 2.3.3
      */
     public Status getStatus() {
         return connected.get();

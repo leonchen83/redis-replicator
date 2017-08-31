@@ -121,11 +121,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     continue;
                 }
                 //sync command
+                final long[] offset = new long[1];
                 while (connected.get() == CONNECTED) {
                     Object obj = replyParser.parse(new OffsetHandler() {
                         @Override
                         public void handle(long len) {
-                            configuration.addOffset(len);
+                            offset[0] = len;
                         }
                     });
                     //command
@@ -151,6 +152,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
                             logger.info("redis reply:" + obj);
                         }
                     }
+                    // add offset after event consumed.
+                    configuration.addOffset(offset[0]);
                 }
                 //connected = false
                 break;

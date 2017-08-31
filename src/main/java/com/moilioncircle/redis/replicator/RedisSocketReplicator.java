@@ -48,12 +48,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
     protected static final Log logger = LogFactory.getLog(RedisSocketReplicator.class);
 
-    protected Socket socket;
     protected final int port;
     protected Timer heartbeat;
     protected final String host;
-    protected ReplyParser replyParser;
-    protected RedisOutputStream outputStream;
+    protected volatile Socket socket;
+    protected volatile ReplyParser replyParser;
+    protected volatile RedisOutputStream outputStream;
     protected final RedisSocketFactory socketFactory;
     protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
 
@@ -378,6 +378,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
     }
 
+    /**
+     * @since 2.3.3
+     * @return connection status
+     */
     public Status getStatus() {
         return connected.get();
     }

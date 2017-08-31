@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
-    protected RedisInputStream inputStream;
+    protected volatile RedisInputStream inputStream;
     protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();

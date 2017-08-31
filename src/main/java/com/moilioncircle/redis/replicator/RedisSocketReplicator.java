@@ -33,10 +33,11 @@ import java.net.Socket;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
+import static com.moilioncircle.redis.replicator.Status.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -54,7 +55,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected ReplyParser replyParser;
     protected RedisOutputStream outputStream;
     protected final RedisSocketFactory socketFactory;
-    protected final AtomicBoolean connected = new AtomicBoolean(false);
+    protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
 
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         Objects.requireNonNull(host);
@@ -105,10 +106,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
                 SyncMode syncMode = trySync(reply);
                 //bug fix.
-                if (syncMode == SyncMode.PSYNC && connected.get()) {
+                if (syncMode == SyncMode.PSYNC && connected.get() == CONNECTED) {
                     //heartbeat send REPLCONF ACK ${slave offset}
                     heartbeat();
-                } else if (syncMode == SyncMode.SYNC_LATER && connected.get()) {
+                } else if (syncMode == SyncMode.SYNC_LATER && connected.get() == CONNECTED) {
                     //sync later
                     i = 0;
                     close();
@@ -120,7 +121,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     continue;
                 }
                 //sync command
-                while (connected.get()) {
+                while (connected.get() == CONNECTED) {
                     Object obj = replyParser.parse(new OffsetHandler() {
                         @Override
                         public void handle(long len) {
@@ -155,7 +156,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 break;
             } catch (IOException | UncheckedIOException e) {
                 //close socket manual
-                if (!connected.get()) break;
+                if (connected.get() != CONNECTED) break;
                 logger.error("[redis-replicator] socket error", e);
                 //connect refused,connect timeout,read timeout,connect abort,server disconnect,connection EOFException
                 close();
@@ -358,52 +359,64 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     protected void connect() throws IOException {
-        if (!connected.compareAndSet(false, true)) return;
-        socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
-        outputStream = new RedisOutputStream(socket.getOutputStream());
-        InputStream inputStream = socket.getInputStream();
-        if (configuration.getAsyncCachedBytes() > 0) {
-            inputStream = new AsyncBufferedInputStream(inputStream, configuration.getAsyncCachedBytes());
+        if (!connected.compareAndSet(DISCONNECTED, CONNECTING)) return;
+        try {
+            socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
+            outputStream = new RedisOutputStream(socket.getOutputStream());
+            InputStream inputStream = socket.getInputStream();
+            if (configuration.getAsyncCachedBytes() > 0) {
+                inputStream = new AsyncBufferedInputStream(inputStream, configuration.getAsyncCachedBytes());
+            }
+            if (configuration.getRateLimit() > 0) {
+                inputStream = new RateLimitInputStream(inputStream, configuration.getRateLimit());
+            }
+            this.inputStream = new RedisInputStream(inputStream, configuration.getBufferSize());
+            this.inputStream.setRawByteListeners(this.rawByteListeners);
+            replyParser = new ReplyParser(this.inputStream);
+        } finally {
+            connected.set(CONNECTED);
         }
-        if (configuration.getRateLimit() > 0) {
-            inputStream = new RateLimitInputStream(inputStream, configuration.getRateLimit());
-        }
-        this.inputStream = new RedisInputStream(inputStream, configuration.getBufferSize());
-        this.inputStream.setRawByteListeners(this.rawByteListeners);
-        replyParser = new ReplyParser(this.inputStream);
+    }
+
+    public Status getStatus() {
+        return connected.get();
     }
 
     @Override
     public void close() {
-        if (!connected.compareAndSet(true, false)) return;
-
-        synchronized (this) {
-            if (heartbeat != null) {
-                heartbeat.cancel();
-                heartbeat = null;
-                logger.info("heartbeat canceled.");
-            }
-        }
+        if (!connected.compareAndSet(CONNECTED, DISCONNECTING)) return;
 
         try {
-            if (inputStream != null) {
-                inputStream.setRawByteListeners(null);
-                inputStream.close();
+            synchronized (this) {
+                if (heartbeat != null) {
+                    heartbeat.cancel();
+                    heartbeat = null;
+                    logger.info("heartbeat canceled.");
+                }
             }
-        } catch (IOException e) {
-            //NOP
+
+            try {
+                if (inputStream != null) {
+                    inputStream.setRawByteListeners(null);
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                //NOP
+            }
+            try {
+                if (outputStream != null) outputStream.close();
+            } catch (IOException e) {
+                //NOP
+            }
+            try {
+                if (socket != null && !socket.isClosed()) socket.close();
+            } catch (IOException e) {
+                //NOP
+            }
+            logger.info("socket closed");
+        } finally {
+            connected.set(DISCONNECTED);
         }
-        try {
-            if (outputStream != null) outputStream.close();
-        } catch (IOException e) {
-            //NOP
-        }
-        try {
-            if (socket != null && !socket.isClosed()) socket.close();
-        } catch (IOException e) {
-            //NOP
-        }
-        logger.info("socket closed");
     }
 
     protected enum SyncMode {SYNC, PSYNC, SYNC_LATER}

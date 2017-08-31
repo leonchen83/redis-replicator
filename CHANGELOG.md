@@ -1,3 +1,7 @@
+### 2.3.3  
+
+add `RedisSocketReplicator.getStatus`
+
 ### 2.3.2
 
 add `Configuration.rateLimit`  

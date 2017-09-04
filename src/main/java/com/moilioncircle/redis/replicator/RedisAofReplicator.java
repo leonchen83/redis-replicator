@@ -21,16 +21,16 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
-import com.moilioncircle.redis.replicator.rdb.datatype.Module;
-import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -105,50 +105,5 @@ public class RedisAofReplicator extends AbstractReplicator {
     @Override
     public void close() throws IOException {
         doClose();
-    }
-
-    @Override
-    public ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRdbVisitor(RdbVisitor rdbVisitor) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RdbVisitor getRdbVisitor() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean addRdbListener(RdbListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean removeRdbListener(RdbListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean addAuxFieldListener(AuxFieldListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean removeAuxFieldListener(AuxFieldListener listener) {
-        throw new UnsupportedOperationException();
     }
 }

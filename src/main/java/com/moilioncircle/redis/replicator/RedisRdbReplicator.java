@@ -16,14 +16,15 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.cmd.CommandName;
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 /**
@@ -33,7 +34,6 @@ import java.util.Objects;
 public class RedisRdbReplicator extends AbstractReplicator {
 
     public RedisRdbReplicator(File file, Configuration configuration) throws FileNotFoundException {
-        //bug fix http://git.oschina.net/leonchen83/redis-replicator/issues/2
         this(new FileInputStream(file), configuration);
     }
 
@@ -67,35 +67,5 @@ public class RedisRdbReplicator extends AbstractReplicator {
     @Override
     public void close() throws IOException {
         doClose();
-    }
-
-    @Override
-    public boolean addCommandListener(CommandListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean removeCommandListener(CommandListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CommandParser<? extends Command> getCommandParser(CommandName command) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CommandParser<? extends Command> removeCommandParser(CommandName command) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void builtInCommandParserRegister() {
-        throw new UnsupportedOperationException();
     }
 }

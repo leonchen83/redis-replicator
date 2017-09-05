@@ -105,14 +105,14 @@ public final class RedisURI implements Comparable<RedisURI> {
 
     private static String decode(String s) {
         if (s == null)
-            return s;
+            return null;
         int n = s.length();
         if (n == 0)
             return s;
         if (s.indexOf('%') < 0)
             return s;
 
-        StringBuffer sb = new StringBuffer(n);
+        StringBuilder sb = new StringBuilder(n);
         ByteBuffer bb = ByteBuffer.allocate(n);
         CharBuffer cb = CharBuffer.allocate(n);
         CharsetDecoder dec = ThreadLocalCoders.decoderFor("UTF-8")
@@ -137,7 +137,6 @@ public final class RedisURI implements Comparable<RedisURI> {
                 continue;
             }
             bb.clear();
-            int ui = i;
             while (true) {
                 bb.put(decode(s.charAt(++i), s.charAt(++i)));
                 if (++i >= n)
@@ -170,7 +169,7 @@ public final class RedisURI implements Comparable<RedisURI> {
     }
 
     private static byte decode(char c1, char c2) {
-        return (byte) (((decode(c1) & 0xf) << 4) | ((decode(c2) & 0xf) << 0));
+        return (byte) (((decode(c1) & 0xF) << 4) | ((decode(c2) & 0xF) << 0));
     }
 
     public int getPort() {

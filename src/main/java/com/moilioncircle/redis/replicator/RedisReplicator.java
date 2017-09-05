@@ -95,6 +95,9 @@ public class RedisReplicator implements Replicator {
                 case RDB:
                     this.replicator = new RedisRdbReplicator(in, configuration);
                     break;
+                case MIXED:
+                    this.replicator = new RedisMixReplicator(in, configuration);
+                    break;
                 default:
                     throw new UnsupportedOperationException(redisURI.getFileType().toString());
             }

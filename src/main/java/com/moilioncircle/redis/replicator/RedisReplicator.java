@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.io.PeekableInputStream;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -31,6 +32,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.Objects;
 
 /**
  * @author Leon Chen
@@ -73,6 +76,31 @@ public class RedisReplicator implements Replicator {
 
     public RedisReplicator(String host, int port, Configuration configuration) {
         this.replicator = new RedisSocketReplicator(host, port, configuration);
+    }
+
+    public RedisReplicator(String uri) throws URISyntaxException, IOException {
+        Objects.requireNonNull(uri);
+        RedisURI redisURI = new RedisURI(uri);
+        Configuration configuration = Configuration.valueOf(redisURI);
+        if (redisURI.getFileType() != null) {
+            PeekableInputStream in = new PeekableInputStream(redisURI.toURL().openStream());
+            switch (redisURI.getFileType()) {
+                case AOF:
+                    if (in.peek() == 'R') {
+                        this.replicator = new RedisMixReplicator(in, configuration);
+                    } else {
+                        this.replicator = new RedisAofReplicator(in, configuration);
+                    }
+                    break;
+                case RDB:
+                    this.replicator = new RedisRdbReplicator(in, configuration);
+                    break;
+                default:
+                    throw new UnsupportedOperationException(redisURI.getFileType().toString());
+            }
+        } else {
+            this.replicator = new RedisSocketReplicator(redisURI.getHost(), redisURI.getPort(), configuration);
+        }
     }
 
     @Override

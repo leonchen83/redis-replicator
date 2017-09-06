@@ -23,6 +23,11 @@ package com.moilioncircle.redis.replicator;
 public enum FileType {
     AOF, RDB, MIXED;
 
+    /**
+     * @param type string type
+     * @return FileType
+     * @since 2.3.3
+     */
     public static FileType parse(String type) {
         if (type == null) {
             return null;

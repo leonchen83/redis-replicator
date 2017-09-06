@@ -41,6 +41,7 @@ public class KeyStringValueString extends KeyValuePair<String> {
      * @since 2.2.0
      * @deprecated use {@link #setRawValue} instead. will remove in version 3.0.0
      */
+    @Deprecated
     public void setRawBytes(byte[] rawBytes) {
         this.rawValue = rawBytes;
     }

@@ -78,6 +78,13 @@ public class RedisReplicator implements Replicator {
         this.replicator = new RedisSocketReplicator(host, port, configuration);
     }
 
+    /**
+     * @param uri redis uri.
+     * @throws URISyntaxException uri syntax error.
+     * @throws IOException        read timeout or read EOF.
+     * @see RedisURI
+     * @since 2.3.3
+     */
     public RedisReplicator(String uri) throws URISyntaxException, IOException {
         Objects.requireNonNull(uri);
         RedisURI redisURI = new RedisURI(uri);

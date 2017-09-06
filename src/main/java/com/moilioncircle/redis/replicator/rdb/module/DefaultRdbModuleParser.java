@@ -26,7 +26,10 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import static com.moilioncircle.redis.replicator.Constants.*;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_DOUBLE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_FLOAT;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_STRING;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_UINT;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -57,6 +60,7 @@ public class DefaultRdbModuleParser {
      * @since 2.3.0
      * @deprecated Use {@link #loadSigned(int)} instead. will remove this method in 3.0.0
      */
+    @Deprecated
     public long loadSigned() throws IOException {
         return loadSigned(1);
     }
@@ -78,6 +82,7 @@ public class DefaultRdbModuleParser {
      * @since 2.3.0
      * @deprecated Use {@link #loadUnsigned(int)} instead. will remove this method in 3.0.0
      */
+    @Deprecated
     public BigInteger loadUnsigned() throws IOException {
         return loadUnsigned(1);
     }
@@ -88,6 +93,7 @@ public class DefaultRdbModuleParser {
      * @since 2.3.0
      * @deprecated Use {@link #loadString(int)} instead. will remove this method in 3.0.0
      */
+    @Deprecated
     public String loadString() throws IOException {
         return loadString(1);
     }
@@ -98,6 +104,7 @@ public class DefaultRdbModuleParser {
      * @since 2.3.0
      * @deprecated Use {@link #loadStringBuffer(int)} instead. will remove this method in 3.0.0
      */
+    @Deprecated
     public byte[] loadStringBuffer() throws IOException {
         return loadStringBuffer(1);
     }
@@ -108,6 +115,7 @@ public class DefaultRdbModuleParser {
      * @since 2.3.0
      * @deprecated Use {@link #loadDouble(int)} instead. will remove this method in 3.0.0
      */
+    @Deprecated
     public double loadDouble() throws IOException {
         return loadDouble(1);
     }
@@ -118,6 +126,7 @@ public class DefaultRdbModuleParser {
      * @since 2.3.0
      * @deprecated Use {@link #loadFloat(int)} instead. will remove this method in 3.0.0
      */
+    @Deprecated
     public float loadFloat() throws IOException {
         return loadFloat(1);
     }

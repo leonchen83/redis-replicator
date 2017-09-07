@@ -232,6 +232,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 } else {
                     RdbParser parser = new RdbParser(in, replicator);
                     parser.parse();
+                    if (len == -1) in.skip(40, false); // skip 40 bytes delimiter when disk-less replication
                 }
                 return "OK".getBytes();
             }

@@ -243,22 +243,26 @@ public class RedisInputStream extends InputStream {
         return tail - head + in.available();
     }
 
-    @Override
-    public long skip(long len) throws IOException {
+    public long skip(long len, boolean notify) throws IOException {
         long total = len;
         while (total > 0) {
             int available = tail - head;
             if (available >= total) {
-                notify(Arrays.copyOfRange(buf, head, head + (int) total));
+                if (notify) notify(Arrays.copyOfRange(buf, head, head + (int) total));
                 head += total;
                 break;
             } else {
-                notify(Arrays.copyOfRange(buf, head, tail));
+                if (notify) notify(Arrays.copyOfRange(buf, head, tail));
                 total -= available;
                 fill();
             }
         }
         return len;
+    }
+
+    @Override
+    public long skip(long len) throws IOException {
+        return skip(len, true);
     }
 
     @Override

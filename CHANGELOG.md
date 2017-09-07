@@ -1,9 +1,10 @@
-### 2.3.3  
+### 2.4.0  
 
 add `RedisSocketReplicator.getStatus`.  
 add constructor `RedisReplicator(String uri)`.  
 
 redis uri support.  
+diskless replication support.  
 fix offset bug. only add heart beat offset after event consumed.  
 
 ### 2.3.2

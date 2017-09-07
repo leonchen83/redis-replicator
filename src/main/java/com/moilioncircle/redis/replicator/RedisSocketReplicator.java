@@ -16,7 +16,12 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.*;
+import com.moilioncircle.redis.replicator.cmd.BulkReplyHandler;
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.OffsetHandler;
+import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
@@ -37,7 +42,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
-import static com.moilioncircle.redis.replicator.Status.*;
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.Status.CONNECTING;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -210,9 +218,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
             @Override
             public byte[] handle(long len, RedisInputStream in) throws IOException {
                 if (logger.isInfoEnabled()) {
-                    logger.info("RDB dump file size:" + len);
+                    if (len != -1) {
+                        logger.info("RDB dump file size:" + len);
+                    } else {
+                        logger.info("Disk-less replication.");
+                    }
                 }
-                if (configuration.isDiscardRdbEvent()) {
+                if (len != -1 && configuration.isDiscardRdbEvent()) {
                     if (logger.isInfoEnabled()) {
                         logger.info("discard " + len + " bytes");
                     }

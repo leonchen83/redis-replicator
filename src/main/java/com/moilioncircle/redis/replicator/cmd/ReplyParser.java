@@ -21,7 +21,11 @@ import com.moilioncircle.redis.replicator.util.ByteBuilder;
 
 import java.io.IOException;
 
-import static com.moilioncircle.redis.replicator.Constants.*;
+import static com.moilioncircle.redis.replicator.Constants.COLON;
+import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
+import static com.moilioncircle.redis.replicator.Constants.MINUS;
+import static com.moilioncircle.redis.replicator.Constants.PLUS;
+import static com.moilioncircle.redis.replicator.Constants.STAR;
 
 /**
  * @author Leon Chen
@@ -73,12 +77,22 @@ public class ReplyParser {
                             builder.put((byte) c);
                         }
                     }
-                    long len = Long.parseLong(builder.toString());
-                    // $-1\r\n. this is called null string.
-                    // see http://redis.io/topics/protocol
-                    if (len == -1) return null;
+                    String payload = builder.toString();
+                    long len = -1;
+                    // disk-less replication
+                    // $EOF:<40 bytes delimiter>
+                    if (!payload.startsWith("EOF:")) {
+                        len = Long.parseLong(builder.toString());
+                        // $-1\r\n. this is called null string.
+                        // see http://redis.io/topics/protocol
+                        if (len == -1) return null;
+                    } else {
+                        if (handler instanceof BulkReplyHandler.SimpleBulkReplyHandler) {
+                            throw new AssertionError("Parse reply for disk-less replication can not use BulkReplyHandler.SimpleBulkReplyHandler.");
+                        }
+                    }
                     if (handler != null) return handler.handle(len, in);
-                    throw new AssertionError("callback is null");
+                    throw new AssertionError("Callback is null");
                 case COLON:
                     // RESP Integers
                     builder = ByteBuilder.allocate(128);

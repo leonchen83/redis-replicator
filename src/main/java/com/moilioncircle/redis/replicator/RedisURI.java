@@ -228,12 +228,12 @@ public final class RedisURI implements Comparable<RedisURI> {
         return this.uri.compareTo(that.uri);
     }
 
-    public URL toURL() {
+    public URL toURL() throws MalformedURLException {
         Objects.requireNonNull(getFileType());
         try {
             return new URI("file", uri.getRawAuthority(), uri.getRawPath(), uri.getRawQuery(), uri.getRawFragment()).toURL();
-        } catch (URISyntaxException | MalformedURLException e) {
-            throw new UnsupportedOperationException(e);
+        } catch (URISyntaxException e) {
+            throw new MalformedURLException(e.getMessage());
         }
     }
 

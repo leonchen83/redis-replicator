@@ -28,7 +28,7 @@ public enum FileType {
      * @return FileType
      * @since 2.3.3
      */
-    public static FileType parse(String type) {
+    static FileType parse(String type) {
         if (type == null) {
             return null;
         } else if (type.equalsIgnoreCase("aof")) {

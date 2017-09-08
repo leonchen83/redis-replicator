@@ -20,13 +20,19 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
+import com.moilioncircle.redis.replicator.io.PeekableInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 import com.moilioncircle.redis.replicator.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -38,6 +44,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class RedisMixReplicator extends AbstractReplicator {
     protected static final Log logger = LogFactory.getLog(RedisAofReplicator.class);
     protected final ReplyParser replyParser;
+    protected final PeekableInputStream peekable;
 
     public RedisMixReplicator(File file, Configuration configuration) throws FileNotFoundException {
         this(new FileInputStream(file), configuration);
@@ -47,6 +54,11 @@ public class RedisMixReplicator extends AbstractReplicator {
         Objects.requireNonNull(in);
         Objects.requireNonNull(configuration);
         this.configuration = configuration;
+        if (in instanceof PeekableInputStream) {
+            this.peekable = (PeekableInputStream) in;
+        } else {
+            in = this.peekable = new PeekableInputStream(in);
+        }
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
         this.inputStream.setRawByteListeners(this.rawByteListeners);
         this.replyParser = new ReplyParser(inputStream);
@@ -68,8 +80,10 @@ public class RedisMixReplicator extends AbstractReplicator {
     }
 
     protected void doOpen() throws IOException {
-        RdbParser parser = new RdbParser(inputStream, this);
-        parser.parse();
+        if (peekable.peek() == 'R') {
+            RdbParser parser = new RdbParser(inputStream, this);
+            parser.parse();
+        }
         while (true) {
             // got EOFException to break the loop
             Object obj = replyParser.parse();

@@ -63,4 +63,34 @@ public class RedisMixReplicatorTest {
         assertEquals(244653, acc.get());
         assertEquals(59259, acc1.get());
     }
+
+    @Test
+    public void testOpen1() throws IOException {
+        Replicator replicator = new RedisReplicator(
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        final AtomicInteger acc = new AtomicInteger(0);
+        final AtomicInteger acc1 = new AtomicInteger(0);
+        replicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                acc.incrementAndGet();
+            }
+        });
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                acc1.incrementAndGet();
+            }
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                System.out.println("close testOpen1");
+            }
+        });
+        replicator.open();
+        assertEquals(0, acc.get());
+        assertEquals(4, acc1.get());
+    }
 }

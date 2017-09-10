@@ -83,7 +83,7 @@ public class RedisReplicator implements Replicator {
      * @throws URISyntaxException uri syntax error.
      * @throws IOException        read timeout or read EOF.
      * @see RedisURI
-     * @since 2.3.3
+     * @since 2.4.0
      */
     public RedisReplicator(String uri) throws URISyntaxException, IOException {
         Objects.requireNonNull(uri);

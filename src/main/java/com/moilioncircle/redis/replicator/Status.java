@@ -18,7 +18,7 @@ package com.moilioncircle.redis.replicator;
 
 /**
  * @author Leon Chen
- * @since 2.3.3
+ * @since 2.4.0
  */
 public enum Status {
     CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED

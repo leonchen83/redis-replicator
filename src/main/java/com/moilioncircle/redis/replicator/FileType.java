@@ -26,7 +26,7 @@ public enum FileType {
     /**
      * @param type string type
      * @return FileType
-     * @since 2.3.3
+     * @since 2.4.0
      */
     static FileType parse(String type) {
         if (type == null) {

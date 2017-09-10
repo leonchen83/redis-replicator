@@ -33,7 +33,7 @@ import java.util.Objects;
 
 /**
  * @author Leon Chen
- * @since 2.3.3
+ * @since 2.4.0
  */
 public final class RedisURI implements Comparable<RedisURI> {
 

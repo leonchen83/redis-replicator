@@ -21,7 +21,7 @@ import java.io.InputStream;
 
 /**
  * @author Leon Chen
- * @since 2.3.3
+ * @since 2.4.0
  */
 public class PeekableInputStream extends InputStream {
 

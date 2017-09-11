@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -69,6 +71,7 @@ public class RedisMixReplicator extends AbstractReplicator {
 
     @Override
     public void open() throws IOException {
+        if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
         try {
             doOpen();
         } catch (EOFException ignore) {
@@ -84,7 +87,7 @@ public class RedisMixReplicator extends AbstractReplicator {
             RdbParser parser = new RdbParser(inputStream, this);
             parser.parse();
         }
-        while (true) {
+        while (getStatus() == CONNECTED) {
             // got EOFException to break the loop
             Object obj = replyParser.parse();
             if (obj instanceof Object[]) {

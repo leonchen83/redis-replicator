@@ -27,7 +27,27 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 
-import static com.moilioncircle.redis.replicator.Constants.*;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_AUX;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME_MS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 
 /**
  * Redis RDB format
@@ -117,12 +137,11 @@ public class RdbParser {
         rdbVisitor.applyMagic(in);
         int version = rdbVisitor.applyVersion(in);
         DB db = null;
-        long checksum;
         /*
          * rdb
          */
         loop:
-        while (true) {
+        while (this.replicator.getStatus() == CONNECTED) {
             int type = rdbVisitor.applyType(in);
             Event event = null;
             switch (type) {
@@ -142,7 +161,8 @@ public class RdbParser {
                     db = rdbVisitor.applySelectDB(in, version);
                     break;
                 case RDB_OPCODE_EOF:
-                    checksum = rdbVisitor.applyEof(in, version);
+                    long checksum = rdbVisitor.applyEof(in, version);
+                    this.replicator.submitEvent(new PostFullSyncEvent(checksum));
                     break loop;
                 case RDB_TYPE_STRING:
                     event = rdbVisitor.applyString(in, db, version);
@@ -193,7 +213,6 @@ public class RdbParser {
             if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(event);
             this.replicator.submitEvent(event);
         }
-        this.replicator.submitEvent(new PostFullSyncEvent(checksum));
         return in.total();
     }
 }

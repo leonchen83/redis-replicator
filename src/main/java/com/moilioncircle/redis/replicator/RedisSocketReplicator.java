@@ -38,7 +38,6 @@ import java.net.Socket;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
@@ -63,7 +62,6 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected volatile ReplyParser replyParser;
     protected volatile RedisOutputStream outputStream;
     protected final RedisSocketFactory socketFactory;
-    protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
 
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         Objects.requireNonNull(host);
@@ -114,10 +112,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
                 SyncMode syncMode = trySync(reply);
                 //bug fix.
-                if (syncMode == SyncMode.PSYNC && connected.get() == CONNECTED) {
+                if (syncMode == SyncMode.PSYNC && getStatus() == CONNECTED) {
                     //heartbeat send REPLCONF ACK ${slave offset}
                     heartbeat();
-                } else if (syncMode == SyncMode.SYNC_LATER && connected.get() == CONNECTED) {
+                } else if (syncMode == SyncMode.SYNC_LATER && getStatus() == CONNECTED) {
                     //sync later
                     i = 0;
                     close();
@@ -130,7 +128,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
                 //sync command
                 final long[] offset = new long[1];
-                while (connected.get() == CONNECTED) {
+                while (getStatus() == CONNECTED) {
                     Object obj = replyParser.parse(new OffsetHandler() {
                         @Override
                         public void handle(long len) {
@@ -168,7 +166,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 break;
             } catch (IOException | UncheckedIOException e) {
                 //close socket manual
-                if (connected.get() != CONNECTED) break;
+                if (getStatus() != CONNECTED) break;
                 logger.error("[redis-replicator] socket error", e);
                 //connect refused,connect timeout,read timeout,connect abort,server disconnect,connection EOFException
                 close();
@@ -393,14 +391,6 @@ public class RedisSocketReplicator extends AbstractReplicator {
         } finally {
             connected.set(CONNECTED);
         }
-    }
-
-    /**
-     * @return connection status
-     * @since 2.4.0
-     */
-    public Status getStatus() {
-        return connected.get();
     }
 
     @Override

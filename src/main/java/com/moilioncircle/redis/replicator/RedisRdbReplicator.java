@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -49,6 +52,7 @@ public class RedisRdbReplicator extends AbstractReplicator {
 
     @Override
     public void open() throws IOException {
+        if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
         try {
             doOpen();
         } catch (EOFException ignore) {

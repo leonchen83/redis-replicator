@@ -1,3 +1,8 @@
+### 2.4.1
+
+add `Replicator.getStatus`.  
+fix close replicator bug.  
+
 ### 2.4.0  
 
 add `RedisSocketReplicator.getStatus`.  

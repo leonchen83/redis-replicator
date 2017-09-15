@@ -18,15 +18,22 @@ package com.moilioncircle.redis.replicator;
 
 import sun.nio.cs.ThreadLocalCoders;
 
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
+import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -35,24 +42,123 @@ import java.util.Objects;
  * @author Leon Chen
  * @since 2.4.0
  */
-public final class RedisURI implements Comparable<RedisURI> {
+public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
-    private String host;
-    private String path;
-    private String query;
-    private int port = -1;
-    private String scheme;
-    private String userInfo;
-    private String fragment;
-    private String authority;
-    private FileType fileType;
+    private static final long serialVersionUID = 1L;
 
-    private URI uri;
-    Map<String, String> parameters = new HashMap<>();
+    private final static char[] hexDigits = {
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
+
+    private String string;
+
+    private transient String host;
+    private transient String path;
+    private transient String query;
+    private transient int port = -1;
+    private transient String scheme;
+    private transient String userInfo;
+    private transient String fragment;
+    private transient String authority;
+    private transient FileType fileType;
+
+    private transient URI uri;
+    transient Map<String, String> parameters = new HashMap<>();
 
     public RedisURI(String uri) throws URISyntaxException {
         parse(uri);
+        this.string = this.uri.toString();
     }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getUserInfo() {
+        return userInfo;
+    }
+
+    public String getFragment() {
+        return fragment;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public FileType getFileType() {
+        return fileType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof RedisURI))
+            return false;
+        return this.uri.equals(((RedisURI) o).uri);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.uri.hashCode();
+    }
+
+    @Override
+    public int compareTo(RedisURI that) {
+        return this.uri.compareTo(that.uri);
+    }
+
+    public URL toURL() throws MalformedURLException {
+        Objects.requireNonNull(getFileType());
+        try {
+            return new URI("file", uri.getRawAuthority(), uri.getRawPath(), uri.getRawQuery(), uri.getRawFragment()).toURL();
+        } catch (URISyntaxException e) {
+            throw new MalformedURLException(e.getMessage());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.uri.toString();
+    }
+
+    public String toASCIIString() {
+        return encode(this.uri.toString());
+    }
+
+    private void writeObject(ObjectOutputStream os) throws IOException {
+        os.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream is) throws ClassNotFoundException, IOException {
+        this.port = -1;
+        is.defaultReadObject();
+        try {
+            parse(this.string);
+        } catch (URISyntaxException x) {
+            IOException y = new InvalidObjectException("Invalid Redis URI");
+            y.initCause(x);
+            throw y;
+        }
+    }
+
+    // helper
 
     private void parse(String uri) throws URISyntaxException {
         this.uri = new URI(uri);
@@ -175,70 +281,42 @@ public final class RedisURI implements Comparable<RedisURI> {
         return (byte) (((decode(c1) & 0xF) << 4) | ((decode(c2) & 0xF) << 0));
     }
 
-    public int getPort() {
-        return port;
-    }
+    private static String encode(String s) {
+        int n = s.length();
+        if (n == 0)
+            return s;
 
-    public String getHost() {
-        return host;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public String getScheme() {
-        return scheme;
-    }
-
-    public String getUserInfo() {
-        return userInfo;
-    }
-
-    public String getFragment() {
-        return fragment;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public FileType getFileType() {
-        return fileType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof RedisURI))
-            return false;
-        return this.uri.equals(((RedisURI) o).uri);
-    }
-
-    @Override
-    public int hashCode() {
-        return this.uri.hashCode();
-    }
-
-    @Override
-    public int compareTo(RedisURI that) {
-        return this.uri.compareTo(that.uri);
-    }
-
-    public URL toURL() throws MalformedURLException {
-        Objects.requireNonNull(getFileType());
-        try {
-            return new URI("file", uri.getRawAuthority(), uri.getRawPath(), uri.getRawQuery(), uri.getRawFragment()).toURL();
-        } catch (URISyntaxException e) {
-            throw new MalformedURLException(e.getMessage());
+        // First check whether we actually need to encode
+        for (int i = 0; ; ) {
+            if (s.charAt(i) >= '\u0080')
+                break;
+            if (++i >= n)
+                return s;
         }
+
+        String ns = Normalizer.normalize(s, Normalizer.Form.NFC);
+        ByteBuffer bb = null;
+        try {
+            bb = ThreadLocalCoders.encoderFor("UTF-8")
+                    .encode(CharBuffer.wrap(ns));
+        } catch (CharacterCodingException x) {
+            assert false;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (bb.hasRemaining()) {
+            int b = bb.get() & 0xff;
+            if (b >= 0x80)
+                appendEscape(sb, (byte) b);
+            else
+                sb.append((char) b);
+        }
+        return sb.toString();
     }
 
-    @Override
-    public String toString() {
-        return this.uri.toString();
+    private static void appendEscape(StringBuilder sb, byte b) {
+        sb.append('%');
+        sb.append(hexDigits[(b >> 4) & 0x0F]);
+        sb.append(hexDigits[(b >> 0) & 0x0F]);
     }
 }

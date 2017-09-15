@@ -34,6 +34,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
          * [4.2.5. Register this module parser and command parser and handle event](#425-register-this-module-parser-and-command-parser-and-handle-event)
       * [4.3. Write your own rdb parser](#43-write-your-own-rdb-parser)
       * [4.4. Event timeline](#44-event-timeline)
+      * [4.5. Redis URI](#45-redis-uri)
    * [5. Other topics](#5-other-topics)
       * [5.1. Built-in command parser](#51-built-in-command-parser)
       * [5.2. EOFException](#52-eofexception)
@@ -108,7 +109,7 @@ redis 2.6 - 4.0
 ## 3.1. Replication via socket  
   
 ```java  
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -127,7 +128,7 @@ redis 2.6 - 4.0
 ## 3.2. Read rdb file  
 
 ```java  
-        Replicator replicator = new RedisReplicator(new File("dump.rdb"), FileType.RDB, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -141,7 +142,7 @@ redis 2.6 - 4.0
 ## 3.3. Read aof file  
 
 ```java  
-        Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
@@ -162,8 +163,7 @@ redis 2.6 - 4.0
 ```
 ### 3.4.3. Using replicator read mixed file 
 ```java  
-        final Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.MIXED,
-                Configuration.defaultSetting());
+        final Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -184,7 +184,7 @@ redis 2.6 - 4.0
 
 ```java  
 
-        final FileOutputStream out = new FileOutputStream(new File("./dump.rdb"));
+        final FileOutputStream out = new FileOutputStream(new File("/path/to/dump.rdb"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -196,7 +196,7 @@ redis 2.6 - 4.0
         };
 
         //save rdb from remote server
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -220,7 +220,7 @@ redis 2.6 - 4.0
         replicator.open();
 
         //check rdb file
-        replicator = new RedisReplicator(new File("./dump.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator = new RedisReplicator("redis:///path/to/dump.rdb");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -234,7 +234,7 @@ redis 2.6 - 4.0
 
 ```java  
 
-        final FileOutputStream out = new FileOutputStream(new File("./appendonly.aof"));
+        final FileOutputStream out = new FileOutputStream(new File("/path/to/appendonly.aof"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -246,7 +246,7 @@ redis 2.6 - 4.0
         };
 
         //save 1000 records commands
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -279,7 +279,7 @@ redis 2.6 - 4.0
         replicator.open();
 
         //check aof file
-        replicator = new RedisReplicator(new File("./appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
+        replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
@@ -338,7 +338,7 @@ redis 2.6 - 4.0
   
 ### 4.1.3. Register this parser  
 ```java  
-    Replicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
+    Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
     replicator.addCommandParser(CommandName.name("APPEND"),new YourAppendParser());
 ```
   
@@ -444,7 +444,7 @@ redis 2.6 - 4.0
 
 ```java  
     public static void main(String[] args) throws IOException {
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
         replicator.addRdbListener(new RdbListener.Adaptor() {
@@ -469,8 +469,8 @@ redis 2.6 - 4.0
     }
 ```
 ## 4.3. Write your own rdb parser  
-* extends `RdbVisitor`  
-* register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
+* Extends `RdbVisitor`  
+* Register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 
 ## 4.4. Event timeline  
 
@@ -481,6 +481,29 @@ redis 2.6 - 4.0
  connect->------->-------------->------------->---------->-------------------->--------------x <-disconnect
                ↓              ↓          ↓            ↓                   ↓
           prefullsync    auxfields...  rdbs...   postfullsync            cmds...       
+```
+
+## 4.5. Redis URI
+
+Before redis-replicator-2.4.0, we construct `RedisReplicator` as following:  
+
+```java  
+Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+Replicator replicator = new RedisReplicator(new File("/path/to/dump.rdb", FileType.RDB, Configuration.defaultSetting());
+Replicator replicator = new RedisReplicator(new File("/path/to/appendonly.aof", FileType.AOF, Configuration.defaultSetting());
+Replicator replicator = new RedisReplicator(new File("/path/to/appendonly.aof", FileType.MIXED, Configuration.defaultSetting());
+```
+
+After redis-replicator-2.4.0, We introduced a new concept(Redis URI) which simplify the constructor of `RedisReplicator`.  
+
+```java  
+Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb");
+Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
+
+// configuration setting example
+Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?authPassword=yes&readTimeout=10000&ssl=yes");
+Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit=1000000");
 ```
 
 # 5. Other topics  
@@ -504,7 +527,7 @@ redis 2.6 - 4.0
   
 ## 5.2. EOFException
   
-* adjust redis server setting as following.more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
+* Adjust redis server setting as following.more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
   
 ```java  
     client-output-buffer-limit slave 0 0 0
@@ -513,8 +536,8 @@ redis 2.6 - 4.0
   
 ## 5.3. Trace event log  
   
-* set log level to **debug**
-* if you are using log4j2,add logger as following:
+* Set log level to **debug**
+* If you are using log4j2,add logger as following:
 
 ```xml  
     <Logger name="com.moilioncircle" level="debug">
@@ -524,6 +547,8 @@ redis 2.6 - 4.0
   
 ```java  
     Configuration.defaultSetting().setVerbose(true);
+    // redis uri
+    "redis://127.0.0.1:6379?verbose=yes"
 ```
   
 ## 5.4. SSL connection  
@@ -543,24 +568,25 @@ redis 2.6 - 4.0
   
 ```java  
     Configuration.defaultSetting().setAuthPassword("foobared");
+    // redis uri
+    "redis://127.0.0.1:6379?authPassword=foobared"
 ```  
 
 ## 5.6. Avoid full sync  
   
-* adjust redis server setting as following  
+* Adjust redis server setting as following  
   
 ```java  
     repl-backlog-size
     repl-backlog-ttl
     repl-ping-slave-period
 ```
-`repl-ping-slave-period` **MUST** less than `Configuration.getReadTimeout()`  
-default `Configuration.getReadTimeout()` is 30 seconds
+`repl-ping-slave-period` **MUST** less than `Configuration.getReadTimeout()`, default `Configuration.getReadTimeout()` is 30 seconds
   
 ## 5.7. FullSyncEvent  
   
 ```java  
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         final long start = System.currentTimeMillis();
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addRdbListener(new RdbListener() {
@@ -586,11 +612,11 @@ default `Configuration.getReadTimeout()` is 30 seconds
   
 ## 5.8. Handle raw bytes  
   
-* for any `KeyValuePair` type except `KeyStringValueModule`, we can get the raw bytes. In some cases(e.g. HyperLogLog),this is very useful.  
+* For any `KeyValuePair` type except `KeyStringValueModule`, we can get the raw bytes. In some cases(e.g. HyperLogLog),this is very useful.  
 
   
 ```java  
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -610,7 +636,7 @@ default `Configuration.getReadTimeout()` is 30 seconds
         replicator.open();
 ```  
   
-for easy operation, the key of return type `Map<byte[], byte[]>` of `KeyStringValueHash.getRawValue`, we can `get` and `put` the key as `value type`  
+For easy operation, the key of return type `Map<byte[], byte[]>` of `KeyStringValueHash.getRawValue`, we can `get` and `put` the key as `value type`  
 
 ```java  
 KeyStringValueHash ksvh = (KeyStringValueHash) kv;
@@ -620,7 +646,7 @@ rawValue.put(new byte[]{1}, value);
 System.out.println(rawValue.get(new byte[]{1}) == value) //will print true 
 ```
 
-commands also support raw bytes.  
+Commands also support raw bytes.  
 
 ```java  
 SetCommand set = (SetCommand) command;

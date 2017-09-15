@@ -35,6 +35,7 @@
          * [4.2.5. 注册module parser和command parser并处理相关事件](#425-注册module-parser和command-parser并处理相关事件)
       * [4.3. 编写你自己的rdb解析器](#43-编写你自己的rdb解析器)
       * [4.4. 事件时间线](#44-事件时间线)
+      * [4.5. Redis URI](#45-redis-uri)
    * [5. 其他主题](#5-其他主题)
       * [5.1. 内置的Command Parser](#51-内置的command-parser)
       * [5.2. 当出现EOFException](#52-当出现eofexception)
@@ -113,7 +114,7 @@ redis 2.6 - 4.0
 ## 3.1. 通过socket同步  
   
 ```java  
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -132,7 +133,7 @@ redis 2.6 - 4.0
 ## 3.2. 读取并解析rdb文件  
 
 ```java  
-        Replicator replicator = new RedisReplicator(new File("dump.rdb"), FileType.RDB, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -146,7 +147,7 @@ redis 2.6 - 4.0
 ## 3.3. 读取并解析aof文件  
 
 ```java  
-        Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
@@ -167,8 +168,7 @@ redis 2.6 - 4.0
 ```
 ### 3.4.3. 应用Replicator读取混合格式文件 
 ```java  
-        final Replicator replicator = new RedisReplicator(new File("appendonly.aof"), FileType.MIXED,
-                Configuration.defaultSetting());
+        final Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -190,7 +190,7 @@ redis 2.6 - 4.0
 
 ```java  
 
-        final FileOutputStream out = new FileOutputStream(new File("./dump.rdb"));
+        final FileOutputStream out = new FileOutputStream(new File("path/to/dump.rdb"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -202,7 +202,7 @@ redis 2.6 - 4.0
         };
 
         //保存server端传来的rdb文件
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -226,7 +226,7 @@ redis 2.6 - 4.0
         replicator.open();
 
         //检查写入的rdb文件
-        replicator = new RedisReplicator(new File("./dump.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator = new RedisReplicator("redis:///path/to/dump.rdb");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -240,7 +240,7 @@ redis 2.6 - 4.0
 
 ```java  
 
-        final FileOutputStream out = new FileOutputStream(new File("./appendonly.aof"));
+        final FileOutputStream out = new FileOutputStream(new File("/path/to/appendonly.aof"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -252,7 +252,7 @@ redis 2.6 - 4.0
         };
 
         //保存1000条命令
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -285,7 +285,7 @@ redis 2.6 - 4.0
         replicator.open();
 
         //检查写入的aof文件
-        replicator = new RedisReplicator(new File("./appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
+        replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
@@ -344,7 +344,7 @@ redis 2.6 - 4.0
   
 ### 4.1.3. 注册这个command parser到replicator  
 ```java  
-    Replicator replicator = new RedisReplicator("127.0.0.1",6379,Configuration.defaultSetting());
+    Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
     replicator.addCommandParser(CommandName.name("APPEND"),new YourAppendParser());
 ```
   
@@ -450,7 +450,7 @@ redis 2.6 - 4.0
 
 ```java  
     public static void main(String[] args) throws IOException {
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
         replicator.addRdbListener(new RdbListener.Adaptor() {
@@ -475,8 +475,8 @@ redis 2.6 - 4.0
     }
 ```
 ## 4.3. 编写你自己的rdb解析器  
-* 写一个类继承 `RdbVisitor`抽象类  
-* 通过`Replicator`的`setRdbVisitor`方法注册你自己的 `RdbVisitor`.  
+* 写一个类继承 `RdbVisitor` 抽象类  
+* 通过 `Replicator` 的 `setRdbVisitor` 方法注册你自己的 `RdbVisitor`.  
 
 ## 4.4. 事件时间线  
 
@@ -488,6 +488,30 @@ redis 2.6 - 4.0
                ↓              ↓          ↓            ↓                   ↓
           prefullsync    auxfields...  rdbs...   postfullsync            cmds...       
 ```
+
+## 4.5. Redis URI
+
+在 redis-replicator-2.4.0 版之前, 我们按如下方式构造 `RedisReplicator` :  
+
+```java  
+Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+Replicator replicator = new RedisReplicator(new File("/path/to/dump.rdb", FileType.RDB, Configuration.defaultSetting());
+Replicator replicator = new RedisReplicator(new File("/path/to/appendonly.aof", FileType.AOF, Configuration.defaultSetting());
+Replicator replicator = new RedisReplicator(new File("/path/to/appendonly.aof", FileType.MIXED, Configuration.defaultSetting());
+```
+
+在 redis-replicator-2.4.0 版之后, 我们引入了一个新的概念(Redis URI) 来简化 `RedisReplicator` 的构造, 以便提供一致的API.  
+
+```java  
+Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb");
+Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
+
+// 配置的例子
+Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?authPassword=yes&readTimeout=10000&ssl=yes");
+Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit=1000000");
+```
+
 
 # 5. 其他主题  
   
@@ -530,6 +554,8 @@ redis 2.6 - 4.0
   
 ```java  
     Configuration.defaultSetting().setVerbose(true);
+    // redis uri
+    "redis://127.0.0.1?verbose=yes"
 ```
   
 ## 5.4. SSL安全链接  
@@ -549,6 +575,8 @@ redis 2.6 - 4.0
   
 ```java  
     Configuration.defaultSetting().setAuthPassword("foobared");
+    // redis uri
+    "redis://127.0.0.1:6379?authPassword=foobared"
 ```  
 
 ## 5.6. 避免全量同步  
@@ -560,13 +588,12 @@ redis 2.6 - 4.0
     repl-backlog-ttl
     repl-ping-slave-period
 ```
-`repl-ping-slave-period` **必须** 小于 `Configuration.getReadTimeout()`  
-默认的 `Configuration.getReadTimeout()` 是30秒.
+`repl-ping-slave-period` **必须** 小于 `Configuration.getReadTimeout()`, 默认的 `Configuration.getReadTimeout()` 是30秒.
   
 ## 5.7. FullSyncEvent事件  
   
 ```java  
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         final long start = System.currentTimeMillis();
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addRdbListener(new RdbListener() {
@@ -595,7 +622,7 @@ redis 2.6 - 4.0
 * 除`KeyStringValueModule`以外的kv类型, 都可以得到原始的字节数组. 在某些情况(比如HyperLogLog)下会很有用.  
   
 ```java  
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

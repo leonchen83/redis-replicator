@@ -158,6 +158,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     offset[0] = 0L;
                 }
                 //getStatus() != CONNECTED
+                exception = null;
                 break;
             } catch (IOException | UncheckedIOException e) {
                 //close socket manual

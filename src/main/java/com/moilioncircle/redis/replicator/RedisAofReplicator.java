@@ -77,7 +77,6 @@ public class RedisAofReplicator extends AbstractReplicator {
 
     protected void doOpen() throws IOException {
         while (getStatus() == CONNECTED) {
-            // got EOFException to break the loop
             Object obj = replyParser.parse();
 
             if (obj instanceof Object[]) {
@@ -86,16 +85,13 @@ public class RedisAofReplicator extends AbstractReplicator {
                 Object[] command = (Object[]) obj;
                 CommandName cmdName = CommandName.name(new String((byte[]) command[0], UTF_8));
                 final CommandParser<? extends Command> operations;
-                //if command do not register. ignore
                 if ((operations = commands.get(cmdName)) == null) {
                     if (logger.isWarnEnabled()) {
                         logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(command) + "]");
                     }
                     continue;
                 }
-                //do command replyParser
                 Command parsedCommand = operations.parse(command);
-                //submit event
                 this.submitEvent(parsedCommand);
             } else {
                 if (logger.isInfoEnabled()) {

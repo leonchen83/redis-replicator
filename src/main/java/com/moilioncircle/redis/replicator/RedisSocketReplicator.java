@@ -113,12 +113,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 final String reply = new String((byte[]) reply(), UTF_8);
 
                 SyncMode syncMode = trySync(reply);
-                //bug fix.
                 if (syncMode == SyncMode.PSYNC && getStatus() == CONNECTED) {
-                    //heartbeat send REPLCONF ACK ${slave offset}
                     heartbeat();
                 } else if (syncMode == SyncMode.SYNC_LATER && getStatus() == CONNECTED) {
-                    //sync later
                     i = 0;
                     close();
                     try {
@@ -128,7 +125,6 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     }
                     continue;
                 }
-                //sync command
                 final long[] offset = new long[1];
                 while (getStatus() == CONNECTED) {
                     Object obj = replyParser.parse(new OffsetHandler() {
@@ -144,16 +140,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         Object[] command = (Object[]) obj;
                         CommandName cmdName = CommandName.name(new String((byte[]) command[0], UTF_8));
                         final CommandParser<? extends Command> operations;
-                        //if command do not register. ignore
                         if ((operations = commands.get(cmdName)) == null) {
                             if (logger.isWarnEnabled()) {
                                 logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(command) + "]");
                             }
                             continue;
                         }
-                        //do command replyParser
                         Command parsedCommand = operations.parse(command);
-                        //submit event
                         this.submitEvent(parsedCommand);
                     } else {
                         if (logger.isInfoEnabled()) {
@@ -168,7 +161,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 break;
             } catch (IOException | UncheckedIOException e) {
                 //close socket manual
-                if (getStatus() != CONNECTED) break;
+                if (getStatus() != CONNECTED) {
+                    exception = null;
+                    break;
+                }
                 if (e instanceof UncheckedIOException) {
                     exception = ((UncheckedIOException) e).getCause();
                 } else {

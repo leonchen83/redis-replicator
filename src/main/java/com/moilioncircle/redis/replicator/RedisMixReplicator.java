@@ -88,7 +88,6 @@ public class RedisMixReplicator extends AbstractReplicator {
             parser.parse();
         }
         while (getStatus() == CONNECTED) {
-            // got EOFException to break the loop
             Object obj = replyParser.parse();
             if (obj instanceof Object[]) {
                 if (configuration.isVerbose() && logger.isDebugEnabled())
@@ -103,9 +102,7 @@ public class RedisMixReplicator extends AbstractReplicator {
                     }
                     continue;
                 }
-                //do command replyParser
                 Command parsedCommand = operations.parse(command);
-                //submit event
                 this.submitEvent(parsedCommand);
             } else {
                 if (logger.isInfoEnabled()) {

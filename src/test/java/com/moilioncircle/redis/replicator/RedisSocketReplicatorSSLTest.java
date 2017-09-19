@@ -22,11 +22,20 @@ import org.junit.Assert;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
-import javax.net.ssl.*;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -282,7 +291,14 @@ public class RedisSocketReplicatorSSLTest {
                 System.out.println("close testSsl4");
             }
         });
-        replicator.open();
+        try {
+            replicator.open();
+            fail();
+        } catch (IOException e) {
+            if (!(e instanceof SocketException)) {
+                fail();
+            }
+        }
         assertEquals(0, acc.get());
     }
 

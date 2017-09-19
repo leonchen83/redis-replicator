@@ -18,7 +18,12 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.cmd.impl.*;
+import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
+import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
@@ -34,6 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen
@@ -213,7 +219,7 @@ public class RedisSocketReplicatorTest {
     }
 
     @Test
-    public void testCloseListener() throws IOException, InterruptedException {
+    public void testCloseListener() throws InterruptedException {
         final AtomicInteger acc = new AtomicInteger(0);
         Replicator replicator = new RedisReplicator("127.0.0.1", 6666, Configuration.defaultSetting().setUseDefaultExceptionListener(false));
         replicator.addCloseListener(new CloseListener() {
@@ -228,7 +234,12 @@ public class RedisSocketReplicatorTest {
                 System.out.println("close testCloseListener");
             }
         });
-        replicator.open();
+        try {
+            replicator.open();
+            fail();
+        } catch (IOException e) {
+        }
+
         assertEquals(1, acc.get());
     }
 

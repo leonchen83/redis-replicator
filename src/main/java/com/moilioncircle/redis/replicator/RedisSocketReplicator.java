@@ -99,7 +99,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
      * @throws IOException when read timeout or connect timeout
      */
     protected void doOpen() throws IOException {
+        IOException exception = null;
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
+            exception = null;
             try {
                 establishConnection();
                 //reset retries
@@ -162,13 +164,17 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     configuration.addOffset(offset[0]);
                     offset[0] = 0L;
                 }
-                //connected = false
+                //getStatus() != CONNECTED
                 break;
             } catch (IOException | UncheckedIOException e) {
                 //close socket manual
                 if (getStatus() != CONNECTED) break;
-                logger.error("[redis-replicator] socket error", e);
-                //connect refused,connect timeout,read timeout,connect abort,server disconnect,connection EOFException
+                if (e instanceof UncheckedIOException) {
+                    exception = ((UncheckedIOException) e).getCause();
+                } else {
+                    exception = (IOException) e;
+                }
+                logger.error("[redis-replicator] socket error", exception);
                 close();
                 //retry psync in next loop.
                 if (logger.isInfoEnabled()) {
@@ -181,6 +187,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 }
             }
         }
+        if (exception != null) throw exception;
     }
 
     protected SyncMode trySync(final String reply) throws IOException {

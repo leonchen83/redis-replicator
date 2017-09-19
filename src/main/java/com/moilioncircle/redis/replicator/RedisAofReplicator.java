@@ -69,7 +69,7 @@ public class RedisAofReplicator extends AbstractReplicator {
             doOpen();
         } catch (EOFException ignore) {
         } catch (UncheckedIOException e) {
-            if (!(e.getCause() instanceof EOFException)) throw e;
+            if (!(e.getCause() instanceof EOFException)) throw e.getCause();
         } finally {
             close();
         }

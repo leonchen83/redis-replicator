@@ -1,3 +1,7 @@
+### 2.4.2
+
+fix `Replicator.open` IOException bug  
+
 ### 2.4.1
 
 add `Replicator.getStatus`.  

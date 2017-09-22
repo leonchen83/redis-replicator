@@ -25,9 +25,11 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -144,5 +146,21 @@ public class RedisURITest {
         replicator.open();
         assertEquals(0, acc.get());
         assertEquals(4, acc1.get());
+    }
+
+    @Test
+    public void testURI() throws URISyntaxException, UnsupportedEncodingException {
+        String str = "redis:///test?" + URLEncoder.encode("新建文件夹", "UTF-8") + "=dump.rdb";
+        RedisURI uri = new RedisURI(str);
+        assertEquals("dump.rdb", uri.parameters.get("新建文件夹"));
+        str = "redis:///test?" + URLEncoder.encode("新建文件夹", "UTF-8") + "=" + URLEncoder.encode("新建文件夹", "UTF-8");
+        uri = new RedisURI(str);
+        assertEquals("新建文件夹", uri.parameters.get("新建文件夹"));
+        str = "redis:///test?key=value";
+        uri = new RedisURI(str);
+        assertEquals("value", uri.parameters.get("key"));
+        str = "redis:///test?key=%20";
+        uri = new RedisURI(str);
+        assertEquals(" ", uri.parameters.get("key"));
     }
 }

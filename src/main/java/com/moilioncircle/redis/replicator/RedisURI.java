@@ -42,9 +42,8 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final static char[] hexDigits = {
-            '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    private final static char[] HEXDIGITS = {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
     private String string;
@@ -154,7 +153,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     private void parse(String uri) throws URISyntaxException {
         this.uri = new URI(uri);
-        if (this.uri.getScheme().equalsIgnoreCase("redis")) {
+        if (this.uri.getScheme() != null && this.uri.getScheme().equalsIgnoreCase("redis")) {
             this.scheme = "redis";
         } else {
             throw new IllegalArgumentException("scheme must be [redis].");
@@ -217,16 +216,10 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
         ByteBuffer bb = ByteBuffer.allocate(n);
 
         char c = s.charAt(0);
-        boolean betweenBrackets = false;
 
         int i = 0;
         while (i < n) {
-            if (c == '[') {
-                betweenBrackets = true;
-            } else if (betweenBrackets && c == ']') {
-                betweenBrackets = false;
-            }
-            if (c != '%' || betweenBrackets) {
+            if (c != '%') {
                 sb.append(c);
                 if (++i >= n)
                     break;
@@ -282,7 +275,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
         StringBuilder sb = new StringBuilder();
         while (bb.hasRemaining()) {
-            int b = bb.get() & 0xff;
+            int b = bb.get() & 0xFF;
             if (b >= 0x80)
                 appendEscape(sb, (byte) b);
             else
@@ -293,7 +286,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     private static void appendEscape(StringBuilder sb, byte b) {
         sb.append('%');
-        sb.append(hexDigits[(b >> 4) & 0x0F]);
-        sb.append(hexDigits[(b >> 0) & 0x0F]);
+        sb.append(HEXDIGITS[(b >> 4) & 0x0F]);
+        sb.append(HEXDIGITS[(b >> 0) & 0x0F]);
     }
 }

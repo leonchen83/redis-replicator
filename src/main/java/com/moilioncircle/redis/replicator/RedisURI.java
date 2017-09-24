@@ -42,7 +42,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private final static char[] HEXDIGITS = {
+    private final static char[] HEX_DIGITS = {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
@@ -286,7 +286,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     private static void appendEscape(StringBuilder sb, byte b) {
         sb.append('%');
-        sb.append(HEXDIGITS[(b >> 4) & 0x0F]);
-        sb.append(HEXDIGITS[(b >> 0) & 0x0F]);
+        sb.append(HEX_DIGITS[(b >> 4) & 0x0F]);
+        sb.append(HEX_DIGITS[(b >> 0) & 0x0F]);
     }
 }

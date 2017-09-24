@@ -152,15 +152,19 @@ public class RedisURITest {
     public void testURI() throws URISyntaxException, UnsupportedEncodingException {
         String str = "redis:///test?" + URLEncoder.encode("新建文件夹", "UTF-8") + "=dump.rdb";
         RedisURI uri = new RedisURI(str);
+        assertEquals(str, uri.toASCIIString());
         assertEquals("dump.rdb", uri.parameters.get("新建文件夹"));
         str = "redis:///test?" + URLEncoder.encode("新建文件夹", "UTF-8") + "=" + URLEncoder.encode("新建文件夹", "UTF-8");
         uri = new RedisURI(str);
+        assertEquals(str, uri.toASCIIString());
         assertEquals("新建文件夹", uri.parameters.get("新建文件夹"));
         str = "redis:///test?key=value";
         uri = new RedisURI(str);
+        assertEquals(str, uri.toASCIIString());
         assertEquals("value", uri.parameters.get("key"));
         str = "redis:///test?key=%20";
         uri = new RedisURI(str);
+        assertEquals(str, uri.toASCIIString());
         assertEquals(" ", uri.parameters.get("key"));
     }
 }

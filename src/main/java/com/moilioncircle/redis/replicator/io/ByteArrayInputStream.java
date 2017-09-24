@@ -70,7 +70,7 @@ public class ByteArrayInputStream extends InputStream {
 
     @Override
     public int available() {
-        return (int)(this.count - this.pos);
+        return (int) (this.count - this.pos);
     }
 
     @Override

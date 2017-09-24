@@ -22,7 +22,22 @@ import com.moilioncircle.redis.replicator.util.Lzf;
 
 import java.io.IOException;
 
-import static com.moilioncircle.redis.replicator.Constants.*;
+import static com.moilioncircle.redis.replicator.Constants.RDB_14BITLEN;
+import static com.moilioncircle.redis.replicator.Constants.RDB_32BITLEN;
+import static com.moilioncircle.redis.replicator.Constants.RDB_64BITLEN;
+import static com.moilioncircle.redis.replicator.Constants.RDB_6BITLEN;
+import static com.moilioncircle.redis.replicator.Constants.RDB_ENCVAL;
+import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT16;
+import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT32;
+import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT8;
+import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_LZF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_ENC;
+import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_PLAIN;
+import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_16B;
+import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_24B;
+import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_32B;
+import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_64B;
+import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_8B;
 
 /**
  * @author Leon Chen

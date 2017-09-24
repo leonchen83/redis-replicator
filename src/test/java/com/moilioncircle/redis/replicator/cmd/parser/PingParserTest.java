@@ -16,7 +16,35 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.*;
+import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
+import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.EvalCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ExpireAtCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.GetSetCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.HSetCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.HSetNxCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.LSetCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.MoveCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.PExpireAtCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.PExpireCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.PSetExCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.PingCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.RenameCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.RenameNxCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.RestoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SAddCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SDiffStoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SInterStoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SUnionStoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ScriptFlushCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ScriptLoadCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SetBitCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SetNxCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SetRangeCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

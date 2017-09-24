@@ -15,7 +15,7 @@ public class RateLimitInputStreamTest {
     @Test
     public void read() throws Exception {
         byte[] bytes = new byte[9000];
-        Arrays.fill(bytes, (byte)100);
+        Arrays.fill(bytes, (byte) 100);
         RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(bytes)), 2000);
         byte[] b = new byte[bytes.length - 1000];
         long st = System.currentTimeMillis();
@@ -30,7 +30,7 @@ public class RateLimitInputStreamTest {
     @Test
     public void read1() throws Exception {
         byte[] bytes = new byte[9000];
-        Arrays.fill(bytes, (byte)100);
+        Arrays.fill(bytes, (byte) 100);
         RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(bytes)), 10);
         long st = System.currentTimeMillis();
         in.read();
@@ -44,7 +44,7 @@ public class RateLimitInputStreamTest {
     @Test
     public void read2() throws Exception {
         byte[] bytes = new byte[9000];
-        Arrays.fill(bytes, (byte)100);
+        Arrays.fill(bytes, (byte) 100);
         RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(bytes)), 10);
         long st = System.currentTimeMillis();
         assertEquals(9000, in.skip(bytes.length));

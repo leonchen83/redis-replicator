@@ -16,7 +16,12 @@
 
 package com.moilioncircle.examples;
 
-import com.moilioncircle.redis.replicator.*;
+import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.Constants;
+import com.moilioncircle.redis.replicator.FileType;
+import com.moilioncircle.redis.replicator.RedisReplicator;
+import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.UncheckedIOException;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;

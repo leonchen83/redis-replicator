@@ -16,7 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.*;
+import com.moilioncircle.redis.replicator.cmd.impl.DecrByCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.DecrCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.HIncrByCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.IncrByCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.IncrCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZIncrByCommand;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

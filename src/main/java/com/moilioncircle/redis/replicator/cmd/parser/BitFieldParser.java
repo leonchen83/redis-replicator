@@ -17,7 +17,13 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.*;
+import com.moilioncircle.redis.replicator.cmd.impl.BitFieldCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.GetTypeOffset;
+import com.moilioncircle.redis.replicator.cmd.impl.IncrByTypeOffsetIncrement;
+import com.moilioncircle.redis.replicator.cmd.impl.OverFlow;
+import com.moilioncircle.redis.replicator.cmd.impl.OverFlowType;
+import com.moilioncircle.redis.replicator.cmd.impl.SetTypeOffsetValue;
+import com.moilioncircle.redis.replicator.cmd.impl.Statement;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

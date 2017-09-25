@@ -226,7 +226,6 @@
                             <source>${maven.compiler.source}</source>
                             <target>${maven.compiler.target}</target>
                             <encoding>${project.build.sourceEncoding}</encoding>
-                            <compilerArgument>-proc:none</compilerArgument>
                         </configuration>
                     </plugin>
                     <plugin>

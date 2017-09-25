@@ -508,7 +508,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb");
 Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
 
 // 配置的例子
-Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?authPassword=yes&readTimeout=10000&ssl=yes");
+Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?authPassword=foobared&readTimeout=10000&ssl=yes");
 Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit=1000000");
 ```
 

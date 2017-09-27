@@ -37,15 +37,19 @@ import java.io.IOException;
  */
 public class MigrationExample {
     public static void main(String[] args) throws IOException {
-        MyClient client = new MyClient("target host", 6379);
-        Replicator r = new RedisMigrationReplicator("source host", 6379, Configuration.defaultSetting());
+        final MyClient target = new MyClient("127.0.0.1", 6380);
+        // WARN delete all target data.
+        target.flushAll();
+        Replicator r = new RedisMigrationReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof MigrationKeyValuePair) {
                     MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
                     int ms = mkv.getExpiredMs() == null ? 0 : (int) (mkv.getExpiredMs() - System.currentTimeMillis());
-                    client.restore(mkv.getRawKey(), ms, mkv.getValue());
+                    target.restore(mkv.getRawKey(), ms, mkv.getValue());
+                    String r = target.getStatusCodeReply();
+                    System.out.println(r);
                 }
             }
         });
@@ -54,14 +58,16 @@ public class MigrationExample {
             public void handle(Replicator replicator, Command command) {
                 if (command instanceof DefaultCommand) {
                     DefaultCommand dc = (DefaultCommand) command;
-                    client.sendCommand(dc.getCommand(), dc.getArgs());
+                    target.sendCommand(dc.getCommand(), dc.getArgs());
+                    String r = target.getStatusCodeReply();
+                    System.out.println(r);
                 }
             }
         });
         r.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
-                client.close();
+                target.close();
             }
         });
         r.open();

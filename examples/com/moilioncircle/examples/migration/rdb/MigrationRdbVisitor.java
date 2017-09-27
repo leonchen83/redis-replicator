@@ -56,10 +56,12 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
 
     private static class DefaultRawByteListener implements RawByteListener {
         private final ByteBuilder builder;
+        private final int version;
 
-        private DefaultRawByteListener(byte type) {
+        private DefaultRawByteListener(byte type, int version) {
             this.builder = ByteBuilder.allocate(8194);
             this.builder.put(type);
+            this.version = version;
         }
 
         @Override
@@ -68,7 +70,27 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         }
 
         public byte[] getBytes() {
+            this.builder.put((byte) version);
+            this.builder.put((byte) 0x00);
+            byte[] bytes = this.builder.array();
+            byte[] crc = longToByteArray(CRC64.crc64(bytes));
+            for (byte b : crc) {
+                this.builder.put(b);
+            }
             return this.builder.array();
+        }
+
+        private static byte[] longToByteArray(long value) {
+            return new byte[]{
+                    (byte) value,
+                    (byte) (value >> 8),
+                    (byte) (value >> 16),
+                    (byte) (value >> 24),
+                    (byte) (value >> 32),
+                    (byte) (value >> 40),
+                    (byte) (value >> 48),
+                    (byte) (value >> 56),
+            };
         }
     }
 
@@ -81,7 +103,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o0 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_STRING);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_STRING, version);
         replicator.addRawByteListener(listener);
         parser.rdbLoadEncodedStringObject().first();
         replicator.removeRawByteListener(listener);
@@ -97,7 +119,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o1 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST, version);
         replicator.addRawByteListener(listener);
         long len = parser.rdbLoadLen().len;
         for (int i = 0; i < len; i++) {
@@ -116,7 +138,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o2 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_SET);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_SET, version);
         replicator.addRawByteListener(listener);
         long len = parser.rdbLoadLen().len;
         for (int i = 0; i < len; i++) {
@@ -135,7 +157,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o3 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET, version);
         replicator.addRawByteListener(listener);
         long len = parser.rdbLoadLen().len;
         while (len > 0) {
@@ -156,7 +178,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o5 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET_2);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET_2, version);
         replicator.addRawByteListener(listener);
         long len = parser.rdbLoadLen().len;
         while (len > 0) {
@@ -177,7 +199,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o4 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH, version);
         replicator.addRawByteListener(listener);
         long len = parser.rdbLoadLen().len;
         while (len > 0) {
@@ -198,7 +220,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o9 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_ZIPMAP);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_ZIPMAP, version);
         replicator.addRawByteListener(listener);
         parser.rdbLoadPlainStringObject();
         replicator.removeRawByteListener(listener);
@@ -214,7 +236,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o10 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST_ZIPLIST);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST_ZIPLIST, version);
         replicator.addRawByteListener(listener);
         parser.rdbLoadPlainStringObject();
         replicator.removeRawByteListener(listener);
@@ -230,7 +252,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o11 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_SET_INTSET);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_SET_INTSET, version);
         replicator.addRawByteListener(listener);
         parser.rdbLoadPlainStringObject();
         replicator.removeRawByteListener(listener);
@@ -246,7 +268,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o12 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET_ZIPLIST);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET_ZIPLIST, version);
         replicator.addRawByteListener(listener);
         parser.rdbLoadPlainStringObject();
         replicator.removeRawByteListener(listener);
@@ -262,7 +284,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o13 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_ZIPLIST);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_ZIPLIST, version);
         replicator.addRawByteListener(listener);
         parser.rdbLoadPlainStringObject();
         replicator.removeRawByteListener(listener);
@@ -278,7 +300,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o14 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST_QUICKLIST);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST_QUICKLIST, version);
         replicator.addRawByteListener(listener);
         long len = parser.rdbLoadLen().len;
         for (int i = 0; i < len; i++) {
@@ -297,7 +319,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o6 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_MODULE);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_MODULE, version);
         replicator.addRawByteListener(listener);
         char[] c = new char[9];
         long moduleid = parser.rdbLoadLen().len;
@@ -323,7 +345,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         MigrationKeyValuePair o7 = new MigrationKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_MODULE_2);
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_MODULE_2, version);
         replicator.addRawByteListener(listener);
         char[] c = new char[9];
         long moduleid = parser.rdbLoadLen().len;

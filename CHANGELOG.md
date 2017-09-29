@@ -1,6 +1,9 @@
+### 2.4.3
+fix multi thread close bug.
+
 ### 2.4.2
 
-fix `Replicator.open` IOException bug  
+fix `Replicator.open` IOException bug.
 
 ### 2.4.1
 
@@ -18,11 +21,11 @@ fix offset bug. only add heart beat offset after event consumed.
 
 ### 2.3.2
 
-add `Configuration.rateLimit`  
+add `Configuration.rateLimit`.
 
 ### 2.3.1
 
-add 3 commands
+add 3 commands.
 
 ```java  
 
@@ -37,7 +40,7 @@ fix reconnect bug.
 ### 2.3.0
 module_2 support.  
 
-add a new RdbVisitor : `ValueIterableRdbVisitor`  
+add a new RdbVisitor : `ValueIterableRdbVisitor`.
 
 **api changes** :  
 
@@ -58,7 +61,7 @@ raw bytes support.
 ### 2.1.2  
 
 ```java  
-DefaultRdbModuleParser.loadUnSigned mark deprecated. use DefaultRdbModuleParser.loadUnsigned instead  
+DefaultRdbModuleParser.loadUnSigned mark deprecated. use DefaultRdbModuleParser.loadUnsigned instead.
 fix compile warning  
 fix javadoc  
 fix log format  
@@ -69,7 +72,7 @@ fix log format
 
 ```java  
 add new commands :  
-swapdb,zremrangebylex,zremrangebyrank,zremrangebyscore,multi,exec  
+swapdb,zremrangebylex,zremrangebyrank,zremrangebyscore,multi,exec.
 RPushXCommand value -> values (redis 4.0 compatibility)
 LPushXCommand value -> values (redis 4.0 compatibility)
 ```

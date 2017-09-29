@@ -47,9 +47,11 @@ public class MigrationExample {
                 if (kv instanceof MigrationKeyValuePair) {
                     MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
                     int ms = mkv.getExpiredMs() == null ? 0 : (int) (mkv.getExpiredMs() - System.currentTimeMillis());
-                    target.restore(mkv.getRawKey(), ms, mkv.getValue());
-                    String r = target.getStatusCodeReply();
-                    System.out.println(r);
+                    if (ms > 0) {
+                        target.restore(mkv.getRawKey(), ms, mkv.getValue());
+                        String r = target.getStatusCodeReply();
+                        System.out.println(r);
+                    }
                 }
             }
         });

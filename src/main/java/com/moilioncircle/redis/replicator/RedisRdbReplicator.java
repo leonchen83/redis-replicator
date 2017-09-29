@@ -59,17 +59,13 @@ public class RedisRdbReplicator extends AbstractReplicator {
         } catch (UncheckedIOException e) {
             if (!(e.getCause() instanceof EOFException)) throw e.getCause();
         } finally {
-            close();
+            doClose();
+            doCloseListener(this);
         }
     }
 
     protected void doOpen() throws IOException {
         RdbParser parser = new RdbParser(inputStream, this);
         parser.parse();
-    }
-
-    @Override
-    public void close() throws IOException {
-        doClose();
     }
 }

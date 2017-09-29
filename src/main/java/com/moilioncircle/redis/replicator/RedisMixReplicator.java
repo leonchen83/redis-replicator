@@ -78,7 +78,8 @@ public class RedisMixReplicator extends AbstractReplicator {
         } catch (UncheckedIOException e) {
             if (!(e.getCause() instanceof EOFException)) throw e.getCause();
         } finally {
-            close();
+            doClose();
+            doCloseListener(this);
         }
     }
 
@@ -110,10 +111,5 @@ public class RedisMixReplicator extends AbstractReplicator {
                 }
             }
         }
-    }
-
-    @Override
-    public void close() throws IOException {
-        doClose();
     }
 }

@@ -87,7 +87,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         try {
             doOpen();
         } finally {
-            close();
+            doClose();
             doCloseListener(this);
         }
     }
@@ -117,7 +117,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     heartbeat();
                 } else if (syncMode == SyncMode.SYNC_LATER && getStatus() == CONNECTED) {
                     i = 0;
-                    close();
+                    doClose();
                     try {
                         Thread.sleep(configuration.getRetryTimeInterval());
                     } catch (InterruptedException interrupt) {
@@ -172,7 +172,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     exception = (IOException) e;
                 }
                 logger.error("[redis-replicator] socket error", exception);
-                close();
+                doClose();
                 //retry psync in next loop.
                 if (logger.isInfoEnabled()) {
                     logger.info("reconnect to redis-server. retry times:" + (i + 1));
@@ -398,8 +398,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     @Override
-    public void close() {
-        if (!connected.compareAndSet(CONNECTED, DISCONNECTING)) return;
+    protected void doClose() throws IOException {
+        connected.compareAndSet(CONNECTED, DISCONNECTING);
 
         try {
             synchronized (this) {

@@ -71,7 +71,8 @@ public class RedisAofReplicator extends AbstractReplicator {
         } catch (UncheckedIOException e) {
             if (!(e.getCause() instanceof EOFException)) throw e.getCause();
         } finally {
-            close();
+            doClose();
+            doCloseListener(this);
         }
     }
 
@@ -99,10 +100,5 @@ public class RedisAofReplicator extends AbstractReplicator {
                 }
             }
         }
-    }
-
-    @Override
-    public void close() throws IOException {
-        doClose();
     }
 }

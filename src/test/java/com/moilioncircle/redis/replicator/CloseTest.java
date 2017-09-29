@@ -196,4 +196,42 @@ public class CloseTest {
         assertEquals(1, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
+
+    @Test
+    public void testMixClose4() throws IOException, InterruptedException {
+        final Replicator replicator = new RedisReplicator(
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        final AtomicInteger acc = new AtomicInteger(0);
+        new Thread() {
+            @Override
+            public void run() {
+                replicator.addRdbListener(new RdbListener.Adaptor() {
+                    @Override
+                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                        if (replicator.getStatus() == DISCONNECTED) {
+                            acc.incrementAndGet();
+                        }
+                    }
+                });
+                replicator.addCloseListener(new CloseListener() {
+                    @Override
+                    public void handle(Replicator replicator) {
+                        System.out.println("close testMixClose4");
+                    }
+                });
+                try {
+                    replicator.open();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+        Thread.sleep(100);
+        replicator.close();
+        Thread.sleep(100);
+        assertEquals(0, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
+    }
 }

@@ -26,6 +26,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -157,11 +158,42 @@ public class CloseTest {
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
-                System.out.println("close testMixClose1");
+                System.out.println("close testMixClose2");
             }
         });
         replicator.open();
         assertEquals(244653, acc.get());
         assertEquals(100, acc1.get());
+    }
+
+    @Test
+    public void testMixClose3() throws IOException, InterruptedException {
+        final Replicator replicator = new RedisReplicator(
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        final AtomicInteger acc = new AtomicInteger(0);
+        new Thread() {
+            @Override
+            public void run() {
+                replicator.addCloseListener(new CloseListener() {
+                    @Override
+                    public void handle(Replicator replicator) {
+                        acc.incrementAndGet();
+                        System.out.println("close testMixClose3");
+                    }
+                });
+                try {
+                    replicator.open();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+        Thread.sleep(100);
+        replicator.close();
+        Thread.sleep(100);
+        assertEquals(1, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
     }
 }

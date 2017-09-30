@@ -38,8 +38,6 @@ import java.io.IOException;
 public class MigrationExample {
     public static void main(String[] args) throws IOException {
         final MyClient target = new MyClient("127.0.0.1", 6380);
-        // WARN delete all target data.
-        target.flushAll();
         Replicator r = new RedisMigrationReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override

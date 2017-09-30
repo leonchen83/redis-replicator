@@ -1,5 +1,6 @@
 ### 2.4.3
-fix multi thread close bug.
+fix multi thread `close` bug.
+fix `restore` command bug.
 
 ### 2.4.2
 

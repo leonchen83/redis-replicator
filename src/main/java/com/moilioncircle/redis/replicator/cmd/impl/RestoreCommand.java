@@ -27,7 +27,7 @@ public class RestoreCommand implements Command {
     private static final long serialVersionUID = 1L;
 
     private String key;
-    private int ttl;
+    private long ttl;
     private String serializedValue;
     private Boolean isReplace;
     private byte[] rawKey;
@@ -36,11 +36,11 @@ public class RestoreCommand implements Command {
     public RestoreCommand() {
     }
 
-    public RestoreCommand(String key, int ttl, String serializedValue, Boolean isReplace) {
+    public RestoreCommand(String key, long ttl, String serializedValue, Boolean isReplace) {
         this(key, ttl, serializedValue, isReplace, null, null);
     }
 
-    public RestoreCommand(String key, int ttl, String serializedValue, Boolean isReplace, byte[] rawKey, byte[] rawSerializedValue) {
+    public RestoreCommand(String key, long ttl, String serializedValue, Boolean isReplace, byte[] rawKey, byte[] rawSerializedValue) {
         this.key = key;
         this.ttl = ttl;
         this.serializedValue = serializedValue;
@@ -57,11 +57,11 @@ public class RestoreCommand implements Command {
         this.key = key;
     }
 
-    public int getTtl() {
+    public long getTtl() {
         return ttl;
     }
 
-    public void setTtl(int ttl) {
+    public void setTtl(long ttl) {
         this.ttl = ttl;
     }
 

@@ -61,10 +61,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.moilioncircle/redis-replicator/badge.svg)](http://www.javadoc.io/doc/com.moilioncircle/redis-replicator)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)  
   
-Redis Replicator is a redis rdb and command parser written in java.  
-It can parse,filter,broadcast the rdb and command events in a real time manner.  
-It also can synchronize redis data to your local cache or to database.  
-The following I mentioned `Command` which means `Writable Command` in redis and excludes `Readable Command`(e.g. `get`,`hmget`)  
+Redis Replicator is a redis rdb and command parser written in java. It can parse, filter, broadcast the rdb and command events in a real time manner. It also can synchronize redis data to your local cache or to database. The following I mentioned `Command` which means `Writable Command`(e.g. `set`,`hmset`) in redis and excludes the `Readable Command`(e.g. `get`,`hmget`)  
 
 ## 1.2. QQ group  
   
@@ -78,7 +75,7 @@ The following I mentioned `Command` which means `Writable Command` in redis and 
 ## 2.1. Requirements  
 jdk 1.7+  
 maven-3.2.3+  
-redis 2.6 - 4.0  
+redis 2.6 - 4.0.x  
 
 ## 2.2. Maven dependency  
 ```java  
@@ -99,7 +96,7 @@ redis 2.6 - 4.0
 
 |     **redis version**        |**redis-replicator version**  |  
 | ---------------------------- | ---------------------------- |  
-|  \[2.6, 4.0.0\]              |           \[2.3.0, \]        |  
+|  \[2.6, 4.0.x\]              |           \[2.3.0, \]        |  
 |  \[2.6, 4.0-RC3\]            |       \[2.1.0, 2.2.0\]       |  
 |  \[2.6, 3.2.x\]              |  \[1.0.18\](not supported)   |  
 
@@ -485,7 +482,7 @@ redis 2.6 - 4.0
 
 ## 4.5. Redis URI
 
-Before redis-replicator-2.4.0, we construct `RedisReplicator` as following:  
+Before redis-replicator-2.4.0, We construct `RedisReplicator` like following:  
 
 ```java  
 Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -527,7 +524,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
   
 ## 5.2. EOFException
   
-* Adjust redis server setting as following.more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
+* Adjust redis server setting like following. more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
   
 ```java  
     client-output-buffer-limit slave 0 0 0
@@ -537,7 +534,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 ## 5.3. Trace event log  
   
 * Set log level to **debug**
-* If you are using log4j2,add logger as following:
+* If you are using log4j2, add logger like following:
 
 ```xml  
     <Logger name="com.moilioncircle" level="debug">
@@ -574,12 +571,12 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 
 ## 5.6. Avoid full sync  
   
-* Adjust redis server setting as following  
+* Adjust redis server setting like following  
   
 ```java  
     repl-backlog-size
     repl-backlog-ttl
-    repl-ping-slave-period
+    repl-ping-slave-periods
 ```
 `repl-ping-slave-period` **MUST** less than `Configuration.getReadTimeout()`, default `Configuration.getReadTimeout()` is 30 seconds
   
@@ -636,7 +633,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
         replicator.open();
 ```  
   
-For easy operation, the key of return type `Map<byte[], byte[]>` of `KeyStringValueHash.getRawValue`, we can `get` and `put` the key as `value type`  
+For easy operation, the key of return type `Map<byte[], byte[]>` of `KeyStringValueHash.getRawValue`, we can `get` and `put` the key as [value type](https://en.wikipedia.org/wiki/Value_type)  
 
 ```java  
 KeyStringValueHash ksvh = (KeyStringValueHash) kv;
@@ -656,9 +653,9 @@ byte[] rawValue = set.getRawValue();
 ```
   
 # 6. Contributors  
-* Leon Chen  
-* Adrian Yao  
-* Trydofor  
+* [Leon Chen](chen.bao.yi@gmail.com)  
+* [Adrian Yao](adrianyaofly@gmail.com)  
+* [Trydofor](trydofor@gmail.com)  
   
 # 7. References  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

@@ -62,9 +62,7 @@
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.moilioncircle/redis-replicator/badge.svg)](http://www.javadoc.io/doc/com.moilioncircle/redis-replicator)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)  
   
-Redis Replicator是一款rdb解析以及命令解析的工具. 此工具完整实现了redis replication协议.  
-支持sync,psync,psync2等三种同步命令. 还支持远程rdb文件备份以及数据同步等功能.  
-此文中提到的 `命令` 特指redis中的写命令，不包括读命令(比如 `get`,`hmget`)  
+Redis Replicator是一款rdb解析以及命令解析的工具. 此工具完整实现了redis replication协议. 支持sync,psync,psync2等三种同步命令. 还支持远程rdb文件备份以及数据同步等功能. 此文中提到的 `命令` 特指redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`)  
 
 ## 1.2. QQ讨论组  
   
@@ -83,7 +81,7 @@ Redis Replicator是一款rdb解析以及命令解析的工具. 此工具完整�
 ## 2.1. 安装前置条件  
 jdk 1.7+  
 maven-3.2.3+  
-redis 2.6 - 4.0  
+redis 2.6 - 4.0.x  
 
 ## 2.2. Maven依赖  
 ```java  
@@ -104,7 +102,7 @@ redis 2.6 - 4.0
 
 |     **redis 版本**        |**redis-replicator 版本**  |  
 | ------------------------- | ------------------------- |  
-|  \[2.6, 4.0.0\]           |           \[2.3.0, \]     |  
+|  \[2.6, 4.0.x\]           |           \[2.3.0, \]     |  
 |  \[2.6, 4.0-RC3\]         |       \[2.1.0, 2.2.0\]    |  
 |  \[2.6, 3.2.x\]           |  \[1.0.18\](不再提供支持)   |  
 
@@ -642,7 +640,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
         replicator.open();
 ```  
   
-为了操作简便`KeyStringValueHash.getRawValue`返回的`Map<byte[], byte[]>`中的key可以当做值类型存取  
+为了操作简便`KeyStringValueHash.getRawValue`返回的`Map<byte[], byte[]>`中的key可以当做[值类型](https://en.wikipedia.org/wiki/Value_type)存取  
 
 ```java  
 KeyStringValueHash ksvh = (KeyStringValueHash) kv;
@@ -662,9 +660,10 @@ byte[] rawValue = set.getRawValue();
 ```
   
 # 6. 贡献者  
-* Leon Chen  
-* Adrian Yao  
-* Trydofor  
+
+* [Leon Chen](chen.bao.yi@gmail.com)  
+* [Adrian Yao](adrianyaofly@gmail.com)  
+* [Trydofor](trydofor@gmail.com)  
   
 # 7. 相关引用  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

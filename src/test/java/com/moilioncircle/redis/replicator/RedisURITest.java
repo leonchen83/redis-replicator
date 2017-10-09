@@ -41,7 +41,10 @@ import static org.junit.Assert.assertEquals;
  * @since 2.1.0
  */
 public class RedisURITest {
-    public static void main(String[] args) throws URISyntaxException, IOException {
+
+    @Test
+    @SuppressWarnings("resource")
+    public void testFile() throws URISyntaxException, IOException {
         URL url = RedisURITest.class.getClassLoader().getResource("dumpV7.rdb");
         URI uri = url.toURI();
         URI redisURI = new URI("redis", uri.getRawAuthority(), uri.getRawPath(), uri.getRawQuery(), uri.getRawFragment());
@@ -72,6 +75,7 @@ public class RedisURITest {
     }
 
     @Test
+    @SuppressWarnings("resource")
     public void testSet() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
         Replicator replicator = new RedisReplicator("redis://localhost?retries=0");
@@ -117,6 +121,7 @@ public class RedisURITest {
         assertEquals("ok", ref.get());
     }
 
+    @SuppressWarnings("resource")
     @Test
     public void testOpen1() throws IOException, URISyntaxException {
         URL url = RedisURITest.class.getClassLoader().getResource("appendonly1.aof");

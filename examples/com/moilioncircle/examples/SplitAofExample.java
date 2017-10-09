@@ -37,6 +37,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @since 2.3.2
  */
 public class SplitAofExample {
+    @SuppressWarnings("resource")
     public static void main(String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(
                 new File("./src/test/resources/appendonly2.aof"), FileType.AOF,

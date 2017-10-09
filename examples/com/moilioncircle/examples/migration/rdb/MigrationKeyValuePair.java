@@ -23,4 +23,5 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
  * @since 2.4.3
  */
 public class MigrationKeyValuePair extends KeyValuePair<byte[]> {
+    private static final long serialVersionUID = 1L;
 }

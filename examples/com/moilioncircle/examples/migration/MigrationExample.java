@@ -36,6 +36,7 @@ import java.io.IOException;
  * @since 2.4.3
  */
 public class MigrationExample {
+    @SuppressWarnings("resource")
     public static void main(String[] args) throws IOException {
         final MyClient target = new MyClient("127.0.0.1", 6380);
         Replicator r = new RedisMigrationReplicator("127.0.0.1", 6379, Configuration.defaultSetting());

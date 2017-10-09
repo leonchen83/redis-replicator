@@ -35,6 +35,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class CloseTest {
     @Test
+    @SuppressWarnings("resource")
     public void testRdbClose() throws IOException, InterruptedException {
         Replicator r = new RedisReplicator(
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")), FileType.RDB,
@@ -64,6 +65,7 @@ public class CloseTest {
     }
 
     @Test
+    @SuppressWarnings("resource")
     public void testAofClose() throws IOException {
         Replicator r = new RedisReplicator(
                 RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), FileType.AOF,
@@ -93,6 +95,7 @@ public class CloseTest {
     }
 
     @Test
+    @SuppressWarnings("resource")
     public void testMixClose1() throws IOException {
         Replicator replicator = new RedisReplicator(
                 RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
@@ -130,6 +133,7 @@ public class CloseTest {
     }
 
     @Test
+    @SuppressWarnings("resource")
     public void testMixClose2() throws IOException {
         Replicator replicator = new RedisReplicator(
                 RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,

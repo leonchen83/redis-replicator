@@ -24,6 +24,9 @@ import redis.clients.jedis.Protocol;
  * @since 2.4.3
  */
 public class DefaultCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+    
     private byte[][] args = new byte[0][];
     private Protocol.Command command;
 

@@ -45,11 +45,17 @@ public class MigrationExample {
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof MigrationKeyValuePair) {
                     MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
-                    long ms = mkv.getExpiredMs() == null ? 0 : mkv.getExpiredMs() - System.currentTimeMillis();
-                    if (ms > 0) {
-                        target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(), "REPLACE".getBytes());
+                    if (mkv.getExpiredMs() == null) {
+                        target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), "0".getBytes(), mkv.getValue(), "REPLACE".getBytes());
                         String r = target.getStatusCodeReply();
                         System.out.println(r);
+                    } else {
+                        long ms = mkv.getExpiredMs() - System.currentTimeMillis();
+                        if (ms > 0) {
+                            target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(), "REPLACE".getBytes());
+                            String r = target.getStatusCodeReply();
+                            System.out.println(r);
+                        }
                     }
                 }
             }

@@ -664,6 +664,8 @@ byte[] rawValue = set.getRawValue();
 * [Leon Chen](https://github.com/leonchen83)  
 * [Adrian Yao](https://github.com/adrianyao89)  
 * [Trydofor](https://github.com/trydofor)  
+* [Argun](https://github.com/Argun)  
+* [Sean Pan](https://github.com/XinYang-Pan)  
   
 # 7. 相关引用  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

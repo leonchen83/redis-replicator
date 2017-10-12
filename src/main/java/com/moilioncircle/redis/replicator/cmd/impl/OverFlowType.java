@@ -23,5 +23,5 @@ import java.io.Serializable;
  * @since 2.1.0
  */
 public enum OverFlowType implements Serializable {
-    WRAP, SAT, FAIL
+	WRAP, SAT, FAIL
 }

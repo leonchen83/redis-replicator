@@ -27,92 +27,86 @@ import java.util.Arrays;
  */
 public class ZAddCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String key;
-    private ExistType existType;
-    private Boolean isCh;
-    private Boolean isIncr;
-    private ZSetEntry[] zSetEntries;
-    private byte[] rawKey;
+	private String key;
+	private ExistType existType;
+	private Boolean isCh;
+	private Boolean isIncr;
+	private ZSetEntry[] zSetEntries;
+	private byte[] rawKey;
 
-    public ZAddCommand() {
-    }
+	public ZAddCommand() {
+	}
 
-    public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries) {
-        this(key, existType, isCh, isIncr, zSetEntries, null);
-    }
+	public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries) {
+		this(key, existType, isCh, isIncr, zSetEntries, null);
+	}
 
-    public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries, byte[] rawKey) {
-        this.key = key;
-        this.existType = existType;
-        this.isCh = isCh;
-        this.isIncr = isIncr;
-        this.zSetEntries = zSetEntries;
-        this.rawKey = rawKey;
-    }
+	public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries, byte[] rawKey) {
+		this.key = key;
+		this.existType = existType;
+		this.isCh = isCh;
+		this.isIncr = isIncr;
+		this.zSetEntries = zSetEntries;
+		this.rawKey = rawKey;
+	}
 
-    public String getKey() {
-        return key;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    public ExistType getExistType() {
-        return existType;
-    }
+	public ExistType getExistType() {
+		return existType;
+	}
 
-    public void setExistType(ExistType existType) {
-        this.existType = existType;
-    }
+	public void setExistType(ExistType existType) {
+		this.existType = existType;
+	}
 
-    public Boolean getCh() {
-        return isCh;
-    }
+	public Boolean getCh() {
+		return isCh;
+	}
 
-    public void setCh(Boolean ch) {
-        isCh = ch;
-    }
+	public void setCh(Boolean ch) {
+		isCh = ch;
+	}
 
-    public Boolean getIncr() {
-        return isIncr;
-    }
+	public Boolean getIncr() {
+		return isIncr;
+	}
 
-    public void setIncr(Boolean incr) {
-        isIncr = incr;
-    }
+	public void setIncr(Boolean incr) {
+		isIncr = incr;
+	}
 
-    public ZSetEntry[] getZSetEntries() {
-        return zSetEntries;
-    }
+	public ZSetEntry[] getZSetEntries() {
+		return zSetEntries;
+	}
 
-    public ZSetEntry[] getzSetEntries() {
-        return zSetEntries;
-    }
+	public ZSetEntry[] getzSetEntries() {
+		return zSetEntries;
+	}
 
-    public void setzSetEntries(ZSetEntry[] zSetEntries) {
-        this.zSetEntries = zSetEntries;
-    }
+	public void setzSetEntries(ZSetEntry[] zSetEntries) {
+		this.zSetEntries = zSetEntries;
+	}
 
-    public byte[] getRawKey() {
-        return rawKey;
-    }
+	public byte[] getRawKey() {
+		return rawKey;
+	}
 
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
+	public void setRawKey(byte[] rawKey) {
+		this.rawKey = rawKey;
+	}
 
-    @Override
-    public String toString() {
-        return "ZAddCommand{" +
-                "key='" + key + '\'' +
-                ", existType=" + existType +
-                ", isCh=" + isCh +
-                ", isIncr=" + isIncr +
-                ", zSetEntries=" + Arrays.toString(zSetEntries) +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "ZAddCommand{" + "key='" + key + '\'' + ", existType=" + existType + ", isCh=" + isCh + ", isIncr=" + isIncr + ", zSetEntries=" + Arrays.toString(zSetEntries) + '}';
+	}
 
 }

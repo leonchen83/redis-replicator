@@ -23,16 +23,16 @@ import java.io.Serializable;
  * @since 2.1.0
  */
 public enum ExistType implements Serializable {
-    /**
-     * not set
-     */
-    NONE,
-    /**
-     * Don't update already existing elements
-     */
-    NX,
-    /**
-     * Only update elements that already exist
-     */
-    XX
+	/**
+	 * not set
+	 */
+	NONE,
+	/**
+	 * Don't update already existing elements
+	 */
+	NX,
+	/**
+	 * Only update elements that already exist
+	 */
+	XX
 }

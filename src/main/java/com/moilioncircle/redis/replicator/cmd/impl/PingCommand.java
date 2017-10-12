@@ -24,43 +24,41 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class PingCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String message;
-    private byte[] rawMessage;
+	private String message;
+	private byte[] rawMessage;
 
-    public PingCommand() {
-    }
+	public PingCommand() {
+	}
 
-    public PingCommand(String message) {
-        this(message, null);
-    }
+	public PingCommand(String message) {
+		this(message, null);
+	}
 
-    public PingCommand(String message, byte[] rawMessage) {
-        this.message = message;
-        this.rawMessage = rawMessage;
-    }
+	public PingCommand(String message, byte[] rawMessage) {
+		this.message = message;
+		this.rawMessage = rawMessage;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public byte[] getRawMessage() {
-        return rawMessage;
-    }
+	public byte[] getRawMessage() {
+		return rawMessage;
+	}
 
-    public void setRawMessage(byte[] rawMessage) {
-        this.rawMessage = rawMessage;
-    }
+	public void setRawMessage(byte[] rawMessage) {
+		this.rawMessage = rawMessage;
+	}
 
-    @Override
-    public String toString() {
-        return "PingCommand{" +
-                "message='" + message + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "PingCommand{" + "message='" + message + '\'' + '}';
+	}
 }

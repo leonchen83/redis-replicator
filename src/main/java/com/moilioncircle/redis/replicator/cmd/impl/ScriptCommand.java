@@ -24,6 +24,6 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public abstract class ScriptCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 }

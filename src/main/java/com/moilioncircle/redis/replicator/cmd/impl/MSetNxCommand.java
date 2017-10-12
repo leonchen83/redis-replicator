@@ -26,43 +26,41 @@ import java.util.Map;
  */
 public class MSetNxCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Map<String, String> kv;
-    private Map<byte[], byte[]> rawKv;
+	private Map<String, String> kv;
+	private Map<byte[], byte[]> rawKv;
 
-    public MSetNxCommand() {
-    }
+	public MSetNxCommand() {
+	}
 
-    public MSetNxCommand(Map<String, String> kv) {
-        this(kv, null);
-    }
+	public MSetNxCommand(Map<String, String> kv) {
+		this(kv, null);
+	}
 
-    public MSetNxCommand(Map<String, String> kv, Map<byte[], byte[]> rawKv) {
-        this.kv = kv;
-        this.rawKv = rawKv;
-    }
+	public MSetNxCommand(Map<String, String> kv, Map<byte[], byte[]> rawKv) {
+		this.kv = kv;
+		this.rawKv = rawKv;
+	}
 
-    public Map<String, String> getKv() {
-        return kv;
-    }
+	public Map<String, String> getKv() {
+		return kv;
+	}
 
-    public void setKv(Map<String, String> kv) {
-        this.kv = kv;
-    }
+	public void setKv(Map<String, String> kv) {
+		this.kv = kv;
+	}
 
-    public Map<byte[], byte[]> getRawKv() {
-        return rawKv;
-    }
+	public Map<byte[], byte[]> getRawKv() {
+		return rawKv;
+	}
 
-    public void setRawKv(Map<byte[], byte[]> rawKv) {
-        this.rawKv = rawKv;
-    }
+	public void setRawKv(Map<byte[], byte[]> rawKv) {
+		this.rawKv = rawKv;
+	}
 
-    @Override
-    public String toString() {
-        return "MSetNxCommand{" +
-                "kv=" + kv +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "MSetNxCommand{" + "kv=" + kv + '}';
+	}
 }

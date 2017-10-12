@@ -26,98 +26,93 @@ import java.util.Arrays;
  */
 public class ZUnionStoreCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String destination;
-    private int numkeys;
-    private String[] keys;
-    private double[] weights;
-    private AggregateType aggregateType;
-    private byte[] rawDestination;
-    private byte[][] rawKeys;
+	private String destination;
+	private int numkeys;
+	private String[] keys;
+	private double[] weights;
+	private AggregateType aggregateType;
+	private byte[] rawDestination;
+	private byte[][] rawKeys;
 
-    public ZUnionStoreCommand() {
-    }
+	public ZUnionStoreCommand() {
+	}
 
-    public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType) {
-        this(destination, numkeys, keys, weights, aggregateType, null, null);
-    }
+	public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType) {
+		this(destination, numkeys, keys, weights, aggregateType, null, null);
+	}
 
-    public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType, byte[] rawDestination, byte[][] rawKeys) {
-        this.destination = destination;
-        this.numkeys = numkeys;
-        this.keys = keys;
-        this.weights = weights;
-        this.aggregateType = aggregateType;
-        this.rawDestination = rawDestination;
-        this.rawKeys = rawKeys;
-    }
+	public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType, byte[] rawDestination, byte[][] rawKeys) {
+		this.destination = destination;
+		this.numkeys = numkeys;
+		this.keys = keys;
+		this.weights = weights;
+		this.aggregateType = aggregateType;
+		this.rawDestination = rawDestination;
+		this.rawKeys = rawKeys;
+	}
 
-    public String getDestination() {
-        return destination;
-    }
+	public String getDestination() {
+		return destination;
+	}
 
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
 
-    public int getNumkeys() {
-        return numkeys;
-    }
+	public int getNumkeys() {
+		return numkeys;
+	}
 
-    public void setNumkeys(int numkeys) {
-        this.numkeys = numkeys;
-    }
+	public void setNumkeys(int numkeys) {
+		this.numkeys = numkeys;
+	}
 
-    public String[] getKeys() {
-        return keys;
-    }
+	public String[] getKeys() {
+		return keys;
+	}
 
-    public void setKeys(String[] keys) {
-        this.keys = keys;
-    }
+	public void setKeys(String[] keys) {
+		this.keys = keys;
+	}
 
-    public double[] getWeights() {
-        return weights;
-    }
+	public double[] getWeights() {
+		return weights;
+	}
 
-    public void setWeights(double[] weights) {
-        this.weights = weights;
-    }
+	public void setWeights(double[] weights) {
+		this.weights = weights;
+	}
 
-    public AggregateType getAggregateType() {
-        return aggregateType;
-    }
+	public AggregateType getAggregateType() {
+		return aggregateType;
+	}
 
-    public void setAggregateType(AggregateType aggregateType) {
-        this.aggregateType = aggregateType;
-    }
+	public void setAggregateType(AggregateType aggregateType) {
+		this.aggregateType = aggregateType;
+	}
 
-    public byte[] getRawDestination() {
-        return rawDestination;
-    }
+	public byte[] getRawDestination() {
+		return rawDestination;
+	}
 
-    public void setRawDestination(byte[] rawDestination) {
-        this.rawDestination = rawDestination;
-    }
+	public void setRawDestination(byte[] rawDestination) {
+		this.rawDestination = rawDestination;
+	}
 
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
+	public byte[][] getRawKeys() {
+		return rawKeys;
+	}
 
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
+	public void setRawKeys(byte[][] rawKeys) {
+		this.rawKeys = rawKeys;
+	}
 
-    @Override
-    public String toString() {
-        return "ZUnionStoreCommand{" +
-                "destination='" + destination + '\'' +
-                ", numkeys=" + numkeys +
-                ", keys=" + Arrays.toString(keys) +
-                ", weights=" + Arrays.toString(weights) +
-                ", aggregateType=" + aggregateType +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "ZUnionStoreCommand{" + "destination='" + destination + '\'' + ", numkeys=" + numkeys + ", keys=" + Arrays.toString(keys) + ", weights=" + Arrays.toString(weights) + ", aggregateType="
+			+ aggregateType + '}';
+	}
 
 }

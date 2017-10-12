@@ -24,85 +24,81 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class HSetCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String field;
-    private String value;
-    private byte[] rawKey;
-    private byte[] rawField;
-    private byte[] rawValue;
+	private String key;
+	private String field;
+	private String value;
+	private byte[] rawKey;
+	private byte[] rawField;
+	private byte[] rawValue;
 
-    public HSetCommand() {
-    }
+	public HSetCommand() {
+	}
 
-    public HSetCommand(String key, String field, String value) {
-        this(key, field, value, null, null, null);
-    }
+	public HSetCommand(String key, String field, String value) {
+		this(key, field, value, null, null, null);
+	}
 
-    public HSetCommand(String key, String field, String value, byte[] rawKey, byte[] rawField, byte[] rawValue) {
-        this.key = key;
-        this.field = field;
-        this.value = value;
-        this.rawKey = rawKey;
-        this.rawField = rawField;
-        this.rawValue = rawValue;
-    }
+	public HSetCommand(String key, String field, String value, byte[] rawKey, byte[] rawField, byte[] rawValue) {
+		this.key = key;
+		this.field = field;
+		this.value = value;
+		this.rawKey = rawKey;
+		this.rawField = rawField;
+		this.rawValue = rawValue;
+	}
 
-    public String getKey() {
-        return key;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    public String getField() {
-        return field;
-    }
+	public String getField() {
+		return field;
+	}
 
-    public void setField(String field) {
-        this.field = field;
-    }
+	public void setField(String field) {
+		this.field = field;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 
-    public byte[] getRawKey() {
-        return rawKey;
-    }
+	public byte[] getRawKey() {
+		return rawKey;
+	}
 
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
+	public void setRawKey(byte[] rawKey) {
+		this.rawKey = rawKey;
+	}
 
-    public byte[] getRawField() {
-        return rawField;
-    }
+	public byte[] getRawField() {
+		return rawField;
+	}
 
-    public void setRawField(byte[] rawField) {
-        this.rawField = rawField;
-    }
+	public void setRawField(byte[] rawField) {
+		this.rawField = rawField;
+	}
 
-    public byte[] getRawValue() {
-        return rawValue;
-    }
+	public byte[] getRawValue() {
+		return rawValue;
+	}
 
-    public void setRawValue(byte[] rawValue) {
-        this.rawValue = rawValue;
-    }
+	public void setRawValue(byte[] rawValue) {
+		this.rawValue = rawValue;
+	}
 
-    @Override
-    public String toString() {
-        return "HSetCommand{" +
-                "key='" + key + '\'' +
-                ", field='" + field + '\'' +
-                ", value='" + value + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "HSetCommand{" + "key='" + key + '\'' + ", field='" + field + '\'' + ", value='" + value + '\'' + '}';
+	}
 }

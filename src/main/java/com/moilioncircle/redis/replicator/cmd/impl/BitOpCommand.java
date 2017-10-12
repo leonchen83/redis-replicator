@@ -26,75 +26,71 @@ import java.util.Arrays;
  */
 public class BitOpCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Op op;
-    private String destkey;
-    private String[] keys;
-    private byte[] rawDestkey;
-    private byte[][] rawKeys;
+	private Op op;
+	private String destkey;
+	private String[] keys;
+	private byte[] rawDestkey;
+	private byte[][] rawKeys;
 
-    public BitOpCommand() {
-    }
+	public BitOpCommand() {
+	}
 
-    public BitOpCommand(Op op, String destkey, String[] keys) {
-        this(op, destkey, keys, null, null);
-    }
+	public BitOpCommand(Op op, String destkey, String[] keys) {
+		this(op, destkey, keys, null, null);
+	}
 
-    public BitOpCommand(Op op, String destkey, String[] keys, byte[] rawDestkey, byte[][] rawKeys) {
-        this.op = op;
-        this.destkey = destkey;
-        this.keys = keys;
-        this.rawDestkey = rawDestkey;
-        this.rawKeys = rawKeys;
-    }
+	public BitOpCommand(Op op, String destkey, String[] keys, byte[] rawDestkey, byte[][] rawKeys) {
+		this.op = op;
+		this.destkey = destkey;
+		this.keys = keys;
+		this.rawDestkey = rawDestkey;
+		this.rawKeys = rawKeys;
+	}
 
-    public Op getOp() {
-        return op;
-    }
+	public Op getOp() {
+		return op;
+	}
 
-    public void setOp(Op op) {
-        this.op = op;
-    }
+	public void setOp(Op op) {
+		this.op = op;
+	}
 
-    public String getDestkey() {
-        return destkey;
-    }
+	public String getDestkey() {
+		return destkey;
+	}
 
-    public void setDestkey(String destkey) {
-        this.destkey = destkey;
-    }
+	public void setDestkey(String destkey) {
+		this.destkey = destkey;
+	}
 
-    public String[] getKeys() {
-        return keys;
-    }
+	public String[] getKeys() {
+		return keys;
+	}
 
-    public void setKeys(String[] keys) {
-        this.keys = keys;
-    }
+	public void setKeys(String[] keys) {
+		this.keys = keys;
+	}
 
-    public byte[] getRawDestkey() {
-        return rawDestkey;
-    }
+	public byte[] getRawDestkey() {
+		return rawDestkey;
+	}
 
-    public void setRawDestkey(byte[] rawDestkey) {
-        this.rawDestkey = rawDestkey;
-    }
+	public void setRawDestkey(byte[] rawDestkey) {
+		this.rawDestkey = rawDestkey;
+	}
 
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
+	public byte[][] getRawKeys() {
+		return rawKeys;
+	}
 
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
+	public void setRawKeys(byte[][] rawKeys) {
+		this.rawKeys = rawKeys;
+	}
 
-    @Override
-    public String toString() {
-        return "BitOpCommand{" +
-                "op=" + op +
-                ", destkey='" + destkey + '\'' +
-                ", keys=" + Arrays.toString(keys) +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "BitOpCommand{" + "op=" + op + ", destkey='" + destkey + '\'' + ", keys=" + Arrays.toString(keys) + '}';
+	}
 }

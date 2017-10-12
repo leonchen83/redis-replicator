@@ -26,64 +26,61 @@ import java.util.Arrays;
  */
 public class HDelCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String fields[];
-    private byte[] rawKey;
-    private byte[][] rawFields;
+	private String key;
+	private String fields[];
+	private byte[] rawKey;
+	private byte[][] rawFields;
 
-    public HDelCommand() {
-    }
+	public HDelCommand() {
+	}
 
-    public HDelCommand(String key, String[] fields) {
-        this(key, fields, null, null);
-    }
+	public HDelCommand(String key, String[] fields) {
+		this(key, fields, null, null);
+	}
 
-    public HDelCommand(String key, String[] fields, byte[] rawKey, byte[][] rawFields) {
-        this.key = key;
-        this.fields = fields;
-        this.rawKey = rawKey;
-        this.rawFields = rawFields;
-    }
+	public HDelCommand(String key, String[] fields, byte[] rawKey, byte[][] rawFields) {
+		this.key = key;
+		this.fields = fields;
+		this.rawKey = rawKey;
+		this.rawFields = rawFields;
+	}
 
-    public String getKey() {
-        return key;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    public String[] getFields() {
-        return fields;
-    }
+	public String[] getFields() {
+		return fields;
+	}
 
-    public void setFields(String[] fields) {
-        this.fields = fields;
-    }
+	public void setFields(String[] fields) {
+		this.fields = fields;
+	}
 
-    public byte[] getRawKey() {
-        return rawKey;
-    }
+	public byte[] getRawKey() {
+		return rawKey;
+	}
 
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
+	public void setRawKey(byte[] rawKey) {
+		this.rawKey = rawKey;
+	}
 
-    public byte[][] getRawFields() {
-        return rawFields;
-    }
+	public byte[][] getRawFields() {
+		return rawFields;
+	}
 
-    public void setRawFields(byte[][] rawFields) {
-        this.rawFields = rawFields;
-    }
+	public void setRawFields(byte[][] rawFields) {
+		this.rawFields = rawFields;
+	}
 
-    @Override
-    public String toString() {
-        return "HDelCommand{" +
-                "key='" + key + '\'' +
-                ", fields=" + Arrays.toString(fields) +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "HDelCommand{" + "key='" + key + '\'' + ", fields=" + Arrays.toString(fields) + '}';
+	}
 }

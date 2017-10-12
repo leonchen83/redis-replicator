@@ -24,29 +24,27 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class SelectCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private int index;
+	private int index;
 
-    public SelectCommand() {
-    }
+	public SelectCommand() {
+	}
 
-    public SelectCommand(int index) {
-        this.index = index;
-    }
+	public SelectCommand(int index) {
+		this.index = index;
+	}
 
-    public int getIndex() {
-        return index;
-    }
+	public int getIndex() {
+		return index;
+	}
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
+	public void setIndex(int index) {
+		this.index = index;
+	}
 
-    @Override
-    public String toString() {
-        return "SelectCommand{" +
-                "index='" + index + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "SelectCommand{" + "index='" + index + '\'' + '}';
+	}
 }

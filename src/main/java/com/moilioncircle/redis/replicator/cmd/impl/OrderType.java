@@ -23,5 +23,5 @@ import java.io.Serializable;
  * @since 2.3.1
  */
 public enum OrderType implements Serializable {
-    ASC, DESC, NONE
+	ASC, DESC, NONE
 }

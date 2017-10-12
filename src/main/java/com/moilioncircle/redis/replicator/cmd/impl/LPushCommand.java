@@ -26,64 +26,61 @@ import java.util.Arrays;
  */
 public class LPushCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String[] values;
-    private byte[] rawKey;
-    private byte[][] rawValues;
+	private String key;
+	private String[] values;
+	private byte[] rawKey;
+	private byte[][] rawValues;
 
-    public LPushCommand() {
-    }
+	public LPushCommand() {
+	}
 
-    public LPushCommand(String key, String[] values) {
-        this(key, values, null, null);
-    }
+	public LPushCommand(String key, String[] values) {
+		this(key, values, null, null);
+	}
 
-    public LPushCommand(String key, String[] values, byte[] rawKey, byte[][] rawValues) {
-        this.key = key;
-        this.values = values;
-        this.rawKey = rawKey;
-        this.rawValues = rawValues;
-    }
+	public LPushCommand(String key, String[] values, byte[] rawKey, byte[][] rawValues) {
+		this.key = key;
+		this.values = values;
+		this.rawKey = rawKey;
+		this.rawValues = rawValues;
+	}
 
-    public String getKey() {
-        return key;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    public String[] getValues() {
-        return values;
-    }
+	public String[] getValues() {
+		return values;
+	}
 
-    public void setValues(String[] values) {
-        this.values = values;
-    }
+	public void setValues(String[] values) {
+		this.values = values;
+	}
 
-    public byte[] getRawKey() {
-        return rawKey;
-    }
+	public byte[] getRawKey() {
+		return rawKey;
+	}
 
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
+	public void setRawKey(byte[] rawKey) {
+		this.rawKey = rawKey;
+	}
 
-    public byte[][] getRawValues() {
-        return rawValues;
-    }
+	public byte[][] getRawValues() {
+		return rawValues;
+	}
 
-    public void setRawValues(byte[][] rawValues) {
-        this.rawValues = rawValues;
-    }
+	public void setRawValues(byte[][] rawValues) {
+		this.rawValues = rawValues;
+	}
 
-    @Override
-    public String toString() {
-        return "LPushCommand{" +
-                "key='" + key + '\'' +
-                ", values=" + Arrays.toString(values) +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "LPushCommand{" + "key='" + key + '\'' + ", values=" + Arrays.toString(values) + '}';
+	}
 }

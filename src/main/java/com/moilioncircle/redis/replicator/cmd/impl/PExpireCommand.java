@@ -24,54 +24,51 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class PExpireCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String key;
-    private long ex;
-    private byte[] rawKey;
+	private String key;
+	private long ex;
+	private byte[] rawKey;
 
-    public PExpireCommand() {
-    }
+	public PExpireCommand() {
+	}
 
-    public PExpireCommand(String key, long ex) {
-        this(key, ex, null);
-    }
+	public PExpireCommand(String key, long ex) {
+		this(key, ex, null);
+	}
 
-    public PExpireCommand(String key, long ex, byte[] rawKey) {
-        this.key = key;
-        this.ex = ex;
-        this.rawKey = rawKey;
-    }
+	public PExpireCommand(String key, long ex, byte[] rawKey) {
+		this.key = key;
+		this.ex = ex;
+		this.rawKey = rawKey;
+	}
 
-    public String getKey() {
-        return key;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    public long getEx() {
-        return ex;
-    }
+	public long getEx() {
+		return ex;
+	}
 
-    public void setEx(long ex) {
-        this.ex = ex;
-    }
+	public void setEx(long ex) {
+		this.ex = ex;
+	}
 
-    public byte[] getRawKey() {
-        return rawKey;
-    }
+	public byte[] getRawKey() {
+		return rawKey;
+	}
 
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
+	public void setRawKey(byte[] rawKey) {
+		this.rawKey = rawKey;
+	}
 
-    @Override
-    public String toString() {
-        return "PExpireCommand{" +
-                "key='" + key + '\'' +
-                ", ex=" + ex +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "PExpireCommand{" + "key='" + key + '\'' + ", ex=" + ex + '}';
+	}
 }

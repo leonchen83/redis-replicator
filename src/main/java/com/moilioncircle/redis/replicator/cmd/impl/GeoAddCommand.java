@@ -26,54 +26,51 @@ import java.util.Arrays;
  */
 public class GeoAddCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String key;
-    private Geo[] geos;
-    private byte[] rawKey;
+	private String key;
+	private Geo[] geos;
+	private byte[] rawKey;
 
-    public GeoAddCommand() {
-    }
+	public GeoAddCommand() {
+	}
 
-    public GeoAddCommand(String key, Geo[] geos) {
-        this(key, geos, null);
-    }
+	public GeoAddCommand(String key, Geo[] geos) {
+		this(key, geos, null);
+	}
 
-    public GeoAddCommand(String key, Geo[] geos, byte[] rawKey) {
-        this.key = key;
-        this.geos = geos;
-        this.rawKey = rawKey;
-    }
+	public GeoAddCommand(String key, Geo[] geos, byte[] rawKey) {
+		this.key = key;
+		this.geos = geos;
+		this.rawKey = rawKey;
+	}
 
-    public String getKey() {
-        return key;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    public Geo[] getGeos() {
-        return geos;
-    }
+	public Geo[] getGeos() {
+		return geos;
+	}
 
-    public void setGeos(Geo[] geos) {
-        this.geos = geos;
-    }
+	public void setGeos(Geo[] geos) {
+		this.geos = geos;
+	}
 
-    public byte[] getRawKey() {
-        return rawKey;
-    }
+	public byte[] getRawKey() {
+		return rawKey;
+	}
 
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
+	public void setRawKey(byte[] rawKey) {
+		this.rawKey = rawKey;
+	}
 
-    @Override
-    public String toString() {
-        return "GeoAddCommand{" +
-                "key='" + key + '\'' +
-                ", geos=" + Arrays.toString(geos) +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "GeoAddCommand{" + "key='" + key + '\'' + ", geos=" + Arrays.toString(geos) + '}';
+	}
 }

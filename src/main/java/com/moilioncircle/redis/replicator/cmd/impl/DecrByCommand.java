@@ -24,54 +24,51 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class DecrByCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String key;
-    private long value;
-    private byte[] rawKey;
+	private String key;
+	private long value;
+	private byte[] rawKey;
 
-    public DecrByCommand() {
-    }
+	public DecrByCommand() {
+	}
 
-    public DecrByCommand(String key, long value) {
-        this(key, value, null);
-    }
+	public DecrByCommand(String key, long value) {
+		this(key, value, null);
+	}
 
-    public DecrByCommand(String key, long value, byte[] rawKey) {
-        this.key = key;
-        this.value = value;
-        this.rawKey = rawKey;
-    }
+	public DecrByCommand(String key, long value, byte[] rawKey) {
+		this.key = key;
+		this.value = value;
+		this.rawKey = rawKey;
+	}
 
-    public String getKey() {
-        return key;
-    }
+	public String getKey() {
+		return key;
+	}
 
-    public void setKey(String key) {
-        this.key = key;
-    }
+	public void setKey(String key) {
+		this.key = key;
+	}
 
-    public long getValue() {
-        return value;
-    }
+	public long getValue() {
+		return value;
+	}
 
-    public void setValue(long value) {
-        this.value = value;
-    }
+	public void setValue(long value) {
+		this.value = value;
+	}
 
-    public byte[] getRawKey() {
-        return rawKey;
-    }
+	public byte[] getRawKey() {
+		return rawKey;
+	}
 
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
+	public void setRawKey(byte[] rawKey) {
+		this.rawKey = rawKey;
+	}
 
-    @Override
-    public String toString() {
-        return "DecrByCommand{" +
-                "key='" + key + '\'' +
-                ", value=" + value +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "DecrByCommand{" + "key='" + key + '\'' + ", value=" + value + '}';
+	}
 }

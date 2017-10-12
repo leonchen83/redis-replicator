@@ -26,96 +26,91 @@ import java.util.Arrays;
  */
 public class EvalCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private String script;
-    private int numkeys;
-    private String[] keys;
-    private String[] args;
-    private byte[] rawScript;
-    private byte[][] rawKeys;
-    private byte[][] rawArgs;
+	private String script;
+	private int numkeys;
+	private String[] keys;
+	private String[] args;
+	private byte[] rawScript;
+	private byte[][] rawKeys;
+	private byte[][] rawArgs;
 
-    public EvalCommand() {
-    }
+	public EvalCommand() {
+	}
 
-    public EvalCommand(String script, int numkeys, String[] keys, String[] args) {
-        this(script, numkeys, keys, args, null, null, null);
-    }
+	public EvalCommand(String script, int numkeys, String[] keys, String[] args) {
+		this(script, numkeys, keys, args, null, null, null);
+	}
 
-    public EvalCommand(String script, int numkeys, String[] keys, String[] args, byte[] rawScript, byte[][] rawKeys, byte[][] rawArgs) {
-        this.script = script;
-        this.numkeys = numkeys;
-        this.keys = keys;
-        this.args = args;
-        this.rawScript = rawScript;
-        this.rawKeys = rawKeys;
-        this.rawArgs = rawArgs;
-    }
+	public EvalCommand(String script, int numkeys, String[] keys, String[] args, byte[] rawScript, byte[][] rawKeys, byte[][] rawArgs) {
+		this.script = script;
+		this.numkeys = numkeys;
+		this.keys = keys;
+		this.args = args;
+		this.rawScript = rawScript;
+		this.rawKeys = rawKeys;
+		this.rawArgs = rawArgs;
+	}
 
-    public String getScript() {
-        return script;
-    }
+	public String getScript() {
+		return script;
+	}
 
-    public void setScript(String script) {
-        this.script = script;
-    }
+	public void setScript(String script) {
+		this.script = script;
+	}
 
-    public int getNumkeys() {
-        return numkeys;
-    }
+	public int getNumkeys() {
+		return numkeys;
+	}
 
-    public void setNumkeys(int numkeys) {
-        this.numkeys = numkeys;
-    }
+	public void setNumkeys(int numkeys) {
+		this.numkeys = numkeys;
+	}
 
-    public String[] getKeys() {
-        return keys;
-    }
+	public String[] getKeys() {
+		return keys;
+	}
 
-    public void setKeys(String[] keys) {
-        this.keys = keys;
-    }
+	public void setKeys(String[] keys) {
+		this.keys = keys;
+	}
 
-    public String[] getArgs() {
-        return args;
-    }
+	public String[] getArgs() {
+		return args;
+	}
 
-    public void setArgs(String[] args) {
-        this.args = args;
-    }
+	public void setArgs(String[] args) {
+		this.args = args;
+	}
 
-    public byte[] getRawScript() {
-        return rawScript;
-    }
+	public byte[] getRawScript() {
+		return rawScript;
+	}
 
-    public void setRawScript(byte[] rawScript) {
-        this.rawScript = rawScript;
-    }
+	public void setRawScript(byte[] rawScript) {
+		this.rawScript = rawScript;
+	}
 
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
+	public byte[][] getRawKeys() {
+		return rawKeys;
+	}
 
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
+	public void setRawKeys(byte[][] rawKeys) {
+		this.rawKeys = rawKeys;
+	}
 
-    public byte[][] getRawArgs() {
-        return rawArgs;
-    }
+	public byte[][] getRawArgs() {
+		return rawArgs;
+	}
 
-    public void setRawArgs(byte[][] rawArgs) {
-        this.rawArgs = rawArgs;
-    }
+	public void setRawArgs(byte[][] rawArgs) {
+		this.rawArgs = rawArgs;
+	}
 
-    @Override
-    public String toString() {
-        return "EvalCommand{" +
-                "script='" + script + '\'' +
-                ", numkeys=" + numkeys +
-                ", keys=" + Arrays.toString(keys) +
-                ", args=" + Arrays.toString(args) +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "EvalCommand{" + "script='" + script + '\'' + ", numkeys=" + numkeys + ", keys=" + Arrays.toString(keys) + ", args=" + Arrays.toString(args) + '}';
+	}
 }

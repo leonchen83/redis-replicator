@@ -26,43 +26,41 @@ import java.util.Map;
  */
 public class MSetCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private Map<String, String> kv;
-    private Map<byte[], byte[]> rawKv;
+	private Map<String, String> kv;
+	private Map<byte[], byte[]> rawKv;
 
-    public MSetCommand() {
-    }
+	public MSetCommand() {
+	}
 
-    public MSetCommand(Map<String, String> kv) {
-        this(kv, null);
-    }
+	public MSetCommand(Map<String, String> kv) {
+		this(kv, null);
+	}
 
-    public MSetCommand(Map<String, String> kv, Map<byte[], byte[]> rawKv) {
-        this.kv = kv;
-        this.rawKv = rawKv;
-    }
+	public MSetCommand(Map<String, String> kv, Map<byte[], byte[]> rawKv) {
+		this.kv = kv;
+		this.rawKv = rawKv;
+	}
 
-    public Map<String, String> getKv() {
-        return kv;
-    }
+	public Map<String, String> getKv() {
+		return kv;
+	}
 
-    public void setKv(Map<String, String> kv) {
-        this.kv = kv;
-    }
+	public void setKv(Map<String, String> kv) {
+		this.kv = kv;
+	}
 
-    public Map<byte[], byte[]> getRawKv() {
-        return rawKv;
-    }
+	public Map<byte[], byte[]> getRawKv() {
+		return rawKv;
+	}
 
-    public void setRawKv(Map<byte[], byte[]> rawKv) {
-        this.rawKv = rawKv;
-    }
+	public void setRawKv(Map<byte[], byte[]> rawKv) {
+		this.rawKv = rawKv;
+	}
 
-    @Override
-    public String toString() {
-        return "MSetCommand{" +
-                "kv=" + kv +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "MSetCommand{" + "kv=" + kv + '}';
+	}
 }

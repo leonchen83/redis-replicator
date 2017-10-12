@@ -44,74 +44,72 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 public class RedisMixReplicator extends AbstractReplicator {
-	protected static final Log logger = LogFactory.getLog(RedisAofReplicator.class);
-	protected final ReplyParser replyParser;
-	protected final PeekableInputStream peekable;
+    protected static final Log logger = LogFactory.getLog(RedisAofReplicator.class);
+    protected final ReplyParser replyParser;
+    protected final PeekableInputStream peekable;
 
-	public RedisMixReplicator(File file, Configuration configuration) throws FileNotFoundException {
-		this(new FileInputStream(file), configuration);
-	}
+    public RedisMixReplicator(File file, Configuration configuration) throws FileNotFoundException {
+        this(new FileInputStream(file), configuration);
+    }
 
-	public RedisMixReplicator(InputStream in, Configuration configuration) {
-		Objects.requireNonNull(in);
-		Objects.requireNonNull(configuration);
-		this.configuration = configuration;
-		if (in instanceof PeekableInputStream) {
-			this.peekable = (PeekableInputStream) in;
-		} else {
-			in = this.peekable = new PeekableInputStream(in);
-		}
-		this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
-		this.inputStream.setRawByteListeners(this.rawByteListeners);
-		this.replyParser = new ReplyParser(inputStream);
-		builtInCommandParserRegister();
-		if (configuration.isUseDefaultExceptionListener())
-			addExceptionListener(new DefaultExceptionListener());
-	}
+    public RedisMixReplicator(InputStream in, Configuration configuration) {
+        Objects.requireNonNull(in);
+        Objects.requireNonNull(configuration);
+        this.configuration = configuration;
+        if (in instanceof PeekableInputStream) {
+            this.peekable = (PeekableInputStream) in;
+        } else {
+            in = this.peekable = new PeekableInputStream(in);
+        }
+        this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
+        this.inputStream.setRawByteListeners(this.rawByteListeners);
+        this.replyParser = new ReplyParser(inputStream);
+        builtInCommandParserRegister();
+        if (configuration.isUseDefaultExceptionListener())
+            addExceptionListener(new DefaultExceptionListener());
+    }
 
-	@Override
-	public void open() throws IOException {
-		if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED))
-			return;
-		try {
-			doOpen();
-		} catch (EOFException ignore) {
-		} catch (UncheckedIOException e) {
-			if (!(e.getCause() instanceof EOFException))
-				throw e.getCause();
-		} finally {
-			doClose();
-			doCloseListener(this);
-		}
-	}
+    @Override
+    public void open() throws IOException {
+        if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
+        try {
+            doOpen();
+        } catch (EOFException ignore) {
+        } catch (UncheckedIOException e) {
+            if (!(e.getCause() instanceof EOFException)) throw e.getCause();
+        } finally {
+            doClose();
+            doCloseListener(this);
+        }
+    }
 
-	protected void doOpen() throws IOException {
-		if (peekable.peek() == 'R') {
-			RdbParser parser = new RdbParser(inputStream, this);
-			parser.parse();
-		}
-		while (getStatus() == CONNECTED) {
-			Object obj = replyParser.parse();
-			if (obj instanceof Object[]) {
-				if (configuration.isVerbose() && logger.isDebugEnabled())
-					logger.debug(Arrays.deepToString((Object[]) obj));
-				Object[] command = (Object[]) obj;
-				CommandName cmdName = CommandName.name(new String((byte[]) command[0], UTF_8));
-				final CommandParser<? extends Command> operations;
-				//if command do not register. ignore
-				if ((operations = commands.get(cmdName)) == null) {
-					if (logger.isWarnEnabled()) {
-						logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(command) + "]");
-					}
-					continue;
-				}
-				Command parsedCommand = operations.parse(command);
-				this.submitEvent(parsedCommand);
-			} else {
-				if (logger.isInfoEnabled()) {
-					logger.info("redis reply:" + obj);
-				}
-			}
-		}
-	}
+    protected void doOpen() throws IOException {
+        if (peekable.peek() == 'R') {
+            RdbParser parser = new RdbParser(inputStream, this);
+            parser.parse();
+        }
+        while (getStatus() == CONNECTED) {
+            Object obj = replyParser.parse();
+            if (obj instanceof Object[]) {
+                if (configuration.isVerbose() && logger.isDebugEnabled())
+                    logger.debug(Arrays.deepToString((Object[]) obj));
+                Object[] command = (Object[]) obj;
+                CommandName cmdName = CommandName.name(new String((byte[]) command[0], UTF_8));
+                final CommandParser<? extends Command> operations;
+                //if command do not register. ignore
+                if ((operations = commands.get(cmdName)) == null) {
+                    if (logger.isWarnEnabled()) {
+                        logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(command) + "]");
+                    }
+                    continue;
+                }
+                Command parsedCommand = operations.parse(command);
+                this.submitEvent(parsedCommand);
+            } else {
+                if (logger.isInfoEnabled()) {
+                    logger.info("redis reply:" + obj);
+                }
+            }
+        }
+    }
 }

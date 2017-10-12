@@ -21,36 +21,34 @@ package com.moilioncircle.redis.replicator.cmd;
  * @since 2.1.0
  */
 public class CommandName {
-	public final String name;
+    public final String name;
 
-	private CommandName(String name) {
-		this.name = name;
-	}
+    private CommandName(String name) {
+        this.name = name;
+    }
 
-	public static CommandName name(String key) {
-		return new CommandName(key);
-	}
+    public static CommandName name(String key) {
+        return new CommandName(key);
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-		CommandName that = (CommandName) o;
-		return name.toUpperCase()
-			.equals(that.name.toUpperCase());
-	}
+        CommandName that = (CommandName) o;
+        return name.toUpperCase().equals(that.name.toUpperCase());
+    }
 
-	@Override
-	public int hashCode() {
-		return name.toUpperCase()
-			.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return name.toUpperCase().hashCode();
+    }
 
-	@Override
-	public String toString() {
-		return "CommandName{" + "name='" + name + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "CommandName{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

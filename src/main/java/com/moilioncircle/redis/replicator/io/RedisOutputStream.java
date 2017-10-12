@@ -25,39 +25,39 @@ import java.io.OutputStream;
  * @since 2.1.0
  */
 public class RedisOutputStream extends OutputStream {
-	private final OutputStream out;
+    private final OutputStream out;
 
-	public RedisOutputStream(OutputStream out) {
-		this.out = new BufferedOutputStream(out);
-	}
+    public RedisOutputStream(OutputStream out) {
+        this.out = new BufferedOutputStream(out);
+    }
 
-	@Override
-	public void write(int b) throws IOException {
-		out.write(b);
-	}
+    @Override
+    public void write(int b) throws IOException {
+        out.write(b);
+    }
 
-	@Override
-	public void write(byte[] b) throws IOException {
-		out.write(b, 0, b.length);
-	}
+    @Override
+    public void write(byte[] b) throws IOException {
+        out.write(b, 0, b.length);
+    }
 
-	@Override
-	public void write(byte[] b, int off, int len) throws IOException {
-		out.write(b, off, len);
-	}
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        out.write(b, off, len);
+    }
 
-	public void writeCrLf() throws IOException {
-		out.write('\r');
-		out.write('\n');
-	}
+    public void writeCrLf() throws IOException {
+        out.write('\r');
+        out.write('\n');
+    }
 
-	@Override
-	public void flush() throws IOException {
-		out.flush();
-	}
+    @Override
+    public void flush() throws IOException {
+        out.flush();
+    }
 
-	@Override
-	public void close() throws IOException {
-		out.close();
-	}
+    @Override
+    public void close() throws IOException {
+        out.close();
+    }
 }

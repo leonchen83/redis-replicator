@@ -36,38 +36,36 @@ import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
  */
 public class RedisRdbReplicator extends AbstractReplicator {
 
-	public RedisRdbReplicator(File file, Configuration configuration) throws FileNotFoundException {
-		this(new FileInputStream(file), configuration);
-	}
+    public RedisRdbReplicator(File file, Configuration configuration) throws FileNotFoundException {
+        this(new FileInputStream(file), configuration);
+    }
 
-	public RedisRdbReplicator(InputStream in, Configuration configuration) {
-		Objects.requireNonNull(in);
-		Objects.requireNonNull(configuration);
-		this.configuration = configuration;
-		this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
-		this.inputStream.setRawByteListeners(this.rawByteListeners);
-		if (configuration.isUseDefaultExceptionListener())
-			addExceptionListener(new DefaultExceptionListener());
-	}
+    public RedisRdbReplicator(InputStream in, Configuration configuration) {
+        Objects.requireNonNull(in);
+        Objects.requireNonNull(configuration);
+        this.configuration = configuration;
+        this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
+        this.inputStream.setRawByteListeners(this.rawByteListeners);
+        if (configuration.isUseDefaultExceptionListener())
+            addExceptionListener(new DefaultExceptionListener());
+    }
 
-	@Override
-	public void open() throws IOException {
-		if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED))
-			return;
-		try {
-			doOpen();
-		} catch (EOFException ignore) {
-		} catch (UncheckedIOException e) {
-			if (!(e.getCause() instanceof EOFException))
-				throw e.getCause();
-		} finally {
-			doClose();
-			doCloseListener(this);
-		}
-	}
+    @Override
+    public void open() throws IOException {
+        if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
+        try {
+            doOpen();
+        } catch (EOFException ignore) {
+        } catch (UncheckedIOException e) {
+            if (!(e.getCause() instanceof EOFException)) throw e.getCause();
+        } finally {
+            doClose();
+            doCloseListener(this);
+        }
+    }
 
-	protected void doOpen() throws IOException {
-		RdbParser parser = new RdbParser(inputStream, this);
-		parser.parse();
-	}
+    protected void doOpen() throws IOException {
+        RdbParser parser = new RdbParser(inputStream, this);
+        parser.parse();
+    }
 }

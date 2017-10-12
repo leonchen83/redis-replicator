@@ -21,5 +21,5 @@ package com.moilioncircle.redis.replicator;
  * @since 2.4.0
  */
 public enum Status {
-	CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED
+    CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED
 }

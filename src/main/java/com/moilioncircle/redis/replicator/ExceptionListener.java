@@ -21,5 +21,5 @@ package com.moilioncircle.redis.replicator;
  * @since 2.1.0
  */
 public interface ExceptionListener {
-	void handle(Replicator replicator, Throwable throwable, Object event);
+    void handle(Replicator replicator, Throwable throwable, Object event);
 }

@@ -21,5 +21,5 @@ package com.moilioncircle.redis.replicator.io;
  * @since 2.1.0
  */
 public interface RawByteListener {
-	void handle(byte... rawBytes);
+    void handle(byte... rawBytes);
 }

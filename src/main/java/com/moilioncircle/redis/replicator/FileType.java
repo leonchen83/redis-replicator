@@ -21,26 +21,26 @@ package com.moilioncircle.redis.replicator;
  * @since 2.1.0
  */
 public enum FileType {
-	AOF, RDB, MIXED;
+    AOF, RDB, MIXED;
 
-	/**
-	 * @param type string type
-	 * @return FileType
-	 * @since 2.4.0
-	 */
-	static FileType parse(String type) {
-		if (type == null) {
-			return null;
-		} else if (type.equalsIgnoreCase("aof")) {
-			return AOF;
-		} else if (type.equalsIgnoreCase("rdb")) {
-			return RDB;
-		} else if (type.equalsIgnoreCase("mix")) {
-			return MIXED;
-		} else if (type.equalsIgnoreCase("mixed")) {
-			return MIXED;
-		} else {
-			return null;
-		}
-	}
+    /**
+     * @param type string type
+     * @return FileType
+     * @since 2.4.0
+     */
+    static FileType parse(String type) {
+        if (type == null) {
+            return null;
+        } else if (type.equalsIgnoreCase("aof")) {
+            return AOF;
+        } else if (type.equalsIgnoreCase("rdb")) {
+            return RDB;
+        } else if (type.equalsIgnoreCase("mix")) {
+            return MIXED;
+        } else if (type.equalsIgnoreCase("mixed")) {
+            return MIXED;
+        } else {
+            return null;
+        }
+    }
 }

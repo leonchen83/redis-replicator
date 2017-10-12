@@ -87,7 +87,7 @@ public class ModuleParserExample {
          *
          */
         private static final long serialVersionUID = 1L;
-        private final long[]      value;
+        private final long[] value;
 
         public HelloTypeModule(long[] value) {
             this.value = value;
@@ -119,13 +119,8 @@ public class ModuleParserExample {
          *
          */
         private static final long serialVersionUID = 1L;
-        private final String      key;
-        private final long        value;
-
-        public HelloTypeCommand(String key, long value) {
-            this.key = key;
-            this.value = value;
-        }
+        private final String key;
+        private final long value;
 
         public long getValue() {
             return value;
@@ -133,6 +128,11 @@ public class ModuleParserExample {
 
         public String getKey() {
             return key;
+        }
+
+        public HelloTypeCommand(String key, long value) {
+            this.key = key;
+            this.value = value;
         }
 
         @Override

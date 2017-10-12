@@ -26,7 +26,7 @@ public class FlushDBCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private Boolean           isAsync;
+    private Boolean isAsync;
 
     public FlushDBCommand() {
     }

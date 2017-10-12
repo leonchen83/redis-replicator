@@ -30,7 +30,11 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -146,21 +150,21 @@ public class RdbBinaryTest {
 
     private Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-                ObjectInput in = new ObjectInputStream(bis)) {
+             ObjectInput in = new ObjectInputStream(bis)) {
             return in.readObject();
         }
     }
 
     private Object toObject(Map<byte[], byte[]> map, byte[] field) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(map.get(field));
-                ObjectInput in = new ObjectInputStream(bis)) {
+             ObjectInput in = new ObjectInputStream(bis)) {
             return in.readObject();
         }
     }
 
     private Object toObject(List<byte[]> list) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(list.get(0));
-                ObjectInput in = new ObjectInputStream(bis)) {
+             ObjectInput in = new ObjectInputStream(bis)) {
             return in.readObject();
         }
     }
@@ -171,8 +175,8 @@ public class RdbBinaryTest {
          *
          */
         private String a;
-        private int    b;
-        private long   c;
+        private int b;
+        private long c;
 
         public Test() {
 

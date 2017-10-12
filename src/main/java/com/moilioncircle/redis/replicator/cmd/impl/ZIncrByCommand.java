@@ -26,11 +26,11 @@ public class ZIncrByCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            key;
-    private double            increment;
-    private String            member;
-    private byte[]            rawKey;
-    private byte[]            rawMember;
+    private String key;
+    private double increment;
+    private String member;
+    private byte[] rawKey;
+    private byte[] rawMember;
 
     public ZIncrByCommand() {
     }

@@ -16,7 +16,11 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.*;
+import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
+import com.moilioncircle.redis.replicator.RedisReplicator;
+import com.moilioncircle.redis.replicator.RedisSocketReplicatorTest;
+import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
@@ -96,7 +100,7 @@ public class ModuleTest {
 
         private static final long serialVersionUID = 1L;
 
-        private final long[]      value;
+        private final long[] value;
 
         public HelloTypeModule(long[] value) {
             this.value = value;
@@ -125,13 +129,8 @@ public class ModuleTest {
 
     public static class HelloTypeCommand implements Command {
         private static final long serialVersionUID = 1L;
-        private final String      key;
-        private final long        value;
-
-        public HelloTypeCommand(String key, long value) {
-            this.key = key;
-            this.value = value;
-        }
+        private final String key;
+        private final long value;
 
         public long getValue() {
             return value;
@@ -139,6 +138,11 @@ public class ModuleTest {
 
         public String getKey() {
             return key;
+        }
+
+        public HelloTypeCommand(String key, long value) {
+            this.key = key;
+            this.value = value;
         }
 
         @Override

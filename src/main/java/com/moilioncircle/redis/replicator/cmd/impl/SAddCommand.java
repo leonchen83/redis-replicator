@@ -28,10 +28,10 @@ public class SAddCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            key;
-    private String[]          members;
-    private byte[]            rawKey;
-    private byte[][]          rawMembers;
+    private String key;
+    private String[] members;
+    private byte[] rawKey;
+    private byte[][] rawMembers;
 
     public SAddCommand() {
     }

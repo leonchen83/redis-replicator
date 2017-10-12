@@ -26,11 +26,11 @@ public class HIncrByCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            key;
-    private String            field;
-    private long              increment;
-    private byte[]            rawKey;
-    private byte[]            rawField;
+    private String key;
+    private String field;
+    private long increment;
+    private byte[] rawKey;
+    private byte[] rawField;
 
     public HIncrByCommand() {
     }

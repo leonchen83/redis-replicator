@@ -28,91 +28,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Configuration {
 
-    /**
-     * psync offset
-     */
-    private final AtomicLong replOffset                  = new AtomicLong(-1);
-    /**
-     * socket connection timeout
-     */
-    private int              connectionTimeout           = 30000;
-    /**
-     * socket input stream read timeout
-     */
-    private int              readTimeout                 = 30000;
-    /**
-     * socket receive buffer size
-     */
-    private int              receiveBufferSize           = 0;
-    /**
-     * socket send buffer size
-     */
-    private int              sendBufferSize              = 0;
-    /**
-     * connection retry times. if retries <= 0 then always retry
-     */
-    private int              retries                     = 5;
-    /**
-     * retry time interval
-     */
-    private int              retryTimeInterval           = 1000;
-    /**
-     * redis input stream buffer size
-     */
-    private int              bufferSize                  = 8 * 1024;
-    /**
-     * auth password
-     */
-    private String           authPassword                = null;
-    /**
-     * discard rdb event
-     */
-    private boolean          discardRdbEvent             = false;
-    /**
-     * async buffer size
-     */
-    private int              asyncCachedBytes            = 512 * 1024;
-    /**
-     * rate limit (unit : bytes/second)
-     *
-     * @since 2.3.2
-     */
-    private int              rateLimit                   = 0;
-    /**
-     * trace event log
-     */
-    private boolean          verbose                     = false;
-    /**
-     * used in psync heartbeat
-     */
-    private int              heartBeatPeriod             = 1000;
-    /**
-     * use default exception handler
-     *
-     * @since 2.2.0
-     */
-    private boolean          useDefaultExceptionListener = true;
-    /**
-     * open ssl connection
-     */
-    private boolean          ssl                         = false;
-    /**
-     * ssl socket factory
-     */
-    private SSLSocketFactory sslSocketFactory            = (SSLSocketFactory) SSLSocketFactory.getDefault();
-    /**
-     * ssl parameters
-     */
-    private SSLParameters    sslParameters;
-    /**
-     * hostname verifier
-     */
-    private HostnameVerifier hostnameVerifier;
-    /**
-     * psync master repl_id
-     */
-    private String           replId                      = "?";
-
     private Configuration() {
     }
 
@@ -125,92 +40,109 @@ public class Configuration {
         return new Configuration();
     }
 
-    public static Configuration valueOf(RedisURI uri) {
-        Configuration configuration = defaultSetting();
-        Map<String, String> parameters = uri.parameters;
-        if (parameters.containsKey("connectionTimeout")) {
-            configuration.setConnectionTimeout(getInt(parameters.get("connectionTimeout")));
-        }
-        if (parameters.containsKey("readTimeout")) {
-            configuration.setReadTimeout(getInt(parameters.get("readTimeout")));
-        }
-        if (parameters.containsKey("receiveBufferSize")) {
-            configuration.setReceiveBufferSize(getInt(parameters.get("receiveBufferSize")));
-        }
-        if (parameters.containsKey("sendBufferSize")) {
-            configuration.setSendBufferSize(getInt(parameters.get("sendBufferSize")));
-        }
-        if (parameters.containsKey("retries")) {
-            configuration.setRetries(getInt(parameters.get("retries")));
-        }
-        if (parameters.containsKey("retryTimeInterval")) {
-            configuration.setRetryTimeInterval(getInt(parameters.get("retryTimeInterval")));
-        }
-        if (parameters.containsKey("bufferSize")) {
-            configuration.setBufferSize(getInt(parameters.get("bufferSize")));
-        }
-        if (parameters.containsKey("authPassword")) {
-            configuration.setAuthPassword(parameters.get("authPassword"));
-        }
-        if (parameters.containsKey("discardRdbEvent")) {
-            configuration.setDiscardRdbEvent(getBool(parameters.get("discardRdbEvent")));
-        }
-        if (parameters.containsKey("asyncCachedBytes")) {
-            configuration.setAsyncCachedBytes(getInt(parameters.get("asyncCachedBytes")));
-        }
-        if (parameters.containsKey("rateLimit")) {
-            configuration.setRateLimit(getInt(parameters.get("rateLimit")));
-        }
-        if (parameters.containsKey("verbose")) {
-            configuration.setVerbose(getBool(parameters.get("verbose")));
-        }
-        if (parameters.containsKey("heartBeatPeriod")) {
-            configuration.setHeartBeatPeriod(getInt(parameters.get("heartBeatPeriod")));
-        }
-        if (parameters.containsKey("useDefaultExceptionListener")) {
-            configuration.setUseDefaultExceptionListener(getBool(parameters.get("useDefaultExceptionListener")));
-        }
-        if (parameters.containsKey("ssl")) {
-            configuration.setSsl(getBool(parameters.get("ssl")));
-        }
-        if (parameters.containsKey("replId")) {
-            configuration.setReplId(parameters.get("replId"));
-        }
-        if (parameters.containsKey("replOffset")) {
-            configuration.setReplOffset(getLong(parameters.get("replOffset")));
-        }
-        return configuration;
-    }
+    /**
+     * socket connection timeout
+     */
+    private int connectionTimeout = 30000;
 
-    private static boolean getBool(String value) {
-        if (value == null)
-            return false;
-        if (value.equals("false") || value.equals("no"))
-            return false;
-        if (value.equals("true") || value.equals("yes"))
-            return true;
-        return false;
-    }
+    /**
+     * socket input stream read timeout
+     */
+    private int readTimeout = 30000;
 
-    private static int getInt(String value) {
-        if (value == null)
-            return 0;
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
-    }
+    /**
+     * socket receive buffer size
+     */
+    private int receiveBufferSize = 0;
 
-    private static long getLong(String value) {
-        if (value == null)
-            return 0L;
-        try {
-            return Long.parseLong(value);
-        } catch (NumberFormatException e) {
-            return 0L;
-        }
-    }
+    /**
+     * socket send buffer size
+     */
+    private int sendBufferSize = 0;
+
+    /**
+     * connection retry times. if retries <= 0 then always retry
+     */
+    private int retries = 5;
+
+    /**
+     * retry time interval
+     */
+    private int retryTimeInterval = 1000;
+
+    /**
+     * redis input stream buffer size
+     */
+    private int bufferSize = 8 * 1024;
+
+    /**
+     * auth password
+     */
+    private String authPassword = null;
+
+    /**
+     * discard rdb event
+     */
+    private boolean discardRdbEvent = false;
+
+    /**
+     * async buffer size
+     */
+    private int asyncCachedBytes = 512 * 1024;
+
+    /**
+     * rate limit (unit : bytes/second)
+     *
+     * @since 2.3.2
+     */
+    private int rateLimit = 0;
+
+    /**
+     * trace event log
+     */
+    private boolean verbose = false;
+
+    /**
+     * used in psync heartbeat
+     */
+    private int heartBeatPeriod = 1000;
+
+    /**
+     * use default exception handler
+     *
+     * @since 2.2.0
+     */
+    private boolean useDefaultExceptionListener = true;
+
+    /**
+     * open ssl connection
+     */
+    private boolean ssl = false;
+
+    /**
+     * ssl socket factory
+     */
+    private SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+
+    /**
+     * ssl parameters
+     */
+    private SSLParameters sslParameters;
+
+    /**
+     * hostname verifier
+     */
+    private HostnameVerifier hostnameVerifier;
+
+    /**
+     * psync master repl_id
+     */
+    private String replId = "?";
+
+    /**
+     * psync offset
+     */
+    private final AtomicLong replOffset = new AtomicLong(-1);
 
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -395,6 +327,93 @@ public class Configuration {
     public Configuration setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
         return this;
+    }
+
+    public static Configuration valueOf(RedisURI uri) {
+        Configuration configuration = defaultSetting();
+        Map<String, String> parameters = uri.parameters;
+        if (parameters.containsKey("connectionTimeout")) {
+            configuration.setConnectionTimeout(getInt(parameters.get("connectionTimeout")));
+        }
+        if (parameters.containsKey("readTimeout")) {
+            configuration.setReadTimeout(getInt(parameters.get("readTimeout")));
+        }
+        if (parameters.containsKey("receiveBufferSize")) {
+            configuration.setReceiveBufferSize(getInt(parameters.get("receiveBufferSize")));
+        }
+        if (parameters.containsKey("sendBufferSize")) {
+            configuration.setSendBufferSize(getInt(parameters.get("sendBufferSize")));
+        }
+        if (parameters.containsKey("retries")) {
+            configuration.setRetries(getInt(parameters.get("retries")));
+        }
+        if (parameters.containsKey("retryTimeInterval")) {
+            configuration.setRetryTimeInterval(getInt(parameters.get("retryTimeInterval")));
+        }
+        if (parameters.containsKey("bufferSize")) {
+            configuration.setBufferSize(getInt(parameters.get("bufferSize")));
+        }
+        if (parameters.containsKey("authPassword")) {
+            configuration.setAuthPassword(parameters.get("authPassword"));
+        }
+        if (parameters.containsKey("discardRdbEvent")) {
+            configuration.setDiscardRdbEvent(getBool(parameters.get("discardRdbEvent")));
+        }
+        if (parameters.containsKey("asyncCachedBytes")) {
+            configuration.setAsyncCachedBytes(getInt(parameters.get("asyncCachedBytes")));
+        }
+        if (parameters.containsKey("rateLimit")) {
+            configuration.setRateLimit(getInt(parameters.get("rateLimit")));
+        }
+        if (parameters.containsKey("verbose")) {
+            configuration.setVerbose(getBool(parameters.get("verbose")));
+        }
+        if (parameters.containsKey("heartBeatPeriod")) {
+            configuration.setHeartBeatPeriod(getInt(parameters.get("heartBeatPeriod")));
+        }
+        if (parameters.containsKey("useDefaultExceptionListener")) {
+            configuration.setUseDefaultExceptionListener(getBool(parameters.get("useDefaultExceptionListener")));
+        }
+        if (parameters.containsKey("ssl")) {
+            configuration.setSsl(getBool(parameters.get("ssl")));
+        }
+        if (parameters.containsKey("replId")) {
+            configuration.setReplId(parameters.get("replId"));
+        }
+        if (parameters.containsKey("replOffset")) {
+            configuration.setReplOffset(getLong(parameters.get("replOffset")));
+        }
+        return configuration;
+    }
+
+    private static boolean getBool(String value) {
+        if (value == null)
+            return false;
+        if (value.equals("false") || value.equals("no"))
+            return false;
+        if (value.equals("true") || value.equals("yes"))
+            return true;
+        return false;
+    }
+
+    private static int getInt(String value) {
+        if (value == null)
+            return 0;
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private static long getLong(String value) {
+        if (value == null)
+            return 0L;
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return 0L;
+        }
     }
 
     @Override

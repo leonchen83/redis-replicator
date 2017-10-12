@@ -26,13 +26,13 @@ public class LInsertCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            key;
-    private LInsertType       lInsertType;
-    private String            pivot;
-    private String            value;
-    private byte[]            rawKey;
-    private byte[]            rawPivot;
-    private byte[]            rawValue;
+    private String key;
+    private LInsertType lInsertType;
+    private String pivot;
+    private String value;
+    private byte[] rawKey;
+    private byte[] rawPivot;
+    private byte[] rawValue;
 
     public LInsertCommand() {
     }

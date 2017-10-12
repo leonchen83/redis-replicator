@@ -28,10 +28,10 @@ public class SUnionStoreCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            destination;
-    private String[]          keys;
-    private byte[]            rawDestination;
-    private byte[][]          rawKeys;
+    private String destination;
+    private String[] keys;
+    private byte[] rawDestination;
+    private byte[][] rawKeys;
 
     public SUnionStoreCommand() {
     }

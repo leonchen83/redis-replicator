@@ -24,8 +24,8 @@ public class ScriptLoadCommand extends ScriptCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private String            script;
-    private byte[]            rawScript;
+    private String script;
+    private byte[] rawScript;
 
     public ScriptLoadCommand() {
     }

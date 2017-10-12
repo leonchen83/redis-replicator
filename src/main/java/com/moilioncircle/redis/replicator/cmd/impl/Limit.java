@@ -26,8 +26,8 @@ public class Limit implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private long              offset;
-    private long              count;
+    private long offset;
+    private long count;
 
     public Limit() {
     }

@@ -16,7 +16,12 @@
 
 package com.moilioncircle.examples;
 
-import com.moilioncircle.redis.replicator.*;
+import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.Constants;
+import com.moilioncircle.redis.replicator.FileType;
+import com.moilioncircle.redis.replicator.RedisReplicator;
+import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.UncheckedIOException;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -63,8 +68,7 @@ public class MergeRdbExample {
                             tuple.setT1(null);
                             tuple.setT2(ByteBuilder.allocate(128));
                         }
-                        for (byte b : rawBytes)
-                            tuple.getT2().put(b);
+                        for (byte b : rawBytes) tuple.getT2().put(b);
                     }
                 };
                 replicator.addRawByteListener(rawByteListener);
@@ -96,19 +100,6 @@ public class MergeRdbExample {
         }
     }
 
-    private static byte[] longToByteArray(long value) {
-        return new byte[] {
-                (byte) value,
-                (byte) (value >> 8),
-                (byte) (value >> 16),
-                (byte) (value >> 24),
-                (byte) (value >> 32),
-                (byte) (value >> 40),
-                (byte) (value >> 48),
-                (byte) (value >> 56),
-        };
-    }
-
     private static class Tuple2<T1, T2> {
         private T1 t1;
         private T2 t2;
@@ -136,5 +127,18 @@ public class MergeRdbExample {
         public String toString() {
             return "<" + t1 + ", " + t2 + '>';
         }
+    }
+
+    private static byte[] longToByteArray(long value) {
+        return new byte[]{
+                (byte) value,
+                (byte) (value >> 8),
+                (byte) (value >> 16),
+                (byte) (value >> 24),
+                (byte) (value >> 32),
+                (byte) (value >> 40),
+                (byte) (value >> 48),
+                (byte) (value >> 56),
+        };
     }
 }

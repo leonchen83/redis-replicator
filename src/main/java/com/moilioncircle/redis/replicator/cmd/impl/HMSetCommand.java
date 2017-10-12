@@ -26,11 +26,11 @@ import java.util.Map;
  */
 public class HMSetCommand implements Command {
 
-    private static final long   serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-    private String              key;
+    private String key;
     private Map<String, String> fields;
-    private byte[]              rawKey;
+    private byte[] rawKey;
     private Map<byte[], byte[]> rawFields;
 
     public HMSetCommand() {

@@ -45,11 +45,6 @@ public class TimerTaskExample {
         System.in.read();
     }
 
-    private static void save(KeyValuePair<?> kv) {
-        System.out.println(kv);
-        //save kv to mysql or to anywhere.
-    }
-
     private static class Task extends TimerTask {
         @Override
         public void run() {
@@ -83,5 +78,10 @@ public class TimerTaskExample {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void save(KeyValuePair<?> kv) {
+        System.out.println(kv);
+        //save kv to mysql or to anywhere.
     }
 }

@@ -27,7 +27,7 @@ public final class CompressLZF {
      * hash collisions (reduced compression) and speed (amount that fits in CPU
      * cache).
      */
-    private static final int HASH_SIZE   = 1 << 14;
+    private static final int HASH_SIZE = 1 << 14;
 
     /**
      * The maximum number of literals in a chunk (32).
@@ -37,17 +37,17 @@ public final class CompressLZF {
     /**
      * The maximum offset allowed for a back-reference (8192).
      */
-    private static final int MAX_OFF     = 1 << 13;
+    private static final int MAX_OFF = 1 << 13;
 
     /**
      * The maximum back-reference length (264).
      */
-    private static final int MAX_REF     = (1 << 8) + (1 << 3);
+    private static final int MAX_REF = (1 << 8) + (1 << 3);
 
     /**
      * Hash table for matching byte sequences (reused for performance).
      */
-    private int[]            cachedHashTable;
+    private int[] cachedHashTable;
 
     /**
      * Return byte with lower 2 bytes being byte at index, then index+1.

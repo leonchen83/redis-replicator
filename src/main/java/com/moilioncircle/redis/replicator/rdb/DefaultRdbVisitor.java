@@ -20,7 +20,18 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.ByteArrayInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.datatype.*;
+import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
+import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueZSet;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
@@ -28,9 +39,31 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
-import static com.moilioncircle.redis.replicator.Constants.*;
+import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -411,23 +444,23 @@ public class DefaultRdbVisitor extends RdbVisitor {
         long lenOfContent = BaseRdbParser.LenHelper.lenOfContent(stream);
         for (long i = 0; i < lenOfContent; i++) {
             switch (encoding) {
-            case 2:
-                String element = String.valueOf(stream.readInt(2));
-                set.add(element);
-                rawSet.add(element.getBytes());
-                break;
-            case 4:
-                element = String.valueOf(stream.readInt(4));
-                set.add(element);
-                rawSet.add(element.getBytes());
-                break;
-            case 8:
-                element = String.valueOf(stream.readLong(8));
-                set.add(element);
-                rawSet.add(element.getBytes());
-                break;
-            default:
-                throw new AssertionError("expect encoding [2,4,8] but:" + encoding);
+                case 2:
+                    String element = String.valueOf(stream.readInt(2));
+                    set.add(element);
+                    rawSet.add(element.getBytes());
+                    break;
+                case 4:
+                    element = String.valueOf(stream.readInt(4));
+                    set.add(element);
+                    rawSet.add(element.getBytes());
+                    break;
+                case 8:
+                    element = String.valueOf(stream.readLong(8));
+                    set.add(element);
+                    rawSet.add(element.getBytes());
+                    break;
+                default:
+                    throw new AssertionError("expect encoding [2,4,8] but:" + encoding);
             }
         }
         o11.setValueRdbType(RDB_TYPE_SET_INTSET);
@@ -605,8 +638,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         /* Module v2 serialization has an EOF mark at the end. */
         long eof = parser.rdbLoadLen().len;
         if (eof != RDB_MODULE_OPCODE_EOF) {
-            throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName
-                    + "' that is not terminated by the proper module value EOF marker");
+            throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName + "' that is not terminated by the proper module value EOF marker");
         }
         return o7;
     }
@@ -624,36 +656,36 @@ public class DefaultRdbVisitor extends RdbVisitor {
          * ----------------------------
          */
         switch (valueType) {
-        case RDB_TYPE_STRING:
-            return (KeyValuePair<?>) applyString(in, db, version);
-        case RDB_TYPE_LIST:
-            return (KeyValuePair<?>) applyList(in, db, version);
-        case RDB_TYPE_SET:
-            return (KeyValuePair<?>) applySet(in, db, version);
-        case RDB_TYPE_ZSET:
-            return (KeyValuePair<?>) applyZSet(in, db, version);
-        case RDB_TYPE_ZSET_2:
-            return (KeyValuePair<?>) applyZSet2(in, db, version);
-        case RDB_TYPE_HASH:
-            return (KeyValuePair<?>) applyHash(in, db, version);
-        case RDB_TYPE_HASH_ZIPMAP:
-            return (KeyValuePair<?>) applyHashZipMap(in, db, version);
-        case RDB_TYPE_LIST_ZIPLIST:
-            return (KeyValuePair<?>) applyListZipList(in, db, version);
-        case RDB_TYPE_SET_INTSET:
-            return (KeyValuePair<?>) applySetIntSet(in, db, version);
-        case RDB_TYPE_ZSET_ZIPLIST:
-            return (KeyValuePair<?>) applyZSetZipList(in, db, version);
-        case RDB_TYPE_HASH_ZIPLIST:
-            return (KeyValuePair<?>) applyHashZipList(in, db, version);
-        case RDB_TYPE_LIST_QUICKLIST:
-            return (KeyValuePair<?>) applyListQuickList(in, db, version);
-        case RDB_TYPE_MODULE:
-            return (KeyValuePair<?>) applyModule(in, db, version);
-        case RDB_TYPE_MODULE_2:
-            return (KeyValuePair<?>) applyModule2(in, db, version);
-        default:
-            throw new AssertionError("unexpected value type:" + valueType);
+            case RDB_TYPE_STRING:
+                return (KeyValuePair<?>) applyString(in, db, version);
+            case RDB_TYPE_LIST:
+                return (KeyValuePair<?>) applyList(in, db, version);
+            case RDB_TYPE_SET:
+                return (KeyValuePair<?>) applySet(in, db, version);
+            case RDB_TYPE_ZSET:
+                return (KeyValuePair<?>) applyZSet(in, db, version);
+            case RDB_TYPE_ZSET_2:
+                return (KeyValuePair<?>) applyZSet2(in, db, version);
+            case RDB_TYPE_HASH:
+                return (KeyValuePair<?>) applyHash(in, db, version);
+            case RDB_TYPE_HASH_ZIPMAP:
+                return (KeyValuePair<?>) applyHashZipMap(in, db, version);
+            case RDB_TYPE_LIST_ZIPLIST:
+                return (KeyValuePair<?>) applyListZipList(in, db, version);
+            case RDB_TYPE_SET_INTSET:
+                return (KeyValuePair<?>) applySetIntSet(in, db, version);
+            case RDB_TYPE_ZSET_ZIPLIST:
+                return (KeyValuePair<?>) applyZSetZipList(in, db, version);
+            case RDB_TYPE_HASH_ZIPLIST:
+                return (KeyValuePair<?>) applyHashZipList(in, db, version);
+            case RDB_TYPE_LIST_QUICKLIST:
+                return (KeyValuePair<?>) applyListQuickList(in, db, version);
+            case RDB_TYPE_MODULE:
+                return (KeyValuePair<?>) applyModule(in, db, version);
+            case RDB_TYPE_MODULE_2:
+                return (KeyValuePair<?>) applyModule2(in, db, version);
+            default:
+                throw new AssertionError("unexpected value type:" + valueType);
         }
     }
 }

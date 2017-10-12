@@ -26,12 +26,12 @@ public class SMoveCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            source;
-    private String            destination;
-    private String            member;
-    private byte[]            rawSource;
-    private byte[]            rawDestination;
-    private byte[]            rawMember;
+    private String source;
+    private String destination;
+    private String member;
+    private byte[] rawSource;
+    private byte[] rawDestination;
+    private byte[] rawMember;
 
     public SMoveCommand() {
     }

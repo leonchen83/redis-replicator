@@ -28,13 +28,13 @@ public class ZUnionStoreCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            destination;
-    private int               numkeys;
-    private String[]          keys;
-    private double[]          weights;
-    private AggregateType     aggregateType;
-    private byte[]            rawDestination;
-    private byte[][]          rawKeys;
+    private String destination;
+    private int numkeys;
+    private String[] keys;
+    private double[] weights;
+    private AggregateType aggregateType;
+    private byte[] rawDestination;
+    private byte[][] rawKeys;
 
     public ZUnionStoreCommand() {
     }
@@ -43,8 +43,7 @@ public class ZUnionStoreCommand implements Command {
         this(destination, numkeys, keys, weights, aggregateType, null, null);
     }
 
-    public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType, byte[] rawDestination,
-            byte[][] rawKeys) {
+    public ZUnionStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType, byte[] rawDestination, byte[][] rawKeys) {
         this.destination = destination;
         this.numkeys = numkeys;
         this.keys = keys;

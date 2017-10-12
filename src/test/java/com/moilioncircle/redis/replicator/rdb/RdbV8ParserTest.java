@@ -41,7 +41,7 @@ public class RdbV8ParserTest {
     @Test
     public void testParse() throws Exception {
         ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
-        String[] resources = new String[] { "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb" };
+        String[] resources = new String[]{"rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb"};
         for (String resource : resources) {
             template(resource, map);
         }
@@ -58,8 +58,9 @@ public class RdbV8ParserTest {
     @SuppressWarnings("resource")
     public void template(String filename, final ConcurrentHashMap<String, KeyValuePair<?>> map) {
         try {
-            Replicator replicator = new RedisReplicator(RdbParserTest.class.getClassLoader().getResourceAsStream(filename), FileType.RDB,
-                    Configuration.defaultSetting());
+            Replicator replicator = new RedisReplicator(RdbParserTest.class.
+                    getClassLoader().getResourceAsStream(filename)
+                    , FileType.RDB, Configuration.defaultSetting());
             replicator.addRdbListener(new RdbListener.Adaptor() {
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {

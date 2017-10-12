@@ -52,8 +52,7 @@ public class MigrationExample {
                     } else {
                         long ms = mkv.getExpiredMs() - System.currentTimeMillis();
                         if (ms > 0) {
-                            target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(),
-                                    "REPLACE".getBytes());
+                            target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(), "REPLACE".getBytes());
                             String r = target.getStatusCodeReply();
                             System.out.println(r);
                         }

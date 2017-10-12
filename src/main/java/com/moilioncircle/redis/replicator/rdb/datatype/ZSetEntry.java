@@ -26,9 +26,9 @@ public class ZSetEntry implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String            element;
-    private double            score;
-    private byte[]            rawElement;
+    private String element;
+    private double score;
+    private byte[] rawElement;
 
     public ZSetEntry() {
     }
@@ -47,12 +47,12 @@ public class ZSetEntry implements Serializable {
         return element;
     }
 
-    public void setElement(String element) {
-        this.element = element;
-    }
-
     public double getScore() {
         return score;
+    }
+
+    public void setElement(String element) {
+        this.element = element;
     }
 
     public void setScore(double score) {

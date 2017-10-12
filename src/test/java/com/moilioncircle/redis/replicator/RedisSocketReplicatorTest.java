@@ -18,7 +18,12 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.cmd.impl.*;
+import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
+import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
@@ -32,7 +37,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen

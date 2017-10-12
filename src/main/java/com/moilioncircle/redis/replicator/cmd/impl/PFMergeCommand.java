@@ -28,10 +28,10 @@ public class PFMergeCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            destkey;
-    private String[]          sourcekeys;
-    private byte[]            rawDestkey;
-    private byte[][]          rawSourcekeys;
+    private String destkey;
+    private String[] sourcekeys;
+    private byte[] rawDestkey;
+    private byte[][] rawSourcekeys;
 
     public PFMergeCommand() {
     }

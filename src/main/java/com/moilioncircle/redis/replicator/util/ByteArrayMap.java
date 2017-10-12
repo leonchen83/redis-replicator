@@ -16,8 +16,14 @@
 
 package com.moilioncircle.redis.replicator.util;
 
-import java.util.*;
+import java.util.AbstractSet;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Leon Chen
@@ -50,10 +56,8 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
     }
 
     public ByteArrayMap(boolean ordered, int initialCapacity, float loadFactor) {
-        if (ordered)
-            map = new LinkedHashMap<>(initialCapacity, loadFactor);
-        else
-            map = new HashMap<>(initialCapacity, loadFactor);
+        if (ordered) map = new LinkedHashMap<>(initialCapacity, loadFactor);
+        else map = new HashMap<>(initialCapacity, loadFactor);
     }
 
     @Override
@@ -260,8 +264,8 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
 
     private final class Node implements Map.Entry<byte[], V> {
 
+        private V value;
         private final byte[] bytes;
-        private V            value;
 
         private Node(byte[] bytes, V value) {
             this.bytes = bytes;

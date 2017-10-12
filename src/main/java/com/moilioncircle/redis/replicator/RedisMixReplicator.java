@@ -27,7 +27,12 @@ import com.moilioncircle.redis.replicator.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
@@ -39,8 +44,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 public class RedisMixReplicator extends AbstractReplicator {
-    protected static final Log          logger = LogFactory.getLog(RedisAofReplicator.class);
-    protected final ReplyParser         replyParser;
+    protected static final Log logger = LogFactory.getLog(RedisAofReplicator.class);
+    protected final ReplyParser replyParser;
     protected final PeekableInputStream peekable;
 
     public RedisMixReplicator(File file, Configuration configuration) throws FileNotFoundException {

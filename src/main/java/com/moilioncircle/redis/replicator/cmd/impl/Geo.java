@@ -26,10 +26,10 @@ public class Geo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String            member;
-    private double            longitude;
-    private double            latitude;
-    private byte[]            rawMember;
+    private String member;
+    private double longitude;
+    private double latitude;
+    private byte[] rawMember;
 
     public Geo() {
     }

@@ -42,27 +42,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class PsyncTest {
 
-    private static void close(Replicator replicator) {
-        try {
-            ((TestRedisSocketReplicator) replicator).getOutputStream().close();
-        } catch (IOException e) {
-        }
-        try {
-            ((TestRedisSocketReplicator) replicator).getInputStream().close();
-        } catch (IOException e) {
-        }
-        try {
-            ((TestRedisSocketReplicator) replicator).getSocket().close();
-        } catch (IOException e) {
-        }
-    }
-
     @Test
     public void psync() throws IOException {
 
-        final Configuration configuration = Configuration.defaultSetting().setAuthPassword("test").setConnectionTimeout(3000).setReadTimeout(3000)
-                .setBufferSize(64).setAsyncCachedBytes(0).setHeartBeatPeriod(200).setReceiveBufferSize(0).setSendBufferSize(0)
-                .setDiscardRdbEvent(true).setRetryTimeInterval(1000).setUseDefaultExceptionListener(false);
+        final Configuration configuration = Configuration.defaultSetting().
+                setAuthPassword("test").
+                setConnectionTimeout(3000).
+                setReadTimeout(3000).
+                setBufferSize(64).
+                setAsyncCachedBytes(0).
+                setHeartBeatPeriod(200).
+                setReceiveBufferSize(0).
+                setSendBufferSize(0).
+                setDiscardRdbEvent(true).
+                setRetryTimeInterval(1000).
+                setUseDefaultExceptionListener(false);
         System.out.println(configuration);
         @SuppressWarnings("resource")
         Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
@@ -116,6 +110,21 @@ public class PsyncTest {
         assertEquals(1000, acc.get());
         for (AuxField auxField : set) {
             System.out.println(auxField.getAuxKey() + "=" + auxField.getAuxValue());
+        }
+    }
+
+    private static void close(Replicator replicator) {
+        try {
+            ((TestRedisSocketReplicator) replicator).getOutputStream().close();
+        } catch (IOException e) {
+        }
+        try {
+            ((TestRedisSocketReplicator) replicator).getInputStream().close();
+        } catch (IOException e) {
+        }
+        try {
+            ((TestRedisSocketReplicator) replicator).getSocket().close();
+        } catch (IOException e) {
         }
     }
 

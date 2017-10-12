@@ -26,7 +26,7 @@ public class SelectCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private int               index;
+    private int index;
 
     public SelectCommand() {
     }

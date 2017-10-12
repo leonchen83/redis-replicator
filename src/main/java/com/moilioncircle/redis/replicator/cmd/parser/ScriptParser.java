@@ -44,4 +44,5 @@ public class ScriptParser implements CommandParser<ScriptCommand> {
         throw new AssertionError("SCRIPT " + keyWord);
     }
 
+
 }

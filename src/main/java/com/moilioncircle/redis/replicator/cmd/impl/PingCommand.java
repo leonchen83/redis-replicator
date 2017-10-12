@@ -26,8 +26,8 @@ public class PingCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            message;
-    private byte[]            rawMessage;
+    private String message;
+    private byte[] rawMessage;
 
     public PingCommand() {
     }

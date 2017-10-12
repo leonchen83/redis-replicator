@@ -25,10 +25,8 @@ public class AbstractParserTest {
     protected Object[] toObjectArray(Object[] raw) {
         Object[] r = new Object[raw.length];
         for (int i = 0; i < r.length; i++) {
-            if (raw[i] instanceof String)
-                r[i] = ((String) raw[i]).getBytes();
-            else
-                r[i] = raw[i];
+            if (raw[i] instanceof String) r[i] = ((String) raw[i]).getBytes();
+            else r[i] = raw[i];
         }
         return r;
     }

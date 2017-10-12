@@ -20,10 +20,21 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.datatype.*;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -36,16 +47,16 @@ import static org.junit.Assert.fail;
 @SuppressWarnings("unchecked")
 public class RdbBinaryParserTest {
 
-    public static final byte[] b1 = new byte[] { -1 };
-    public static final byte[] b2 = new byte[] { 0, -1 };
-    public static final byte[] b3 = new byte[] { 0, 0, -1 };
-    public static final byte[] b4 = new byte[] { 0, 0, 0, -1 };
-    public static final byte[] b5 = new byte[] { 0, 0, 0, 0, -1 };
+    public static final byte[] b1 = new byte[]{-1};
+    public static final byte[] b2 = new byte[]{0, -1};
+    public static final byte[] b3 = new byte[]{0, 0, -1};
+    public static final byte[] b4 = new byte[]{0, 0, 0, -1};
+    public static final byte[] b5 = new byte[]{0, 0, 0, 0, -1};
 
     @Test
     public void testParse() throws Exception {
         ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
-        String[] resources = new String[] { "dictionary.rdb",
+        String[] resources = new String[]{"dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
                 "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
                 "intset_32.rdb", "intset_64.rdb", "keys_with_expiry.rdb",
@@ -54,7 +65,7 @@ public class RdbBinaryParserTest {
                 "regular_sorted_set.rdb", "sorted_set_as_ziplist.rdb", "uncompressible_string_keys.rdb",
                 "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
                 "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
-                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb" };
+                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb"};
         for (String resource : resources) {
             template(resource, map);
         }
@@ -77,8 +88,7 @@ public class RdbBinaryParserTest {
         assertByteArray(b4, map.get("b4"));
         assertByteArray(b5, map.get("b5"));
 
-        assertByteArray("Key that redis should compress easily".getBytes(), map.get(
-                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+        assertByteArray("Key that redis should compress easily".getBytes(), map.get("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
 
         assertByteArray("2".getBytes(), map.get("zimap_doesnt_compress"), "MKD1G6");
         assertByteArray("F7TI".getBytes(), map.get("zimap_doesnt_compress"), "YNNXK");
@@ -93,10 +103,8 @@ public class RdbBinaryParserTest {
         assertByteArray("aaaa".getBytes(), map.get("zipmap_compresses_easily"), "aa");
         assertByteArray("aaaaaaaaaaaaaa".getBytes(), map.get("zipmap_compresses_easily"), "aaaaa");
 
-        assertByteArray("T63SOS8DQJF0Q0VJEZ0D1IQFCYTIPSBOUIAI9SB0OV57MQR1FI".getBytes(), map.get("force_dictionary"),
-                "ZMU5WEJDG7KU89AOG5LJT6K7HMNB3DEI43M6EYTJ83VRJ6XNXQ");
-        assertByteArray("6VULTCV52FXJ8MGVSFTZVAGK2JXZMGQ5F8OVJI0X6GEDDR27RZ".getBytes(), map.get("force_dictionary"),
-                "UHS5ESW4HLK8XOGTM39IK1SJEUGVV9WOPK6JYA5QBZSJU84491");
+        assertByteArray("T63SOS8DQJF0Q0VJEZ0D1IQFCYTIPSBOUIAI9SB0OV57MQR1FI".getBytes(), map.get("force_dictionary"), "ZMU5WEJDG7KU89AOG5LJT6K7HMNB3DEI43M6EYTJ83VRJ6XNXQ");
+        assertByteArray("6VULTCV52FXJ8MGVSFTZVAGK2JXZMGQ5F8OVJI0X6GEDDR27RZ".getBytes(), map.get("force_dictionary"), "UHS5ESW4HLK8XOGTM39IK1SJEUGVV9WOPK6JYA5QBZSJU84491");
 
         assertByteArray("aaaaaa".getBytes(), map.get("ziplist_compresses_easily"), 0);
         assertByteArray("aaaaaaaaaaaa".getBytes(), map.get("ziplist_compresses_easily"), 1);
@@ -108,8 +116,7 @@ public class RdbBinaryParserTest {
         assertByteArray("aj2410".getBytes(), map.get("ziplist_doesnt_compress"), 0);
         assertByteArray("cc953a17a8e096e76a44169ad3f9ac87c5f8248a403274416179aa9fbd852344".getBytes(), map.get("ziplist_doesnt_compress"), 1);
 
-        String[] numbers = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "-2", "25", "-61", "63", "16380",
-                "-16000", "65535", "-65523", "4194304", "9223372036854775807" };
+        String[] numbers = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "-2", "25", "-61", "63", "16380", "-16000", "65535", "-65523", "4194304", "9223372036854775807"};
         List<String> numlist = Arrays.asList(numbers);
         assertContainsList(numlist, map.get("ziplist_with_integers"));
 
@@ -235,8 +242,9 @@ public class RdbBinaryParserTest {
     public void template(String filename, final ConcurrentHashMap<String, KeyValuePair<?>> map) {
         try {
             @SuppressWarnings("resource")
-            Replicator replicator = new RedisReplicator(RdbBinaryParserTest.class.getClassLoader().getResourceAsStream(filename), FileType.RDB,
-                    Configuration.defaultSetting());
+            Replicator replicator = new RedisReplicator(RdbBinaryParserTest.class.
+                    getClassLoader().getResourceAsStream(filename)
+                    , FileType.RDB, Configuration.defaultSetting());
             replicator.addRdbListener(new RdbListener.Adaptor() {
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {

@@ -30,13 +30,69 @@ import com.moilioncircle.redis.replicator.util.ByteBuilder;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import static com.moilioncircle.redis.replicator.Constants.*;
+import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
 
 /**
  * @author Leon Chen
  * @since 2.4.3
  */
 public class MigrationRdbVisitor extends DefaultRdbVisitor {
+
+    private static class DefaultRawByteListener implements RawByteListener {
+        private final ByteBuilder builder;
+        private final int version;
+
+        private DefaultRawByteListener(byte type, int version) {
+            this.builder = ByteBuilder.allocate(8194);
+            this.builder.put(type);
+            this.version = version;
+        }
+
+        @Override
+        public void handle(byte... rawBytes) {
+            for (byte b : rawBytes) this.builder.put(b);
+        }
+
+        public byte[] getBytes() {
+            this.builder.put((byte) version);
+            this.builder.put((byte) 0x00);
+            byte[] bytes = this.builder.array();
+            byte[] crc = longToByteArray(CRC64.crc64(bytes));
+            for (byte b : crc) {
+                this.builder.put(b);
+            }
+            return this.builder.array();
+        }
+
+        private static byte[] longToByteArray(long value) {
+            return new byte[]{
+                    (byte) value,
+                    (byte) (value >> 8),
+                    (byte) (value >> 16),
+                    (byte) (value >> 24),
+                    (byte) (value >> 32),
+                    (byte) (value >> 40),
+                    (byte) (value >> 48),
+                    (byte) (value >> 56),
+            };
+        }
+    }
 
     public MigrationRdbVisitor(Replicator replicator) {
         super(replicator);
@@ -305,8 +361,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
 
         long eof = parser.rdbLoadLen().len;
         if (eof != RDB_MODULE_OPCODE_EOF) {
-            throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName
-                    + "' that is not terminated by the proper module value EOF marker");
+            throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName + "' that is not terminated by the proper module value EOF marker");
         }
         replicator.removeRawByteListener(listener);
         o7.setValueRdbType(RDB_TYPE_MODULE_2);
@@ -314,47 +369,6 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o7.setDb(db);
         o7.setRawKey(key);
         return o7;
-    }
-
-    private static class DefaultRawByteListener implements RawByteListener {
-        private final ByteBuilder builder;
-        private final int         version;
-
-        private DefaultRawByteListener(byte type, int version) {
-            this.builder = ByteBuilder.allocate(8194);
-            this.builder.put(type);
-            this.version = version;
-        }
-
-        private static byte[] longToByteArray(long value) {
-            return new byte[] {
-                    (byte) value,
-                    (byte) (value >> 8),
-                    (byte) (value >> 16),
-                    (byte) (value >> 24),
-                    (byte) (value >> 32),
-                    (byte) (value >> 40),
-                    (byte) (value >> 48),
-                    (byte) (value >> 56),
-            };
-        }
-
-        @Override
-        public void handle(byte... rawBytes) {
-            for (byte b : rawBytes)
-                this.builder.put(b);
-        }
-
-        public byte[] getBytes() {
-            this.builder.put((byte) version);
-            this.builder.put((byte) 0x00);
-            byte[] bytes = this.builder.array();
-            byte[] crc = longToByteArray(CRC64.crc64(bytes));
-            for (byte b : crc) {
-                this.builder.put(b);
-            }
-            return this.builder.array();
-        }
     }
 
 }

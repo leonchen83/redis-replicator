@@ -28,8 +28,8 @@ public class DelCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String[]          keys;
-    private byte[][]          rawKeys;
+    private String[] keys;
+    private byte[][] rawKeys;
 
     public DelCommand() {
     }

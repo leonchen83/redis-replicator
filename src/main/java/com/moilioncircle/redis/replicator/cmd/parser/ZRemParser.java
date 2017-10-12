@@ -28,6 +28,7 @@ import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objTo
  */
 public class ZRemParser implements CommandParser<ZRemCommand> {
 
+
     @Override
     public ZRemCommand parse(Object[] command) {
         int idx = 1, newIdx = 0;

@@ -28,11 +28,11 @@ public class BitOpCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private Op                op;
-    private String            destkey;
-    private String[]          keys;
-    private byte[]            rawDestkey;
-    private byte[][]          rawKeys;
+    private Op op;
+    private String destkey;
+    private String[] keys;
+    private byte[] rawDestkey;
+    private byte[][] rawKeys;
 
     public BitOpCommand() {
     }

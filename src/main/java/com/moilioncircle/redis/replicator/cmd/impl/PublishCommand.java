@@ -26,10 +26,10 @@ public class PublishCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String            channel;
-    private String            message;
-    private byte[]            rawChannel;
-    private byte[]            rawMessage;
+    private String channel;
+    private String message;
+    private byte[] rawChannel;
+    private byte[] rawMessage;
 
     public PublishCommand() {
     }

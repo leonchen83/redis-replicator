@@ -29,9 +29,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 //@NonThreadSafe
 public class ByteBuilder {
 
-    private final ByteBuffer   buffer;
-    private final List<byte[]> list  = new ArrayList<>();
-    private int                total = 0;
+    private final ByteBuffer buffer;
+    private final List<byte[]> list = new ArrayList<>();
+    private int total = 0;
 
     private ByteBuilder(int cap) {
         this.buffer = ByteBuffer.allocate(cap);

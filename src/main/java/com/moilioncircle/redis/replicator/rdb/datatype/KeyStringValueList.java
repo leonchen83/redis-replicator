@@ -26,7 +26,7 @@ public class KeyStringValueList extends KeyValuePair<List<String>> {
 
     private static final long serialVersionUID = 1L;
 
-    protected List<byte[]> rawValue;
+    protected List<byte[]>    rawValue;
 
     public List<byte[]> getRawValue() {
         return rawValue;

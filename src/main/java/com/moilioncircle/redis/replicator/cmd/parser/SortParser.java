@@ -24,9 +24,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.ASC;
-import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.DESC;
-import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.NONE;
+import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.*;
 import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
 import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
 

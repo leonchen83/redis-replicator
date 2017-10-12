@@ -26,11 +26,11 @@ public class DB implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private long dbNumber;
+    private long              dbNumber;
     /* rdb version 7 */
-    private Long dbsize = null;
+    private Long              dbsize           = null;
     /* rdb version 7 */
-    private Long expires = null;
+    private Long              expires          = null;
 
     public DB() {
     }

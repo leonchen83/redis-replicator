@@ -62,8 +62,8 @@ public class CommandParserExample {
              *
              */
             private static final long serialVersionUID = 1L;
-            public final String key;
-            public final String value;
+            public final String       key;
+            public final String       value;
 
             public YourAppendCommand(String key, String value) {
                 this.key = key;

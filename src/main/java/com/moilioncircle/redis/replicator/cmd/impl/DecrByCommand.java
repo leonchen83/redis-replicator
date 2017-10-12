@@ -26,9 +26,9 @@ public class DecrByCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private long value;
-    private byte[] rawKey;
+    private String            key;
+    private long              value;
+    private byte[]            rawKey;
 
     public DecrByCommand() {
     }

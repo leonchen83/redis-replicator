@@ -16,35 +16,7 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
-import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.EvalCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ExpireAtCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.GetSetCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.HSetCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.HSetNxCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.LSetCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.MoveCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.PExpireAtCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.PExpireCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.PSetExCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.PingCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.RenameCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.RenameNxCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.RestoreCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SAddCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SDiffStoreCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SInterStoreCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SUnionStoreCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ScriptFlushCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ScriptLoadCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SetBitCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SetNxCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SetRangeCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -268,7 +240,7 @@ public class PingParserTest extends AbstractParserTest {
 
         {
             EvalParser parser = new EvalParser();
-            EvalCommand cmd = parser.parse(toObjectArray(new Object[]{"eval", "return redis.call('set',KEYS[1],'bar')", "1", "foo"}));
+            EvalCommand cmd = parser.parse(toObjectArray(new Object[] { "eval", "return redis.call('set',KEYS[1],'bar')", "1", "foo" }));
             assertEquals("return redis.call('set',KEYS[1],'bar')", cmd.getScript());
             assertEquals(1, cmd.getNumkeys());
             assertEquals("foo", cmd.getKeys()[0]);
@@ -277,21 +249,25 @@ public class PingParserTest extends AbstractParserTest {
 
         {
             ScriptParser parser = new ScriptParser();
-            ScriptLoadCommand cmd = (ScriptLoadCommand) parser.parse(toObjectArray(new Object[]{"script", "load", "return redis.call('set',KEYS[1],'bar')"}));
+            ScriptLoadCommand cmd = (ScriptLoadCommand) parser
+                    .parse(toObjectArray(new Object[] { "script", "load", "return redis.call('set',KEYS[1],'bar')" }));
             assertEquals("return redis.call('set',KEYS[1],'bar')", cmd.getScript());
             System.out.println(cmd);
         }
 
         {
             ScriptParser parser = new ScriptParser();
-            ScriptFlushCommand cmd = (ScriptFlushCommand) parser.parse(toObjectArray(new Object[]{"script", "flush"}));
+            ScriptFlushCommand cmd = (ScriptFlushCommand) parser.parse(toObjectArray(new Object[] { "script", "flush" }));
             System.out.println(cmd);
         }
 
         {
             RestoreParser parser = new RestoreParser();
-            RestoreCommand cmd = parser.parse(toObjectArray(new Object[]{"restore", "mykey", "0", "\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd"}));
-            assertEquals("\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd", cmd.getSerializedValue());
+            RestoreCommand cmd = parser.parse(toObjectArray(new Object[] { "restore", "mykey", "0",
+                    "\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd" }));
+            assertEquals(
+                    "\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd",
+                    cmd.getSerializedValue());
             assertEquals("mykey", cmd.getKey());
             assertEquals(0L, cmd.getTtl());
             assertEquals(null, cmd.getReplace());

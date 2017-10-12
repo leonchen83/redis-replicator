@@ -50,7 +50,7 @@ public class Arrays {
 
         dejaVu.add(a);
         buf.append('[');
-        for (int i = 0; ; i++) {
+        for (int i = 0;; i++) {
             Object element = a[i];
             if (element == null) {
                 buf.append("null");
@@ -80,7 +80,7 @@ public class Arrays {
                         else
                             deepToString((Object[]) element, buf, dejaVu);
                     }
-                } else {  // element is non-null and not an array
+                } else { // element is non-null and not an array
                     buf.append(element.toString());
                 }
             }

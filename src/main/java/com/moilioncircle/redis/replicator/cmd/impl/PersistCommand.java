@@ -26,8 +26,8 @@ public class PersistCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private byte[] rawKey;
+    private String            key;
+    private byte[]            rawKey;
 
     public PersistCommand() {
     }

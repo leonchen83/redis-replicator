@@ -26,9 +26,9 @@ public class MoveCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private int db;
-    private byte[] rawKey;
+    private String            key;
+    private int               db;
+    private byte[]            rawKey;
 
     public MoveCommand() {
     }

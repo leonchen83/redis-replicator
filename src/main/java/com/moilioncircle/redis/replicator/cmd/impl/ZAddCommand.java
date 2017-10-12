@@ -29,12 +29,12 @@ public class ZAddCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private ExistType existType;
-    private Boolean isCh;
-    private Boolean isIncr;
-    private ZSetEntry[] zSetEntries;
-    private byte[] rawKey;
+    private String            key;
+    private ExistType         existType;
+    private Boolean           isCh;
+    private Boolean           isIncr;
+    private ZSetEntry[]       zSetEntries;
+    private byte[]            rawKey;
 
     public ZAddCommand() {
     }

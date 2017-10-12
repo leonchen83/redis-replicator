@@ -31,13 +31,13 @@ public class KeyValuePair<T> implements Event {
 
     private static final long serialVersionUID = 1L;
 
-    protected DB db;
-    protected int valueRdbType;
-    protected ExpiredType expiredType = ExpiredType.NONE;
-    protected Long expiredValue;
-    protected String key;
-    protected T value;
-    protected byte[] rawKey;
+    protected DB              db;
+    protected int             valueRdbType;
+    protected ExpiredType     expiredType      = ExpiredType.NONE;
+    protected Long            expiredValue;
+    protected String          key;
+    protected T               value;
+    protected byte[]          rawKey;
 
     public int getValueRdbType() {
         return valueRdbType;

@@ -16,11 +16,7 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
-import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByLexCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByRankCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByScoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

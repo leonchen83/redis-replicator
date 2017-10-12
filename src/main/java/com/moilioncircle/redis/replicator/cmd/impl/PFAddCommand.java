@@ -28,10 +28,10 @@ public class PFAddCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String[] elements;
-    private byte[] rawKey;
-    private byte[][] rawElements;
+    private String            key;
+    private String[]          elements;
+    private byte[]            rawKey;
+    private byte[][]          rawElements;
 
     public PFAddCommand() {
     }

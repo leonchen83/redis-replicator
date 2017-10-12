@@ -27,9 +27,9 @@ import java.io.InputStream;
  */
 public class ByteArrayInputStream extends InputStream {
 
-    protected long pos;
-    protected long count;
-    protected long mark = 0;
+    protected long      pos;
+    protected long      count;
+    protected long      mark = 0;
     protected ByteArray buf;
 
     public ByteArrayInputStream(ByteArray buf) {

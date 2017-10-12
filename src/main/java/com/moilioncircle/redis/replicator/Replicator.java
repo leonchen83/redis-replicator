@@ -51,12 +51,12 @@ public interface Replicator extends Closeable, ReplicatorListener {
 
     ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion);
 
+    RdbVisitor getRdbVisitor();
+
     /*
      * Rdb
      */
     void setRdbVisitor(RdbVisitor rdbVisitor);
-
-    RdbVisitor getRdbVisitor();
 
     /*
      *

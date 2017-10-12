@@ -32,13 +32,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 public class RedisInputStream extends InputStream {
-    protected int head = 0;
-    protected int tail = 0;
-    protected long total = 0;
-    protected long markLen = 0;
-    protected final byte[] buf;
-    protected boolean mark = false;
-    protected final InputStream in;
+    protected final byte[]          buf;
+    protected final InputStream     in;
+    protected int                   head    = 0;
+    protected int                   tail    = 0;
+    protected long                  total   = 0;
+    protected long                  markLen = 0;
+    protected boolean               mark    = false;
     protected List<RawByteListener> rawByteListeners;
 
     public RedisInputStream(final InputStream in) {

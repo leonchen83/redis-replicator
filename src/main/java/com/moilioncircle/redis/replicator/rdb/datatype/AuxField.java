@@ -26,8 +26,8 @@ public class AuxField implements Event {
 
     private static final long serialVersionUID = 1L;
 
-    private String auxKey;
-    private String auxValue;
+    private String            auxKey;
+    private String            auxValue;
 
     public AuxField() {
     }
@@ -41,12 +41,12 @@ public class AuxField implements Event {
         return auxKey;
     }
 
-    public String getAuxValue() {
-        return auxValue;
-    }
-
     public void setAuxKey(String auxKey) {
         this.auxKey = auxKey;
+    }
+
+    public String getAuxValue() {
+        return auxValue;
     }
 
     public void setAuxValue(String auxValue) {

@@ -38,7 +38,8 @@ public class TestRawBytes {
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv.getValueRdbType() == 0) {
                     KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    System.out.println("key:" + ksvs.getKey() + ",value:" + ksvs.getValue() + ",len:" + ksvs.getRawValue().length + "," + Arrays.toString(ksvs.getRawValue()));
+                    System.out.println("key:" + ksvs.getKey() + ",value:" + ksvs.getValue() + ",len:" + ksvs.getRawValue().length + ","
+                            + Arrays.toString(ksvs.getRawValue()));
                 }
             }
         });

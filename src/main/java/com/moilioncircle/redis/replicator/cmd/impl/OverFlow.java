@@ -27,8 +27,8 @@ public class OverFlow implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private OverFlowType overFlowType;
-    private List<Statement> statements;
+    private OverFlowType      overFlowType;
+    private List<Statement>   statements;
 
     public OverFlow() {
     }

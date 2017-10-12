@@ -20,12 +20,7 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueZSet;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
+import com.moilioncircle.redis.replicator.rdb.datatype.*;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
@@ -47,7 +42,7 @@ public class ValueIterableRdbParserTest {
 
     @Test
     public void test() {
-        String[] resources = new String[]{"dictionary.rdb",
+        String[] resources = new String[] { "dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
                 "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
                 "intset_32.rdb", "intset_64.rdb", "keys_with_expiry.rdb",
@@ -56,7 +51,8 @@ public class ValueIterableRdbParserTest {
                 "regular_sorted_set.rdb", "sorted_set_as_ziplist.rdb", "uncompressible_string_keys.rdb",
                 "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
                 "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
-                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb", "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "binarydump.rdb", "module.rdb"};
+                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb", "rdb_version_8_with_64b_length_and_scores.rdb",
+                "non_ascii_values.rdb", "binarydump.rdb", "module.rdb" };
         for (String f : resources) {
             assertEquals(testFile(f), testFile1(f));
         }
@@ -64,7 +60,8 @@ public class ValueIterableRdbParserTest {
 
     private int testFile(String fileName) {
         final AtomicInteger acc = new AtomicInteger(0);
-        Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB, Configuration.defaultSetting());
+        Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB,
+                Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
         r.addRdbListener(new RdbListener.Adaptor() {
@@ -108,7 +105,8 @@ public class ValueIterableRdbParserTest {
     private int testFile1(String fileName) {
         final AtomicInteger acc = new AtomicInteger(0);
         @SuppressWarnings("resource")
-        Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB, Configuration.defaultSetting());
+        Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB,
+                Configuration.defaultSetting());
         r.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override

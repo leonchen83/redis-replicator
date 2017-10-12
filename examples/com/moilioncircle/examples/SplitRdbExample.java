@@ -16,12 +16,7 @@
 
 package com.moilioncircle.examples;
 
-import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.Constants;
-import com.moilioncircle.redis.replicator.FileType;
-import com.moilioncircle.redis.replicator.RedisReplicator;
-import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.UncheckedIOException;
+import com.moilioncircle.redis.replicator.*;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -82,7 +77,8 @@ public class SplitRdbExample {
                     tuple.setT1(null);
                     tuple.setT2(ByteBuilder.allocate(128));
                 }
-                for (byte b : rawBytes) tuple.getT2().put(b);
+                for (byte b : rawBytes)
+                    tuple.getT2().put(b);
             }
         };
 
@@ -120,7 +116,7 @@ public class SplitRdbExample {
     }
 
     private static byte[] longToByteArray(long value) {
-        return new byte[]{
+        return new byte[] {
                 (byte) value,
                 (byte) (value >> 8),
                 (byte) (value >> 16),

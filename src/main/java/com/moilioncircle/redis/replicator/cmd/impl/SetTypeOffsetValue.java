@@ -24,11 +24,11 @@ public class SetTypeOffsetValue implements Statement {
 
     private static final long serialVersionUID = 1L;
 
-    private String type;
-    private String offset;
-    private long value;
-    private byte[] rawType;
-    private byte[] rawOffset;
+    private String            type;
+    private String            offset;
+    private long              value;
+    private byte[]            rawType;
+    private byte[]            rawOffset;
 
     public SetTypeOffsetValue() {
     }

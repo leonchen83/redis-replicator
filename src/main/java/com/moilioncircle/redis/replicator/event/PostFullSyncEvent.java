@@ -24,13 +24,13 @@ public class PostFullSyncEvent implements Event {
 
     private static final long serialVersionUID = 1L;
 
-    private final long checksum;
-
-    public long getChecksum() {
-        return checksum;
-    }
+    private final long        checksum;
 
     public PostFullSyncEvent(final long checksum) {
         this.checksum = checksum;
+    }
+
+    public long getChecksum() {
+        return checksum;
     }
 }

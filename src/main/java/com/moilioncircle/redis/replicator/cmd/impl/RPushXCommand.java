@@ -29,10 +29,10 @@ public class RPushXCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String[] values;
-    private byte[] rawKey;
-    private byte[][] rawValues;
+    private String            key;
+    private String[]          values;
+    private byte[]            rawKey;
+    private byte[][]          rawValues;
 
     public RPushXCommand() {
     }

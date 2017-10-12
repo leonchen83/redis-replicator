@@ -28,13 +28,13 @@ public class EvalCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String script;
-    private int numkeys;
-    private String[] keys;
-    private String[] args;
-    private byte[] rawScript;
-    private byte[][] rawKeys;
-    private byte[][] rawArgs;
+    private String            script;
+    private int               numkeys;
+    private String[]          keys;
+    private String[]          args;
+    private byte[]            rawScript;
+    private byte[][]          rawKeys;
+    private byte[][]          rawArgs;
 
     public EvalCommand() {
     }

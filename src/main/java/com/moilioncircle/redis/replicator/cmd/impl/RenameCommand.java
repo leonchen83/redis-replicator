@@ -26,10 +26,10 @@ public class RenameCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String newKey;
-    private byte[] rawKey;
-    private byte[] rawNewKey;
+    private String            key;
+    private String            newKey;
+    private byte[]            rawKey;
+    private byte[]            rawNewKey;
 
     public RenameCommand() {
     }

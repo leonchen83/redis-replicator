@@ -26,8 +26,8 @@ public class SwapDBCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private int source;
-    private int target;
+    private int               source;
+    private int               target;
 
     public SwapDBCommand() {
 

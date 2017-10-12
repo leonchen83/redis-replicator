@@ -26,12 +26,12 @@ public class RestoreCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private long ttl;
-    private String serializedValue;
-    private Boolean isReplace;
-    private byte[] rawKey;
-    private byte[] rawSerializedValue;
+    private String            key;
+    private long              ttl;
+    private String            serializedValue;
+    private Boolean           isReplace;
+    private byte[]            rawKey;
+    private byte[]            rawSerializedValue;
 
     public RestoreCommand() {
     }

@@ -44,33 +44,33 @@ public class RedisReplicator implements Replicator {
 
     public RedisReplicator(File file, FileType fileType, Configuration configuration) throws FileNotFoundException {
         switch (fileType) {
-            case AOF:
-                this.replicator = new RedisAofReplicator(file, configuration);
-                break;
-            case RDB:
-                this.replicator = new RedisRdbReplicator(file, configuration);
-                break;
-            case MIXED:
-                this.replicator = new RedisMixReplicator(file, configuration);
-                break;
-            default:
-                throw new UnsupportedOperationException(fileType.toString());
+        case AOF:
+            this.replicator = new RedisAofReplicator(file, configuration);
+            break;
+        case RDB:
+            this.replicator = new RedisRdbReplicator(file, configuration);
+            break;
+        case MIXED:
+            this.replicator = new RedisMixReplicator(file, configuration);
+            break;
+        default:
+            throw new UnsupportedOperationException(fileType.toString());
         }
     }
 
     public RedisReplicator(InputStream in, FileType fileType, Configuration configuration) {
         switch (fileType) {
-            case AOF:
-                this.replicator = new RedisAofReplicator(in, configuration);
-                break;
-            case RDB:
-                this.replicator = new RedisRdbReplicator(in, configuration);
-                break;
-            case MIXED:
-                this.replicator = new RedisMixReplicator(in, configuration);
-                break;
-            default:
-                throw new UnsupportedOperationException(fileType.toString());
+        case AOF:
+            this.replicator = new RedisAofReplicator(in, configuration);
+            break;
+        case RDB:
+            this.replicator = new RedisRdbReplicator(in, configuration);
+            break;
+        case MIXED:
+            this.replicator = new RedisMixReplicator(in, configuration);
+            break;
+        default:
+            throw new UnsupportedOperationException(fileType.toString());
         }
     }
 
@@ -105,21 +105,21 @@ public class RedisReplicator implements Replicator {
         if (uri.getFileType() != null) {
             PeekableInputStream in = new PeekableInputStream(uri.toURL().openStream());
             switch (uri.getFileType()) {
-                case AOF:
-                    if (in.peek() == 'R') {
-                        this.replicator = new RedisMixReplicator(in, configuration);
-                    } else {
-                        this.replicator = new RedisAofReplicator(in, configuration);
-                    }
-                    break;
-                case RDB:
-                    this.replicator = new RedisRdbReplicator(in, configuration);
-                    break;
-                case MIXED:
+            case AOF:
+                if (in.peek() == 'R') {
                     this.replicator = new RedisMixReplicator(in, configuration);
-                    break;
-                default:
-                    throw new UnsupportedOperationException(uri.getFileType().toString());
+                } else {
+                    this.replicator = new RedisAofReplicator(in, configuration);
+                }
+                break;
+            case RDB:
+                this.replicator = new RedisRdbReplicator(in, configuration);
+                break;
+            case MIXED:
+                this.replicator = new RedisMixReplicator(in, configuration);
+                break;
+            default:
+                throw new UnsupportedOperationException(uri.getFileType().toString());
             }
         } else {
             this.replicator = new RedisSocketReplicator(uri.getHost(), uri.getPort(), configuration);
@@ -192,13 +192,13 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public void setRdbVisitor(RdbVisitor rdbVisitor) {
-        replicator.setRdbVisitor(rdbVisitor);
+    public RdbVisitor getRdbVisitor() {
+        return replicator.getRdbVisitor();
     }
 
     @Override
-    public RdbVisitor getRdbVisitor() {
-        return replicator.getRdbVisitor();
+    public void setRdbVisitor(RdbVisitor rdbVisitor) {
+        replicator.setRdbVisitor(rdbVisitor);
     }
 
     @Override

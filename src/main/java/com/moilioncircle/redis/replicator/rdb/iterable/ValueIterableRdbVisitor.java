@@ -35,18 +35,7 @@ import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -325,20 +314,20 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             public byte[] next() {
                 try {
                     switch (encoding) {
-                        case 2:
-                            String element = String.valueOf(stream.readInt(2));
-                            condition--;
-                            return element.getBytes();
-                        case 4:
-                            element = String.valueOf(stream.readInt(4));
-                            condition--;
-                            return element.getBytes();
-                        case 8:
-                            element = String.valueOf(stream.readLong(8));
-                            condition--;
-                            return element.getBytes();
-                        default:
-                            throw new AssertionError("expect encoding [2,4,8] but:" + encoding);
+                    case 2:
+                        String element = String.valueOf(stream.readInt(2));
+                        condition--;
+                        return element.getBytes();
+                    case 4:
+                        element = String.valueOf(stream.readInt(4));
+                        condition--;
+                        return element.getBytes();
+                    case 8:
+                        element = String.valueOf(stream.readLong(8));
+                        condition--;
+                        return element.getBytes();
+                    default:
+                        throw new AssertionError("expect encoding [2,4,8] but:" + encoding);
                     }
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
@@ -468,8 +457,8 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
     private static abstract class Iter<T> implements Iterator<T> {
 
-        protected long condition;
         protected final BaseRdbParser parser;
+        protected long                condition;
 
         private Iter(long condition, BaseRdbParser parser) {
             this.condition = condition;
@@ -484,8 +473,8 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
     private static class HashZipMapIter extends Iter<Map.Entry<byte[], byte[]>> {
 
-        protected int zmEleLen;
         protected final RedisInputStream stream;
+        protected int                    zmEleLen;
 
         private HashZipMapIter(RedisInputStream stream) {
             super(0, null);
@@ -521,7 +510,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
     private static class QuickListIter extends Iter<byte[]> {
 
-        protected int zllen = -1;
+        protected int              zllen = -1;
         protected RedisInputStream stream;
 
         private QuickListIter(long condition, BaseRdbParser parser) {

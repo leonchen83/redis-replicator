@@ -16,12 +16,7 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.LPopCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.LPushCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.LPushXCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.RPopCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.RPushCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.RPushXCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

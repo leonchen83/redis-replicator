@@ -28,7 +28,6 @@ import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objTo
  */
 public class LPushParser implements CommandParser<LPushCommand> {
 
-
     @Override
     public LPushCommand parse(Object[] command) {
         int idx = 1, newIdx = 0;

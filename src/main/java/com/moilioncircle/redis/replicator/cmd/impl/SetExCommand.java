@@ -26,11 +26,11 @@ public class SetExCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private int ex;
-    private String value;
-    private byte[] rawKey;
-    private byte[] rawValue;
+    private String            key;
+    private int               ex;
+    private String            value;
+    private byte[]            rawKey;
+    private byte[]            rawValue;
 
     public SetExCommand() {
     }

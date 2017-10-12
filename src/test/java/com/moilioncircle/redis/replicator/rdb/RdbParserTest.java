@@ -24,12 +24,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -45,7 +40,7 @@ public class RdbParserTest {
     @Test
     public void testParse() throws Exception {
         ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
-        String[] resources = new String[]{"dictionary.rdb",
+        String[] resources = new String[] { "dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
                 "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
                 "intset_32.rdb", "intset_64.rdb", "keys_with_expiry.rdb",
@@ -54,7 +49,7 @@ public class RdbParserTest {
                 "regular_sorted_set.rdb", "sorted_set_as_ziplist.rdb", "uncompressible_string_keys.rdb",
                 "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
                 "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
-                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb"};
+                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb" };
         for (String resource : resources) {
             template(resource, map);
         }
@@ -71,7 +66,9 @@ public class RdbParserTest {
         assertEquals("Negative 16 bit integer", map.get("-29477").getValue());
         assertEquals("Negative 32 bit integer", map.get("-183358245").getValue());
 
-        assertEquals("Key that redis should compress easily", map.get("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa").getValue());
+        assertEquals("Key that redis should compress easily",
+                map.get("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                        .getValue());
 
         assertEquals("2", ((HashMap<String, String>) map.get("zimap_doesnt_compress").getValue()).get("MKD1G6"));
         assertEquals("F7TI", ((HashMap<String, String>) map.get("zimap_doesnt_compress").getValue()).get("YNNXK"));
@@ -86,8 +83,10 @@ public class RdbParserTest {
         assertEquals("aaaa", ((HashMap<String, String>) map.get("zipmap_compresses_easily").getValue()).get("aa"));
         assertEquals("aaaaaaaaaaaaaa", ((HashMap<String, String>) map.get("zipmap_compresses_easily").getValue()).get("aaaaa"));
 
-        assertEquals("T63SOS8DQJF0Q0VJEZ0D1IQFCYTIPSBOUIAI9SB0OV57MQR1FI", ((HashMap<String, String>) map.get("force_dictionary").getValue()).get("ZMU5WEJDG7KU89AOG5LJT6K7HMNB3DEI43M6EYTJ83VRJ6XNXQ"));
-        assertEquals("6VULTCV52FXJ8MGVSFTZVAGK2JXZMGQ5F8OVJI0X6GEDDR27RZ", ((HashMap<String, String>) map.get("force_dictionary").getValue()).get("UHS5ESW4HLK8XOGTM39IK1SJEUGVV9WOPK6JYA5QBZSJU84491"));
+        assertEquals("T63SOS8DQJF0Q0VJEZ0D1IQFCYTIPSBOUIAI9SB0OV57MQR1FI",
+                ((HashMap<String, String>) map.get("force_dictionary").getValue()).get("ZMU5WEJDG7KU89AOG5LJT6K7HMNB3DEI43M6EYTJ83VRJ6XNXQ"));
+        assertEquals("6VULTCV52FXJ8MGVSFTZVAGK2JXZMGQ5F8OVJI0X6GEDDR27RZ",
+                ((HashMap<String, String>) map.get("force_dictionary").getValue()).get("UHS5ESW4HLK8XOGTM39IK1SJEUGVV9WOPK6JYA5QBZSJU84491"));
 
         List<String> list = (ArrayList<String>) map.get("ziplist_compresses_easily").getValue();
         assertEquals("aaaaaa", list.get(0));
@@ -101,7 +100,8 @@ public class RdbParserTest {
         assertEquals("aj2410", list.get(0));
         assertEquals("cc953a17a8e096e76a44169ad3f9ac87c5f8248a403274416179aa9fbd852344", list.get(1));
 
-        String[] numbers = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "-2", "25", "-61", "63", "16380", "-16000", "65535", "-65523", "4194304", "9223372036854775807"};
+        String[] numbers = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "-2", "25", "-61", "63", "16380",
+                "-16000", "65535", "-65523", "4194304", "9223372036854775807" };
         List<String> numlist = Arrays.asList(numbers);
 
         list = (ArrayList<String>) map.get("ziplist_with_integers").getValue();
@@ -175,9 +175,8 @@ public class RdbParserTest {
     @SuppressWarnings("resource")
     public void template(String filename, final ConcurrentHashMap<String, KeyValuePair<?>> map) {
         try {
-            Replicator replicator = new RedisReplicator(RdbParserTest.class.
-                    getClassLoader().getResourceAsStream(filename)
-                    , FileType.RDB, Configuration.defaultSetting());
+            Replicator replicator = new RedisReplicator(RdbParserTest.class.getClassLoader().getResourceAsStream(filename), FileType.RDB,
+                    Configuration.defaultSetting());
             replicator.addRdbListener(new RdbListener.Adaptor() {
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {

@@ -16,12 +16,7 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.DelCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.HDelCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.LRemCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.SRemCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.UnLinkCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ZRemCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

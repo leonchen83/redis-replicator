@@ -29,20 +29,21 @@ import static java.lang.System.currentTimeMillis;
  * @since 2.3.2
  */
 public class RateLimitInputStream extends InputStream {
-    private static final Log logger = LogFactory.getLog(RateLimitInputStream.class);
+    private static final Log  logger          = LogFactory.getLog(RateLimitInputStream.class);
 
-    private static final int DEFAULT_PERMITS = 100 * 1024 * 1000; // 97.65MB/sec
+    private static final int  DEFAULT_PERMITS = 100 * 1024 * 1000;                            // 97.65MB/sec
 
-    private final int permits;
-    private RateLimiter limiter;
+    private final int         permits;
     private final InputStream in;
+    private RateLimiter       limiter;
 
     public RateLimitInputStream(InputStream in) {
         this(in, DEFAULT_PERMITS);
     }
 
     public RateLimitInputStream(InputStream in, int permits) {
-        if (permits <= 1000) permits = 1000;
+        if (permits <= 1000)
+            permits = 1000;
         else if (permits > 1000) permits = permits / 1000 * 1000;
         logger.info("rate limit force set to " + permits);
 
@@ -108,11 +109,11 @@ public class RateLimitInputStream extends InputStream {
 
     private class TokenBucketRateLimiter implements RateLimiter {
 
-        private long access;
-        private long borrow;
-        private long permits;
-        private final long size;
+        private final long   size;
         private final double sleep;
+        private long         access;
+        private long         borrow;
+        private long         permits;
 
         private TokenBucketRateLimiter(int permits) {
             this.access = currentTimeMillis();

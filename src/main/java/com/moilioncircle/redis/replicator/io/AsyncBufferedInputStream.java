@@ -36,22 +36,21 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class AsyncBufferedInputStream extends InputStream implements Runnable {
     //
-    private static final Log logger = LogFactory.getLog(AsyncBufferedInputStream.class);
+    private static final Log     logger           = LogFactory.getLog(AsyncBufferedInputStream.class);
 
     //
-    private static final int DEFAULT_CAPACITY = 2 * 1024 * 1024;
+    private static final int     DEFAULT_CAPACITY = 2 * 1024 * 1024;
 
     //
-    private final Thread worker;
-    private final InputStream is;
-    private volatile IOException exception;
+    private final Thread         worker;
+    private final InputStream    is;
     private final ByteRingBuffer ringBuffer;
-    private final ThreadFactory threadFactory;
-    private final ReentrantLock lock = new ReentrantLock(false);
-    private final AtomicBoolean closed = new AtomicBoolean(false);
-    private final Condition bufferNotFull = this.lock.newCondition();
-    private final Condition bufferNotEmpty = this.lock.newCondition();
-
+    private final ThreadFactory  threadFactory;
+    private final ReentrantLock  lock             = new ReentrantLock(false);
+    private final AtomicBoolean  closed           = new AtomicBoolean(false);
+    private final Condition      bufferNotFull    = this.lock.newCondition();
+    private final Condition      bufferNotEmpty   = this.lock.newCondition();
+    private volatile IOException exception;
 
     /*
      *
@@ -198,11 +197,11 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
      *
      */
     private final class ByteRingBuffer {
-        //
-        private int size;
-        private int head; // Write
-        private int tail; // Read
         private final byte[] buffer;
+        //
+        private int          size;
+        private int          head;  // Write
+        private int          tail;  // Read
 
         /*
          *

@@ -22,22 +22,7 @@ import com.moilioncircle.redis.replicator.util.Lzf;
 
 import java.io.IOException;
 
-import static com.moilioncircle.redis.replicator.Constants.RDB_14BITLEN;
-import static com.moilioncircle.redis.replicator.Constants.RDB_32BITLEN;
-import static com.moilioncircle.redis.replicator.Constants.RDB_64BITLEN;
-import static com.moilioncircle.redis.replicator.Constants.RDB_6BITLEN;
-import static com.moilioncircle.redis.replicator.Constants.RDB_ENCVAL;
-import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT16;
-import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT32;
-import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT8;
-import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_LZF;
-import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_ENC;
-import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_PLAIN;
-import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_16B;
-import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_24B;
-import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_32B;
-import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_64B;
-import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_8B;
+import static com.moilioncircle.redis.replicator.Constants.*;
 
 /**
  * @author Leon Chen
@@ -122,18 +107,18 @@ public class BaseRdbParser {
         boolean encode = (flags & RDB_LOAD_ENC) != 0;
         byte[] value;
         switch (enctype) {
-            case RDB_ENC_INT8:
-                value = in.readBytes(1).first();
-                break;
-            case RDB_ENC_INT16:
-                value = in.readBytes(2).first();
-                break;
-            case RDB_ENC_INT32:
-                value = in.readBytes(4).first();
-                break;
-            default:
-                value = new byte[]{0x00};
-                break;
+        case RDB_ENC_INT8:
+            value = in.readBytes(1).first();
+            break;
+        case RDB_ENC_INT16:
+            value = in.readBytes(2).first();
+            break;
+        case RDB_ENC_INT32:
+            value = in.readBytes(4).first();
+            break;
+        default:
+            value = new byte[] { 0x00 };
+            break;
         }
         if (plain) {
             return new ByteArray(value);
@@ -204,14 +189,14 @@ public class BaseRdbParser {
         boolean isencoded = lenObj.isencoded;
         if (isencoded) {
             switch ((int) len) {
-                case RDB_ENC_INT8:
-                case RDB_ENC_INT16:
-                case RDB_ENC_INT32:
-                    return rdbLoadIntegerObject((int) len, flags);
-                case RDB_ENC_LZF:
-                    return rdbLoadLzfStringObject(flags);
-                default:
-                    throw new AssertionError("unknown RdbParser encoding type:" + len);
+            case RDB_ENC_INT8:
+            case RDB_ENC_INT16:
+            case RDB_ENC_INT32:
+                return rdbLoadIntegerObject((int) len, flags);
+            case RDB_ENC_LZF:
+                return rdbLoadLzfStringObject(flags);
+            default:
+                throw new AssertionError("unknown RdbParser encoding type:" + len);
             }
         }
         if (plain) {
@@ -244,15 +229,15 @@ public class BaseRdbParser {
     public double rdbLoadDoubleValue() throws IOException {
         int len = in.read();
         switch (len) {
-            case 255:
-                return Double.NEGATIVE_INFINITY;
-            case 254:
-                return Double.POSITIVE_INFINITY;
-            case 253:
-                return Double.NaN;
-            default:
-                byte[] bytes = in.readBytes(len).first();
-                return Double.valueOf(new String(bytes));
+        case 255:
+            return Double.NEGATIVE_INFINITY;
+        case 254:
+            return Double.POSITIVE_INFINITY;
+        case 253:
+            return Double.NaN;
+        default:
+            byte[] bytes = in.readBytes(len).first();
+            return Double.valueOf(new String(bytes));
         }
     }
 
@@ -273,7 +258,7 @@ public class BaseRdbParser {
      * @see #rdbLoadLen
      */
     public static class Len {
-        public final long len;
+        public final long    len;
         public final boolean isencoded;
 
         private Len(long len, boolean isencoded) {
@@ -321,33 +306,33 @@ public class BaseRdbParser {
             }
             int special = in.read();
             switch (special >> 6) {
-                case 0:
-                    int len = special & 0x3f;
-                    return bytes(in, len);
-                case 1:
-                    len = ((special & 0x3f) << 8) | in.read();
-                    return bytes(in, len);
-                case 2:
-                    //bigEndian
-                    len = in.readInt(4, false);
-                    return bytes(in, len);
-                default:
-                    break;
+            case 0:
+                int len = special & 0x3f;
+                return bytes(in, len);
+            case 1:
+                len = ((special & 0x3f) << 8) | in.read();
+                return bytes(in, len);
+            case 2:
+                //bigEndian
+                len = in.readInt(4, false);
+                return bytes(in, len);
+            default:
+                break;
             }
             switch (special) {
-                case ZIP_INT_8B:
-                    return String.valueOf(in.readInt(1)).getBytes();
-                case ZIP_INT_16B:
-                    return String.valueOf(in.readInt(2)).getBytes();
-                case ZIP_INT_24B:
-                    return String.valueOf(in.readInt(3)).getBytes();
-                case ZIP_INT_32B:
-                    return String.valueOf(in.readInt(4)).getBytes();
-                case ZIP_INT_64B:
-                    return String.valueOf(in.readLong(8)).getBytes();
-                default:
-                    //6BIT
-                    return String.valueOf(special - 0xf1).getBytes();
+            case ZIP_INT_8B:
+                return String.valueOf(in.readInt(1)).getBytes();
+            case ZIP_INT_16B:
+                return String.valueOf(in.readInt(2)).getBytes();
+            case ZIP_INT_24B:
+                return String.valueOf(in.readInt(3)).getBytes();
+            case ZIP_INT_32B:
+                return String.valueOf(in.readInt(4)).getBytes();
+            case ZIP_INT_64B:
+                return String.valueOf(in.readLong(8)).getBytes();
+            default:
+                //6BIT
+                return String.valueOf(special - 0xf1).getBytes();
             }
         }
     }

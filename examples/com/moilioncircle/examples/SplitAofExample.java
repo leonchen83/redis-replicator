@@ -16,12 +16,7 @@
 
 package com.moilioncircle.examples;
 
-import com.moilioncircle.redis.replicator.CloseListener;
-import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.FileType;
-import com.moilioncircle.redis.replicator.RedisReplicator;
-import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.UncheckedIOException;
+import com.moilioncircle.redis.replicator.*;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
@@ -66,7 +61,8 @@ public class SplitAofExample {
                     tuple.setT1(false);
                     tuple.setT2(ByteBuilder.allocate(128));
                 }
-                for (byte b : rawBytes) tuple.getT2().put(b);
+                for (byte b : rawBytes)
+                    tuple.getT2().put(b);
             }
         };
 
@@ -74,24 +70,24 @@ public class SplitAofExample {
 
         //if you are using socket replication, open following comment so that avoid very big ByteBuilder.
 
-//        replicator.addAuxFieldListener(new AuxFieldListener() {
-//            @Override
-//            public void handle(Replicator replicator, AuxField auxField) {
-//                // clear aux field
-//                tuple.setT2(ByteBuilder.allocate(128));
-//            }
-//        });
-//        replicator.addRdbListener(new RdbListener.Adaptor() {
-//            @Override
-//            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-//                tuple.setT2(ByteBuilder.allocate(128));
-//            }
-//
-//            @Override
-//            public void postFullSync(Replicator replicator, long checksum) {
-//                tuple.setT2(ByteBuilder.allocate(128));
-//            }
-//        });
+        //        replicator.addAuxFieldListener(new AuxFieldListener() {
+        //            @Override
+        //            public void handle(Replicator replicator, AuxField auxField) {
+        //                // clear aux field
+        //                tuple.setT2(ByteBuilder.allocate(128));
+        //            }
+        //        });
+        //        replicator.addRdbListener(new RdbListener.Adaptor() {
+        //            @Override
+        //            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+        //                tuple.setT2(ByteBuilder.allocate(128));
+        //            }
+        //
+        //            @Override
+        //            public void postFullSync(Replicator replicator, long checksum) {
+        //                tuple.setT2(ByteBuilder.allocate(128));
+        //            }
+        //        });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {

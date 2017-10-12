@@ -22,7 +22,7 @@ package com.moilioncircle.redis.replicator.rdb.module;
  */
 public class ModuleKey {
     private final String moduleName;
-    private final int moduleVersion;
+    private final int    moduleVersion;
 
     private ModuleKey(String moduleName, int moduleVersion) {
         this.moduleName = moduleName;

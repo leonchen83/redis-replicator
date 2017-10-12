@@ -22,15 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -59,106 +51,143 @@ public class RedisSocketReplicatorSSLTest {
         System.setProperty("javax.net.ssl.trustStoreType", trustStoreType);
     }
 
-//    @Test
-//    public void testSsl() throws IOException {
-//        setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
-//        Replicator replicator = new RedisReplicator("127.0.0.1", 56379, Configuration.defaultSetting().setSsl(true));
-//        final AtomicInteger acc = new AtomicInteger(0);
-//        Jedis jedis = null;
-//        try {
-//            jedis = new Jedis("127.0.0.1", 6379);
-//            jedis.set("ssl", "true");
-//        } finally {
-//            jedis.close();
-//        }
-//        replicator.addRdbListener(new RdbListener() {
-//            @Override
-//            public void preFullSync(Replicator replicator) {
-//            }
-//
-//            @Override
-//            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-//                if(kv.getKey().equals("ssl")) acc.incrementAndGet();
-//            }
-//
-//            @Override
-//            public void postFullSync(Replicator replicator, long checksum) {
-//                Jedis jedis = null;
-//                try {
-//                    jedis = new Jedis("127.0.0.1", 6379);
-//                    jedis.del("ssl");
-//                } finally {
-//                    jedis.close();
-//                }
-//                try {
-//                    replicator.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        replicator.addCloseListener(new CloseListener() {
-//            @Override
-//            public void handle(Replicator replicator) {
-//                System.out.println("close testSsl");
-//                assertEquals(1, acc.get());
-//            }
-//        });
-//        replicator.open();
-//    }
-//
-//    @Test
-//    public void testSsl1() throws IOException {
-//        setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
-//        Replicator replicator = new RedisReplicator("localhost", 56379,
-//                Configuration.defaultSetting().setSsl(true)
-//                        .setReadTimeout(0)
-//                        .setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault())
-//                        .setHostnameVerifier(new BasicHostnameVerifier())
-//                        .setSslParameters(new SSLParameters()));
-//        final AtomicInteger acc = new AtomicInteger(0);
-//        Jedis jedis = null;
-//        try {
-//            jedis = new Jedis("127.0.0.1", 6379);
-//            jedis.set("ssl1", "true");
-//        } finally {
-//            jedis.close();
-//        }
-//        replicator.addRdbListener(new RdbListener() {
-//            @Override
-//            public void preFullSync(Replicator replicator) {
-//            }
-//
-//            @Override
-//            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-//                if(kv.getKey().equals("ssl1")) acc.incrementAndGet();
-//            }
-//
-//            @Override
-//            public void postFullSync(Replicator replicator, long checksum) {
-//                Jedis jedis = null;
-//                try {
-//                    jedis = new Jedis("127.0.0.1", 6379);
-//                    jedis.del("ssl1");
-//                } finally {
-//                    jedis.close();
-//                }
-//                try {
-//                    replicator.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        replicator.addCloseListener(new CloseListener() {
-//            @Override
-//            public void handle(Replicator replicator) {
-//                System.out.println("close testSsl1");
-//                assertEquals(1, acc.get());
-//            }
-//        });
-//        replicator.open();
-//    }
+    //    @Test
+    //    public void testSsl() throws IOException {
+    //        setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
+    //        Replicator replicator = new RedisReplicator("127.0.0.1", 56379, Configuration.defaultSetting().setSsl(true));
+    //        final AtomicInteger acc = new AtomicInteger(0);
+    //        Jedis jedis = null;
+    //        try {
+    //            jedis = new Jedis("127.0.0.1", 6379);
+    //            jedis.set("ssl", "true");
+    //        } finally {
+    //            jedis.close();
+    //        }
+    //        replicator.addRdbListener(new RdbListener() {
+    //            @Override
+    //            public void preFullSync(Replicator replicator) {
+    //            }
+    //
+    //            @Override
+    //            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+    //                if(kv.getKey().equals("ssl")) acc.incrementAndGet();
+    //            }
+    //
+    //            @Override
+    //            public void postFullSync(Replicator replicator, long checksum) {
+    //                Jedis jedis = null;
+    //                try {
+    //                    jedis = new Jedis("127.0.0.1", 6379);
+    //                    jedis.del("ssl");
+    //                } finally {
+    //                    jedis.close();
+    //                }
+    //                try {
+    //                    replicator.close();
+    //                } catch (IOException e) {
+    //                    e.printStackTrace();
+    //                }
+    //            }
+    //        });
+    //        replicator.addCloseListener(new CloseListener() {
+    //            @Override
+    //            public void handle(Replicator replicator) {
+    //                System.out.println("close testSsl");
+    //                assertEquals(1, acc.get());
+    //            }
+    //        });
+    //        replicator.open();
+    //    }
+    //
+    //    @Test
+    //    public void testSsl1() throws IOException {
+    //        setJvmTrustStore("src/test/resources/keystore/truststore.jceks", "jceks");
+    //        Replicator replicator = new RedisReplicator("localhost", 56379,
+    //                Configuration.defaultSetting().setSsl(true)
+    //                        .setReadTimeout(0)
+    //                        .setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault())
+    //                        .setHostnameVerifier(new BasicHostnameVerifier())
+    //                        .setSslParameters(new SSLParameters()));
+    //        final AtomicInteger acc = new AtomicInteger(0);
+    //        Jedis jedis = null;
+    //        try {
+    //            jedis = new Jedis("127.0.0.1", 6379);
+    //            jedis.set("ssl1", "true");
+    //        } finally {
+    //            jedis.close();
+    //        }
+    //        replicator.addRdbListener(new RdbListener() {
+    //            @Override
+    //            public void preFullSync(Replicator replicator) {
+    //            }
+    //
+    //            @Override
+    //            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+    //                if(kv.getKey().equals("ssl1")) acc.incrementAndGet();
+    //            }
+    //
+    //            @Override
+    //            public void postFullSync(Replicator replicator, long checksum) {
+    //                Jedis jedis = null;
+    //                try {
+    //                    jedis = new Jedis("127.0.0.1", 6379);
+    //                    jedis.del("ssl1");
+    //                } finally {
+    //                    jedis.close();
+    //                }
+    //                try {
+    //                    replicator.close();
+    //                } catch (IOException e) {
+    //                    e.printStackTrace();
+    //                }
+    //            }
+    //        });
+    //        replicator.addCloseListener(new CloseListener() {
+    //            @Override
+    //            public void handle(Replicator replicator) {
+    //                System.out.println("close testSsl1");
+    //                assertEquals(1, acc.get());
+    //            }
+    //        });
+    //        replicator.open();
+    //    }
+
+    private static SSLSocketFactory createTrustStoreSslSocketFactory() throws Exception {
+
+        KeyStore trustStore = KeyStore.getInstance("jceks");
+        try (InputStream inputStream = new FileInputStream("src/test/resources/keystore/truststore.jceks")) {
+            trustStore.load(inputStream, null);
+        }
+
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
+        trustManagerFactory.init(trustStore);
+        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagers, new SecureRandom());
+        return sslContext.getSocketFactory();
+    }
+
+    private static SSLSocketFactory createTrustNoOneSslSocketFactory() throws Exception {
+        TrustManager[] unTrustManagers = new TrustManager[] {
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+                        throw new RuntimeException(new InvalidAlgorithmParameterException());
+                    }
+
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
+                        throw new RuntimeException(new InvalidAlgorithmParameterException());
+                    }
+                }
+        };
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, unTrustManagers, new SecureRandom());
+        return sslContext.getSocketFactory();
+    }
 
     @Test
     public void testSsl2() throws Exception {
@@ -300,43 +329,6 @@ public class RedisSocketReplicatorSSLTest {
             }
         }
         assertEquals(0, acc.get());
-    }
-
-    private static SSLSocketFactory createTrustStoreSslSocketFactory() throws Exception {
-
-        KeyStore trustStore = KeyStore.getInstance("jceks");
-        try (InputStream inputStream = new FileInputStream("src/test/resources/keystore/truststore.jceks")) {
-            trustStore.load(inputStream, null);
-        }
-
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
-        trustManagerFactory.init(trustStore);
-        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustManagers, new SecureRandom());
-        return sslContext.getSocketFactory();
-    }
-
-    private static SSLSocketFactory createTrustNoOneSslSocketFactory() throws Exception {
-        TrustManager[] unTrustManagers = new TrustManager[]{
-                new X509TrustManager() {
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new X509Certificate[0];
-                    }
-
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
-                        throw new RuntimeException(new InvalidAlgorithmParameterException());
-                    }
-
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) {
-                        throw new RuntimeException(new InvalidAlgorithmParameterException());
-                    }
-                }
-        };
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, unTrustManagers, new SecureRandom());
-        return sslContext.getSocketFactory();
     }
 
     private static class BasicHostnameVerifier implements HostnameVerifier {

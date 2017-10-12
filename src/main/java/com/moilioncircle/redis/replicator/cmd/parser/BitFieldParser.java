@@ -17,13 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.BitFieldCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.GetTypeOffset;
-import com.moilioncircle.redis.replicator.cmd.impl.IncrByTypeOffsetIncrement;
-import com.moilioncircle.redis.replicator.cmd.impl.OverFlow;
-import com.moilioncircle.redis.replicator.cmd.impl.OverFlowType;
-import com.moilioncircle.redis.replicator.cmd.impl.SetTypeOffsetValue;
-import com.moilioncircle.redis.replicator.cmd.impl.Statement;
+import com.moilioncircle.redis.replicator.cmd.impl.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -51,8 +45,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 idx = parseStatement(idx, command, list);
                 if (idx >= command.length) break;
                 token = objToString(command[idx]);
-            }
-            while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
+            } while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
         }
         List<OverFlow> overFlowList = null;
         if (idx < command.length) {
@@ -89,8 +82,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 idx = parseStatement(idx, params, list);
                 if (idx >= params.length) break;
                 token = objToString(params[idx]);
-            }
-            while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
+            } while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
         }
         overFlow.setOverFlowType(overFlowType);
         overFlow.setStatements(list);

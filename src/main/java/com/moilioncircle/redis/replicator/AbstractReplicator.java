@@ -19,79 +19,7 @@ package com.moilioncircle.redis.replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.parser.AppendParser;
-import com.moilioncircle.redis.replicator.cmd.parser.BRPopLPushParser;
-import com.moilioncircle.redis.replicator.cmd.parser.BitFieldParser;
-import com.moilioncircle.redis.replicator.cmd.parser.BitOpParser;
-import com.moilioncircle.redis.replicator.cmd.parser.DecrByParser;
-import com.moilioncircle.redis.replicator.cmd.parser.DecrParser;
-import com.moilioncircle.redis.replicator.cmd.parser.DelParser;
-import com.moilioncircle.redis.replicator.cmd.parser.EvalParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ExecParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ExpireAtParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ExpireParser;
-import com.moilioncircle.redis.replicator.cmd.parser.FlushAllParser;
-import com.moilioncircle.redis.replicator.cmd.parser.FlushDBParser;
-import com.moilioncircle.redis.replicator.cmd.parser.GeoAddParser;
-import com.moilioncircle.redis.replicator.cmd.parser.GetSetParser;
-import com.moilioncircle.redis.replicator.cmd.parser.HDelParser;
-import com.moilioncircle.redis.replicator.cmd.parser.HIncrByParser;
-import com.moilioncircle.redis.replicator.cmd.parser.HMSetParser;
-import com.moilioncircle.redis.replicator.cmd.parser.HSetNxParser;
-import com.moilioncircle.redis.replicator.cmd.parser.HSetParser;
-import com.moilioncircle.redis.replicator.cmd.parser.IncrByParser;
-import com.moilioncircle.redis.replicator.cmd.parser.IncrParser;
-import com.moilioncircle.redis.replicator.cmd.parser.LInsertParser;
-import com.moilioncircle.redis.replicator.cmd.parser.LPopParser;
-import com.moilioncircle.redis.replicator.cmd.parser.LPushParser;
-import com.moilioncircle.redis.replicator.cmd.parser.LPushXParser;
-import com.moilioncircle.redis.replicator.cmd.parser.LRemParser;
-import com.moilioncircle.redis.replicator.cmd.parser.LSetParser;
-import com.moilioncircle.redis.replicator.cmd.parser.LTrimParser;
-import com.moilioncircle.redis.replicator.cmd.parser.MSetNxParser;
-import com.moilioncircle.redis.replicator.cmd.parser.MSetParser;
-import com.moilioncircle.redis.replicator.cmd.parser.MoveParser;
-import com.moilioncircle.redis.replicator.cmd.parser.MultiParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PExpireAtParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PExpireParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PFAddParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PFCountParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PFMergeParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PSetExParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PersistParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PingParser;
-import com.moilioncircle.redis.replicator.cmd.parser.PublishParser;
-import com.moilioncircle.redis.replicator.cmd.parser.RPopLPushParser;
-import com.moilioncircle.redis.replicator.cmd.parser.RPopParser;
-import com.moilioncircle.redis.replicator.cmd.parser.RPushParser;
-import com.moilioncircle.redis.replicator.cmd.parser.RPushXParser;
-import com.moilioncircle.redis.replicator.cmd.parser.RenameNxParser;
-import com.moilioncircle.redis.replicator.cmd.parser.RenameParser;
-import com.moilioncircle.redis.replicator.cmd.parser.RestoreParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SAddParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SDiffStoreParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SInterStoreParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SMoveParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SRemParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SUnionStoreParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ScriptParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SelectParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SetBitParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SetExParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SetNxParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SetParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SetRangeParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SortParser;
-import com.moilioncircle.redis.replicator.cmd.parser.SwapDBParser;
-import com.moilioncircle.redis.replicator.cmd.parser.UnLinkParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ZAddParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ZIncrByParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ZInterStoreParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ZRemParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByLexParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByRankParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByScoreParser;
-import com.moilioncircle.redis.replicator.cmd.parser.ZUnionStoreParser;
+import com.moilioncircle.redis.replicator.cmd.parser.*;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
@@ -109,9 +37,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.moilioncircle.redis.replicator.Status.CONNECTED;
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
+import static com.moilioncircle.redis.replicator.Status.*;
 
 /**
  * @author Leon Chen
@@ -119,12 +45,12 @@ import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
  * @since 2.1.0
  */
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
-    protected Configuration configuration;
-    protected volatile RedisInputStream inputStream;
-    protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
-    protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
-    protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
-    protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
+    protected final AtomicReference<Status>                            connected  = new AtomicReference<>(DISCONNECTED);
+    protected final Map<ModuleKey, ModuleParser<? extends Module>>     modules    = new ConcurrentHashMap<>();
+    protected final Map<CommandName, CommandParser<? extends Command>> commands   = new ConcurrentHashMap<>();
+    protected Configuration                                            configuration;
+    protected volatile RedisInputStream                                inputStream;
+    protected RdbVisitor                                               rdbVisitor = new DefaultRdbVisitor(this);
 
     @Override
     public CommandParser<? extends Command> getCommandParser(CommandName command) {
@@ -193,13 +119,13 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     }
 
     @Override
-    public void setRdbVisitor(RdbVisitor rdbVisitor) {
-        this.rdbVisitor = rdbVisitor;
+    public RdbVisitor getRdbVisitor() {
+        return this.rdbVisitor;
     }
 
     @Override
-    public RdbVisitor getRdbVisitor() {
-        return this.rdbVisitor;
+    public void setRdbVisitor(RdbVisitor rdbVisitor) {
+        this.rdbVisitor = rdbVisitor;
     }
 
     @Override

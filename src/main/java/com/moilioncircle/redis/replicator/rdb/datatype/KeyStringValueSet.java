@@ -26,7 +26,7 @@ public class KeyStringValueSet extends KeyValuePair<Set<String>> {
 
     private static final long serialVersionUID = 1L;
 
-    protected Set<byte[]> rawValue;
+    protected Set<byte[]>     rawValue;
 
     public Set<byte[]> getRawValue() {
         return rawValue;

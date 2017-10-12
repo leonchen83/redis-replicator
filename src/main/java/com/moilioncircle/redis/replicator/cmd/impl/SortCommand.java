@@ -28,17 +28,17 @@ public class SortCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String byPattern;
-    private Limit limit;
-    private String[] getPatterns;
-    private OrderType order;
-    private Boolean alpha;
-    private String destination;
-    private byte[] rawKey;
-    private byte[] rawByPattern;
-    private byte[][] rawGetPatterns;
-    private byte[] rawDestination;
+    private String            key;
+    private String            byPattern;
+    private Limit             limit;
+    private String[]          getPatterns;
+    private OrderType         order;
+    private Boolean           alpha;
+    private String            destination;
+    private byte[]            rawKey;
+    private byte[]            rawByPattern;
+    private byte[][]          rawGetPatterns;
+    private byte[]            rawDestination;
 
     public SortCommand() {
     }
@@ -47,7 +47,8 @@ public class SortCommand implements Command {
         this(key, byPattern, limit, getPatterns, order, alpha, destination, null, null, null, null);
     }
 
-    public SortCommand(String key, String byPattern, Limit limit, String[] getPatterns, OrderType order, Boolean alpha, String destination, byte[] rawKey, byte[] rawByPattern, byte[][] rawGetPatterns, byte[] rawDestination) {
+    public SortCommand(String key, String byPattern, Limit limit, String[] getPatterns, OrderType order, Boolean alpha, String destination,
+            byte[] rawKey, byte[] rawByPattern, byte[][] rawGetPatterns, byte[] rawDestination) {
         this.key = key;
         this.byPattern = byPattern;
         this.limit = limit;

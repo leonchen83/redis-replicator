@@ -33,70 +33,70 @@ public class Lzf {
             int ctrl = in.get(inPos++) & 255;
             if (ctrl < 1 << 5) {
                 switch (ctrl) {
-                    case 31:
-                        out.set(outPos++, in.get(inPos++));
-                    case 30:
-                        out.set(outPos++, in.get(inPos++));
-                    case 29:
-                        out.set(outPos++, in.get(inPos++));
-                    case 28:
-                        out.set(outPos++, in.get(inPos++));
-                    case 27:
-                        out.set(outPos++, in.get(inPos++));
-                    case 26:
-                        out.set(outPos++, in.get(inPos++));
-                    case 25:
-                        out.set(outPos++, in.get(inPos++));
-                    case 24:
-                        out.set(outPos++, in.get(inPos++));
-                    case 23:
-                        out.set(outPos++, in.get(inPos++));
-                    case 22:
-                        out.set(outPos++, in.get(inPos++));
-                    case 21:
-                        out.set(outPos++, in.get(inPos++));
-                    case 20:
-                        out.set(outPos++, in.get(inPos++));
-                    case 19:
-                        out.set(outPos++, in.get(inPos++));
-                    case 18:
-                        out.set(outPos++, in.get(inPos++));
-                    case 17:
-                        out.set(outPos++, in.get(inPos++));
-                    case 16:
-                        out.set(outPos++, in.get(inPos++));
-                    case 15:
-                        out.set(outPos++, in.get(inPos++));
-                    case 14:
-                        out.set(outPos++, in.get(inPos++));
-                    case 13:
-                        out.set(outPos++, in.get(inPos++));
-                    case 12:
-                        out.set(outPos++, in.get(inPos++));
-                    case 11:
-                        out.set(outPos++, in.get(inPos++));
-                    case 10:
-                        out.set(outPos++, in.get(inPos++));
-                    case 9:
-                        out.set(outPos++, in.get(inPos++));
-                    case 8:
-                        out.set(outPos++, in.get(inPos++));
-                    case 7:
-                        out.set(outPos++, in.get(inPos++));
-                    case 6:
-                        out.set(outPos++, in.get(inPos++));
-                    case 5:
-                        out.set(outPos++, in.get(inPos++));
-                    case 4:
-                        out.set(outPos++, in.get(inPos++));
-                    case 3:
-                        out.set(outPos++, in.get(inPos++));
-                    case 2:
-                        out.set(outPos++, in.get(inPos++));
-                    case 1:
-                        out.set(outPos++, in.get(inPos++));
-                    case 0:
-                        out.set(outPos++, in.get(inPos++));
+                case 31:
+                    out.set(outPos++, in.get(inPos++));
+                case 30:
+                    out.set(outPos++, in.get(inPos++));
+                case 29:
+                    out.set(outPos++, in.get(inPos++));
+                case 28:
+                    out.set(outPos++, in.get(inPos++));
+                case 27:
+                    out.set(outPos++, in.get(inPos++));
+                case 26:
+                    out.set(outPos++, in.get(inPos++));
+                case 25:
+                    out.set(outPos++, in.get(inPos++));
+                case 24:
+                    out.set(outPos++, in.get(inPos++));
+                case 23:
+                    out.set(outPos++, in.get(inPos++));
+                case 22:
+                    out.set(outPos++, in.get(inPos++));
+                case 21:
+                    out.set(outPos++, in.get(inPos++));
+                case 20:
+                    out.set(outPos++, in.get(inPos++));
+                case 19:
+                    out.set(outPos++, in.get(inPos++));
+                case 18:
+                    out.set(outPos++, in.get(inPos++));
+                case 17:
+                    out.set(outPos++, in.get(inPos++));
+                case 16:
+                    out.set(outPos++, in.get(inPos++));
+                case 15:
+                    out.set(outPos++, in.get(inPos++));
+                case 14:
+                    out.set(outPos++, in.get(inPos++));
+                case 13:
+                    out.set(outPos++, in.get(inPos++));
+                case 12:
+                    out.set(outPos++, in.get(inPos++));
+                case 11:
+                    out.set(outPos++, in.get(inPos++));
+                case 10:
+                    out.set(outPos++, in.get(inPos++));
+                case 9:
+                    out.set(outPos++, in.get(inPos++));
+                case 8:
+                    out.set(outPos++, in.get(inPos++));
+                case 7:
+                    out.set(outPos++, in.get(inPos++));
+                case 6:
+                    out.set(outPos++, in.get(inPos++));
+                case 5:
+                    out.set(outPos++, in.get(inPos++));
+                case 4:
+                    out.set(outPos++, in.get(inPos++));
+                case 3:
+                    out.set(outPos++, in.get(inPos++));
+                case 2:
+                    out.set(outPos++, in.get(inPos++));
+                case 1:
+                    out.set(outPos++, in.get(inPos++));
+                case 0:
+                    out.set(outPos++, in.get(inPos++));
                 }
                 continue;
             }
@@ -108,18 +108,18 @@ public class Lzf {
                 out.set(outPos, out.get(outPos++ + ctrl));
                 out.set(outPos, out.get(outPos++ + ctrl));
                 switch ((int) len) {
-                    case 6:
-                        out.set(outPos, out.get(outPos++ + ctrl));
-                    case 5:
-                        out.set(outPos, out.get(outPos++ + ctrl));
-                    case 4:
-                        out.set(outPos, out.get(outPos++ + ctrl));
-                    case 3:
-                        out.set(outPos, out.get(outPos++ + ctrl));
-                    case 2:
-                        out.set(outPos, out.get(outPos++ + ctrl));
-                    case 1:
-                        out.set(outPos, out.get(outPos++ + ctrl));
+                case 6:
+                    out.set(outPos, out.get(outPos++ + ctrl));
+                case 5:
+                    out.set(outPos, out.get(outPos++ + ctrl));
+                case 4:
+                    out.set(outPos, out.get(outPos++ + ctrl));
+                case 3:
+                    out.set(outPos, out.get(outPos++ + ctrl));
+                case 2:
+                    out.set(outPos, out.get(outPos++ + ctrl));
+                case 1:
+                    out.set(outPos, out.get(outPos++ + ctrl));
                 }
                 continue;
             }
@@ -133,70 +133,70 @@ public class Lzf {
                     long inPos1 = outPos + ctrl;
                     long outPos1 = outPos;
                     switch ((int) len - 1) {
-                        case 31:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 30:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 29:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 28:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 27:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 26:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 25:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 24:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 23:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 22:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 21:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 20:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 19:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 18:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 17:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 16:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 15:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 14:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 13:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 12:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 11:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 10:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 9:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 8:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 7:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 6:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 5:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 4:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 3:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 2:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 1:
-                            out.set(outPos1++, out.get(inPos1++));
-                        case 0:
-                            out.set(outPos1++, out.get(inPos1++));
+                    case 31:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 30:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 29:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 28:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 27:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 26:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 25:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 24:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 23:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 22:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 21:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 20:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 19:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 18:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 17:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 16:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 15:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 14:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 13:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 12:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 11:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 10:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 9:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 8:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 7:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 6:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 5:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 4:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 3:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 2:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 1:
+                        out.set(outPos1++, out.get(inPos1++));
+                    case 0:
+                        out.set(outPos1++, out.get(inPos1++));
                     }
                 } else {
                     ByteArray.arraycopy(out, outPos + ctrl, out, outPos, len);

@@ -18,14 +18,8 @@ package com.moilioncircle.redis.replicator.util;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,19 +31,19 @@ public class ByteArrayMapTest {
     @Test
     public void test() {
         Map<byte[], byte[]> m = new LinkedHashMap<>();
-        m.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
-        m.put(null, new byte[]{4});
-        m.put(new byte[]{4, 5, 6}, null);
+        m.put(new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 6 });
+        m.put(null, new byte[] { 4 });
+        m.put(new byte[] { 4, 5, 6 }, null);
         ByteArrayMap<byte[]> bytes = new ByteArrayMap<>(m);
         assertEquals(3, bytes.size());
-        assertEquals(true, Arrays.equals(new byte[]{4, 5, 6}, bytes.get(new byte[]{1, 2, 3})));
-        assertEquals(true, Arrays.equals(new byte[]{4}, bytes.get(null)));
-        assertEquals(null, bytes.get(new byte[]{4, 5, 6}));
+        assertEquals(true, Arrays.equals(new byte[] { 4, 5, 6 }, bytes.get(new byte[] { 1, 2, 3 })));
+        assertEquals(true, Arrays.equals(new byte[] { 4 }, bytes.get(null)));
+        assertEquals(null, bytes.get(new byte[] { 4, 5, 6 }));
         assertEquals(false, bytes.isEmpty());
-        assertEquals(true, bytes.containsKey(new byte[]{1, 2, 3}));
+        assertEquals(true, bytes.containsKey(new byte[] { 1, 2, 3 }));
         assertEquals(true, bytes.containsKey(null));
         assertEquals(false, bytes.containsKey(1));
-        assertEquals(false, bytes.containsValue(new byte[]{4, 5, 6}));
+        assertEquals(false, bytes.containsValue(new byte[] { 4, 5, 6 }));
         assertEquals(true, bytes.containsValue(null));
 
         Set<byte[]> s = bytes.keySet();
@@ -98,20 +92,20 @@ public class ByteArrayMapTest {
         assertEquals(true, bytes.isEmpty());
 
         bytes = new ByteArrayMap<>(m);
-        bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
-        bytes.put(null, new byte[]{4});
-        bytes.put(new byte[]{4, 5, 6}, null);
+        bytes.put(new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 6 });
+        bytes.put(null, new byte[] { 4 });
+        bytes.put(new byte[] { 4, 5, 6 }, null);
         s = bytes.keySet();
-        s.remove(new byte[]{1, 2, 3});
+        s.remove(new byte[] { 1, 2, 3 });
         s.remove(null);
-        s.remove(new byte[]{4, 5, 6});
+        s.remove(new byte[] { 4, 5, 6 });
         assertEquals(0, s.size());
         assertEquals(0, bytes.size());
 
         bytes = new ByteArrayMap<>(m);
-        bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
-        bytes.put(null, new byte[]{4});
-        bytes.put(new byte[]{4, 5, 6}, null);
+        bytes.put(new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 6 });
+        bytes.put(null, new byte[] { 4 });
+        bytes.put(new byte[] { 4, 5, 6 }, null);
         ss = bytes.entrySet();
         List<Map.Entry<byte[], byte[]>> list = new ArrayList<>();
         for (Map.Entry<byte[], byte[]> entry : ss) {
@@ -124,9 +118,9 @@ public class ByteArrayMapTest {
         assertEquals(0, bytes.size());
 
         bytes = new ByteArrayMap<>(m);
-        bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
-        bytes.put(null, new byte[]{4});
-        bytes.put(new byte[]{4, 5, 6}, null);
+        bytes.put(new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 6 });
+        bytes.put(null, new byte[] { 4 });
+        bytes.put(new byte[] { 4, 5, 6 }, null);
         Iterator<byte[]> a = bytes.keySet().iterator();
         while (a.hasNext()) {
             a.next();
@@ -135,9 +129,9 @@ public class ByteArrayMapTest {
         assertEquals(0, bytes.size());
 
         bytes = new ByteArrayMap<>(m);
-        bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
-        bytes.put(null, new byte[]{4});
-        bytes.put(new byte[]{4, 5, 6}, null);
+        bytes.put(new byte[] { 1, 2, 3 }, new byte[] { 4, 5, 6 });
+        bytes.put(null, new byte[] { 4 });
+        bytes.put(new byte[] { 4, 5, 6 }, null);
         Iterator<Map.Entry<byte[], byte[]>> aa = bytes.entrySet().iterator();
         while (aa.hasNext()) {
             aa.next();
@@ -148,8 +142,8 @@ public class ByteArrayMapTest {
 
     private final class TestEntry implements Map.Entry<byte[], byte[]> {
 
-        private byte[] value;
         private final byte[] key;
+        private byte[]       value;
 
         private TestEntry(byte[] key, byte[] value) {
             this.key = key;

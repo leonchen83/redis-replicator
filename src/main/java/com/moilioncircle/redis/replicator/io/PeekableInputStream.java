@@ -25,9 +25,9 @@ import java.io.InputStream;
  */
 public class PeekableInputStream extends InputStream {
 
-    private int peek;
+    private int         peek;
     private InputStream in;
-    private boolean peeked;
+    private boolean     peeked;
 
     public PeekableInputStream(InputStream in) {
         this.in = in;

@@ -26,10 +26,10 @@ public class ZRemRangeByRankCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private long start;
-    private long stop;
-    private byte[] rawKey;
+    private String            key;
+    private long              start;
+    private long              stop;
+    private byte[]            rawKey;
 
     public ZRemRangeByRankCommand() {
     }

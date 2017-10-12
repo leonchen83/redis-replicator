@@ -28,7 +28,6 @@ import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objTo
  */
 public class SAddParser implements CommandParser<SAddCommand> {
 
-
     @Override
     public SAddCommand parse(Object[] command) {
         int idx = 1, newIdx = 0;

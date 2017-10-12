@@ -26,10 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_DOUBLE;
-import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_FLOAT;
-import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_STRING;
-import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_UINT;
+import static com.moilioncircle.redis.replicator.Constants.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -38,10 +35,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 public class DefaultRdbModuleParser {
-    protected static final Log logger = LogFactory.getLog(DefaultRdbModuleParser.class);
+    protected static final Log     logger = LogFactory.getLog(DefaultRdbModuleParser.class);
 
     private final RedisInputStream in;
-    private final BaseRdbParser parser;
+    private final BaseRdbParser    parser;
 
     public DefaultRdbModuleParser(RedisInputStream in) {
         this.in = in;

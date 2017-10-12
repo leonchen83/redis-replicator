@@ -223,7 +223,8 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFileV8() throws IOException, InterruptedException {
         Replicator redisReplicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV8.rdb"), 100 * 1024), FileType.RDB,
+                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV8.rdb"), 100 * 1024),
+                FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);

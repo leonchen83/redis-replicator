@@ -24,7 +24,7 @@ public class KeyStringValueString extends KeyValuePair<String> {
 
     private static final long serialVersionUID = 1L;
 
-    protected byte[] rawValue;
+    protected byte[]          rawValue;
 
     /**
      * @return raw bytes

@@ -26,61 +26,64 @@ import java.util.Arrays;
  */
 public class SAddCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private String[] members;
-	private byte[] rawKey;
-	private byte[][] rawMembers;
+    private String key;
+    private String[] members;
+    private byte[] rawKey;
+    private byte[][] rawMembers;
 
-	public SAddCommand() {
-	}
+    public SAddCommand() {
+    }
 
-	public SAddCommand(String key, String[] members) {
-		this(key, members, null, null);
-	}
+    public SAddCommand(String key, String[] members) {
+        this(key, members, null, null);
+    }
 
-	public SAddCommand(String key, String[] members, byte[] rawKey, byte[][] rawMembers) {
-		this.key = key;
-		this.members = members;
-		this.rawKey = rawKey;
-		this.rawMembers = rawMembers;
-	}
+    public SAddCommand(String key, String[] members, byte[] rawKey, byte[][] rawMembers) {
+        this.key = key;
+        this.members = members;
+        this.rawKey = rawKey;
+        this.rawMembers = rawMembers;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public String[] getMembers() {
-		return members;
-	}
+    public String[] getMembers() {
+        return members;
+    }
 
-	public void setMembers(String[] members) {
-		this.members = members;
-	}
+    public void setMembers(String[] members) {
+        this.members = members;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	public byte[][] getRawMembers() {
-		return rawMembers;
-	}
+    public byte[][] getRawMembers() {
+        return rawMembers;
+    }
 
-	public void setRawMembers(byte[][] rawMembers) {
-		this.rawMembers = rawMembers;
-	}
+    public void setRawMembers(byte[][] rawMembers) {
+        this.rawMembers = rawMembers;
+    }
 
-	@Override
-	public String toString() {
-		return "SAddCommand{" + "key='" + key + '\'' + ", members=" + Arrays.toString(members) + '}';
-	}
+    @Override
+    public String toString() {
+        return "SAddCommand{" +
+                "key='" + key + '\'' +
+                ", members=" + Arrays.toString(members) +
+                '}';
+    }
 }

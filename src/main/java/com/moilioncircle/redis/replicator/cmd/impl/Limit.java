@@ -24,37 +24,40 @@ import java.io.Serializable;
  */
 public class Limit implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private long offset;
-	private long count;
+    private long offset;
+    private long count;
 
-	public Limit() {
-	}
+    public Limit() {
+    }
 
-	public Limit(long offset, long count) {
-		this.offset = offset;
-		this.count = count;
-	}
+    public Limit(long offset, long count) {
+        this.offset = offset;
+        this.count = count;
+    }
 
-	public long getOffset() {
-		return offset;
-	}
+    public long getOffset() {
+        return offset;
+    }
 
-	public void setOffset(long offset) {
-		this.offset = offset;
-	}
+    public void setOffset(long offset) {
+        this.offset = offset;
+    }
 
-	public long getCount() {
-		return count;
-	}
+    public long getCount() {
+        return count;
+    }
 
-	public void setCount(long count) {
-		this.count = count;
-	}
+    public void setCount(long count) {
+        this.count = count;
+    }
 
-	@Override
-	public String toString() {
-		return "Limit{" + "offset=" + offset + ", count=" + count + '}';
-	}
+    @Override
+    public String toString() {
+        return "Limit{" +
+                "offset=" + offset +
+                ", count=" + count +
+                '}';
+    }
 }

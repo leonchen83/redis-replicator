@@ -23,5 +23,5 @@ import java.io.Serializable;
  * @since 2.1.0
  */
 public enum LInsertType implements Serializable {
-	BEFORE, AFTER
+    BEFORE, AFTER
 }

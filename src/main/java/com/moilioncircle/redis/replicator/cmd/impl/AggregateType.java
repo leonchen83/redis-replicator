@@ -23,5 +23,5 @@ import java.io.Serializable;
  * @since 2.1.0
  */
 public enum AggregateType implements Serializable {
-	SUM, MIN, MAX
+    SUM, MIN, MAX
 }

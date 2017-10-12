@@ -24,91 +24,96 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class LInsertCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private LInsertType lInsertType;
-	private String pivot;
-	private String value;
-	private byte[] rawKey;
-	private byte[] rawPivot;
-	private byte[] rawValue;
+    private String key;
+    private LInsertType lInsertType;
+    private String pivot;
+    private String value;
+    private byte[] rawKey;
+    private byte[] rawPivot;
+    private byte[] rawValue;
 
-	public LInsertCommand() {
-	}
+    public LInsertCommand() {
+    }
 
-	public LInsertCommand(String key, LInsertType lInsertType, String pivot, String value) {
-		this(key, lInsertType, pivot, value, null, null, null);
-	}
+    public LInsertCommand(String key, LInsertType lInsertType, String pivot, String value) {
+        this(key, lInsertType, pivot, value, null, null, null);
+    }
 
-	public LInsertCommand(String key, LInsertType lInsertType, String pivot, String value, byte[] rawKey, byte[] rawPivot, byte[] rawValue) {
-		this.key = key;
-		this.lInsertType = lInsertType;
-		this.pivot = pivot;
-		this.value = value;
-		this.rawKey = rawKey;
-		this.rawPivot = rawPivot;
-		this.rawValue = rawValue;
-	}
+    public LInsertCommand(String key, LInsertType lInsertType, String pivot, String value, byte[] rawKey, byte[] rawPivot, byte[] rawValue) {
+        this.key = key;
+        this.lInsertType = lInsertType;
+        this.pivot = pivot;
+        this.value = value;
+        this.rawKey = rawKey;
+        this.rawPivot = rawPivot;
+        this.rawValue = rawValue;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public LInsertType getlInsertType() {
-		return lInsertType;
-	}
+    public LInsertType getlInsertType() {
+        return lInsertType;
+    }
 
-	public void setlInsertType(LInsertType lInsertType) {
-		this.lInsertType = lInsertType;
-	}
+    public void setlInsertType(LInsertType lInsertType) {
+        this.lInsertType = lInsertType;
+    }
 
-	public String getPivot() {
-		return pivot;
-	}
+    public String getPivot() {
+        return pivot;
+    }
 
-	public void setPivot(String pivot) {
-		this.pivot = pivot;
-	}
+    public void setPivot(String pivot) {
+        this.pivot = pivot;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	public byte[] getRawPivot() {
-		return rawPivot;
-	}
+    public byte[] getRawPivot() {
+        return rawPivot;
+    }
 
-	public void setRawPivot(byte[] rawPivot) {
-		this.rawPivot = rawPivot;
-	}
+    public void setRawPivot(byte[] rawPivot) {
+        this.rawPivot = rawPivot;
+    }
 
-	public byte[] getRawValue() {
-		return rawValue;
-	}
+    public byte[] getRawValue() {
+        return rawValue;
+    }
 
-	public void setRawValue(byte[] rawValue) {
-		this.rawValue = rawValue;
-	}
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
+    }
 
-	@Override
-	public String toString() {
-		return "LInsertCommand{" + "key='" + key + '\'' + ", lInsertType=" + lInsertType + ", pivot='" + pivot + '\'' + ", value='" + value + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "LInsertCommand{" +
+                "key='" + key + '\'' +
+                ", lInsertType=" + lInsertType +
+                ", pivot='" + pivot + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

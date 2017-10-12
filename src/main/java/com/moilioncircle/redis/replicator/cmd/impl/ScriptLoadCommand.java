@@ -22,41 +22,43 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  */
 public class ScriptLoadCommand extends ScriptCommand {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String script;
-	private byte[] rawScript;
+    private String script;
+    private byte[] rawScript;
 
-	public ScriptLoadCommand() {
-	}
+    public ScriptLoadCommand() {
+    }
 
-	public ScriptLoadCommand(String script) {
-		this(script, null);
-	}
+    public ScriptLoadCommand(String script) {
+        this(script, null);
+    }
 
-	public ScriptLoadCommand(String script, byte[] rawScript) {
-		this.script = script;
-		this.rawScript = rawScript;
-	}
+    public ScriptLoadCommand(String script, byte[] rawScript) {
+        this.script = script;
+        this.rawScript = rawScript;
+    }
 
-	public String getScript() {
-		return script;
-	}
+    public String getScript() {
+        return script;
+    }
 
-	public void setScript(String script) {
-		this.script = script;
-	}
+    public void setScript(String script) {
+        this.script = script;
+    }
 
-	public byte[] getRawScript() {
-		return rawScript;
-	}
+    public byte[] getRawScript() {
+        return rawScript;
+    }
 
-	public void setRawScript(byte[] rawScript) {
-		this.rawScript = rawScript;
-	}
+    public void setRawScript(byte[] rawScript) {
+        this.rawScript = rawScript;
+    }
 
-	@Override
-	public String toString() {
-		return "ScriptLoadCommand{" + "script='" + script + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "ScriptLoadCommand{" +
+                "script='" + script + '\'' +
+                '}';
+    }
 }

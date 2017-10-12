@@ -24,71 +24,75 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class PSetExCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private long ex;
-	private String value;
-	private byte[] rawKey;
-	private byte[] rawValue;
+    private String key;
+    private long ex;
+    private String value;
+    private byte[] rawKey;
+    private byte[] rawValue;
 
-	public PSetExCommand() {
-	}
+    public PSetExCommand() {
+    }
 
-	public PSetExCommand(String key, long ex, String value) {
-		this(key, ex, value, null, null);
-	}
+    public PSetExCommand(String key, long ex, String value) {
+        this(key, ex, value, null, null);
+    }
 
-	public PSetExCommand(String key, long ex, String value, byte[] rawKey, byte[] rawValue) {
-		this.key = key;
-		this.ex = ex;
-		this.value = value;
-		this.rawKey = rawKey;
-		this.rawValue = rawValue;
-	}
+    public PSetExCommand(String key, long ex, String value, byte[] rawKey, byte[] rawValue) {
+        this.key = key;
+        this.ex = ex;
+        this.value = value;
+        this.rawKey = rawKey;
+        this.rawValue = rawValue;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public long getEx() {
-		return ex;
-	}
+    public long getEx() {
+        return ex;
+    }
 
-	public void setEx(long ex) {
-		this.ex = ex;
-	}
+    public void setEx(long ex) {
+        this.ex = ex;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	public byte[] getRawValue() {
-		return rawValue;
-	}
+    public byte[] getRawValue() {
+        return rawValue;
+    }
 
-	public void setRawValue(byte[] rawValue) {
-		this.rawValue = rawValue;
-	}
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
+    }
 
-	@Override
-	public String toString() {
-		return "PSetExCommand{" + "key='" + key + '\'' + ", ex=" + ex + ", value='" + value + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "PSetExCommand{" +
+                "key='" + key + '\'' +
+                ", ex=" + ex +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

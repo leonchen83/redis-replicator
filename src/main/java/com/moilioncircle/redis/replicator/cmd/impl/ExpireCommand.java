@@ -24,51 +24,54 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class ExpireCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private int ex;
-	private byte[] rawKey;
+    private String key;
+    private int ex;
+    private byte[] rawKey;
 
-	public ExpireCommand() {
-	}
+    public ExpireCommand() {
+    }
 
-	public ExpireCommand(String key, int ex) {
-		this(key, ex, null);
-	}
+    public ExpireCommand(String key, int ex) {
+        this(key, ex, null);
+    }
 
-	public ExpireCommand(String key, int ex, byte[] rawKey) {
-		this.key = key;
-		this.ex = ex;
-		this.rawKey = rawKey;
-	}
+    public ExpireCommand(String key, int ex, byte[] rawKey) {
+        this.key = key;
+        this.ex = ex;
+        this.rawKey = rawKey;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public int getEx() {
-		return ex;
-	}
+    public int getEx() {
+        return ex;
+    }
 
-	public void setEx(int ex) {
-		this.ex = ex;
-	}
+    public void setEx(int ex) {
+        this.ex = ex;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	@Override
-	public String toString() {
-		return "ExpireCommand{" + "key='" + key + '\'' + ", ex=" + ex + '}';
-	}
+    @Override
+    public String toString() {
+        return "ExpireCommand{" +
+                "key='" + key + '\'' +
+                ", ex=" + ex +
+                '}';
+    }
 }

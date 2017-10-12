@@ -26,61 +26,64 @@ import java.util.Arrays;
  */
 public class PFAddCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private String[] elements;
-	private byte[] rawKey;
-	private byte[][] rawElements;
+    private String key;
+    private String[] elements;
+    private byte[] rawKey;
+    private byte[][] rawElements;
 
-	public PFAddCommand() {
-	}
+    public PFAddCommand() {
+    }
 
-	public PFAddCommand(String key, String[] elements) {
-		this(key, elements, null, null);
-	}
+    public PFAddCommand(String key, String[] elements) {
+        this(key, elements, null, null);
+    }
 
-	public PFAddCommand(String key, String[] elements, byte[] rawKey, byte[][] rawElements) {
-		this.key = key;
-		this.elements = elements;
-		this.rawKey = rawKey;
-		this.rawElements = rawElements;
-	}
+    public PFAddCommand(String key, String[] elements, byte[] rawKey, byte[][] rawElements) {
+        this.key = key;
+        this.elements = elements;
+        this.rawKey = rawKey;
+        this.rawElements = rawElements;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public String[] getElements() {
-		return elements;
-	}
+    public String[] getElements() {
+        return elements;
+    }
 
-	public void setElements(String[] elements) {
-		this.elements = elements;
-	}
+    public void setElements(String[] elements) {
+        this.elements = elements;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	public byte[][] getRawElements() {
-		return rawElements;
-	}
+    public byte[][] getRawElements() {
+        return rawElements;
+    }
 
-	public void setRawElements(byte[][] rawElements) {
-		this.rawElements = rawElements;
-	}
+    public void setRawElements(byte[][] rawElements) {
+        this.rawElements = rawElements;
+    }
 
-	@Override
-	public String toString() {
-		return "PFAddCommand{" + "key='" + key + '\'' + ", element=" + Arrays.toString(elements) + '}';
-	}
+    @Override
+    public String toString() {
+        return "PFAddCommand{" +
+                "key='" + key + '\'' +
+                ", element=" + Arrays.toString(elements) +
+                '}';
+    }
 }

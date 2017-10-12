@@ -24,91 +24,97 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class SetCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private String value;
-	private Integer ex;
-	private Long px;
-	private ExistType existType;
-	private byte[] rawKey;
-	private byte[] rawValue;
+    private String key;
+    private String value;
+    private Integer ex;
+    private Long px;
+    private ExistType existType;
+    private byte[] rawKey;
+    private byte[] rawValue;
 
-	public SetCommand() {
-	}
+    public SetCommand() {
+    }
 
-	public SetCommand(String key, String value, Integer ex, Long px, ExistType existType) {
-		this(key, value, ex, px, existType, null, null);
-	}
+    public SetCommand(String key, String value, Integer ex, Long px, ExistType existType) {
+        this(key, value, ex, px, existType, null, null);
+    }
 
-	public SetCommand(String key, String value, Integer ex, Long px, ExistType existType, byte[] rawKey, byte[] rawValue) {
-		this.key = key;
-		this.value = value;
-		this.ex = ex;
-		this.px = px;
-		this.existType = existType;
-		this.rawKey = rawKey;
-		this.rawValue = rawValue;
-	}
+    public SetCommand(String key, String value, Integer ex, Long px, ExistType existType, byte[] rawKey, byte[] rawValue) {
+        this.key = key;
+        this.value = value;
+        this.ex = ex;
+        this.px = px;
+        this.existType = existType;
+        this.rawKey = rawKey;
+        this.rawValue = rawValue;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public Integer getEx() {
-		return ex;
-	}
+    public Integer getEx() {
+        return ex;
+    }
 
-	public void setEx(Integer ex) {
-		this.ex = ex;
-	}
+    public void setEx(Integer ex) {
+        this.ex = ex;
+    }
 
-	public Long getPx() {
-		return px;
-	}
+    public Long getPx() {
+        return px;
+    }
 
-	public void setPx(Long px) {
-		this.px = px;
-	}
+    public void setPx(Long px) {
+        this.px = px;
+    }
 
-	public ExistType getExistType() {
-		return existType;
-	}
+    public ExistType getExistType() {
+        return existType;
+    }
 
-	public void setExistType(ExistType existType) {
-		this.existType = existType;
-	}
+    public void setExistType(ExistType existType) {
+        this.existType = existType;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	public byte[] getRawValue() {
-		return rawValue;
-	}
+    public byte[] getRawValue() {
+        return rawValue;
+    }
 
-	public void setRawValue(byte[] rawValue) {
-		this.rawValue = rawValue;
-	}
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
+    }
 
-	@Override
-	public String toString() {
-		return "SetCommand{" + "name='" + key + '\'' + ", value='" + value + '\'' + ", ex=" + ex + ", px=" + px + ", existType=" + existType + '}';
-	}
+    @Override
+    public String toString() {
+        return "SetCommand{" +
+                "name='" + key + '\'' +
+                ", value='" + value + '\'' +
+                ", ex=" + ex +
+                ", px=" + px +
+                ", existType=" + existType +
+                '}';
+    }
 }

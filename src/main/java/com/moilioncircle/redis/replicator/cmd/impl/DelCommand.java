@@ -26,41 +26,43 @@ import java.util.Arrays;
  */
 public class DelCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String[] keys;
-	private byte[][] rawKeys;
+    private String[] keys;
+    private byte[][] rawKeys;
 
-	public DelCommand() {
-	}
+    public DelCommand() {
+    }
 
-	public DelCommand(String[] keys) {
-		this(keys, null);
-	}
+    public DelCommand(String[] keys) {
+        this(keys, null);
+    }
 
-	public DelCommand(String[] keys, byte[][] rawKeys) {
-		this.keys = keys;
-		this.rawKeys = rawKeys;
-	}
+    public DelCommand(String[] keys, byte[][] rawKeys) {
+        this.keys = keys;
+        this.rawKeys = rawKeys;
+    }
 
-	public String[] getKeys() {
-		return keys;
-	}
+    public String[] getKeys() {
+        return keys;
+    }
 
-	public void setKeys(String[] keys) {
-		this.keys = keys;
-	}
+    public void setKeys(String[] keys) {
+        this.keys = keys;
+    }
 
-	public byte[][] getRawKeys() {
-		return rawKeys;
-	}
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
 
-	public void setRawKeys(byte[][] rawKeys) {
-		this.rawKeys = rawKeys;
-	}
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
+    }
 
-	@Override
-	public String toString() {
-		return "DelCommand{" + "keys=" + Arrays.toString(keys) + '}';
-	}
+    @Override
+    public String toString() {
+        return "DelCommand{" +
+                "keys=" + Arrays.toString(keys) +
+                '}';
+    }
 }

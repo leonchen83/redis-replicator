@@ -24,71 +24,75 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class BRPopLPushCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String source;
-	private String destination;
-	private int timeout;
-	private byte[] rawSource;
-	private byte[] rawDestination;
+    private String source;
+    private String destination;
+    private int timeout;
+    private byte[] rawSource;
+    private byte[] rawDestination;
 
-	public BRPopLPushCommand() {
-	}
+    public BRPopLPushCommand() {
+    }
 
-	public BRPopLPushCommand(String source, String destination, int timeout) {
-		this(source, destination, timeout, null, null);
-	}
+    public BRPopLPushCommand(String source, String destination, int timeout) {
+        this(source, destination, timeout, null, null);
+    }
 
-	public BRPopLPushCommand(String source, String destination, int timeout, byte[] rawSource, byte[] rawDestination) {
-		this.source = source;
-		this.destination = destination;
-		this.timeout = timeout;
-		this.rawSource = rawSource;
-		this.rawDestination = rawDestination;
-	}
+    public BRPopLPushCommand(String source, String destination, int timeout, byte[] rawSource, byte[] rawDestination) {
+        this.source = source;
+        this.destination = destination;
+        this.timeout = timeout;
+        this.rawSource = rawSource;
+        this.rawDestination = rawDestination;
+    }
 
-	public String getSource() {
-		return source;
-	}
+    public String getSource() {
+        return source;
+    }
 
-	public void setSource(String source) {
-		this.source = source;
-	}
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-	public String getDestination() {
-		return destination;
-	}
+    public String getDestination() {
+        return destination;
+    }
 
-	public void setDestination(String destination) {
-		this.destination = destination;
-	}
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
 
-	public int getTimeout() {
-		return timeout;
-	}
+    public int getTimeout() {
+        return timeout;
+    }
 
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
 
-	public byte[] getRawSource() {
-		return rawSource;
-	}
+    public byte[] getRawSource() {
+        return rawSource;
+    }
 
-	public void setRawSource(byte[] rawSource) {
-		this.rawSource = rawSource;
-	}
+    public void setRawSource(byte[] rawSource) {
+        this.rawSource = rawSource;
+    }
 
-	public byte[] getRawDestination() {
-		return rawDestination;
-	}
+    public byte[] getRawDestination() {
+        return rawDestination;
+    }
 
-	public void setRawDestination(byte[] rawDestination) {
-		this.rawDestination = rawDestination;
-	}
+    public void setRawDestination(byte[] rawDestination) {
+        this.rawDestination = rawDestination;
+    }
 
-	@Override
-	public String toString() {
-		return "BRPopLPushCommand{" + "source='" + source + '\'' + ", destination='" + destination + '\'' + ", timeout=" + timeout + '}';
-	}
+    @Override
+    public String toString() {
+        return "BRPopLPushCommand{" +
+                "source='" + source + '\'' +
+                ", destination='" + destination + '\'' +
+                ", timeout=" + timeout +
+                '}';
+    }
 }

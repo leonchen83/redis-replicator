@@ -24,61 +24,65 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class ZRemRangeByRankCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private long start;
-	private long stop;
-	private byte[] rawKey;
+    private String key;
+    private long start;
+    private long stop;
+    private byte[] rawKey;
 
-	public ZRemRangeByRankCommand() {
-	}
+    public ZRemRangeByRankCommand() {
+    }
 
-	public ZRemRangeByRankCommand(String key, long start, long stop) {
-		this(key, start, stop, null);
-	}
+    public ZRemRangeByRankCommand(String key, long start, long stop) {
+        this(key, start, stop, null);
+    }
 
-	public ZRemRangeByRankCommand(String key, long start, long stop, byte[] rawKey) {
-		this.key = key;
-		this.start = start;
-		this.stop = stop;
-		this.rawKey = rawKey;
-	}
+    public ZRemRangeByRankCommand(String key, long start, long stop, byte[] rawKey) {
+        this.key = key;
+        this.start = start;
+        this.stop = stop;
+        this.rawKey = rawKey;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public long getStart() {
-		return start;
-	}
+    public long getStart() {
+        return start;
+    }
 
-	public void setStart(long start) {
-		this.start = start;
-	}
+    public void setStart(long start) {
+        this.start = start;
+    }
 
-	public long getStop() {
-		return stop;
-	}
+    public long getStop() {
+        return stop;
+    }
 
-	public void setStop(long stop) {
-		this.stop = stop;
-	}
+    public void setStop(long stop) {
+        this.stop = stop;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	@Override
-	public String toString() {
-		return "ZRemRangeByRankCommand{" + "key='" + key + '\'' + ", start=" + start + ", stop=" + stop + '}';
-	}
+    @Override
+    public String toString() {
+        return "ZRemRangeByRankCommand{" +
+                "key='" + key + '\'' +
+                ", start=" + start +
+                ", stop=" + stop +
+                '}';
+    }
 }

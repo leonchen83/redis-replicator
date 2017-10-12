@@ -24,71 +24,76 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class LRemCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private long index;
-	private String value;
-	private byte[] rawKey;
-	private byte[] rawValue;
+    private String key;
+    private long index;
+    private String value;
+    private byte[] rawKey;
+    private byte[] rawValue;
 
-	public LRemCommand() {
-	}
 
-	public LRemCommand(String key, long index, String value) {
-		this(key, index, value, null, null);
-	}
+    public LRemCommand() {
+    }
 
-	public LRemCommand(String key, long index, String value, byte[] rawKey, byte[] rawValue) {
-		this.key = key;
-		this.index = index;
-		this.value = value;
-		this.rawKey = rawKey;
-		this.rawValue = rawValue;
-	}
+    public LRemCommand(String key, long index, String value) {
+        this(key, index, value, null, null);
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public LRemCommand(String key, long index, String value, byte[] rawKey, byte[] rawValue) {
+        this.key = key;
+        this.index = index;
+        this.value = value;
+        this.rawKey = rawKey;
+        this.rawValue = rawValue;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public long getIndex() {
-		return index;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public void setIndex(long index) {
-		this.index = index;
-	}
+    public long getIndex() {
+        return index;
+    }
 
-	public String getValue() {
-		return value;
-	}
+    public void setIndex(long index) {
+        this.index = index;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public byte[] getRawValue() {
-		return rawValue;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	public void setRawValue(byte[] rawValue) {
-		this.rawValue = rawValue;
-	}
+    public byte[] getRawValue() {
+        return rawValue;
+    }
 
-	@Override
-	public String toString() {
-		return "LRemCommand{" + "key='" + key + '\'' + ", index=" + index + ", value='" + value + '\'' + '}';
-	}
+    public void setRawValue(byte[] rawValue) {
+        this.rawValue = rawValue;
+    }
+
+    @Override
+    public String toString() {
+        return "LRemCommand{" +
+                "key='" + key + '\'' +
+                ", index=" + index +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

@@ -26,61 +26,64 @@ import java.util.Arrays;
  */
 public class PFMergeCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String destkey;
-	private String[] sourcekeys;
-	private byte[] rawDestkey;
-	private byte[][] rawSourcekeys;
+    private String destkey;
+    private String[] sourcekeys;
+    private byte[] rawDestkey;
+    private byte[][] rawSourcekeys;
 
-	public PFMergeCommand() {
-	}
+    public PFMergeCommand() {
+    }
 
-	public PFMergeCommand(String destkey, String[] sourcekeys) {
-		this(destkey, sourcekeys, null, null);
-	}
+    public PFMergeCommand(String destkey, String[] sourcekeys) {
+        this(destkey, sourcekeys, null, null);
+    }
 
-	public PFMergeCommand(String destkey, String[] sourcekeys, byte[] rawDestkey, byte[][] rawSourcekeys) {
-		this.destkey = destkey;
-		this.sourcekeys = sourcekeys;
-		this.rawDestkey = rawDestkey;
-		this.rawSourcekeys = rawSourcekeys;
-	}
+    public PFMergeCommand(String destkey, String[] sourcekeys, byte[] rawDestkey, byte[][] rawSourcekeys) {
+        this.destkey = destkey;
+        this.sourcekeys = sourcekeys;
+        this.rawDestkey = rawDestkey;
+        this.rawSourcekeys = rawSourcekeys;
+    }
 
-	public String getDestkey() {
-		return destkey;
-	}
+    public String getDestkey() {
+        return destkey;
+    }
 
-	public void setDestkey(String destkey) {
-		this.destkey = destkey;
-	}
+    public void setDestkey(String destkey) {
+        this.destkey = destkey;
+    }
 
-	public String[] getSourcekeys() {
-		return sourcekeys;
-	}
+    public String[] getSourcekeys() {
+        return sourcekeys;
+    }
 
-	public void setSourcekeys(String[] sourcekeys) {
-		this.sourcekeys = sourcekeys;
-	}
+    public void setSourcekeys(String[] sourcekeys) {
+        this.sourcekeys = sourcekeys;
+    }
 
-	public byte[] getRawDestkey() {
-		return rawDestkey;
-	}
+    public byte[] getRawDestkey() {
+        return rawDestkey;
+    }
 
-	public void setRawDestkey(byte[] rawDestkey) {
-		this.rawDestkey = rawDestkey;
-	}
+    public void setRawDestkey(byte[] rawDestkey) {
+        this.rawDestkey = rawDestkey;
+    }
 
-	public byte[][] getRawSourcekeys() {
-		return rawSourcekeys;
-	}
+    public byte[][] getRawSourcekeys() {
+        return rawSourcekeys;
+    }
 
-	public void setRawSourcekeys(byte[][] rawSourcekeys) {
-		this.rawSourcekeys = rawSourcekeys;
-	}
+    public void setRawSourcekeys(byte[][] rawSourcekeys) {
+        this.rawSourcekeys = rawSourcekeys;
+    }
 
-	@Override
-	public String toString() {
-		return "PFMergeCommand{" + "destkey='" + destkey + '\'' + ", sourcekey=" + Arrays.toString(sourcekeys) + '}';
-	}
+    @Override
+    public String toString() {
+        return "PFMergeCommand{" +
+                "destkey='" + destkey + '\'' +
+                ", sourcekey=" + Arrays.toString(sourcekeys) +
+                '}';
+    }
 }

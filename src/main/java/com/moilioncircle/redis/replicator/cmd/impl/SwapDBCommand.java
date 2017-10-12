@@ -24,38 +24,41 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class SwapDBCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private int source;
-	private int target;
+    private int source;
+    private int target;
 
-	public SwapDBCommand() {
+    public SwapDBCommand() {
 
-	}
+    }
 
-	public SwapDBCommand(int source, int target) {
-		this.source = source;
-		this.target = target;
-	}
+    public SwapDBCommand(int source, int target) {
+        this.source = source;
+        this.target = target;
+    }
 
-	public int getSource() {
-		return source;
-	}
+    public int getSource() {
+        return source;
+    }
 
-	public void setSource(int source) {
-		this.source = source;
-	}
+    public void setSource(int source) {
+        this.source = source;
+    }
 
-	public int getTarget() {
-		return target;
-	}
+    public int getTarget() {
+        return target;
+    }
 
-	public void setTarget(int target) {
-		this.target = target;
-	}
+    public void setTarget(int target) {
+        this.target = target;
+    }
 
-	@Override
-	public String toString() {
-		return "SwapDBCommand{" + "source=" + source + ", target=" + target + '}';
-	}
+    @Override
+    public String toString() {
+        return "SwapDBCommand{" +
+                "source=" + source +
+                ", target=" + target +
+                '}';
+    }
 }

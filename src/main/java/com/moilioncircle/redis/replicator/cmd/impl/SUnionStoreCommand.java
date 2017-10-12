@@ -26,62 +26,65 @@ import java.util.Arrays;
  */
 public class SUnionStoreCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String destination;
-	private String[] keys;
-	private byte[] rawDestination;
-	private byte[][] rawKeys;
+    private String destination;
+    private String[] keys;
+    private byte[] rawDestination;
+    private byte[][] rawKeys;
 
-	public SUnionStoreCommand() {
-	}
+    public SUnionStoreCommand() {
+    }
 
-	public SUnionStoreCommand(String destination, String[] keys) {
-		this(destination, keys, null, null);
-	}
+    public SUnionStoreCommand(String destination, String[] keys) {
+        this(destination, keys, null, null);
+    }
 
-	public SUnionStoreCommand(String destination, String[] keys, byte[] rawDestination, byte[][] rawKeys) {
-		this.destination = destination;
-		this.keys = keys;
-		this.rawDestination = rawDestination;
-		this.rawKeys = rawKeys;
-	}
+    public SUnionStoreCommand(String destination, String[] keys, byte[] rawDestination, byte[][] rawKeys) {
+        this.destination = destination;
+        this.keys = keys;
+        this.rawDestination = rawDestination;
+        this.rawKeys = rawKeys;
+    }
 
-	public String getDestination() {
-		return destination;
-	}
+    public String getDestination() {
+        return destination;
+    }
 
-	public void setDestination(String destination) {
-		this.destination = destination;
-	}
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
 
-	public String[] getKeys() {
-		return keys;
-	}
+    public String[] getKeys() {
+        return keys;
+    }
 
-	public void setKeys(String[] keys) {
-		this.keys = keys;
-	}
+    public void setKeys(String[] keys) {
+        this.keys = keys;
+    }
 
-	public byte[] getRawDestination() {
-		return rawDestination;
-	}
+    public byte[] getRawDestination() {
+        return rawDestination;
+    }
 
-	public void setRawDestination(byte[] rawDestination) {
-		this.rawDestination = rawDestination;
-	}
+    public void setRawDestination(byte[] rawDestination) {
+        this.rawDestination = rawDestination;
+    }
 
-	public byte[][] getRawKeys() {
-		return rawKeys;
-	}
+    public byte[][] getRawKeys() {
+        return rawKeys;
+    }
 
-	public void setRawKeys(byte[][] rawKeys) {
-		this.rawKeys = rawKeys;
-	}
+    public void setRawKeys(byte[][] rawKeys) {
+        this.rawKeys = rawKeys;
+    }
 
-	@Override
-	public String toString() {
-		return "SUnionStoreCommand{" + "destination='" + destination + '\'' + ", key=" + Arrays.toString(keys) + '}';
-	}
+    @Override
+    public String toString() {
+        return "SUnionStoreCommand{" +
+                "destination='" + destination + '\'' +
+                ", key=" + Arrays.toString(keys) +
+                '}';
+    }
 
 }

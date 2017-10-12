@@ -24,41 +24,43 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class IncrCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private byte[] rawKey;
+    private String key;
+    private byte[] rawKey;
 
-	public IncrCommand() {
-	}
+    public IncrCommand() {
+    }
 
-	public IncrCommand(String key) {
-		this(key, null);
-	}
+    public IncrCommand(String key) {
+        this(key, null);
+    }
 
-	public IncrCommand(String key, byte[] rawKey) {
-		this.key = key;
-		this.rawKey = rawKey;
-	}
+    public IncrCommand(String key, byte[] rawKey) {
+        this.key = key;
+        this.rawKey = rawKey;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	@Override
-	public String toString() {
-		return "IncrCommand{" + "key='" + key + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "IncrCommand{" +
+                "key='" + key + '\'' +
+                '}';
+    }
 }

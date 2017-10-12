@@ -24,61 +24,64 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class RPopLPushCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String source;
-	private String destination;
-	private byte[] rawSource;
-	private byte[] rawDestination;
+    private String source;
+    private String destination;
+    private byte[] rawSource;
+    private byte[] rawDestination;
 
-	public RPopLPushCommand() {
-	}
+    public RPopLPushCommand() {
+    }
 
-	public RPopLPushCommand(String source, String destination) {
-		this(source, destination, null, null);
-	}
+    public RPopLPushCommand(String source, String destination) {
+        this(source, destination, null, null);
+    }
 
-	public RPopLPushCommand(String source, String destination, byte[] rawSource, byte[] rawDestination) {
-		this.source = source;
-		this.destination = destination;
-		this.rawSource = rawSource;
-		this.rawDestination = rawDestination;
-	}
+    public RPopLPushCommand(String source, String destination, byte[] rawSource, byte[] rawDestination) {
+        this.source = source;
+        this.destination = destination;
+        this.rawSource = rawSource;
+        this.rawDestination = rawDestination;
+    }
 
-	public String getSource() {
-		return source;
-	}
+    public String getSource() {
+        return source;
+    }
 
-	public void setSource(String source) {
-		this.source = source;
-	}
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-	public String getDestination() {
-		return destination;
-	}
+    public String getDestination() {
+        return destination;
+    }
 
-	public void setDestination(String destination) {
-		this.destination = destination;
-	}
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
 
-	public byte[] getRawSource() {
-		return rawSource;
-	}
+    public byte[] getRawSource() {
+        return rawSource;
+    }
 
-	public void setRawSource(byte[] rawSource) {
-		this.rawSource = rawSource;
-	}
+    public void setRawSource(byte[] rawSource) {
+        this.rawSource = rawSource;
+    }
 
-	public byte[] getRawDestination() {
-		return rawDestination;
-	}
+    public byte[] getRawDestination() {
+        return rawDestination;
+    }
 
-	public void setRawDestination(byte[] rawDestination) {
-		this.rawDestination = rawDestination;
-	}
+    public void setRawDestination(byte[] rawDestination) {
+        this.rawDestination = rawDestination;
+    }
 
-	@Override
-	public String toString() {
-		return "RPopLPushCommand{" + "source='" + source + '\'' + ", destination='" + destination + '\'' + '}';
-	}
+    @Override
+    public String toString() {
+        return "RPopLPushCommand{" +
+                "source='" + source + '\'' +
+                ", destination='" + destination + '\'' +
+                '}';
+    }
 }

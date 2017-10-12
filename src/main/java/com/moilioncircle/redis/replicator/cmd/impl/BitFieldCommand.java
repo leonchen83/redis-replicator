@@ -26,61 +26,65 @@ import java.util.List;
  */
 public class BitFieldCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String key;
-	private byte[] rawKey;
-	private List<Statement> statements;
-	private List<OverFlow> overFlows;
+    private String key;
+    private byte[] rawKey;
+    private List<Statement> statements;
+    private List<OverFlow> overFlows;
 
-	public BitFieldCommand() {
-	}
+    public BitFieldCommand() {
+    }
 
-	public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows) {
-		this(key, statements, overFlows, null);
-	}
+    public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows) {
+        this(key, statements, overFlows, null);
+    }
 
-	public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows, byte[] rawKey) {
-		this.key = key;
-		this.rawKey = rawKey;
-		this.statements = statements;
-		this.overFlows = overFlows;
-	}
+    public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows, byte[] rawKey) {
+        this.key = key;
+        this.rawKey = rawKey;
+        this.statements = statements;
+        this.overFlows = overFlows;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public byte[] getRawKey() {
-		return rawKey;
-	}
+    public byte[] getRawKey() {
+        return rawKey;
+    }
 
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
+    public void setRawKey(byte[] rawKey) {
+        this.rawKey = rawKey;
+    }
 
-	public List<Statement> getStatements() {
-		return statements;
-	}
+    public List<Statement> getStatements() {
+        return statements;
+    }
 
-	public void setStatements(List<Statement> statements) {
-		this.statements = statements;
-	}
+    public void setStatements(List<Statement> statements) {
+        this.statements = statements;
+    }
 
-	public List<OverFlow> getOverFlows() {
-		return overFlows;
-	}
+    public List<OverFlow> getOverFlows() {
+        return overFlows;
+    }
 
-	public void setOverFlows(List<OverFlow> overFlows) {
-		this.overFlows = overFlows;
-	}
+    public void setOverFlows(List<OverFlow> overFlows) {
+        this.overFlows = overFlows;
+    }
 
-	@Override
-	public String toString() {
-		return "BitFieldCommand{" + "key='" + key + '\'' + ", statements=" + statements + ", overFlows=" + overFlows + '}';
-	}
+    @Override
+    public String toString() {
+        return "BitFieldCommand{" +
+                "key='" + key + '\'' +
+                ", statements=" + statements +
+                ", overFlows=" + overFlows +
+                '}';
+    }
 }

@@ -24,13 +24,13 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class MultiCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public MultiCommand() {
-	}
+    public MultiCommand() {
+    }
 
-	@Override
-	public String toString() {
-		return "MultiCommand{}";
-	}
+    @Override
+    public String toString() {
+        return "MultiCommand{}";
+    }
 }

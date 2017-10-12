@@ -22,15 +22,15 @@ package com.moilioncircle.redis.replicator.event;
  */
 public class PostFullSyncEvent implements Event {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    private final long checksum;
+	private final long checksum;
 
-    public long getChecksum() {
-        return checksum;
-    }
+	public long getChecksum() {
+		return checksum;
+	}
 
-    public PostFullSyncEvent(final long checksum) {
-        this.checksum = checksum;
-    }
+	public PostFullSyncEvent(final long checksum) {
+		this.checksum = checksum;
+	}
 }

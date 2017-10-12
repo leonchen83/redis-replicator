@@ -24,18 +24,18 @@ import java.util.Objects;
  * @since 2.3.0
  */
 public class UncheckedIOException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public UncheckedIOException(String message, IOException cause) {
-        super(message, Objects.requireNonNull(cause));
-    }
+	public UncheckedIOException(String message, IOException cause) {
+		super(message, Objects.requireNonNull(cause));
+	}
 
-    public UncheckedIOException(IOException cause) {
-        super(Objects.requireNonNull(cause));
-    }
+	public UncheckedIOException(IOException cause) {
+		super(Objects.requireNonNull(cause));
+	}
 
-    @Override
-    public IOException getCause() {
-        return (IOException) super.getCause();
-    }
+	@Override
+	public IOException getCause() {
+		return (IOException) super.getCause();
+	}
 }

@@ -24,5 +24,5 @@ import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
  * @since 2.1.0
  */
 public interface AuxFieldListener {
-    void handle(Replicator replicator, AuxField auxField);
+	void handle(Replicator replicator, AuxField auxField);
 }

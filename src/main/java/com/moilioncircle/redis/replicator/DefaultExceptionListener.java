@@ -24,10 +24,10 @@ import org.apache.commons.logging.LogFactory;
  * @since 2.1.0
  */
 public class DefaultExceptionListener implements ExceptionListener {
-    private static final Log logger = LogFactory.getLog(DefaultExceptionListener.class);
+	private static final Log logger = LogFactory.getLog(DefaultExceptionListener.class);
 
-    @Override
-    public void handle(Replicator replicator, Throwable throwable, Object event) {
-        logger.error("error on event [" + event + "]", throwable);
-    }
+	@Override
+	public void handle(Replicator replicator, Throwable throwable, Object event) {
+		logger.error("error on event [" + event + "]", throwable);
+	}
 }

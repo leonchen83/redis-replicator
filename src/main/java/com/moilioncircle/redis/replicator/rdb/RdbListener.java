@@ -26,24 +26,24 @@ import org.apache.commons.logging.LogFactory;
  * @since 2.1.0
  */
 public interface RdbListener {
-    void preFullSync(Replicator replicator);
+	void preFullSync(Replicator replicator);
 
-    void handle(Replicator replicator, KeyValuePair<?> kv);
+	void handle(Replicator replicator, KeyValuePair<?> kv);
 
-    void postFullSync(Replicator replicator, long checksum);
+	void postFullSync(Replicator replicator, long checksum);
 
-    abstract class Adaptor implements RdbListener {
+	abstract class Adaptor implements RdbListener {
 
-        private static final Log logger = LogFactory.getLog(Adaptor.class);
+		private static final Log logger = LogFactory.getLog(Adaptor.class);
 
-        public void preFullSync(Replicator replicator) {
-            logger.info("pre full sync");
-            //do nothing
-        }
+		public void preFullSync(Replicator replicator) {
+			logger.info("pre full sync");
+			//do nothing
+		}
 
-        public void postFullSync(Replicator replicator, long checksum) {
-            logger.info("post full sync");
-            //do nothing
-        }
-    }
+		public void postFullSync(Replicator replicator, long checksum) {
+			logger.info("post full sync");
+			//do nothing
+		}
+	}
 }

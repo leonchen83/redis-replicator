@@ -26,42 +26,42 @@ import com.moilioncircle.redis.replicator.rdb.RdbListener;
  * @since 2.1.0
  */
 public interface ReplicatorListener {
-    /*
-     * Rdb
-     */
-    boolean addRdbListener(RdbListener listener);
+	/*
+	 * Rdb
+	 */
+	boolean addRdbListener(RdbListener listener);
 
-    boolean removeRdbListener(RdbListener listener);
+	boolean removeRdbListener(RdbListener listener);
 
-    boolean addAuxFieldListener(AuxFieldListener listener);
+	boolean addAuxFieldListener(AuxFieldListener listener);
 
-    boolean removeAuxFieldListener(AuxFieldListener listener);
+	boolean removeAuxFieldListener(AuxFieldListener listener);
 
-    /*
-     * Raw byte
-     */
-    boolean addRawByteListener(RawByteListener listener);
+	/*
+	 * Raw byte
+	 */
+	boolean addRawByteListener(RawByteListener listener);
 
-    boolean removeRawByteListener(RawByteListener listener);
+	boolean removeRawByteListener(RawByteListener listener);
 
-    /*
-     * Command
-     */
-    boolean addCommandListener(CommandListener listener);
+	/*
+	 * Command
+	 */
+	boolean addCommandListener(CommandListener listener);
 
-    boolean removeCommandListener(CommandListener listener);
+	boolean removeCommandListener(CommandListener listener);
 
-    /*
-     * Close
-     */
-    boolean addCloseListener(CloseListener listener);
+	/*
+	 * Close
+	 */
+	boolean addCloseListener(CloseListener listener);
 
-    boolean removeCloseListener(CloseListener listener);
+	boolean removeCloseListener(CloseListener listener);
 
-    /*
-     * Exception
-     */
-    boolean addExceptionListener(ExceptionListener listener);
+	/*
+	 * Exception
+	 */
+	boolean addExceptionListener(ExceptionListener listener);
 
-    boolean removeExceptionListener(ExceptionListener listener);
+	boolean removeExceptionListener(ExceptionListener listener);
 }

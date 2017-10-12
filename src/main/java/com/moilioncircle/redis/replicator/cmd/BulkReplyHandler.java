@@ -25,16 +25,20 @@ import java.io.IOException;
  * @since 2.1.0
  */
 public interface BulkReplyHandler {
-    byte[] handle(long len, RedisInputStream in) throws IOException;
+	byte[] handle(long len, RedisInputStream in) throws IOException;
 
-    class SimpleBulkReplyHandler implements BulkReplyHandler {
-        @Override
-        public byte[] handle(long len, RedisInputStream in) throws IOException {
-            byte[] reply = len == 0 ? new byte[]{} : in.readBytes(len).first();
-            int c;
-            if ((c = in.read()) != '\r') throw new AssertionError("expect '\\r' but :" + (char) c);
-            if ((c = in.read()) != '\n') throw new AssertionError("expect '\\n' but :" + (char) c);
-            return reply;
-        }
-    }
+	class SimpleBulkReplyHandler implements BulkReplyHandler {
+		@Override
+		public byte[] handle(long len, RedisInputStream in) throws IOException {
+			byte[] reply = len == 0 ? new byte[] {}
+				: in.readBytes(len)
+					.first();
+			int c;
+			if ((c = in.read()) != '\r')
+				throw new AssertionError("expect '\\r' but :" + (char) c);
+			if ((c = in.read()) != '\n')
+				throw new AssertionError("expect '\\n' but :" + (char) c);
+			return reply;
+		}
+	}
 }

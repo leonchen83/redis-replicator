@@ -165,7 +165,9 @@ public class ByteArrayMapTest {
         out.close();
 
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+        @SuppressWarnings("unchecked")
         ByteArrayMap<byte[]> deseri = (ByteArrayMap<byte[]>) in.readObject();
+        in.close();
         assertEquals(3, deseri.size());
         assertEquals(true, Arrays.equals(new byte[]{4, 5, 6}, deseri.get(new byte[]{1, 2, 3})));
         assertEquals(true, Arrays.equals(new byte[]{4}, deseri.get(null)));
@@ -176,7 +178,6 @@ public class ByteArrayMapTest {
         assertEquals(false, deseri.containsKey(1));
         assertEquals(false, deseri.containsValue(new byte[]{4, 5, 6}));
         assertEquals(true, deseri.containsValue(null));
-        in.close();
     }
 
     private final class TestEntry implements Map.Entry<byte[], byte[]> {

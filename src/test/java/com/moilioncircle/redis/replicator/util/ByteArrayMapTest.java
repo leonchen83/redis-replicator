@@ -165,7 +165,7 @@ public class ByteArrayMapTest {
         out.close();
 
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-        ByteArrayMap<byte[]> deseri = (ByteArrayMap<byte[]>)in.readObject();
+        ByteArrayMap<byte[]> deseri = (ByteArrayMap<byte[]>) in.readObject();
         assertEquals(3, deseri.size());
         assertEquals(true, Arrays.equals(new byte[]{4, 5, 6}, deseri.get(new byte[]{1, 2, 3})));
         assertEquals(true, Arrays.equals(new byte[]{4}, deseri.get(null)));

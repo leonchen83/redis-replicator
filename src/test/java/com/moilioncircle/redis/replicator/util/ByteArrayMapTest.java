@@ -18,6 +18,12 @@ package com.moilioncircle.redis.replicator.util;
 
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -144,6 +150,33 @@ public class ByteArrayMapTest {
             aa.remove();
         }
         assertEquals(0, bytes.size());
+    }
+
+    @Test
+    public void testSerialize() throws IOException, ClassNotFoundException {
+        Map<byte[], byte[]> m = new LinkedHashMap<>();
+        m.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
+        m.put(null, new byte[]{4});
+        m.put(new byte[]{4, 5, 6}, null);
+        File file = new File("./test.txt");
+        ByteArrayMap<byte[]> bytes = new ByteArrayMap<>(m);
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
+        out.writeObject(bytes);
+        out.close();
+
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+        ByteArrayMap<byte[]> deseri = (ByteArrayMap<byte[]>)in.readObject();
+        assertEquals(3, deseri.size());
+        assertEquals(true, Arrays.equals(new byte[]{4, 5, 6}, deseri.get(new byte[]{1, 2, 3})));
+        assertEquals(true, Arrays.equals(new byte[]{4}, deseri.get(null)));
+        assertEquals(null, deseri.get(new byte[]{4, 5, 6}));
+        assertEquals(false, deseri.isEmpty());
+        assertEquals(true, deseri.containsKey(new byte[]{1, 2, 3}));
+        assertEquals(true, deseri.containsKey(null));
+        assertEquals(false, deseri.containsKey(1));
+        assertEquals(false, deseri.containsValue(new byte[]{4, 5, 6}));
+        assertEquals(true, deseri.containsValue(null));
+        in.close();
     }
 
     private final class TestEntry implements Map.Entry<byte[], byte[]> {

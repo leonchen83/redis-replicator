@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.util;
 
+import java.io.Serializable;
 import java.util.AbstractSet;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,7 +31,8 @@ import java.util.Set;
  * @since 2.2.0
  */
 //@NonThreadSafe
-public class ByteArrayMap<V> implements Map<byte[], V> {
+public class ByteArrayMap<V> implements Map<byte[], V>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     protected final Map<Key, V> map;
 
@@ -126,7 +128,8 @@ public class ByteArrayMap<V> implements Map<byte[], V> {
         return new EntrySet();
     }
 
-    private static final class Key {
+    private static final class Key implements Serializable {
+        private static final long serialVersionUID = 1L;
 
         private final byte[] bytes;
 

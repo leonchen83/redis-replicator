@@ -482,7 +482,7 @@ redis 2.6 - 4.0.x
 
 ## 4.5. Redis URI
 
-Before redis-replicator-2.4.0, We construct `RedisReplicator` like following:  
+Before redis-replicator-2.4.0, We construct `RedisReplicator` like the following:  
 
 ```java  
 Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
@@ -524,7 +524,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
   
 ## 5.2. EOFException
   
-* Adjust redis server setting like following. more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
+* Adjust redis server setting like the following. more details please refer to [redis.conf](https://raw.githubusercontent.com/antirez/redis/3.0/redis.conf)  
   
 ```java  
     client-output-buffer-limit slave 0 0 0
@@ -534,7 +534,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 ## 5.3. Trace event log  
   
 * Set log level to **debug**
-* If you are using log4j2, add logger like following:
+* If you are using log4j2, add logger like the following:
 
 ```xml  
     <Logger name="com.moilioncircle" level="debug">
@@ -571,7 +571,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 
 ## 5.6. Avoid full sync  
   
-* Adjust redis server setting like following  
+* Adjust redis server setting like the following  
   
 ```java  
     repl-backlog-size

@@ -1,32 +1,32 @@
 ### 2.4.3
-fix multi thread `close` bug.  
-fix `restore` command bug.  
+Fix multi thread `close` bug.  
+Fix `restore` command bug.  
 
 ### 2.4.2
 
-fix `Replicator.open` IOException bug.
+Fix `Replicator.open` IOException bug.
 
 ### 2.4.1
 
-add `Replicator.getStatus`.  
-fix close replicator bug.  
+Add `Replicator.getStatus`.  
+Fix close replicator bug.  
 
 ### 2.4.0  
 
-add `RedisSocketReplicator.getStatus`.  
-add constructor `RedisReplicator(String uri)`.  
+Add `RedisSocketReplicator.getStatus`.  
+Add constructor `RedisReplicator(String uri)`.  
 
-redis uri support.  
-diskless replication support.  
-fix offset bug. only add heart beat offset after event consumed.  
+Redis uri support.  
+Disk-less replication support.  
+Fix offset bug. only add heart beat offset after event consumed.  
 
 ### 2.3.2
 
-add `Configuration.rateLimit`.
+Add `Configuration.rateLimit`.
 
 ### 2.3.1
 
-add 3 commands.
+Add 3 commands.
 
 ```java  
 
@@ -36,56 +36,59 @@ SORT
 
 ```
 
-fix reconnect bug.
+Fix reconnect bug.
 
 ### 2.3.0
-module_2 support.  
+Module_2 support.  
 
-add a new RdbVisitor : `ValueIterableRdbVisitor`.
+Add a new RdbVisitor : `ValueIterableRdbVisitor`.
 
-**api changes** :  
+**API changes** :  
+
+ModuleParser.parse(RedisInputStream in) -> ModuleParser.parse(RedisInputStream in, int version)  
+DefaultRdbModuleParser add following methods for module_2:  
 
 ```java  
-ModuleParser.parse(RedisInputStream in) -> ModuleParser.parse(RedisInputStream in, int version)  
-DefaultRdbModuleParser add following methods for module_2
+
 loadSigned(int version)
 loadUnsigned(int version)
 loadString(int version)
 loadStringBuffer(int version)
 loadDouble(int version)
 loadFloat(int version)
+
 ```
 
 ### 2.2.0
-raw bytes support.
+
+Raw bytes support.  
 
 ### 2.1.2  
 
-```java  
-DefaultRdbModuleParser.loadUnSigned mark deprecated. use DefaultRdbModuleParser.loadUnsigned instead.
-fix compile warning  
-fix javadoc  
-fix log format  
-```
+DefaultRdbModuleParser.loadUnSigned mark deprecated. use DefaultRdbModuleParser.loadUnsigned instead.  
+Fix compile warning.  
+Fix javadoc.  
+Fix log format.  
 
 ### 2.1.1  
-**api changes** :  
+**API changes** :  
+
+Add new commands :  
 
 ```java  
-add new commands :  
-swapdb,zremrangebylex,zremrangebyrank,zremrangebyscore,multi,exec.
+SWAPDB, ZREMRANGEBYLEX, ZREMRANGEBYRANK, ZREMRANGEBYSCORE, MULTI, EXEC.
 RPushXCommand value -> values (redis 4.0 compatibility)
 LPushXCommand value -> values (redis 4.0 compatibility)
 ```
 
 ### 2.1.0
-**api changes** :
+**API changes** :
 
 ```java  
 RdbVisitor interface -> abstract  
 ```
 
-**command changes** :  
+**Command changes** :  
 
 ```java  
 ZIncrByCommand.increment int -> double  
@@ -101,7 +104,7 @@ DecrByCommand.value int -> long
 ```
 
 ### 2.0.0-rc3  
-**api changes** :  
+**API changes** :  
 
 ```java  
 ReplicatorListener.addRdbRawByteListener -> ReplicatorListener.addRawByteListener
@@ -109,7 +112,7 @@ ReplicatorListener.removeRdbRawByteListener -> ReplicatorListener.removeRawByteL
 ```
 
 ### 2.0.0-rc2  
-no api changes  
+No API changes  
 
 ### 2.0.0-rc1  
 2.0.0 Initial commit  

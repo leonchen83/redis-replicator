@@ -41,7 +41,6 @@ import java.util.Map;
  * @author Leon Chen
  * @since 2.5.0
  */
-@SuppressWarnings("resource")
 public class HugeKVExample {
     private static final int BATCH_SIZE = 100;
 
@@ -49,6 +48,7 @@ public class HugeKVExample {
         Replicator r = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new RdbListener.Adaptor() {
+            @SuppressWarnings("unused")
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
 
@@ -123,7 +123,7 @@ public class HugeKVExample {
                         // your business code goes here.
                     }
                 } else if (kv instanceof KeyStringValueModule) {
-                    KeyStringValueModule ksvs = (KeyStringValueModule) kv;
+                    KeyStringValueModule ksvm = (KeyStringValueModule) kv;
                     // your business code
                 }
             }

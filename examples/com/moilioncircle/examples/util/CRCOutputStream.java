@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import static com.moilioncircle.examples.util.CRC64.crc64;
+import static com.moilioncircle.examples.util.CRC64.longToByteArray;
 
 /**
  * @author Leon Chen
@@ -36,19 +37,6 @@ public class CRCOutputStream extends OutputStream {
 
     public byte[] getCRC64() {
         return longToByteArray(checksum);
-    }
-
-    private static byte[] longToByteArray(long value) {
-        return new byte[]{
-                (byte) value,
-                (byte) (value >> 8),
-                (byte) (value >> 16),
-                (byte) (value >> 24),
-                (byte) (value >> 32),
-                (byte) (value >> 40),
-                (byte) (value >> 48),
-                (byte) (value >> 56),
-        };
     }
 
     @Override

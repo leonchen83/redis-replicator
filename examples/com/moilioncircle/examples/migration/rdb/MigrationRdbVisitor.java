@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 import static com.moilioncircle.examples.util.CRC64.crc64;
+import static com.moilioncircle.examples.util.CRC64.longToByteArray;
 import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
@@ -79,19 +80,6 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
                 this.builder.put(b);
             }
             return this.builder.array();
-        }
-
-        private static byte[] longToByteArray(long value) {
-            return new byte[]{
-                    (byte) value,
-                    (byte) (value >> 8),
-                    (byte) (value >> 16),
-                    (byte) (value >> 24),
-                    (byte) (value >> 32),
-                    (byte) (value >> 40),
-                    (byte) (value >> 48),
-                    (byte) (value >> 56),
-            };
         }
     }
 

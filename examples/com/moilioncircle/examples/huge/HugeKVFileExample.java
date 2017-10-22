@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.huge;
 
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
@@ -31,6 +30,7 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueBy
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,16 +39,17 @@ import java.util.Map;
 
 /**
  * @author Leon Chen
- * @since 2.5.0
+ * @since 2.1.0
  */
-public class HugeKVExample {
+@SuppressWarnings("resource")
+public class HugeKVFileExample {
+
     private static final int BATCH_SIZE = 100;
 
     public static void main(String[] args) throws IOException {
-        Replicator r = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator r = new RedisReplicator(new File("./src/test/resources/dumpV7.rdb"), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new RdbListener.Adaptor() {
-            @SuppressWarnings("unused")
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
 
@@ -123,15 +124,9 @@ public class HugeKVExample {
                         // your business code goes here.
                     }
                 } else if (kv instanceof KeyStringValueModule) {
-                    KeyStringValueModule ksvm = (KeyStringValueModule) kv;
+                    KeyStringValueModule ksvs = (KeyStringValueModule) kv;
                     // your business code
                 }
-            }
-        });
-        r.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
             }
         });
         r.open();

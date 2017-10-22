@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.backup;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
@@ -29,16 +27,16 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
 @SuppressWarnings("resource")
-public class CommandBackupExample {
+public class RdbBackupExample {
     public static void main(String[] args) throws IOException {
-        final FileOutputStream out = new FileOutputStream(new File("./src/test/resources/appendonly.aof"));
+
+        final FileOutputStream out = new FileOutputStream(new File("./src/test/resources/dump.rdb"));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -49,11 +47,12 @@ public class CommandBackupExample {
             }
         };
 
-        //save 1000 records commands
+        //save rdb from remote server
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
+                replicator.addRawByteListener(rawByteListener);
             }
 
             @Override
@@ -62,32 +61,22 @@ public class CommandBackupExample {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                replicator.addRawByteListener(rawByteListener);
-            }
-        });
-
-        final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if (acc.incrementAndGet() == 1000) {
-                    try {
-                        out.close();
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                replicator.removeRawByteListener(rawByteListener);
+                try {
+                    out.close();
+                    replicator.close();
+                } catch (IOException ignore) {
                 }
             }
         });
         replicator.open();
 
-        //check aof file
-        replicator = new RedisReplicator(new File("./src/test/resources/appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
-        replicator.addCommandListener(new CommandListener() {
+        //check rdb file
+        replicator = new RedisReplicator(new File("./src/test/resources/dump.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
             }
         });
         replicator.open();

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.extension;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -42,6 +42,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 @SuppressWarnings("resource")
 public class ModuleParserExample {
+
     public static void main(String[] args) throws IOException {
         RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());

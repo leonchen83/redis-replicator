@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.extension;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -32,6 +32,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 @SuppressWarnings("resource")
 public class CommandParserExample {
+
     public static void main(String[] args) throws Exception {
         final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
 

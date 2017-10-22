@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.file;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
@@ -30,13 +30,28 @@ import java.io.IOException;
  * @author Leon Chen
  * @since 2.1.0
  */
-@SuppressWarnings("resource")
-public class AofFileExample {
+public class AofReadExample {
 
-    public static void main(String[] args) throws IOException {
+    @SuppressWarnings("resource")
+    public static void readFile() throws IOException {
         final Replicator replicator = new RedisReplicator(
                 new File("./src/test/resources/appendonly1.aof"),
                 FileType.AOF, Configuration.defaultSetting());
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                System.out.println(command);
+            }
+        });
+
+        replicator.open();
+    }
+
+    @SuppressWarnings("resource")
+    public static void readInputStream() throws IOException {
+        final Replicator replicator = new RedisReplicator(
+                AofReadExample.class.getResourceAsStream("/appendonly1.aof"), FileType.AOF,
+                Configuration.defaultSetting());
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {

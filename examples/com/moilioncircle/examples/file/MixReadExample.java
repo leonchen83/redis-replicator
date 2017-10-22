@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.file;
 
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
@@ -24,42 +25,52 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-@SuppressWarnings("resource")
-public class BroadcastEventExample {
-    public static void main(String[] args) throws IOException {
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
-        //broadcast rdb event
+public class MixReadExample {
+
+    @SuppressWarnings("resource")
+    public static void readFile() throws IOException {
+        final Replicator replicator = new RedisReplicator(new File("./src/test/resources/appendonly4.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println("broadcast rdb channel 1 " + kv);
+                System.out.println(kv);
             }
         });
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addCommandListener(new CommandListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println("broadcast rdb channel 2 " + kv);
+            public void handle(Replicator replicator, Command command) {
+                System.out.println(command);
             }
         });
 
-        replicator.addCommandListener(new CommandListener() {
+        replicator.open();
+    }
+
+    @SuppressWarnings("resource")
+    public static void readInputStream() throws IOException {
+        final Replicator replicator = new RedisReplicator(MixReadExample.class.getResourceAsStream("/appendonly4.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println("broadcast command channel 1 " + command);
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
             }
         });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
-                System.out.println("broadcast command channel 2 " + command);
+                System.out.println(command);
             }
         });
+
         replicator.open();
     }
 }

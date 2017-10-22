@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.other;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;

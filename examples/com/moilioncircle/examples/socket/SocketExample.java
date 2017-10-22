@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.socket;
 
 import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -31,15 +31,23 @@ import java.io.IOException;
  * @since 2.1.0
  */
 @SuppressWarnings("resource")
-public class RdbFileExample {
+public class SocketExample {
     public static void main(String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(
-                new File("./src/test/resources/dumpV7.rdb"), FileType.RDB,
+                "127.0.0.1", 6379,
                 Configuration.defaultSetting());
+
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 System.out.println(kv);
+            }
+        });
+
+        replicator.addCommandListener(new CommandListener() {
+            @Override
+            public void handle(Replicator replicator, Command command) {
+                System.out.println(command);
             }
         });
 

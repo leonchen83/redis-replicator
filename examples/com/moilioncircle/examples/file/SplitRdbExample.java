@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.file;
 
+import com.moilioncircle.examples.util.CRCOutputStream;
 import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
+
 /**
  * @author Leon Chen
  * @since 2.3.2
@@ -47,11 +49,12 @@ public class SplitRdbExample {
                 new File("./src/test/resources/dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
 
-        final FileOutputStream[] outs = new FileOutputStream[4];
-        final AtomicBoolean[] heads = new AtomicBoolean[outs.length];
-        for (int i = 0; i < outs.length; i++) {
+        final int len = 4;
+        final CRCOutputStream[] outs = new CRCOutputStream[len];
+        final AtomicBoolean[] heads = new AtomicBoolean[len];
+        for (int i = 0; i < len; i++) {
             heads[i] = new AtomicBoolean(true);
-            outs[i] = new FileOutputStream(new File("./src/test/resources/dump-split-" + i + ".rdb"));
+            outs[i] = new CRCOutputStream(new FileOutputStream(new File("./src/test/resources/dump-split-" + i + ".rdb")));
         }
         final Tuple2<String, ByteBuilder> tuple = new Tuple2<>();
         tuple.setT2(ByteBuilder.allocate(128));
@@ -101,13 +104,11 @@ public class SplitRdbExample {
             }
 
             public void postFullSync(Replicator replicator, long checksum) {
-                for (FileOutputStream out : outs) {
+                for (int i = 0; i < len; i++) {
                     try {
-                        out.write(Constants.RDB_OPCODE_EOF);
-                        // if you want to load data from split rdb file which we generated.
-                        // You MUST close rdbchecksum in redis.conf.
-                        // Because this checksum is not correct.
-                        out.write(longToByteArray(checksum));
+                        CRCOutputStream out = outs[i];
+                        out.write(RDB_OPCODE_EOF);
+                        out.write(out.getCRC64());
                         out.close();
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
@@ -117,19 +118,6 @@ public class SplitRdbExample {
         });
 
         replicator.open();
-    }
-
-    private static byte[] longToByteArray(long value) {
-        return new byte[]{
-                (byte) value,
-                (byte) (value >> 8),
-                (byte) (value >> 16),
-                (byte) (value >> 24),
-                (byte) (value >> 32),
-                (byte) (value >> 40),
-                (byte) (value >> 48),
-                (byte) (value >> 56),
-        };
     }
 
     private static class Tuple2<T1, T2> {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.file;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
@@ -23,17 +23,34 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-@SuppressWarnings("resource")
-public class RdbInputStreamExample {
-    public static void main(String[] args) throws IOException {
+public class RdbReadExample {
+
+    @SuppressWarnings("resource")
+    public static void readFile() throws IOException {
         final Replicator replicator = new RedisReplicator(
-                RdbInputStreamExample.class.getResourceAsStream("/dumpV7.rdb"), FileType.RDB,
+                new File("./src/test/resources/dumpV7.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                System.out.println(kv);
+            }
+        });
+
+        replicator.open();
+    }
+
+    @SuppressWarnings("resource")
+    public static void readInputStream() throws IOException {
+        final Replicator replicator = new RedisReplicator(
+                RdbReadExample.class.getResourceAsStream("/dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

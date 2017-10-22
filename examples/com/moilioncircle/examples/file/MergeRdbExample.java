@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.file;
 
+import com.moilioncircle.examples.util.CRCOutputStream;
 import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
@@ -34,6 +34,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
+
 /**
  * @author Leon Chen
  * @since 2.3.2
@@ -41,7 +43,7 @@ import java.util.Arrays;
 @SuppressWarnings("resource")
 public class MergeRdbExample {
     public static void main(String[] args) throws IOException {
-        try (FileOutputStream out = new FileOutputStream(new File("./src/test/resources/dump-merged.rdb"))) {
+        try (CRCOutputStream out = new CRCOutputStream(new FileOutputStream(new File("./src/test/resources/dump-merged.rdb")))) {
             // you know your redis version. so you know your rdb version.
             out.write("REDIS0007".getBytes());
             for (int i = 0; i < 4; i++) {
@@ -92,11 +94,8 @@ public class MergeRdbExample {
 
                 replicator.open();
             }
-            out.write(Constants.RDB_OPCODE_EOF);
-            // if you want to load data from split rdb file which we generated.
-            // You MUST close rdbchecksum in redis.conf.
-            // Because this checksum is not correct.
-            out.write(longToByteArray(0L));
+            out.write(RDB_OPCODE_EOF);
+            out.write(out.getCRC64());
         }
     }
 
@@ -127,18 +126,5 @@ public class MergeRdbExample {
         public String toString() {
             return "<" + t1 + ", " + t2 + '>';
         }
-    }
-
-    private static byte[] longToByteArray(long value) {
-        return new byte[]{
-                (byte) value,
-                (byte) (value >> 8),
-                (byte) (value >> 16),
-                (byte) (value >> 24),
-                (byte) (value >> 32),
-                (byte) (value >> 40),
-                (byte) (value >> 48),
-                (byte) (value >> 56),
-        };
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples;
+package com.moilioncircle.examples.file;
 
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;

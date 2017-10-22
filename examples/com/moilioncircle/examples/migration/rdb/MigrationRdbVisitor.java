@@ -30,6 +30,7 @@ import com.moilioncircle.redis.replicator.util.ByteBuilder;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+import static com.moilioncircle.examples.util.CRC64.crc64;
 import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
@@ -73,7 +74,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
             this.builder.put((byte) version);
             this.builder.put((byte) 0x00);
             byte[] bytes = this.builder.array();
-            byte[] crc = longToByteArray(CRC64.crc64(bytes));
+            byte[] crc = longToByteArray(crc64(bytes));
             for (byte b : crc) {
                 this.builder.put(b);
             }

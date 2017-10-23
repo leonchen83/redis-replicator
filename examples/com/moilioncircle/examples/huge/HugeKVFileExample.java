@@ -16,16 +16,12 @@
 
 package com.moilioncircle.examples.huge;
 
-import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +32,8 @@ import java.util.Map;
 @SuppressWarnings("resource")
 public class HugeKVFileExample {
 
-    public static void main(String[] args) throws IOException {
-        Replicator r = new RedisReplicator(new File("./src/test/resources/dumpV7.rdb"), FileType.RDB, Configuration.defaultSetting());
+    public static void main(String[] args) throws Exception {
+        Replicator r = new RedisReplicator("redis:///path/to/dump.rdb");
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new HugeKVRdbListener(200) {
             @Override

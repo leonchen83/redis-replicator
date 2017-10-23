@@ -16,7 +16,6 @@
 
 package com.moilioncircle.examples.huge;
 
-import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
@@ -25,7 +24,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -35,8 +33,8 @@ import java.util.Map;
  */
 public class HugeKVSocketExample {
 
-    public static void main(String[] args) throws IOException {
-        Replicator r = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+    public static void main(String[] args) throws Exception {
+        Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new HugeKVRdbListener(200) {
             @Override

@@ -16,17 +16,18 @@
 
 package com.moilioncircle.examples.backup;
 
-import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URISyntaxException;
 
 /**
  * @author Leon Chen
@@ -34,9 +35,9 @@ import java.io.IOException;
  */
 @SuppressWarnings("resource")
 public class RdbBackupExample {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
 
-        final FileOutputStream out = new FileOutputStream(new File("./src/test/resources/dump.rdb"));
+        final OutputStream out = new BufferedOutputStream(new FileOutputStream(new File("/path/to/dump.rdb")));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -48,7 +49,7 @@ public class RdbBackupExample {
         };
 
         //save rdb from remote server
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -72,7 +73,7 @@ public class RdbBackupExample {
         replicator.open();
 
         //check rdb file
-        replicator = new RedisReplicator(new File("./src/test/resources/dump.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator = new RedisReplicator("redis:///path/to/dump.rdb");
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

@@ -29,6 +29,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class SplitRdbExample {
         final AtomicBoolean[] heads = new AtomicBoolean[len];
         for (int i = 0; i < len; i++) {
             heads[i] = new AtomicBoolean(true);
-            outs[i] = new CRCOutputStream(new FileOutputStream(new File("./src/test/resources/dump-split-" + i + ".rdb")));
+            outs[i] = new CRCOutputStream(new BufferedOutputStream(new FileOutputStream(new File("./src/test/resources/dump-split-" + i + ".rdb"))));
         }
         final Tuple2<String, ByteBuilder> tuple = new Tuple2<>();
         tuple.setT2(ByteBuilder.allocate(128));

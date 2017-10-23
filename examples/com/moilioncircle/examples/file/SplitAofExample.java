@@ -27,9 +27,11 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -43,9 +45,9 @@ public class SplitAofExample {
                 new File("./src/test/resources/appendonly2.aof"), FileType.AOF,
                 Configuration.defaultSetting());
 
-        final FileOutputStream[] outs = new FileOutputStream[4];
+        final OutputStream[] outs = new BufferedOutputStream[4];
         for (int i = 0; i < outs.length; i++) {
-            outs[i] = new FileOutputStream(new File("./src/test/resources/appendonly2-split-" + i + ".aof"));
+            outs[i] = new BufferedOutputStream(new FileOutputStream(new File("./src/test/resources/appendonly2-split-" + i + ".aof")));
         }
 
         final Tuple2<Boolean, ByteBuilder> tuple = new Tuple2<>();
@@ -102,7 +104,7 @@ public class SplitAofExample {
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
-                for (FileOutputStream out : outs) {
+                for (OutputStream out : outs) {
                     try {
                         out.close();
                     } catch (IOException e) {

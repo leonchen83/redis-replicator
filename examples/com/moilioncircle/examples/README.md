@@ -22,7 +22,7 @@ Migrate data between two Redis.
 
 ### socket
 
-Replication data via socket.  
+Replication data via Socket.  
 
 ### other
 

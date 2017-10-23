@@ -20,20 +20,12 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,89 +36,33 @@ import java.util.Map;
 @SuppressWarnings("resource")
 public class HugeKVFileExample {
 
-    private static final int BATCH_SIZE = 100;
-
     public static void main(String[] args) throws IOException {
         Replicator r = new RedisReplicator(new File("./src/test/resources/dumpV7.rdb"), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addRdbListener(new HugeKVRdbListener(200) {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+            public void handleString(boolean last, byte[] key, byte[] value, int type) {
+                // your business code goes here.
+            }
 
-                /*
-                 * Note that:
-                 * 1. Every Iterator MUST be consumed.
-                 * 2. Before every it.next() MUST check precondition it.hasNext()
-                 */
-                if (kv instanceof KeyStringValueString) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    // your business code
-                } else if (kv instanceof KeyStringValueByteArrayIterator) {
-                    // handle huge KV
-                    byte[] key = kv.getRawKey();
-                    Iterator<byte[]> it = ((KeyStringValueByteArrayIterator) kv).getValue();
-                    List<byte[]> list = new ArrayList<>();
-                    while (it.hasNext()) {
-                        try {
-                            byte[] v = it.next();
-                            list.add(v);
-                            if (list.size() == BATCH_SIZE) {
-                                // your business code goes here.
+            @Override
+            public void handleModule(boolean last, byte[] key, Module value, int type) {
+                // your business code goes here.
+            }
 
-                                // rebuild list.
-                                list = new ArrayList<>();
-                            }
-                        } catch (IllegalStateException e) {
-                            // do nothing is OK.
-                            // see ValueIterableRdbVisitor.QuickListIter.next().
-                        }
-                    }
-                    // last batch.
-                    if (!list.isEmpty()) {
-                        // your business code goes here.
-                    }
-                } else if (kv instanceof KeyStringValueMapEntryIterator) {
-                    // handle huge KV
-                    byte[] key = kv.getRawKey();
-                    Iterator<Map.Entry<byte[], byte[]>> it = ((KeyStringValueMapEntryIterator) kv).getValue();
-                    List<Map.Entry<byte[], byte[]>> list = new ArrayList<>();
-                    while (it.hasNext()) {
-                        Map.Entry<byte[], byte[]> v = it.next();
-                        list.add(v);
-                        if (list.size() == BATCH_SIZE) {
-                            // your business code goes here.
+            @Override
+            public void handleList(boolean last, byte[] key, List<byte[]> list, int type) {
+                // your business code goes here.
+            }
 
-                            // rebuild list.
-                            list = new ArrayList<>();
-                        }
-                    }
-                    // last batch.
-                    if (!list.isEmpty()) {
-                        // your business code goes here.
-                    }
-                } else if (kv instanceof KeyStringValueZSetEntryIterator) {
-                    // handle huge KV
-                    byte[] key = kv.getRawKey();
-                    Iterator<ZSetEntry> it = ((KeyStringValueZSetEntryIterator) kv).getValue();
-                    List<ZSetEntry> list = new ArrayList<>();
-                    while (it.hasNext()) {
-                        ZSetEntry v = it.next();
-                        list.add(v);
-                        if (list.size() == BATCH_SIZE) {
-                            // your business code goes here.
+            @Override
+            public void handleZSetEntry(boolean last, byte[] key, List<ZSetEntry> list, int type) {
+                // your business code goes here.
+            }
 
-                            // rebuild list.
-                            list = new ArrayList<>();
-                        }
-                    }
-                    // last batch.
-                    if (!list.isEmpty()) {
-                        // your business code goes here.
-                    }
-                } else if (kv instanceof KeyStringValueModule) {
-                    KeyStringValueModule ksvs = (KeyStringValueModule) kv;
-                    // your business code
-                }
+            @Override
+            public void handleMap(boolean last, byte[] key, List<Map.Entry<byte[], byte[]>> list, int type) {
+                // your business code goes here.
             }
         });
         r.open();

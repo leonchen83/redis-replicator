@@ -16,7 +16,6 @@
 
 package com.moilioncircle.examples.extension;
 
-import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
@@ -31,10 +30,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 @SuppressWarnings("resource")
-public class CommandParserExample {
+public class CommandExtensionExample {
 
     public static void main(String[] args) throws Exception {
-        final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
 
         replicator.addCommandParser(CommandName.name("APPEND"), new YourAppendParser());
 

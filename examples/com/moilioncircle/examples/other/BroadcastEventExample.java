@@ -16,15 +16,12 @@
 
 package com.moilioncircle.examples.other;
 
-import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-
-import java.io.IOException;
 
 /**
  * @author Leon Chen
@@ -33,8 +30,8 @@ import java.io.IOException;
 @SuppressWarnings("resource")
 public class BroadcastEventExample {
 
-    public static void main(String[] args) throws IOException {
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+    public static void main(String[] args) throws Exception {
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         //broadcast rdb event
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

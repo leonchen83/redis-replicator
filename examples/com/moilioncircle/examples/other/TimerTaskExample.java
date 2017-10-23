@@ -16,7 +16,6 @@
 
 package com.moilioncircle.examples.other;
 
-import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -49,7 +48,7 @@ public class TimerTaskExample {
         @Override
         public void run() {
             try {
-                Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+                Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
                 replicator.addRdbListener(new RdbListener() {
                     @Override
                     public void preFullSync(Replicator replicator) {
@@ -74,7 +73,7 @@ public class TimerTaskExample {
                 });
 
                 replicator.open();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

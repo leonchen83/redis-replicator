@@ -16,8 +16,6 @@
 
 package com.moilioncircle.examples.backup;
 
-import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
@@ -26,9 +24,12 @@ import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -37,8 +38,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @SuppressWarnings("resource")
 public class CommandBackupExample {
-    public static void main(String[] args) throws IOException {
-        final FileOutputStream out = new FileOutputStream(new File("./src/test/resources/appendonly.aof"));
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        final OutputStream out = new BufferedOutputStream(new FileOutputStream(new File("/path/to/appendonly.aof")));
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -50,7 +51,7 @@ public class CommandBackupExample {
         };
 
         //save 1000 records commands
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {
@@ -83,7 +84,7 @@ public class CommandBackupExample {
         replicator.open();
 
         //check aof file
-        replicator = new RedisReplicator(new File("./src/test/resources/appendonly.aof"), FileType.AOF, Configuration.defaultSetting());
+        replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {

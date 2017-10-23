@@ -16,7 +16,6 @@
 
 package com.moilioncircle.examples.socket;
 
-import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
@@ -24,18 +23,14 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
-import java.io.IOException;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
 @SuppressWarnings("resource")
 public class SocketExample {
-    public static void main(String[] args) throws IOException {
-        final Replicator replicator = new RedisReplicator(
-                "127.0.0.1", 6379,
-                Configuration.defaultSetting());
+    public static void main(String[] args) throws Exception {
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
 
         replicator.addRdbListener(new RdbListener.Adaptor() {
             @Override

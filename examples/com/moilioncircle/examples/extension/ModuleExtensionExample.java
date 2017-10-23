@@ -16,7 +16,6 @@
 
 package com.moilioncircle.examples.extension;
 
-import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
@@ -41,10 +40,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 @SuppressWarnings("resource")
-public class ModuleParserExample {
+public class ModuleExtensionExample {
 
-    public static void main(String[] args) throws IOException {
-        RedisReplicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+    public static void main(String[] args) throws Exception {
+        RedisReplicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
         replicator.addRdbListener(new RdbListener.Adaptor() {

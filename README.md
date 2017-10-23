@@ -47,6 +47,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
       * [5.6. Avoid full sync](#56-avoid-full-sync)
       * [5.7. FullSyncEvent](#57-fullsyncevent)
       * [5.8. Handle raw bytes](#58-handle-raw-bytes)
+      * [5.9. Handle huge key value pair](#59-handle-huge-key-value-pair)
    * [6. Contributors](#6-contributors)
    * [7. References](#7-references)
    * [8. Supported by](#8-supported-by)
@@ -567,6 +568,13 @@ byte[] rawKey = set.getRawKey();
 byte[] rawValue = set.getRawValue();
 
 ```
+
+## 5.9. Handle huge key value pair  
+
+According to [4.3. Write your own rdb parser](#43-write-your-own-rdb-parser), This tool built in an [Iterable Rdb Parser](./src/main/java/com/moilioncircle/redis/replicator/rdb/iterable/ValueIterableRdbVisitor.java) so that handle huge key value pair.  
+More details please refer to:  
+[1] [HugeKVFileExample.java](./examples/com/moilioncircle/examples/huge/HugeKVFileExample.java)  
+[2] [HugeKVSocketExample.java](./examples/com/moilioncircle/examples/huge/HugeKVSocketExample.java)  
   
 # 6. Contributors  
 * [Leon Chen](https://github.com/leonchen83)  

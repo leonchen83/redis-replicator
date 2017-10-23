@@ -48,6 +48,7 @@
       * [5.6. 避免全量同步](#56-避免全量同步)
       * [5.7. FullSyncEvent事件](#57-fullsyncevent事件)
       * [5.8. 处理原始字节数组](#58-处理原始字节数组)
+      * [5.9. 处理巨大的KV](#59-处理巨大的KV)
    * [6. 贡献者](#6-贡献者)
    * [7. 相关引用](#7-相关引用)
    * [8. 致谢](#8-致谢)
@@ -573,6 +574,13 @@ byte[] rawKey = set.getRawKey();
 byte[] rawValue = set.getRawValue();
 
 ```
+
+## 5.9. 处理巨大的KV  
+
+根据 [4.3. 编写你自己的rdb解析器](#43-编写你自己的rdb解析器), 这个工具内嵌了一个[迭代方式的rdb解析器](./src/main/java/com/moilioncircle/redis/replicator/rdb/iterable/ValueIterableRdbVisitor.java), 以便处理巨大的KV.  
+详细的例子参阅:  
+[1] [HugeKVFileExample.java](./examples/com/moilioncircle/examples/huge/HugeKVFileExample.java)  
+[2] [HugeKVSocketExample.java](./examples/com/moilioncircle/examples/huge/HugeKVSocketExample.java)  
   
 # 6. 贡献者  
 

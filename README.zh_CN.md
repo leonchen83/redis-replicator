@@ -21,18 +21,21 @@
          * [3.4.3. 应用Replicator读取混合格式文件](#343-应用replicator读取混合格式文件)
       * [3.5. 备份远程redis的rdb文件](#35-备份远程redis的rdb文件)
       * [3.6. 备份远程redis的实时命令](#36-备份远程redis的实时命令)
+      * [3.7. 其他示例](#37-其他示例)
    * [4. 高级主题](#4-高级主题)
       * [4.1. 命令扩展](#41-命令扩展)
          * [4.1.1. 首先写一个command类](#411-首先写一个command类)
          * [4.1.2. 然后写一个command parser](#412-然后写一个command-parser)
          * [4.1.3. 注册这个command parser到replicator](#413-注册这个command-parser到replicator)
          * [4.1.4. 处理这个注册的command事件](#414-处理这个注册的command事件)
+         * [4.1.5. 结合到一起](#415-结合到一起)
       * [4.2. Module扩展(redis-4.0及以上)](#42-module扩展redis-40及以上)
          * [4.2.1. 编译redis源码中的测试modules](#421-编译redis源码中的测试modules)
          * [4.2.2. 打开redis配置文件redis.conf中相关注释](#422-打开redis配置文件redisconf中相关注释)
          * [4.2.3. 写一个module parser](#423-写一个module-parser)
          * [4.2.4. 再写一个command parser](#424-再写一个command-parser)
          * [4.2.5. 注册module parser和command parser并处理相关事件](#425-注册module-parser和command-parser并处理相关事件)
+         * [4.2.6. 结合到一起](#426-结合到一起)
       * [4.3. 编写你自己的rdb解析器](#43-编写你自己的rdb解析器)
       * [4.4. 事件时间线](#44-事件时间线)
       * [4.5. Redis URI](#45-redis-uri)
@@ -183,115 +186,17 @@ redis 2.6 - 4.0.x
         replicator.open();
 ```
 
-
 ## 3.5. 备份远程redis的rdb文件  
 
-```java  
-
-        final FileOutputStream out = new FileOutputStream(new File("path/to/dump.rdb"));
-        final RawByteListener rawByteListener = new RawByteListener() {
-            @Override
-            public void handle(byte... rawBytes) {
-                try {
-                    out.write(rawBytes);
-                } catch (IOException ignore) {
-                }
-            }
-        };
-
-        //保存server端传来的rdb文件
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-                replicator.addRawByteListener(rawByteListener);
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                replicator.removeRawByteListener(rawByteListener);
-                try {
-                    out.close();
-                    replicator.close();
-                } catch (IOException ignore) {
-                }
-            }
-        });
-        replicator.open();
-
-        //检查写入的rdb文件
-        replicator = new RedisReplicator("redis:///path/to/dump.rdb");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-        replicator.open();
-```
+参阅 [RdbBackupExample.java](./examples/com/moilioncircle/examples/backup/RdbBackupExample.java)  
 
 ## 3.6. 备份远程redis的实时命令  
 
-```java  
+参阅 [CommandBackupExample.java](./examples/com/moilioncircle/examples/backup/CommandBackupExample.java)  
 
-        final FileOutputStream out = new FileOutputStream(new File("/path/to/appendonly.aof"));
-        final RawByteListener rawByteListener = new RawByteListener() {
-            @Override
-            public void handle(byte... rawBytes) {
-                try {
-                    out.write(rawBytes);
-                } catch (IOException ignore) {
-                }
-            }
-        };
+## 3.7. 其他示例  
 
-        //保存1000条命令
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                replicator.addRawByteListener(rawByteListener);
-            }
-        });
-
-        final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if (acc.incrementAndGet() == 1000) {
-                    try {
-                        out.close();
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        replicator.open();
-
-        //检查写入的aof文件
-        replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
-            }
-        });
-        replicator.open();
-```
+参阅 [examples](./examples/com/moilioncircle/examples/README.md)  
 
 # 4. 高级主题  
 
@@ -358,6 +263,10 @@ redis 2.6 - 4.0.x
         }
     });
 ```  
+
+### 4.1.5. 结合到一起  
+
+参阅 [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extension/CommandExtensionExample.java)  
 
 ## 4.2. Module扩展(redis-4.0及以上)  
 ### 4.2.1. 编译redis源码中的测试modules  
@@ -472,7 +381,13 @@ redis 2.6 - 4.0.x
         replicator.open();
     }
 ```
+
+### 4.2.6. 结合到一起  
+
+参阅 [ModuleExtensionExample.java](./examples/com/moilioncircle/examples/extension/ModuleExtensionExample.java)  
+
 ## 4.3. 编写你自己的rdb解析器  
+
 * 写一个类继承 `RdbVisitor` 抽象类  
 * 通过 `Replicator` 的 `setRdbVisitor` 方法注册你自己的 `RdbVisitor`.  
 

@@ -20,18 +20,21 @@ Table of Contents([中文说明](./README.zh_CN.md))
          * [3.4.3. Using replicator read mixed file](#343-using-replicator-read-mixed-file)
       * [3.5. Backup remote rdb snapshot](#35-backup-remote-rdb-snapshot)
       * [3.6. Backup remote commands](#36-backup-remote-commands)
+      * [3.7. Other examples](#37-other-examples)
    * [4. Advanced topics](#4-advanced-topics)
       * [4.1. Command extension](#41-command-extension)
          * [4.1.1. Write a command](#411-write-a-command)
          * [4.1.2. Write a command parser](#412-write-a-command-parser)
          * [4.1.3. Register this parser](#413-register-this-parser)
          * [4.1.4. Handle command event](#414-handle-command-event)
+         * [4.1.5. Put them together](#415-put-them-together)
       * [4.2. Module extension](#42-module-extension)
          * [4.2.1. Compile redis test modules](#421-compile-redis-test-modules)
          * [4.2.2. Open comment in redis.conf](#422-open-comment-in-redisconf)
          * [4.2.3. Write a module parser](#423-write-a-module-parser)
          * [4.2.4. Write a command parser](#424-write-a-command-parser)
          * [4.2.5. Register this module parser and command parser and handle event](#425-register-this-module-parser-and-command-parser-and-handle-event)
+         * [4.2.6. Put them together](#426-put-them-together)
       * [4.3. Write your own rdb parser](#43-write-your-own-rdb-parser)
       * [4.4. Event timeline](#44-event-timeline)
       * [4.5. Redis URI](#45-redis-uri)
@@ -179,112 +182,15 @@ redis 2.6 - 4.0.x
 
 ## 3.5. Backup remote rdb snapshot  
 
-```java  
-
-        final FileOutputStream out = new FileOutputStream(new File("/path/to/dump.rdb"));
-        final RawByteListener rawByteListener = new RawByteListener() {
-            @Override
-            public void handle(byte... rawBytes) {
-                try {
-                    out.write(rawBytes);
-                } catch (IOException ignore) {
-                }
-            }
-        };
-
-        //save rdb from remote server
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-                replicator.addRawByteListener(rawByteListener);
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                replicator.removeRawByteListener(rawByteListener);
-                try {
-                    out.close();
-                    replicator.close();
-                } catch (IOException ignore) {
-                }
-            }
-        });
-        replicator.open();
-
-        //check rdb file
-        replicator = new RedisReplicator("redis:///path/to/dump.rdb");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-        replicator.open();
-```
+See [RdbBackupExample.java](./examples/com/moilioncircle/examples/backup/RdbBackupExample.java)  
 
 ## 3.6. Backup remote commands  
 
-```java  
+See [CommandBackupExample.java](./examples/com/moilioncircle/examples/backup/CommandBackupExample.java)  
 
-        final FileOutputStream out = new FileOutputStream(new File("/path/to/appendonly.aof"));
-        final RawByteListener rawByteListener = new RawByteListener() {
-            @Override
-            public void handle(byte... rawBytes) {
-                try {
-                    out.write(rawBytes);
-                } catch (IOException ignore) {
-                }
-            }
-        };
+## 3.7. Other examples  
 
-        //save 1000 records commands
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                replicator.addRawByteListener(rawByteListener);
-            }
-        });
-
-        final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if (acc.incrementAndGet() == 1000) {
-                    try {
-                        out.close();
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        replicator.open();
-
-        //check aof file
-        replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
-            }
-        });
-        replicator.open();
-```
+See [examples](./examples/com/moilioncircle/examples/README.md)  
 
 # 4. Advanced topics  
 
@@ -351,6 +257,10 @@ redis 2.6 - 4.0.x
         }
     });
 ```  
+
+### 4.1.5. Put them together  
+
+See [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extension/CommandExtensionExample.java)  
 
 ## 4.2. Module extension  
 ### 4.2.1. Compile redis test modules  
@@ -465,7 +375,13 @@ redis 2.6 - 4.0.x
         replicator.open();
     }
 ```
+
+### 4.2.6. Put them together
+
+See [ModuleExtensionExample.java](./examples/com/moilioncircle/examples/extension/ModuleExtensionExample.java)  
+
 ## 4.3. Write your own rdb parser  
+
 * Extends `RdbVisitor`  
 * Register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 leon chen
+ * Copyright 2016-2017 Leon Chen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.Map;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 2.5.0
  */
 @SuppressWarnings("resource")
 public class HugeKVFileExample {

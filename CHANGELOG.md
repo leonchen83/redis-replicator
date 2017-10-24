@@ -1,4 +1,9 @@
+### 2.4.4
+
+Fix ByteArrayMap serialize bug.  
+
 ### 2.4.3
+
 Fix multi thread `close` bug.  
 Fix `restore` command bug.  
 
@@ -18,7 +23,7 @@ Add constructor `RedisReplicator(String uri)`.
 
 Redis uri support.  
 Disk-less replication support.  
-Fix offset bug. only add heart beat offset after event consumed.  
+Fix offset bug. only ping heartbeat offset after event consumed.  
 
 ### 2.3.2
 
@@ -39,6 +44,7 @@ SORT
 Fix reconnect bug.
 
 ### 2.3.0
+
 Module_2 support.  
 
 Add a new RdbVisitor : `ValueIterableRdbVisitor`.
@@ -63,14 +69,15 @@ loadFloat(int version)
 
 Raw bytes support.  
 
-### 2.1.2  
+### 2.1.2
 
 DefaultRdbModuleParser.loadUnSigned mark deprecated. use DefaultRdbModuleParser.loadUnsigned instead.  
 Fix compile warning.  
 Fix javadoc.  
 Fix log format.  
 
-### 2.1.1  
+### 2.1.1
+
 **API changes** :  
 
 Add new commands :  
@@ -82,6 +89,7 @@ LPushXCommand value -> values (redis 4.0 compatibility)
 ```
 
 ### 2.1.0
+
 **API changes** :
 
 ```java  
@@ -103,7 +111,8 @@ HIncrByCommand.increment int -> long
 DecrByCommand.value int -> long
 ```
 
-### 2.0.0-rc3  
+### 2.0.0-rc3
+
 **API changes** :  
 
 ```java  
@@ -111,8 +120,10 @@ ReplicatorListener.addRdbRawByteListener -> ReplicatorListener.addRawByteListene
 ReplicatorListener.removeRdbRawByteListener -> ReplicatorListener.removeRawByteListener
 ```
 
-### 2.0.0-rc2  
+### 2.0.0-rc2
+
 No API changes  
 
-### 2.0.0-rc1  
+### 2.0.0-rc1
+
 2.0.0 Initial commit  

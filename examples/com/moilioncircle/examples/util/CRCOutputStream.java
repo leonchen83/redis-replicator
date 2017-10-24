@@ -24,7 +24,7 @@ import static com.moilioncircle.examples.util.CRC64.longToByteArray;
 
 /**
  * @author Leon Chen
- * @since 2.5.0
+ * @since 2.4.4
  */
 public class CRCOutputStream extends OutputStream {
 

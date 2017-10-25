@@ -171,11 +171,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 } else {
                     exception = (IOException) e;
                 }
-                logger.error("[redis-replicator] socket error", exception);
+                logger.error("[redis-replicator] socket error. redis-server[" + host + ":" + port + "]", exception);
                 doClose();
                 //retry psync in next loop.
                 if (logger.isInfoEnabled()) {
-                    logger.info("reconnect to redis-server. retry times:" + (i + 1));
+                    logger.info("reconnect to redis-server[" + host + ":" + port + "]. retry times:" + (i + 1));
                 }
                 try {
                     Thread.sleep(configuration.getRetryTimeInterval());
@@ -392,6 +392,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             this.inputStream = new RedisInputStream(inputStream, configuration.getBufferSize());
             this.inputStream.setRawByteListeners(this.rawByteListeners);
             replyParser = new ReplyParser(this.inputStream);
+            logger.info("Connected to redis-server[" + host + ":" + port + "]");
         } finally {
             connected.set(CONNECTED);
         }
@@ -428,7 +429,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             } catch (IOException e) {
                 //NOP
             }
-            logger.info("socket closed");
+            logger.info("socket closed. redis-server[" + host + ":" + port + "]");
         } finally {
             connected.set(DISCONNECTED);
         }

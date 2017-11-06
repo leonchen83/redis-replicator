@@ -64,6 +64,8 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -91,7 +93,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 
     @Override
     public int applyVersion(RedisInputStream in) throws IOException {
-        int version = Integer.parseInt(BaseRdbParser.StringHelper.str(in, 4));
+        int version = parseInt(BaseRdbParser.StringHelper.str(in, 4));
         if (version < 2 || version > 8) {
             throw new UnsupportedOperationException(String.valueOf("can't handle RDB format version " + version));
         }
@@ -186,7 +188,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 logger.info("RDB " + auxKey + ": " + auxValue);
             }
             if (auxKey.equals("repl-id")) replicator.getConfiguration().setReplId(auxValue);
-            if (auxKey.equals("repl-offset")) replicator.getConfiguration().setReplOffset(Long.parseLong(auxValue));
+            if (auxKey.equals("repl-offset")) replicator.getConfiguration().setReplOffset(parseLong(auxValue));
+            if (auxKey.equals("repl-stream-db")) replicator.getConfiguration().setReplStreamDB(parseInt(auxValue));
             return new AuxField(auxKey, auxValue);
         } else {
             if (logger.isWarnEnabled()) {

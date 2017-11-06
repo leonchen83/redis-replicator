@@ -185,6 +185,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
             if (logger.isInfoEnabled()) {
                 logger.info("RDB " + auxKey + ": " + auxValue);
             }
+            if (auxKey.equals("repl-id")) replicator.getConfiguration().setReplId(auxValue);
+            if (auxKey.equals("repl-offset")) replicator.getConfiguration().setReplOffset(Long.parseLong(auxValue));
             return new AuxField(auxKey, auxValue);
         } else {
             if (logger.isWarnEnabled()) {

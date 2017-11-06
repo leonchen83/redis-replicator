@@ -25,8 +25,8 @@
     <version>2.4.5</version>
 
     <name>redis-replicator</name>
-    <description>Redis Replicator is a redis RDB and Command parser written in java.
-        It can parse,filter,broadcast the RDB and Command events in a real time manner.
+    <description>Redis Replicator implement Redis Replication protocol written in java.
+        It can parse,filter,broadcast the RDB and AOF events in a real time manner.
         It also can synchronize redis data to your local cache or to database.
     </description>
     <url>https://github.com/leonchen83/redis-replicator</url>

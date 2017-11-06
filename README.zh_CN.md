@@ -66,7 +66,7 @@
 [![Javadocs](http://www.javadoc.io/badge/com.moilioncircle/redis-replicator.svg)](http://www.javadoc.io/doc/com.moilioncircle/redis-replicator)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)  
   
-Redis Replicator是一款rdb解析以及命令解析的工具. 此工具完整实现了redis replication协议. 支持sync,psync,psync2等三种同步命令. 还支持远程rdb文件备份以及数据同步等功能. 此文中提到的 `命令` 特指redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`)  
+Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实现了Redis Replication协议. 支持SYNC, PSYNC, PSYNC2等三种同步命令. 还支持远程RDB文件备份以及数据同步等功能. 此文中提到的 `命令` 特指Redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`)  
 
 ## 1.2. QQ讨论组  
   

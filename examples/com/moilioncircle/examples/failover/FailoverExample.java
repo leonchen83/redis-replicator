@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 
 /**
  * @author Leon Chen
- * @since 2.4.4
+ * @since 2.4.5
  */
 public class FailoverExample {
 

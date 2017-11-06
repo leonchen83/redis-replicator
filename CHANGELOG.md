@@ -1,3 +1,8 @@
+### 2.4.5
+
+Fix PSYNC2 bug.  
+Fix repl-stream-db bug.  
+
 ### 2.4.4
 
 Fix ByteArrayMap serialize bug.  

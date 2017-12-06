@@ -29,7 +29,6 @@ import java.util.Map;
  * @author Leon Chen
  * @since 2.4.4
  */
-@SuppressWarnings("resource")
 public class HugeKVFileExample {
 
     public static void main(String[] args) throws Exception {

@@ -1,3 +1,7 @@
+### 2.5.0
+
+Add a new RdbVisitor : `SkipRdbVisitor`.  
+
 ### 2.4.5
 
 Fix PSYNC2 bug.  

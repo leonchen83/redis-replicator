@@ -21,6 +21,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -50,6 +51,7 @@ public class RdbBackupExample {
 
         //save rdb from remote server
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+        replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
         replicator.addRdbListener(new RdbListener() {
             @Override
             public void preFullSync(Replicator replicator) {

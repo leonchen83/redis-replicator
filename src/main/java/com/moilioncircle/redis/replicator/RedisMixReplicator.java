@@ -91,7 +91,7 @@ public class RedisMixReplicator extends AbstractReplicator {
         while (getStatus() == CONNECTED) {
             Object obj = replyParser.parse();
             if (obj instanceof Object[]) {
-                if (configuration.isVerbose() && logger.isDebugEnabled())
+                if (verbose() && logger.isDebugEnabled())
                     logger.debug(Arrays.deepToString((Object[]) obj));
                 Object[] command = (Object[]) obj;
                 CommandName cmdName = CommandName.name(new String((byte[]) command[0], UTF_8));

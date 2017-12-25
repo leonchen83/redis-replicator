@@ -1,6 +1,7 @@
-### 2.5.0
+### 2.4.6
 
 Add a new RdbVisitor : `SkipRdbVisitor`.  
+Fix serializable bug.  
 
 ### 2.4.5
 

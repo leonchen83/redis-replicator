@@ -37,7 +37,7 @@ import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen
- * @since 2.5.0
+ * @since 2.4.6
  */
 public class SkipRdbVisitorTest {
     @Test

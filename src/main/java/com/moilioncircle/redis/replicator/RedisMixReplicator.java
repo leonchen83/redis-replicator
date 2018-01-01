@@ -93,18 +93,18 @@ public class RedisMixReplicator extends AbstractReplicator {
             if (obj instanceof Object[]) {
                 if (verbose() && logger.isDebugEnabled())
                     logger.debug(Arrays.deepToString((Object[]) obj));
-                Object[] command = (Object[]) obj;
-                CommandName cmdName = CommandName.name(new String((byte[]) command[0], UTF_8));
-                final CommandParser<? extends Command> operations;
+                Object[] raw = (Object[]) obj;
+                CommandName cmdName = CommandName.name(new String((byte[]) raw[0], UTF_8));
+                final CommandParser<? extends Command> parser;
                 //if command do not register. ignore
-                if ((operations = commands.get(cmdName)) == null) {
+                if ((parser = commands.get(cmdName)) == null) {
                     if (logger.isWarnEnabled()) {
-                        logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(command) + "]");
+                        logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(raw) + "]");
                     }
                     continue;
                 }
-                Command parsedCommand = operations.parse(command);
-                this.submitEvent(parsedCommand);
+                Command command = parser.parse(raw);
+                this.submitEvent(command);
             } else {
                 if (logger.isInfoEnabled()) {
                     logger.info("redis reply:" + obj);

@@ -61,7 +61,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         private final int version;
 
         private DefaultRawByteListener(byte type, int version) {
-            this.builder = ByteBuilder.allocate(8194);
+            this.builder = ByteBuilder.allocate(8192);
             this.builder.put(type);
             this.version = version;
         }

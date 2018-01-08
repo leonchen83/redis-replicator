@@ -26,6 +26,7 @@ import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Leon Chen
@@ -43,22 +44,27 @@ public class HugeKVSocketExample {
             }
 
             @Override
-            public void handleModule(boolean last, byte[] key, Module value, int type) {
-                // your business code goes here.
-            }
-
-            @Override
             public void handleList(boolean last, byte[] key, List<byte[]> list, int type) {
                 // your business code goes here.
             }
 
             @Override
-            public void handleZSetEntry(boolean last, byte[] key, List<ZSetEntry> list, int type) {
+            public void handleSet(boolean last, byte[] key, Set<byte[]> set, int type) {
                 // your business code goes here.
             }
 
             @Override
-            public void handleMap(boolean last, byte[] key, List<Map.Entry<byte[], byte[]>> list, int type) {
+            public void handleMap(boolean last, byte[] key, Map<byte[], byte[]> map, int type) {
+                // your business code goes here.
+            }
+
+            @Override
+            public void handleZSetEntry(boolean last, byte[] key, Set<ZSetEntry> set, int type) {
+                // your business code goes here.
+            }
+
+            @Override
+            public void handleModule(boolean last, byte[] key, Module value, int type) {
                 // your business code goes here.
             }
         });

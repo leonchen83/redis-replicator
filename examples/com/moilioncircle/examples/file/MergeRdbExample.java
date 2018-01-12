@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
 
@@ -42,13 +43,20 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
  */
 @SuppressWarnings("resource")
 public class MergeRdbExample {
+
+    private static final String REDIS_MAGIC = "REDIS";
+    private static final String REDIS_VERSION = "0007";
+
     public static void main(String[] args) throws IOException {
         try (CRCOutputStream out = new CRCOutputStream(new FileOutputStream(new File("./src/test/resources/dump-merged.rdb")))) {
             // you know your redis version. so you know your rdb version.
-            out.write("REDIS0007".getBytes());
+            out.write(REDIS_MAGIC.getBytes());
+            out.write(REDIS_VERSION.getBytes());
+
             for (int i = 0; i < 4; i++) {
                 Replicator replicator = new RedisReplicator(new File("./src/test/resources/dump-split-" + i + ".rdb"),
                         FileType.RDB, Configuration.defaultSetting());
+                final AtomicBoolean header = new AtomicBoolean(false);
                 final Tuple2<String, ByteBuilder> tuple = new Tuple2<>();
                 tuple.setT2(ByteBuilder.allocate(128));
 
@@ -58,8 +66,9 @@ public class MergeRdbExample {
                         if (tuple.getT1() != null) {
                             try {
                                 byte[] ary = tuple.getT2().array();
-                                byte[] head = Arrays.copyOfRange(ary, 0, 5);
-                                if (Arrays.equals("REDIS".getBytes(), head)) {
+                                if (ary.length > 9
+                                        && header.compareAndSet(false, true)
+                                        && Arrays.equals(REDIS_MAGIC.getBytes(), Arrays.copyOfRange(ary, 0, 5))) {
                                     out.write(ary, 9, ary.length - 9);
                                 } else {
                                     out.write(ary);

@@ -45,6 +45,9 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
 @SuppressWarnings("resource")
 public class SplitRdbExample {
 
+    private static final String REDIS_MAGIC = "REDIS";
+    private static final String REDIS_VERSION = "0007";
+
     public static void main(final String[] args) throws IOException {
         final Replicator replicator = new RedisReplicator(
                 new File("./src/test/resources/dumpV7.rdb"), FileType.RDB,
@@ -52,9 +55,10 @@ public class SplitRdbExample {
 
         final int len = 4;
         final CRCOutputStream[] outs = new CRCOutputStream[len];
-        final AtomicBoolean[] heads = new AtomicBoolean[len];
+        final AtomicBoolean[] headers = new AtomicBoolean[len];
+        final AtomicBoolean header = new AtomicBoolean(false);
         for (int i = 0; i < len; i++) {
-            heads[i] = new AtomicBoolean(true);
+            headers[i] = new AtomicBoolean(false);
             outs[i] = new CRCOutputStream(new BufferedOutputStream(new FileOutputStream(new File("./src/test/resources/dump-split-" + i + ".rdb"))));
         }
         final Tuple2<String, ByteBuilder> tuple = new Tuple2<>();
@@ -67,14 +71,15 @@ public class SplitRdbExample {
                     try {
                         // write file by key hashcode sharding
                         int idx = tuple.getT1().hashCode() & (outs.length - 1);
-                        if (heads[idx].compareAndSet(true, false)) {
+                        if (headers[idx].compareAndSet(false, true)) {
                             // you know your redis version. so you know your rdb version.
-                            byte[] head = "REDIS0007".getBytes();
-                            outs[idx].write(head);
+                            outs[idx].write(REDIS_MAGIC.getBytes());
+                            outs[idx].write(REDIS_VERSION.getBytes());
                         }
                         byte[] ary = tuple.getT2().array();
-                        byte[] head = Arrays.copyOfRange(ary, 0, 9);
-                        if (Arrays.equals("REDIS0007".getBytes(), head)) {
+                        if (ary.length > 9
+                                && header.compareAndSet(false, true)
+                                && Arrays.equals(REDIS_MAGIC.getBytes(), Arrays.copyOfRange(ary, 0, 5))) {
                             outs[idx].write(ary, 9, ary.length - 9);
                         } else {
                             outs[idx].write(ary);

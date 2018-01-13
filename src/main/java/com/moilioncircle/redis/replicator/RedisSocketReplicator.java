@@ -41,6 +41,9 @@ import java.util.TimerTask;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
+import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.PSYNC;
+import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.SYNC;
+import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.SYNC_LATER;
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.CONNECTING;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
@@ -85,106 +88,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void open() throws IOException {
         try {
-            doOpen();
+            new RedisSocketReplicatorRetrier().retry(this);
         } finally {
             doClose();
             doCloseListener(this);
         }
-    }
-
-    /**
-     * PSYNC
-     * <p>
-     *
-     * @throws IOException when read timeout or connect timeout
-     */
-    protected void doOpen() throws IOException {
-        IOException exception = null;
-        for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
-            exception = null;
-            try {
-                establishConnection();
-                //reset retries
-                i = 0;
-                if (logger.isInfoEnabled()) {
-                    logger.info("PSYNC " + configuration.getReplId() + " " + String.valueOf(configuration.getReplOffset()));
-                }
-                send("PSYNC".getBytes(), configuration.getReplId().getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
-                final String reply = new String((byte[]) reply(), UTF_8);
-
-                SyncMode syncMode = trySync(reply);
-                if (syncMode == SyncMode.PSYNC && getStatus() == CONNECTED) {
-                    heartbeat();
-                } else if (syncMode == SyncMode.SYNC_LATER && getStatus() == CONNECTED) {
-                    i = 0;
-                    doClose();
-                    try {
-                        Thread.sleep(configuration.getRetryTimeInterval());
-                    } catch (InterruptedException interrupt) {
-                        Thread.currentThread().interrupt();
-                    }
-                    continue;
-                }
-                final long[] offset = new long[1];
-                while (getStatus() == CONNECTED) {
-                    Object obj = replyParser.parse(new OffsetHandler() {
-                        @Override
-                        public void handle(long len) {
-                            offset[0] = len;
-                        }
-                    });
-                    //command
-                    if (obj instanceof Object[]) {
-                        if (verbose() && logger.isDebugEnabled())
-                            logger.debug(Arrays.deepToString((Object[]) obj));
-                        Object[] raw = (Object[]) obj;
-                        CommandName cmdName = CommandName.name(new String((byte[]) raw[0], UTF_8));
-                        final CommandParser<? extends Command> parser;
-                        if ((parser = commands.get(cmdName)) == null) {
-                            if (logger.isWarnEnabled()) {
-                                logger.warn("command [" + cmdName + "] not register. raw command:[" + Arrays.deepToString(raw) + "]");
-                            }
-                            continue;
-                        }
-                        Command command = parser.parse(raw);
-                        this.submitEvent(command);
-                    } else {
-                        if (logger.isInfoEnabled()) {
-                            logger.info("redis reply:" + obj);
-                        }
-                    }
-                    // add offset after event consumed. after that reset offset to 0L.
-                    configuration.addOffset(offset[0]);
-                    offset[0] = 0L;
-                }
-                //getStatus() != CONNECTED
-                exception = null;
-                break;
-            } catch (IOException | UncheckedIOException e) {
-                //close socket manual
-                if (getStatus() != CONNECTED) {
-                    exception = null;
-                    break;
-                }
-                if (e instanceof UncheckedIOException) {
-                    exception = ((UncheckedIOException) e).getCause();
-                } else {
-                    exception = (IOException) e;
-                }
-                logger.error("[redis-replicator] socket error. redis-server[" + host + ":" + port + "]", exception);
-                doClose();
-                //retry psync in next loop.
-                if (logger.isInfoEnabled()) {
-                    logger.info("reconnect to redis-server[" + host + ":" + port + "]. retry times:" + (i + 1));
-                }
-                try {
-                    Thread.sleep(configuration.getRetryTimeInterval());
-                } catch (InterruptedException interrupt) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
-        if (exception != null) throw exception;
     }
 
     protected SyncMode trySync(final String reply) throws IOException {
@@ -196,21 +104,21 @@ public class RedisSocketReplicator extends AbstractReplicator {
             String[] ary = reply.split(" ");
             configuration.setReplId(ary[1]);
             configuration.setReplOffset(Long.parseLong(ary[2]));
-            return SyncMode.PSYNC;
+            return PSYNC;
         } else if (reply.startsWith("CONTINUE")) {
             String[] ary = reply.split(" ");
             //redis-4.0 compatible
             String masterRunId = configuration.getReplId();
             if (ary.length > 1 && masterRunId != null && !masterRunId.equals(ary[1])) configuration.setReplId(ary[1]);
-            return SyncMode.PSYNC;
+            return PSYNC;
         } else if (reply.startsWith("NOMASTERLINK") || reply.startsWith("LOADING")) {
-            return SyncMode.SYNC_LATER;
+            return SYNC_LATER;
         } else {
             //server don't support psync
             logger.info("SYNC");
             send("SYNC".getBytes());
             parseDump(this);
-            return SyncMode.SYNC;
+            return SYNC;
         }
     }
 
@@ -436,4 +344,65 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     protected enum SyncMode {SYNC, PSYNC, SYNC_LATER}
+
+    private class RedisSocketReplicatorRetrier extends AbstractReplicatorRetrier {
+
+        @Override
+        protected boolean connect() throws IOException {
+            establishConnection();
+            return true;
+        }
+
+        @Override
+        protected boolean close(IOException reason) throws IOException {
+            if (reason != null)
+                logger.error("[redis-replicator] socket error. redis-server[" + host + ":" + port + "]", reason);
+            doClose();
+            if (reason != null)
+                logger.info("reconnecting to redis-server[" + host + ":" + port + "]. retry times:" + (retries + 1));
+            return true;
+        }
+
+        @Override
+        protected boolean open() throws IOException {
+            logger.info("PSYNC " + configuration.getReplId() + " " + String.valueOf(configuration.getReplOffset()));
+            send("PSYNC".getBytes(), configuration.getReplId().getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
+            final String reply = new String((byte[]) reply(), UTF_8);
+
+            SyncMode mode = trySync(reply);
+            if (mode == PSYNC && getStatus() == CONNECTED) {
+                heartbeat();
+            } else if (mode == SYNC_LATER && getStatus() == CONNECTED) {
+                return false;
+            }
+            final long[] offset = new long[1];
+            while (getStatus() == CONNECTED) {
+                Object obj = replyParser.parse(new OffsetHandler() {
+                    @Override
+                    public void handle(long len) {
+                        offset[0] = len;
+                    }
+                });
+                //command
+                if (obj instanceof Object[]) {
+                    if (verbose() && logger.isDebugEnabled())
+                        logger.debug(Arrays.deepToString((Object[]) obj));
+                    Object[] raw = (Object[]) obj;
+                    CommandName name = CommandName.name(new String((byte[]) raw[0], UTF_8));
+                    final CommandParser<? extends Command> parser;
+                    if ((parser = commands.get(name)) == null) {
+                        logger.warn("command [" + name + "] not register. raw command:[" + Arrays.deepToString(raw) + "]");
+                        continue;
+                    }
+                    submitEvent(parser.parse(raw));
+                } else {
+                    logger.info("unexpected redis reply:" + obj);
+                }
+                // add offset after event consumed. and then reset offset to 0L.
+                configuration.addOffset(offset[0]);
+                offset[0] = 0L;
+            }
+            return true;
+        }
+    }
 }

@@ -57,6 +57,7 @@ public class RdbFilterExample {
         }, "./src/test/resources/dump-new.rdb");
     }
 
+    @SuppressWarnings("resource")
     private void filter(String source, final Filter<byte[]> filter, String target) throws IOException {
         final Replicator replicator = new RedisReplicator(new File(source), FileType.RDB, Configuration.defaultSetting());
         try (final CRCOutputStream out = new CRCOutputStream(new BufferedOutputStream(new FileOutputStream(new File(target))))) {

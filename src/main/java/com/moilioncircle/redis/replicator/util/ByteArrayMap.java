@@ -298,7 +298,7 @@ public class ByteArrayMap<V> implements Map<byte[], V>, Serializable {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Node node = (Node) o;
+            Node<V> node = (Node<V>) o;
             if (value != null ? !value.equals(node.value) : node.value != null) return false;
             return Arrays.equals(bytes, node.bytes);
         }

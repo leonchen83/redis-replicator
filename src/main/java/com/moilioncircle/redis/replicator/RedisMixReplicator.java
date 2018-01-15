@@ -44,7 +44,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 public class RedisMixReplicator extends AbstractReplicator {
-    protected static final Log logger = LogFactory.getLog(RedisAofReplicator.class);
+    protected static final Log logger = LogFactory.getLog(RedisMixReplicator.class);
     protected final ReplyParser replyParser;
     protected final PeekableInputStream peekable;
 
@@ -98,17 +98,12 @@ public class RedisMixReplicator extends AbstractReplicator {
                 final CommandParser<? extends Command> parser;
                 //if command do not register. ignore
                 if ((parser = commands.get(name)) == null) {
-                    if (logger.isWarnEnabled()) {
-                        logger.warn("command [" + name + "] not register. raw command:[" + Arrays.deepToString(raw) + "]");
-                    }
+                    logger.warn("command [" + name + "] not register. raw command:[" + Arrays.deepToString(raw) + "]");
                     continue;
                 }
-                Command command = parser.parse(raw);
-                this.submitEvent(command);
+                submitEvent(parser.parse(raw));
             } else {
-                if (logger.isInfoEnabled()) {
-                    logger.info("redis reply:" + obj);
-                }
+                logger.info("unexpected redis reply:" + obj);
             }
         }
     }

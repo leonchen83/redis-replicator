@@ -27,6 +27,7 @@ import com.moilioncircle.redis.replicator.cmd.parser.DecrByParser;
 import com.moilioncircle.redis.replicator.cmd.parser.DecrParser;
 import com.moilioncircle.redis.replicator.cmd.parser.DelParser;
 import com.moilioncircle.redis.replicator.cmd.parser.EvalParser;
+import com.moilioncircle.redis.replicator.cmd.parser.EvalShaParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ExecParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ExpireAtParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ExpireParser;
@@ -261,6 +262,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("PEXPIREAT"), new PExpireAtParser());
         addCommandParser(CommandName.name("GEOADD"), new GeoAddParser());
         addCommandParser(CommandName.name("EVAL"), new EvalParser());
+        addCommandParser(CommandName.name("EVALSHA"), new EvalShaParser());
         addCommandParser(CommandName.name("SCRIPT"), new ScriptParser());
         addCommandParser(CommandName.name("PUBLISH"), new PublishParser());
         addCommandParser(CommandName.name("BITOP"), new BitOpParser());

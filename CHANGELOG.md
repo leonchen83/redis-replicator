@@ -1,3 +1,8 @@
+### 2.5.0
+
+Add new command : `EVALSHA`.  
+Add `ReplicatorRetirer`.  
+
 ### 2.4.6
 
 Add a new RdbVisitor : `SkipRdbVisitor`.  

@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.EvalCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.EvalShaCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ExpireAtCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.GetSetCommand;
@@ -270,6 +271,15 @@ public class PingParserTest extends AbstractParserTest {
             EvalParser parser = new EvalParser();
             EvalCommand cmd = parser.parse(toObjectArray(new Object[]{"eval", "return redis.call('set',KEYS[1],'bar')", "1", "foo"}));
             assertEquals("return redis.call('set',KEYS[1],'bar')", cmd.getScript());
+            assertEquals(1, cmd.getNumkeys());
+            assertEquals("foo", cmd.getKeys()[0]);
+            System.out.println(cmd);
+        }
+
+        {
+            EvalShaParser parser = new EvalShaParser();
+            EvalShaCommand cmd = parser.parse(toObjectArray(new Object[]{"evalsha", "2fa2b029f72572e803ff55a09b1282699aecae6a", "1", "foo"}));
+            assertEquals("2fa2b029f72572e803ff55a09b1282699aecae6a", cmd.getSha());
             assertEquals(1, cmd.getNumkeys());
             assertEquals("foo", cmd.getKeys()[0]);
             System.out.println(cmd);

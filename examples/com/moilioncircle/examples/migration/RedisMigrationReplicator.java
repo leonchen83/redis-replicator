@@ -93,6 +93,7 @@ public class RedisMigrationReplicator extends RedisSocketReplicator {
         addCommandParser(CommandName.name("PEXPIREAT"), new DefaultCommandParser());
         addCommandParser(CommandName.name("GEOADD"), new DefaultCommandParser());
         addCommandParser(CommandName.name("EVAL"), new DefaultCommandParser());
+        addCommandParser(CommandName.name("EVALSHA"), new DefaultCommandParser());
         addCommandParser(CommandName.name("SCRIPT"), new DefaultCommandParser());
         addCommandParser(CommandName.name("PUBLISH"), new DefaultCommandParser());
         addCommandParser(CommandName.name("BITOP"), new DefaultCommandParser());

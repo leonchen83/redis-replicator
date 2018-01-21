@@ -20,7 +20,7 @@ import java.io.IOException;
 
 /**
  * @author Leon Chen
- * @since 2.4.7
+ * @since 2.5.0
  */
 interface ReplicatorRetrier {
     void retry(Replicator replicator) throws IOException;

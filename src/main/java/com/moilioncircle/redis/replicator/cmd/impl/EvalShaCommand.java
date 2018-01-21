@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 /**
  * @author Leon Chen
- * @since 2.5.0
+ * @since 2.4.7
  */
 public class EvalShaCommand implements Command {
 

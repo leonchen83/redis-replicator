@@ -22,7 +22,7 @@ import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 
 /**
  * @author Leon Chen
- * @since 2.5.0
+ * @since 2.4.7
  */
 abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
     protected int retries = 0;

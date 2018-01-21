@@ -28,7 +28,7 @@ import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objTo
 
 /**
  * @author Leon Chen
- * @since 2.5.0
+ * @since 2.4.7
  */
 public class EvalShaParser implements CommandParser<EvalShaCommand> {
     @Override

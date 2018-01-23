@@ -36,26 +36,28 @@ import java.io.IOException;
  * @since 2.4.3
  */
 public class MigrationExample {
-    @SuppressWarnings("resource")
+
     public static void main(String[] args) throws IOException {
-        final MyClient target = new MyClient("127.0.0.1", 6380);
-        Replicator r = new RedisMigrationReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        sync("127.0.0.1", 6379, "127.0.0.1", 6380);
+    }
+
+    @SuppressWarnings("resource")
+    public static void sync(String sourceHost, int sourcePort, String targetHost, int targetPort) throws IOException {
+        final ExampleClient target = new ExampleClient(targetHost, targetPort);
+        Replicator r = new RedisMigrationReplicator(sourceHost, sourcePort, Configuration.defaultSetting());
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (!(kv instanceof MigrationKeyValuePair)) return;
                 MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
                 if (mkv.getExpiredMs() == null) {
-                    target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), "0".getBytes(), mkv.getValue(), "REPLACE".getBytes());
-                    String r = target.getStatusCodeReply();
+                    String r = target.send(Protocol.Command.RESTORE, mkv.getRawKey(), "0".getBytes(), mkv.getValue(), "REPLACE".getBytes());
                     System.out.println(r);
                 } else {
                     long ms = mkv.getExpiredMs() - System.currentTimeMillis();
-                    if (ms > 0) {
-                        target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(), "REPLACE".getBytes());
-                        String r = target.getStatusCodeReply();
-                        System.out.println(r);
-                    }
+                    if (ms <= 0) return;
+                    String r = target.send(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(), "REPLACE".getBytes());
+                    System.out.println(r);
                 }
             }
         });
@@ -64,8 +66,7 @@ public class MigrationExample {
             public void handle(Replicator replicator, Command command) {
                 if (!(command instanceof DefaultCommand)) return;
                 DefaultCommand dc = (DefaultCommand) command;
-                target.sendCommand(dc.getCommand(), dc.getArgs());
-                String r = target.getStatusCodeReply();
+                String r = target.send(dc.getCommand(), dc.getArgs());
                 System.out.println(r);
             }
         });
@@ -78,9 +79,15 @@ public class MigrationExample {
         r.open();
     }
 
-    public static class MyClient extends Client {
-        public MyClient(final String host, final int port) {
+    public static class ExampleClient extends Client {
+
+        public ExampleClient(final String host, final int port) {
             super(host, port);
+        }
+
+        public String send(final Protocol.Command cmd, final byte[]... args) {
+            sendCommand(cmd, args);
+            return getStatusCodeReply();
         }
 
         public Connection sendCommand(final Protocol.Command cmd, final byte[]... args) {

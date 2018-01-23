@@ -43,19 +43,18 @@ public class MigrationExample {
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof MigrationKeyValuePair) {
-                    MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
-                    if (mkv.getExpiredMs() == null) {
-                        target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), "0".getBytes(), mkv.getValue(), "REPLACE".getBytes());
+                if (!(kv instanceof MigrationKeyValuePair)) return;
+                MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
+                if (mkv.getExpiredMs() == null) {
+                    target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), "0".getBytes(), mkv.getValue(), "REPLACE".getBytes());
+                    String r = target.getStatusCodeReply();
+                    System.out.println(r);
+                } else {
+                    long ms = mkv.getExpiredMs() - System.currentTimeMillis();
+                    if (ms > 0) {
+                        target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(), "REPLACE".getBytes());
                         String r = target.getStatusCodeReply();
                         System.out.println(r);
-                    } else {
-                        long ms = mkv.getExpiredMs() - System.currentTimeMillis();
-                        if (ms > 0) {
-                            target.sendCommand(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(), "REPLACE".getBytes());
-                            String r = target.getStatusCodeReply();
-                            System.out.println(r);
-                        }
                     }
                 }
             }
@@ -63,12 +62,11 @@ public class MigrationExample {
         r.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
-                if (command instanceof DefaultCommand) {
-                    DefaultCommand dc = (DefaultCommand) command;
-                    target.sendCommand(dc.getCommand(), dc.getArgs());
-                    String r = target.getStatusCodeReply();
-                    System.out.println(r);
-                }
+                if (!(command instanceof DefaultCommand)) return;
+                DefaultCommand dc = (DefaultCommand) command;
+                target.sendCommand(dc.getCommand(), dc.getArgs());
+                String r = target.getStatusCodeReply();
+                System.out.println(r);
             }
         });
         r.addCloseListener(new CloseListener() {

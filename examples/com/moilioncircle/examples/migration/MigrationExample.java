@@ -26,10 +26,11 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import redis.clients.jedis.Client;
-import redis.clients.jedis.Connection;
 import redis.clients.jedis.Protocol;
 
 import java.io.IOException;
+
+import static redis.clients.jedis.Protocol.Command.RESTORE;
 
 /**
  * @author Leon Chen
@@ -41,6 +42,17 @@ public class MigrationExample {
         sync("127.0.0.1", 6379, "127.0.0.1", 6380);
     }
 
+    /*
+     * Precondition:
+     * 1. Make sure the two redis version is same.
+     * 2. Make sure the single key-value is not very big.(highly recommend less then 1 MB)
+     *
+     * We running following steps to sync two redis.
+     * 1. Get rdb stream from source redis.
+     * 2. Convert source rdb stream to redis dump format.
+     * 3. Use Jedis RESTORE command to restore that dump format to target redis.
+     * 4. Get aof stream from source redis and sync to target redis.
+     */
     @SuppressWarnings("resource")
     public static void sync(String sourceHost, int sourcePort, String targetHost, int targetPort) throws IOException {
         final ExampleClient target = new ExampleClient(targetHost, targetPort);
@@ -51,12 +63,12 @@ public class MigrationExample {
                 if (!(kv instanceof MigrationKeyValuePair)) return;
                 MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
                 if (mkv.getExpiredMs() == null) {
-                    String r = target.send(Protocol.Command.RESTORE, mkv.getRawKey(), "0".getBytes(), mkv.getValue(), "REPLACE".getBytes());
+                    String r = target.restore(mkv.getRawKey(), 0L, mkv.getValue(), true);
                     System.out.println(r);
                 } else {
                     long ms = mkv.getExpiredMs() - System.currentTimeMillis();
                     if (ms <= 0) return;
-                    String r = target.send(Protocol.Command.RESTORE, mkv.getRawKey(), String.valueOf(ms).getBytes(), mkv.getValue(), "REPLACE".getBytes());
+                    String r = target.restore(mkv.getRawKey(), ms, mkv.getValue(), true);
                     System.out.println(r);
                 }
             }
@@ -79,6 +91,12 @@ public class MigrationExample {
         r.open();
     }
 
+    /*
+     * Jedis is not a reliable redis client.
+     * For simplicity we use Jedis to show this example.
+     * In production you need to replace following code to yours.
+     * Don't forget to replace DefaultCommandParser too. :)
+     */
     public static class ExampleClient extends Client {
 
         public ExampleClient(final String host, final int port) {
@@ -90,8 +108,12 @@ public class MigrationExample {
             return getStatusCodeReply();
         }
 
-        public Connection sendCommand(final Protocol.Command cmd, final byte[]... args) {
-            return super.sendCommand(cmd, args);
+        public String restore(byte[] key, long expired, byte[] dumped, boolean replace) {
+            if (!replace) {
+                return send(RESTORE, key, String.valueOf(expired).getBytes(), dumped);
+            } else {
+                return send(RESTORE, key, String.valueOf(expired).getBytes(), dumped, "REPLACE".getBytes());
+            }
         }
     }
 }

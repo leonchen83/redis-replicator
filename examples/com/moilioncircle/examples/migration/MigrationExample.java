@@ -20,6 +20,7 @@ import com.moilioncircle.examples.migration.cmd.DefaultCommand;
 import com.moilioncircle.examples.migration.rdb.MigrationKeyValuePair;
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.RedisURI;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
@@ -29,7 +30,9 @@ import redis.clients.jedis.Client;
 import redis.clients.jedis.Protocol;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
+import static redis.clients.jedis.Protocol.Command.AUTH;
 import static redis.clients.jedis.Protocol.Command.RESTORE;
 
 /**
@@ -38,8 +41,8 @@ import static redis.clients.jedis.Protocol.Command.RESTORE;
  */
 public class MigrationExample {
 
-    public static void main(String[] args) throws IOException {
-        sync("127.0.0.1", 6379, "127.0.0.1", 6380);
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        sync("redis://127.0.0.1:6379", "redis://127.0.0.1:6380");
     }
 
     /*
@@ -54,9 +57,16 @@ public class MigrationExample {
      * 4. Get aof stream from source redis and sync to target redis.
      */
     @SuppressWarnings("resource")
-    public static void sync(String sourceHost, int sourcePort, String targetHost, int targetPort) throws IOException {
-        final ExampleClient target = new ExampleClient(targetHost, targetPort);
-        Replicator r = new RedisMigrationReplicator(sourceHost, sourcePort, Configuration.defaultSetting());
+    public static void sync(String sourceUri, String targetUri) throws IOException, URISyntaxException {
+        RedisURI suri = new RedisURI(sourceUri);
+        RedisURI turi = new RedisURI(targetUri);
+        final ExampleClient target = new ExampleClient(turi.getHost(), turi.getPort());
+        Configuration tconfig = Configuration.valueOf(turi);
+        if (tconfig.getAuthPassword() != null) {
+            String auth = target.send(AUTH, tconfig.getAuthPassword().getBytes());
+            System.out.println("AUTH:" + auth);
+        }
+        Replicator r = new RedisMigrationReplicator(suri.getHost(), suri.getPort(), Configuration.valueOf(suri));
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {

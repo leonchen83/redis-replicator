@@ -18,6 +18,7 @@ package com.moilioncircle.examples.huge;
 
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
@@ -37,32 +38,32 @@ public class HugeKVFileExample {
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new HugeKVRdbListener(200) {
             @Override
-            public void handleString(boolean last, byte[] key, byte[] value, int type) {
+            public void handleString(KeyValuePair<byte[]> kv, int batch, boolean last) {
                 // your business code goes here.
             }
 
             @Override
-            public void handleList(boolean last, byte[] key, List<byte[]> list, int type) {
+            public void handleList(KeyValuePair<List<byte[]>> kv, int batch, boolean last) {
                 // your business code goes here.
             }
 
             @Override
-            public void handleSet(boolean last, byte[] key, Set<byte[]> set, int type) {
+            public void handleSet(KeyValuePair<Set<byte[]>> kv, int batch, boolean last) {
                 // your business code goes here.
             }
 
             @Override
-            public void handleMap(boolean last, byte[] key, Map<byte[], byte[]> map, int type) {
+            public void handleMap(KeyValuePair<Map<byte[], byte[]>> kv, int batch, boolean last) {
                 // your business code goes here.
             }
 
             @Override
-            public void handleZSetEntry(boolean last, byte[] key, Set<ZSetEntry> set, int type) {
+            public void handleZSetEntry(KeyValuePair<Set<ZSetEntry>> kv, int batch, boolean last) {
                 // your business code goes here.
             }
 
             @Override
-            public void handleModule(boolean last, byte[] key, Module value, int type) {
+            public void handleModule(KeyValuePair<Module> kv, int batch, boolean last) {
                 // your business code goes here.
             }
         });

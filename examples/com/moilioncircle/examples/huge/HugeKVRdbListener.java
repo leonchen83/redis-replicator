@@ -61,27 +61,27 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
         this.batchSize = batchSize;
     }
 
-    public void handleString(boolean last, byte[] key, byte[] value, int type) {
+    public void handleString(KeyValuePair<byte[]> kv, int batch, boolean last) {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public void handleList(boolean last, byte[] key, List<byte[]> list, int type) {
+    public void handleList(KeyValuePair<List<byte[]>> kv, int batch, boolean last) {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public void handleSet(boolean last, byte[] key, Set<byte[]> set, int type) {
+    public void handleSet(KeyValuePair<Set<byte[]>> kv, int batch, boolean last) {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public void handleMap(boolean last, byte[] key, Map<byte[], byte[]> map, int type) {
+    public void handleMap(KeyValuePair<Map<byte[], byte[]>> kv, int batch, boolean last) {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public void handleZSetEntry(boolean last, byte[] key, Set<ZSetEntry> set, int type) {
+    public void handleZSetEntry(KeyValuePair<Set<ZSetEntry>> kv, int batch, boolean last) {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public void handleModule(boolean last, byte[] key, Module value, int type) {
+    public void handleModule(KeyValuePair<Module> kv, int batch, boolean last) {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
@@ -92,9 +92,10 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
         // Before every it.next() MUST check precondition it.hasNext()
         final byte[] key = kv.getRawKey();
         final int type = kv.getValueRdbType();
+        int batch = 0;
         if (kv instanceof KeyStringValueString) {
             KeyStringValueString ksvs = (KeyStringValueString) kv;
-            handleString(true, key, ksvs.getRawValue(), type);
+            handleString(create(kv, ksvs.getRawValue()), batch, true);
         } else if (kv instanceof KeyStringValueByteArrayIterator) {
             if (type == RDB_TYPE_SET || type == RDB_TYPE_SET_INTSET) {
                 Iterator<byte[]> it = ((KeyStringValueByteArrayIterator) kv).getValue();
@@ -103,14 +104,14 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
                     next.add(it.next());
                     if (next.size() == batchSize) {
                         if (prev != null)
-                            handleSet(false, key, prev, type);
+                            handleSet(create(kv, prev), batch++, false);
                         prev = next;
                         next = create(order, batchSize);
                     }
                 }
                 final boolean last = next.isEmpty();
-                handleSet(last, key, prev, type);
-                if (!last) handleSet(true, key, next, type);
+                handleSet(create(kv, prev), batch++, last);
+                if (!last) handleSet(create(kv, next), batch++, true);
             } else {
                 Iterator<byte[]> it = ((KeyStringValueByteArrayIterator) kv).getValue();
                 List<byte[]> prev = null, next = new ArrayList<>(batchSize);
@@ -119,7 +120,7 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
                         next.add(it.next());
                         if (next.size() == batchSize) {
                             if (prev != null)
-                                handleList(false, key, prev, type);
+                                handleList(create(kv, prev), batch++, false);
                             prev = next;
                             next = new ArrayList<>(batchSize);
                         }
@@ -128,8 +129,8 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
                     }
                 }
                 final boolean last = next.isEmpty();
-                handleList(last, key, prev, type);
-                if (!last) handleList(true, key, next, type);
+                handleList(create(kv, prev), batch++, last);
+                if (!last) handleList(create(kv, next), batch++, true);
             }
         } else if (kv instanceof KeyStringValueMapEntryIterator) {
             Iterator<Map.Entry<byte[], byte[]>> it = ((KeyStringValueMapEntryIterator) kv).getValue();
@@ -139,14 +140,14 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
                 next.put(entry.getKey(), entry.getValue());
                 if (next.size() == batchSize) {
                     if (prev != null)
-                        handleMap(false, key, prev, type);
+                        handleMap(create(kv, prev), batch++, false);
                     prev = next;
                     next = new ByteArrayMap<>(order, batchSize);
                 }
             }
             final boolean last = next.isEmpty();
-            handleMap(last, key, prev, type);
-            if (!last) handleMap(true, key, next, type);
+            handleMap(create(kv, prev), batch++, last);
+            if (!last) handleMap(create(kv, next), batch++, true);
         } else if (kv instanceof KeyStringValueZSetEntryIterator) {
             Iterator<ZSetEntry> it = ((KeyStringValueZSetEntryIterator) kv).getValue();
             Set<ZSetEntry> prev = null, next = create(order, batchSize);
@@ -154,21 +155,32 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
                 next.add(it.next());
                 if (next.size() == batchSize) {
                     if (prev != null)
-                        handleZSetEntry(false, key, prev, type);
+                        handleZSetEntry(create(kv, prev), batch++, false);
                     prev = next;
                     next = create(order, batchSize);
                 }
             }
             final boolean last = next.isEmpty();
-            handleZSetEntry(last, key, prev, type);
-            if (!last) handleZSetEntry(true, key, next, type);
+            handleZSetEntry(create(kv, prev), batch++, last);
+            if (!last) handleZSetEntry(create(kv, next), batch++, true);
         } else if (kv instanceof KeyStringValueModule) {
-            KeyStringValueModule ksvs = (KeyStringValueModule) kv;
-            handleModule(true, key, ksvs.getValue(), type);
+            handleModule((KeyStringValueModule) kv, batch, true);
         }
     }
 
     private <T> Set<T> create(boolean order, int batchSize) {
         return order ? new LinkedHashSet<T>(batchSize) : new HashSet<T>(batchSize);
+    }
+
+    private <T> KeyValuePair<T> create(KeyValuePair<?> raw, T value) {
+        KeyValuePair<T> kv = new KeyValuePair<>();
+        kv.setDb(raw.getDb());
+        kv.setExpiredType(raw.getExpiredType());
+        kv.setExpiredValue(raw.getExpiredValue());
+        kv.setValueRdbType(raw.getValueRdbType());
+        kv.setKey(raw.getKey());
+        kv.setRawKey(raw.getRawKey());
+        kv.setValue(value);
+        return kv;
     }
 }

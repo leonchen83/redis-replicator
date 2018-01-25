@@ -25,12 +25,14 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import redis.clients.jedis.Client;
 import redis.clients.jedis.Protocol;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static redis.clients.jedis.Protocol.Command.AUTH;
 import static redis.clients.jedis.Protocol.Command.RESTORE;
@@ -66,11 +68,21 @@ public class MigrationExample {
             String auth = target.send(AUTH, tconfig.getAuthPassword().getBytes());
             System.out.println("AUTH:" + auth);
         }
+        final AtomicInteger dbnum = new AtomicInteger(-1);
         Replicator r = new RedisMigrationReplicator(suri.getHost(), suri.getPort(), Configuration.valueOf(suri));
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (!(kv instanceof MigrationKeyValuePair)) return;
+                // Step1: select db
+                DB db = kv.getDb();
+                int index;
+                if (db != null && (index = (int) db.getDbNumber()) != dbnum.get()) {
+                    target.select(index);
+                    dbnum.set(index);
+                }
+
+                // Step2: restore dump data
                 MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
                 if (mkv.getExpiredMs() == null) {
                     String r = target.restore(mkv.getRawKey(), 0L, mkv.getValue(), true);
@@ -87,6 +99,7 @@ public class MigrationExample {
             @Override
             public void handle(Replicator replicator, Command command) {
                 if (!(command instanceof DefaultCommand)) return;
+                // Step3: sync aof command
                 DefaultCommand dc = (DefaultCommand) command;
                 String r = target.send(dc.getCommand(), dc.getArgs());
                 System.out.println(r);

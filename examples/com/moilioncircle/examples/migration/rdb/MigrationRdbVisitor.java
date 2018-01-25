@@ -56,14 +56,15 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST
  */
 public class MigrationRdbVisitor extends DefaultRdbVisitor {
 
-    private static class DefaultRawByteListener implements RawByteListener {
-        private final ByteBuilder builder;
+    private class DefaultRawByteListener implements RawByteListener {
         private final int version;
+        private final ByteBuilder builder;
 
         private DefaultRawByteListener(byte type, int version) {
-            this.builder = ByteBuilder.allocate(8192);
+            this.builder = ByteBuilder.allocate(MigrationRdbVisitor.this.size);
             this.builder.put(type);
-            this.version = version;
+            int ver = MigrationRdbVisitor.this.version;
+            this.version = ver == -1 ? version : ver;
         }
 
         @Override
@@ -83,8 +84,17 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         }
     }
 
+    private final int size;
+    private final int version;
+
     public MigrationRdbVisitor(Replicator replicator) {
+        this(replicator, -1, 8192);
+    }
+
+    public MigrationRdbVisitor(Replicator replicator, int version, int size) {
         super(replicator);
+        this.version = version;
+        this.size = size;
     }
 
     @Override

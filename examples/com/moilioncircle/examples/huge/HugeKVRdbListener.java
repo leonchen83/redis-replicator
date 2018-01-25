@@ -45,10 +45,11 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
  */
 public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
 
-    private int batchSize = 64;
-    private boolean order = true;
+    private int batchSize;
+    private boolean order;
 
     public HugeKVRdbListener() {
+        this(64);
     }
 
     public HugeKVRdbListener(int batchSize) {
@@ -90,9 +91,8 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
         // Note that:
         // Every Iterator MUST be consumed.
         // Before every it.next() MUST check precondition it.hasNext()
-        final byte[] key = kv.getRawKey();
-        final int type = kv.getValueRdbType();
         int batch = 0;
+        final int type = kv.getValueRdbType();
         if (kv instanceof KeyStringValueString) {
             KeyStringValueString ksvs = (KeyStringValueString) kv;
             handleString(create(kv, ksvs.getRawValue()), batch, true);
@@ -124,7 +124,7 @@ public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
                             prev = next;
                             next = new ArrayList<>(batchSize);
                         }
-                    } catch (IllegalStateException e) {
+                    } catch (IllegalStateException ignore) {
                         // see ValueIterableRdbVisitor.QuickListIter.next().
                     }
                 }

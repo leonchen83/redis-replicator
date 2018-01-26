@@ -21,6 +21,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
+import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbListener;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class HugeKVFileExample {
     public static void main(String[] args) throws Exception {
         Replicator r = new RedisReplicator("redis:///path/to/dump.rdb");
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
-        r.addRdbListener(new HugeKVRdbListener(200) {
+        r.addRdbListener(new ValueIterableRdbListener(128) {
             @Override
             public void handleString(KeyValuePair<byte[]> kv, int batch, boolean last) {
                 // your business code goes here.

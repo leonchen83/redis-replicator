@@ -1,3 +1,7 @@
+### 2.4.8
+
+Add ValueIterableRdbListener to handle huge kv.  
+
 ### 2.4.7
 
 Add new command : `EVALSHA`.  

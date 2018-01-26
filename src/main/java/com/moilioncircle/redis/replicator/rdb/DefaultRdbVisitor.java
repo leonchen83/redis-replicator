@@ -434,8 +434,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
     @Override
     public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
         /*
-         * |<encoding>| <length-of-contents>|              <contents>                           |
-         * | 4 bytes  |            4 bytes  | 2 bytes lement| 4 bytes element | 8 bytes element |
+         * |<encoding>| <length-of-contents>|              <contents>                            |
+         * | 4 bytes  |            4 bytes  | 2 bytes element| 4 bytes element | 8 bytes element |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueSet o11 = new KeyStringValueSet();

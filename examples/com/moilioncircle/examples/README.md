@@ -1,4 +1,4 @@
-## Packages
+## Packages([包说明](./README.zh_CN.md))  
 
 ### backup
 
@@ -8,9 +8,13 @@ Backup remote RDB or AOF to local.
 
 Command extension or Module extension.  
 
+### failover
+
+PSYNC2 failover example.  
+
 ### file
 
-Read AOF, Mix, RDB from File or InputStream.  
+Read and Filter AOF, Mix, RDB from File or InputStream.  
 
 ### huge
 
@@ -20,10 +24,15 @@ Handle huge KV via Socket or File.
 
 Migrate data between two Redis.  
 
+### other
+
+Broadcast event, TimerTask example.  
+
 ### socket
 
 Replication data via Socket.  
 
-### other
+### util
 
-Broadcast event, TimerTask example.  
+Utility tools.  
+

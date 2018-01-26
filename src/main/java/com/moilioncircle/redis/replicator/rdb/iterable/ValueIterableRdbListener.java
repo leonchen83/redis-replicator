@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples.huge;
+package com.moilioncircle.redis.replicator.rdb.iterable;
 
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
@@ -41,22 +41,22 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
 
 /**
  * @author Leon Chen
- * @since 2.4.4
+ * @since 2.4.8
  */
-public abstract class HugeKVRdbListener extends RdbListener.Adaptor {
+public abstract class ValueIterableRdbListener extends RdbListener.Adaptor {
 
     private int batchSize;
     private boolean order;
 
-    public HugeKVRdbListener() {
+    public ValueIterableRdbListener() {
         this(64);
     }
 
-    public HugeKVRdbListener(int batchSize) {
+    public ValueIterableRdbListener(int batchSize) {
         this(true, batchSize);
     }
 
-    public HugeKVRdbListener(boolean order, int batchSize) {
+    public ValueIterableRdbListener(boolean order, int batchSize) {
         if (batchSize <= 0) throw new IllegalArgumentException(String.valueOf(batchSize));
         this.order = order;
         this.batchSize = batchSize;

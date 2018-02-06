@@ -29,6 +29,9 @@ public class DefaultCommand implements Command {
     private byte[] command;
     private byte[][] args = new byte[0][];
 
+    public DefaultCommand() {
+    }
+
     public DefaultCommand(byte[] command, byte[][] args) {
         this.command = command;
         this.args = args;
@@ -50,4 +53,3 @@ public class DefaultCommand implements Command {
         this.args = args;
     }
 }
-

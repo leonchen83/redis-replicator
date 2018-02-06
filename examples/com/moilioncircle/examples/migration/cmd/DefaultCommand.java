@@ -17,7 +17,6 @@
 package com.moilioncircle.examples.migration.cmd;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import redis.clients.jedis.Protocol;
 
 /**
  * @author Leon Chen
@@ -27,20 +26,28 @@ public class DefaultCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
+    private byte[] command;
     private byte[][] args = new byte[0][];
-    private Protocol.Command command;
 
-    public DefaultCommand(Protocol.Command command, byte[][] args) {
+    public DefaultCommand(byte[] command, byte[][] args) {
         this.command = command;
         this.args = args;
     }
 
-    public Protocol.Command getCommand() {
+    public byte[] getCommand() {
         return command;
+    }
+
+    public void setCommand(byte[] command) {
+        this.command = command;
     }
 
     public byte[][] getArgs() {
         return args;
+    }
+
+    public void setArgs(byte[][] args) {
+        this.args = args;
     }
 }
 

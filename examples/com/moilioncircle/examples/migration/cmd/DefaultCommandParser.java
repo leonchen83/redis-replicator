@@ -17,9 +17,6 @@
 package com.moilioncircle.examples.migration.cmd;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import redis.clients.jedis.Protocol;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -28,11 +25,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class DefaultCommandParser implements CommandParser<DefaultCommand> {
     @Override
     public DefaultCommand parse(Object[] command) {
-        Protocol.Command cmd = Protocol.Command.valueOf(new String((byte[]) command[0], UTF_8).toUpperCase());
         byte[][] args = new byte[command.length - 1][];
         for (int i = 1, j = 0; i < command.length; i++) {
             args[j++] = (byte[]) command[i];
         }
-        return new DefaultCommand(cmd, args);
+        return new DefaultCommand((byte[]) command[0], args);
     }
 }

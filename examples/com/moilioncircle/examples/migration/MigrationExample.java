@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static redis.clients.jedis.Protocol.Command.AUTH;
 import static redis.clients.jedis.Protocol.Command.RESTORE;
 
@@ -126,9 +127,13 @@ public class MigrationExample {
             super(host, port);
         }
 
-        public String send(final Protocol.Command cmd, final byte[]... args) {
+        public String send(Protocol.Command cmd, final byte[]... args) {
             sendCommand(cmd, args);
             return getStatusCodeReply();
+        }
+
+        public String send(final byte[] cmd, final byte[]... args) {
+            return send(Protocol.Command.valueOf(new String(cmd, UTF_8).toUpperCase()), args);
         }
 
         public String restore(byte[] key, long expired, byte[] dumped, boolean replace) {

@@ -17,7 +17,7 @@
 package com.moilioncircle.examples.migration;
 
 import com.moilioncircle.examples.migration.cmd.DefaultCommand;
-import com.moilioncircle.examples.migration.rdb.MigrationKeyValuePair;
+import com.moilioncircle.examples.migration.rdb.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisURI;
@@ -74,7 +74,7 @@ public class MigrationExample {
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (!(kv instanceof MigrationKeyValuePair)) return;
+                if (!(kv instanceof DumpKeyValuePair)) return;
                 // Step1: select db
                 DB db = kv.getDb();
                 int index;
@@ -84,7 +84,7 @@ public class MigrationExample {
                 }
 
                 // Step2: restore dump data
-                MigrationKeyValuePair mkv = (MigrationKeyValuePair) kv;
+                DumpKeyValuePair mkv = (DumpKeyValuePair) kv;
                 if (mkv.getExpiredMs() == null) {
                     String r = target.restore(mkv.getRawKey(), 0L, mkv.getValue(), true);
                     System.out.println(r);

@@ -17,7 +17,7 @@
 package com.moilioncircle.examples.migration;
 
 import com.moilioncircle.examples.migration.cmd.DefaultCommandParser;
-import com.moilioncircle.examples.migration.rdb.MigrationRdbVisitor;
+import com.moilioncircle.examples.migration.rdb.DumpRdbVisitor;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisSocketReplicator;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
@@ -31,7 +31,7 @@ public class RedisMigrationReplicator extends RedisSocketReplicator {
 
     public RedisMigrationReplicator(String host, int port, Configuration configuration) {
         super(host, port, configuration);
-        setRdbVisitor(new MigrationRdbVisitor(this));
+        setRdbVisitor(new DumpRdbVisitor(this));
     }
 
     @Override

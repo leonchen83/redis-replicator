@@ -49,21 +49,22 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
  * @since 2.4.3
  */
-public class MigrationRdbVisitor extends DefaultRdbVisitor {
+public class DumpRdbVisitor extends DefaultRdbVisitor {
 
     private class DefaultRawByteListener implements RawByteListener {
         private final int version;
         private final ByteBuilder builder;
 
         private DefaultRawByteListener(byte type, int version) {
-            this.builder = ByteBuilder.allocate(MigrationRdbVisitor.this.size);
+            this.builder = ByteBuilder.allocate(DumpRdbVisitor.this.size);
             this.builder.put(type);
-            int ver = MigrationRdbVisitor.this.version;
+            int ver = DumpRdbVisitor.this.version;
             this.version = ver == -1 ? version : ver;
         }
 
@@ -87,11 +88,11 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     private final int size;
     private final int version;
 
-    public MigrationRdbVisitor(Replicator replicator) {
+    public DumpRdbVisitor(Replicator replicator) {
         this(replicator, -1, 8192);
     }
 
-    public MigrationRdbVisitor(Replicator replicator, int version, int size) {
+    public DumpRdbVisitor(Replicator replicator, int version, int size) {
         super(replicator);
         this.version = version;
         this.size = size;
@@ -100,7 +101,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyString(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o0 = new MigrationKeyValuePair();
+        DumpKeyValuePair o0 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_STRING, version);
         replicator.addRawByteListener(listener);
@@ -109,6 +110,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o0.setValueRdbType(RDB_TYPE_STRING);
         o0.setValue(listener.getBytes());
         o0.setDb(db);
+        o0.setKey(new String(key, UTF_8));
         o0.setRawKey(key);
         return o0;
     }
@@ -116,7 +118,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o1 = new MigrationKeyValuePair();
+        DumpKeyValuePair o1 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST, version);
         replicator.addRawByteListener(listener);
@@ -129,6 +131,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o1.setValueRdbType(RDB_TYPE_LIST);
         o1.setValue(listener.getBytes());
         o1.setDb(db);
+        o1.setKey(new String(key, UTF_8));
         o1.setRawKey(key);
         return o1;
     }
@@ -136,7 +139,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applySet(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o2 = new MigrationKeyValuePair();
+        DumpKeyValuePair o2 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_SET, version);
         replicator.addRawByteListener(listener);
@@ -149,6 +152,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o2.setValueRdbType(RDB_TYPE_SET);
         o2.setValue(listener.getBytes());
         o2.setDb(db);
+        o2.setKey(new String(key, UTF_8));
         o2.setRawKey(key);
         return o2;
     }
@@ -156,7 +160,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyZSet(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o3 = new MigrationKeyValuePair();
+        DumpKeyValuePair o3 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET, version);
         replicator.addRawByteListener(listener);
@@ -171,6 +175,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o3.setValueRdbType(RDB_TYPE_ZSET);
         o3.setValue(listener.getBytes());
         o3.setDb(db);
+        o3.setKey(new String(key, UTF_8));
         o3.setRawKey(key);
         return o3;
     }
@@ -178,7 +183,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyZSet2(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o5 = new MigrationKeyValuePair();
+        DumpKeyValuePair o5 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET_2, version);
         replicator.addRawByteListener(listener);
@@ -193,6 +198,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o5.setValueRdbType(RDB_TYPE_ZSET_2);
         o5.setValue(listener.getBytes());
         o5.setDb(db);
+        o5.setKey(new String(key, UTF_8));
         o5.setRawKey(key);
         return o5;
     }
@@ -200,7 +206,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyHash(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o4 = new MigrationKeyValuePair();
+        DumpKeyValuePair o4 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH, version);
         replicator.addRawByteListener(listener);
@@ -215,6 +221,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o4.setValueRdbType(RDB_TYPE_HASH);
         o4.setValue(listener.getBytes());
         o4.setDb(db);
+        o4.setKey(new String(key, UTF_8));
         o4.setRawKey(key);
         return o4;
     }
@@ -222,7 +229,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyHashZipMap(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o9 = new MigrationKeyValuePair();
+        DumpKeyValuePair o9 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_ZIPMAP, version);
         replicator.addRawByteListener(listener);
@@ -231,6 +238,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
         o9.setValue(listener.getBytes());
         o9.setDb(db);
+        o9.setKey(new String(key, UTF_8));
         o9.setRawKey(key);
         return o9;
     }
@@ -238,7 +246,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyListZipList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o10 = new MigrationKeyValuePair();
+        DumpKeyValuePair o10 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST_ZIPLIST, version);
         replicator.addRawByteListener(listener);
@@ -247,6 +255,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
         o10.setValue(listener.getBytes());
         o10.setDb(db);
+        o10.setKey(new String(key, UTF_8));
         o10.setRawKey(key);
         return o10;
     }
@@ -254,7 +263,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o11 = new MigrationKeyValuePair();
+        DumpKeyValuePair o11 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_SET_INTSET, version);
         replicator.addRawByteListener(listener);
@@ -263,6 +272,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o11.setValueRdbType(RDB_TYPE_SET_INTSET);
         o11.setValue(listener.getBytes());
         o11.setDb(db);
+        o11.setKey(new String(key, UTF_8));
         o11.setRawKey(key);
         return o11;
     }
@@ -270,7 +280,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyZSetZipList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o12 = new MigrationKeyValuePair();
+        DumpKeyValuePair o12 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET_ZIPLIST, version);
         replicator.addRawByteListener(listener);
@@ -279,6 +289,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
         o12.setValue(listener.getBytes());
         o12.setDb(db);
+        o12.setKey(new String(key, UTF_8));
         o12.setRawKey(key);
         return o12;
     }
@@ -286,7 +297,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyHashZipList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o13 = new MigrationKeyValuePair();
+        DumpKeyValuePair o13 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_ZIPLIST, version);
         replicator.addRawByteListener(listener);
@@ -295,6 +306,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
         o13.setValue(listener.getBytes());
         o13.setDb(db);
+        o13.setKey(new String(key, UTF_8));
         o13.setRawKey(key);
         return o13;
     }
@@ -302,7 +314,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o14 = new MigrationKeyValuePair();
+        DumpKeyValuePair o14 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST_QUICKLIST, version);
         replicator.addRawByteListener(listener);
@@ -315,6 +327,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
         o14.setValue(listener.getBytes());
         o14.setDb(db);
+        o14.setKey(new String(key, UTF_8));
         o14.setRawKey(key);
         return o14;
     }
@@ -322,7 +335,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyModule(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o6 = new MigrationKeyValuePair();
+        DumpKeyValuePair o6 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_MODULE, version);
         replicator.addRawByteListener(listener);
@@ -343,6 +356,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o6.setValueRdbType(RDB_TYPE_MODULE);
         o6.setValue(listener.getBytes());
         o6.setDb(db);
+        o6.setKey(new String(key, UTF_8));
         o6.setRawKey(key);
         return o6;
     }
@@ -350,7 +364,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
     @Override
     public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        MigrationKeyValuePair o7 = new MigrationKeyValuePair();
+        DumpKeyValuePair o7 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_MODULE_2, version);
         replicator.addRawByteListener(listener);
@@ -375,6 +389,7 @@ public class MigrationRdbVisitor extends DefaultRdbVisitor {
         o7.setValueRdbType(RDB_TYPE_MODULE_2);
         o7.setValue(listener.getBytes());
         o7.setDb(db);
+        o7.setKey(new String(key, UTF_8));
         o7.setRawKey(key);
         return o7;
     }

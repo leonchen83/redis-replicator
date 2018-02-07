@@ -119,7 +119,6 @@ public class MigrationExample {
      * Jedis is not a reliable redis client.
      * For simplicity we use Jedis to show this example.
      * In production you need to replace following code to yours.
-     * Don't forget to replace DefaultCommandParser too. :)
      */
     public static class ExampleClient extends Client {
 

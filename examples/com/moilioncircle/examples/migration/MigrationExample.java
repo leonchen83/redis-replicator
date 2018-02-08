@@ -16,17 +16,22 @@
 
 package com.moilioncircle.examples.migration;
 
-import com.moilioncircle.examples.migration.cmd.DefaultCommand;
-import com.moilioncircle.examples.migration.rdb.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.RedisURI;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
+import com.moilioncircle.redis.replicator.cmd.parser.DefaultCommandParser;
+import com.moilioncircle.redis.replicator.cmd.parser.PingParser;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import redis.clients.jedis.Client;
 import redis.clients.jedis.Protocol;
 
@@ -37,10 +42,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static redis.clients.jedis.Protocol.Command.AUTH;
 import static redis.clients.jedis.Protocol.Command.RESTORE;
+import static redis.clients.jedis.Protocol.Command.SELECT;
+import static redis.clients.jedis.Protocol.toByteArray;
 
 /**
  * @author Leon Chen
- * @since 2.4.3
+ * @since 2.5.0
  */
 public class MigrationExample {
 
@@ -70,7 +77,7 @@ public class MigrationExample {
             System.out.println("AUTH:" + auth);
         }
         final AtomicInteger dbnum = new AtomicInteger(-1);
-        Replicator r = new RedisMigrationReplicator(suri.getHost(), suri.getPort(), Configuration.valueOf(suri));
+        Replicator r = dress(new RedisReplicator(suri));
         r.addRdbListener(new RdbListener.Adaptor() {
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
@@ -79,8 +86,9 @@ public class MigrationExample {
                 DB db = kv.getDb();
                 int index;
                 if (db != null && (index = (int) db.getDbNumber()) != dbnum.get()) {
-                    target.select(index);
+                    target.send(SELECT, toByteArray(index));
                     dbnum.set(index);
+                    System.out.println("SELECT:" + index);
                 }
 
                 // Step2: restore dump data
@@ -113,6 +121,85 @@ public class MigrationExample {
             }
         });
         r.open();
+    }
+
+    public static Replicator dress(Replicator r) {
+        r.setRdbVisitor(new DumpRdbVisitor(r));
+        r.addCommandParser(CommandName.name("PING"), new PingParser());
+        r.addCommandParser(CommandName.name("APPEND"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SET"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SETEX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("MSET"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("DEL"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SADD"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("HMSET"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("HSET"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("LSET"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("EXPIRE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("EXPIREAT"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("GETSET"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("HSETNX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("MSETNX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("PSETEX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SETNX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SETRANGE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("HDEL"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("LPOP"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("LPUSH"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("LPUSHX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("LRem"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("RPOP"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("RPUSH"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("RPUSHX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZREM"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("RENAME"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("INCR"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("DECR"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("INCRBY"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("DECRBY"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("PERSIST"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SELECT"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("FLUSHALL"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("FLUSHDB"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("HINCRBY"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZINCRBY"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("MOVE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SMOVE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("PFADD"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("PFCOUNT"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("PFMERGE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SDIFFSTORE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SINTERSTORE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SUNIONSTORE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZADD"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZINTERSTORE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZUNIONSTORE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("BRPOPLPUSH"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("LINSERT"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("RENAMENX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("RESTORE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("PEXPIRE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("PEXPIREAT"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("GEOADD"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("EVAL"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("EVALSHA"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SCRIPT"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("PUBLISH"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("BITOP"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("BITFIELD"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SETBIT"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SREM"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("UNLINK"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SWAPDB"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("MULTI"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("EXEC"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZREMRANGEBYSCORE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZREMRANGEBYRANK"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZREMRANGEBYLEX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("LTRIM"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("SORT"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("RPOPLPUSH"), new DefaultCommandParser());
+        return r;
     }
 
     /*

@@ -1,6 +1,8 @@
-### 2.4.8
+### 2.5.0
 
-Add ValueIterableRdbListener to handle huge kv.  
+Add `ValueIterableRdbListener` to handle huge kv.  
+Add `DefaultCommand` and `DefaultCommandParser` to handle raw command.  
+Add `DumpRdbVisitor` and `DumpKeyValuePair` to convert rdb to `dump` format.  
 
 ### 2.4.7
 

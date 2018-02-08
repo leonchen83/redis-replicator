@@ -41,7 +41,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
 
 /**
  * @author Leon Chen
- * @since 2.4.8
+ * @since 2.5.0
  */
 public abstract class ValueIterableRdbListener extends RdbListener.Adaptor {
 

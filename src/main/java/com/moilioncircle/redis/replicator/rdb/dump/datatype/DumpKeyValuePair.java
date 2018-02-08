@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples.migration.rdb;
+package com.moilioncircle.redis.replicator.rdb.dump.datatype;
 
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 /**
  * @author Leon Chen
- * @since 2.4.3
+ * @since 2.5.0
  */
 public class DumpKeyValuePair extends KeyValuePair<byte[]> {
     private static final long serialVersionUID = 1L;

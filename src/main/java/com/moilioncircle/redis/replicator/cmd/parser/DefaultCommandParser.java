@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples.migration.cmd;
+package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
 import com.moilioncircle.redis.replicator.util.Arrays;
 
 /**
  * @author Leon Chen
- * @since 2.4.3
+ * @since 2.5.0
  */
 public class DefaultCommandParser implements CommandParser<DefaultCommand> {
     @Override

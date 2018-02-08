@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples.migration.rdb;
+package com.moilioncircle.redis.replicator.rdb.dump;
 
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
@@ -24,6 +24,7 @@ import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
@@ -31,8 +32,6 @@ import com.moilioncircle.redis.replicator.util.ByteBuilder;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import static com.moilioncircle.examples.util.CRC64.crc64;
-import static com.moilioncircle.examples.util.CRC64.longToByteArray;
 import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
@@ -49,11 +48,13 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static com.moilioncircle.redis.replicator.util.CRC64.crc64;
+import static com.moilioncircle.redis.replicator.util.CRC64.longToByteArray;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
- * @since 2.4.3
+ * @since 2.5.0
  */
 public class DumpRdbVisitor extends DefaultRdbVisitor {
 

@@ -19,8 +19,8 @@ package com.moilioncircle.examples.util;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static com.moilioncircle.examples.util.CRC64.crc64;
-import static com.moilioncircle.examples.util.CRC64.longToByteArray;
+import static com.moilioncircle.redis.replicator.util.CRC64.crc64;
+import static com.moilioncircle.redis.replicator.util.CRC64.longToByteArray;
 
 /**
  * @author Leon Chen

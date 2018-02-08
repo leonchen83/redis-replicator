@@ -73,7 +73,7 @@ public class MigrationExample {
         final ExampleClient target = new ExampleClient(turi.getHost(), turi.getPort());
         Configuration tconfig = Configuration.valueOf(turi);
         if (tconfig.getAuthPassword() != null) {
-            String auth = target.send(AUTH, tconfig.getAuthPassword().getBytes());
+            Object auth = target.send(AUTH, tconfig.getAuthPassword().getBytes());
             System.out.println("AUTH:" + auth);
         }
         final AtomicInteger dbnum = new AtomicInteger(-1);
@@ -94,12 +94,12 @@ public class MigrationExample {
                 // Step2: restore dump data
                 DumpKeyValuePair mkv = (DumpKeyValuePair) kv;
                 if (mkv.getExpiredMs() == null) {
-                    String r = target.restore(mkv.getRawKey(), 0L, mkv.getValue(), true);
+                    Object r = target.restore(mkv.getRawKey(), 0L, mkv.getValue(), true);
                     System.out.println(r);
                 } else {
                     long ms = mkv.getExpiredMs() - System.currentTimeMillis();
                     if (ms <= 0) return;
-                    String r = target.restore(mkv.getRawKey(), ms, mkv.getValue(), true);
+                    Object r = target.restore(mkv.getRawKey(), ms, mkv.getValue(), true);
                     System.out.println(r);
                 }
             }
@@ -110,7 +110,7 @@ public class MigrationExample {
                 if (!(command instanceof DefaultCommand)) return;
                 // Step3: sync aof command
                 DefaultCommand dc = (DefaultCommand) command;
-                String r = target.send(dc.getCommand(), dc.getArgs());
+                Object r = target.send(dc.getCommand(), dc.getArgs());
                 System.out.println(r);
             }
         });
@@ -213,16 +213,21 @@ public class MigrationExample {
             super(host, port);
         }
 
-        public String send(Protocol.Command cmd, final byte[]... args) {
+        public Object send(Protocol.Command cmd, final byte[]... args) {
             sendCommand(cmd, args);
-            return getStatusCodeReply();
+            Object r = getOne();
+            if (r instanceof byte[]) {
+                return new String((byte[]) r, UTF_8);
+            } else {
+                return r;
+            }
         }
 
-        public String send(final byte[] cmd, final byte[]... args) {
+        public Object send(final byte[] cmd, final byte[]... args) {
             return send(Protocol.Command.valueOf(new String(cmd, UTF_8).toUpperCase()), args);
         }
 
-        public String restore(byte[] key, long expired, byte[] dumped, boolean replace) {
+        public Object restore(byte[] key, long expired, byte[] dumped, boolean replace) {
             if (!replace) {
                 return send(RESTORE, key, toByteArray(expired), dumped);
             } else {

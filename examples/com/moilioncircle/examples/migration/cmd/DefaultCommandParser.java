@@ -31,7 +31,7 @@ public class DefaultCommandParser implements CommandParser<DefaultCommand> {
                 args[j++] = String.valueOf(command[i]).getBytes();
             } else if (command[i] instanceof byte[]) {
                 args[j++] = (byte[]) command[i];
-            } else if (command[i] instanceof byte[][]) {
+            } else if (command[i] instanceof Object[]) {
                 throw new UnsupportedOperationException();
             }
         }

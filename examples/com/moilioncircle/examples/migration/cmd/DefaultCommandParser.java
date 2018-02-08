@@ -17,6 +17,7 @@
 package com.moilioncircle.examples.migration.cmd;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.util.Arrays;
 
 /**
  * @author Leon Chen
@@ -32,7 +33,7 @@ public class DefaultCommandParser implements CommandParser<DefaultCommand> {
             } else if (command[i] instanceof byte[]) {
                 args[j++] = (byte[]) command[i];
             } else if (command[i] instanceof Object[]) {
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException(Arrays.deepToString(command));
             }
         }
         return new DefaultCommand((byte[]) command[0], args);

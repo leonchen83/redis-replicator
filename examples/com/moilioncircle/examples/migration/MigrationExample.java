@@ -224,9 +224,9 @@ public class MigrationExample {
 
         public String restore(byte[] key, long expired, byte[] dumped, boolean replace) {
             if (!replace) {
-                return send(RESTORE, key, String.valueOf(expired).getBytes(), dumped);
+                return send(RESTORE, key, toByteArray(expired), dumped);
             } else {
-                return send(RESTORE, key, String.valueOf(expired).getBytes(), dumped, "REPLACE".getBytes());
+                return send(RESTORE, key, toByteArray(expired), dumped, "REPLACE".getBytes());
             }
         }
     }

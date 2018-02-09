@@ -82,7 +82,7 @@ maven-3.2.3+
 redis 2.6 - 4.0.x  
 
 ## 2.2. Maven dependency  
-```java  
+```xml  
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>

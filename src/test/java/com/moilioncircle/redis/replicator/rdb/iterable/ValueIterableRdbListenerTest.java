@@ -21,7 +21,10 @@ public class ValueIterableRdbListenerTest {
 
     @Test
     public void test() {
-        final AtomicInteger acc = new AtomicInteger(0);
+        final AtomicInteger map = new AtomicInteger(0);
+        final AtomicInteger zset = new AtomicInteger(0);
+        final AtomicInteger set = new AtomicInteger(0);
+        final AtomicInteger list = new AtomicInteger(0);
         Replicator r = new RedisReplicator(ValueIterableRdbListenerTest.class.getClassLoader().getResourceAsStream("dump-huge-kv.rdb"), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new ValueIterableRdbListener(3) {
@@ -31,19 +34,22 @@ public class ValueIterableRdbListenerTest {
 
             @Override
             public void handleList(KeyValuePair<List<byte[]>> kv, int batch, boolean last) {
+                list.incrementAndGet();
             }
 
             @Override
             public void handleSet(KeyValuePair<Set<byte[]>> kv, int batch, boolean last) {
+                set.incrementAndGet();
             }
 
             @Override
             public void handleMap(KeyValuePair<Map<byte[], byte[]>> kv, int batch, boolean last) {
-                acc.incrementAndGet();
+                map.incrementAndGet();
             }
 
             @Override
             public void handleZSetEntry(KeyValuePair<Set<ZSetEntry>> kv, int batch, boolean last) {
+                zset.incrementAndGet();
             }
 
             @Override
@@ -55,14 +61,18 @@ public class ValueIterableRdbListenerTest {
         } catch (Exception e) {
             fail();
         }
-
-        assertEquals(4, acc.get());
-
+        assertEquals(4, map.get());
+        assertEquals(4, list.get());
+        assertEquals(4, set.get());
+        assertEquals(4, zset.get());
     }
 
     @Test
     public void test1() {
-        final AtomicInteger acc = new AtomicInteger(0);
+        final AtomicInteger map = new AtomicInteger(0);
+        final AtomicInteger zset = new AtomicInteger(0);
+        final AtomicInteger set = new AtomicInteger(0);
+        final AtomicInteger list = new AtomicInteger(0);
         Replicator r = new RedisReplicator(ValueIterableRdbListenerTest.class.getClassLoader().getResourceAsStream("dump-huge-kv.rdb"), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new ValueIterableRdbListener(2) {
@@ -72,19 +82,22 @@ public class ValueIterableRdbListenerTest {
 
             @Override
             public void handleList(KeyValuePair<List<byte[]>> kv, int batch, boolean last) {
+                list.incrementAndGet();
             }
 
             @Override
             public void handleSet(KeyValuePair<Set<byte[]>> kv, int batch, boolean last) {
+                set.incrementAndGet();
             }
 
             @Override
             public void handleMap(KeyValuePair<Map<byte[], byte[]>> kv, int batch, boolean last) {
-                acc.incrementAndGet();
+                map.incrementAndGet();
             }
 
             @Override
             public void handleZSetEntry(KeyValuePair<Set<ZSetEntry>> kv, int batch, boolean last) {
+                zset.incrementAndGet();
             }
 
             @Override
@@ -96,8 +109,9 @@ public class ValueIterableRdbListenerTest {
         } catch (Exception e) {
             fail();
         }
-
-        assertEquals(5, acc.get());
-
+        assertEquals(5, map.get());
+        assertEquals(5, list.get());
+        assertEquals(5, set.get());
+        assertEquals(5, zset.get());
     }
 }

@@ -21,6 +21,7 @@ public class ValueIterableRdbListenerTest {
 
     @Test
     public void test() {
+        final AtomicInteger string = new AtomicInteger(0);
         final AtomicInteger map = new AtomicInteger(0);
         final AtomicInteger zset = new AtomicInteger(0);
         final AtomicInteger set = new AtomicInteger(0);
@@ -30,6 +31,7 @@ public class ValueIterableRdbListenerTest {
         r.addRdbListener(new ValueIterableRdbListener(3) {
             @Override
             public void handleString(KeyValuePair<byte[]> kv, int batch, boolean last) {
+                string.incrementAndGet();
             }
 
             @Override
@@ -61,6 +63,7 @@ public class ValueIterableRdbListenerTest {
         } catch (Exception e) {
             fail();
         }
+        assertEquals(1, string.get());
         assertEquals(4, map.get());
         assertEquals(4, list.get());
         assertEquals(4, set.get());
@@ -69,6 +72,7 @@ public class ValueIterableRdbListenerTest {
 
     @Test
     public void test1() {
+        final AtomicInteger string = new AtomicInteger(0);
         final AtomicInteger map = new AtomicInteger(0);
         final AtomicInteger zset = new AtomicInteger(0);
         final AtomicInteger set = new AtomicInteger(0);
@@ -78,6 +82,7 @@ public class ValueIterableRdbListenerTest {
         r.addRdbListener(new ValueIterableRdbListener(2) {
             @Override
             public void handleString(KeyValuePair<byte[]> kv, int batch, boolean last) {
+                string.incrementAndGet();
             }
 
             @Override
@@ -109,6 +114,7 @@ public class ValueIterableRdbListenerTest {
         } catch (Exception e) {
             fail();
         }
+        assertEquals(1, string.get());
         assertEquals(5, map.get());
         assertEquals(5, list.get());
         assertEquals(5, set.get());

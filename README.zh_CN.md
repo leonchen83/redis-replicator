@@ -594,9 +594,10 @@ byte[] rawValue = set.getRawValue();
   
 # 7. 相关引用  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  
-  * [Redis RDB File Format](https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format)  
-  * [Redis Protocol specification](http://redis.io/topics/protocol)
-  * [Redis Replication](http://redis.io/topics/replication)
+  * [Redis RDB文件格式](https://github.com/leonchen83/redis-replicator/wiki/RDB-dump-data-format)  
+  * [Redis 协议指南](http://redis.io/topics/protocol)
+  * [Redis 同步协议](http://redis.io/topics/replication)
+  * [Redis-replicator 设计与实现](https://github.com/leonchen83/mycode/blob/master/redis/redis-share/Redis-replicator%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0.md)
 
 # 8. 致谢  
 

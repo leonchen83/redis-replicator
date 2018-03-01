@@ -587,9 +587,10 @@ More details please refer to:
   
 # 7. References  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  
-  * [Redis RDB File Format](https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format)  
+  * [Redis RDB File Format](https://github.com/leonchen83/redis-replicator/wiki/RDB-dump-data-format)  
   * [Redis Protocol specification](http://redis.io/topics/protocol)
   * [Redis Replication](http://redis.io/topics/replication)
+  * [Redis Design and Implementation](https://github.com/leonchen83/mycode/blob/master/redis/redis-share/Redis-replicator%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0.md)
 
 # 8. Supported by  
 

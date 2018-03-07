@@ -211,6 +211,8 @@ public class MigrationExample {
 
         public ExampleClient(final String host, final int port) {
             super(host, port);
+            setConnectionTimeout(10000);
+            setSoTimeout(10000);
         }
 
         public Object send(Protocol.Command cmd, final byte[]... args) {

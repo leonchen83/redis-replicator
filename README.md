@@ -389,12 +389,12 @@ See [ModuleExtensionExample.java](./examples/com/moilioncircle/examples/extensio
 ## 4.4. Event timeline  
 
 ```java  
-     |                     full resynchronization              |  partial resynchronization  |
-     ↓-----------<--------------<-------------<----------<-----↓--------------<--------------↑
-     ↓                                                         ↓                             ↑ <-reconnect    
- connect->------->-------------->------------->---------->-------------------->--------------x <-disconnect
-               ↓              ↓          ↓            ↓                   ↓
-          prefullsync    auxfields...  rdbs...   postfullsync            cmds...       
+        |                     full resynchronization              |  partial resynchronization  |
+        +-----------<--------------<-------------<----------<-----+--------------<-------<------+
+        |                       RDB                               |            AOF              | <-reconnect    
+ connect+-->----->-------------->------------->---------->-------------------->------->---------x <-disconnect
+        |      |              |          |            |           |             |               |
+          prefullsync    auxfields...  rdbs...   postfullsync                  cmds...       
 ```
 
 ## 4.5. Redis URI

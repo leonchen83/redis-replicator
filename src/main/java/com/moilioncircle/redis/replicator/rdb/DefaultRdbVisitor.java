@@ -35,8 +35,8 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class DefaultRdbVisitor extends RdbVisitor {
 
-    protected static final Log logger = LogFactory.getLog(DefaultRdbVisitor.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DefaultRdbVisitor.class);
 
     protected final Replicator replicator;
 
@@ -185,7 +185,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         String auxValue = new String(parser.rdbLoadEncodedStringObject().first(), UTF_8);
         if (!auxKey.startsWith("%")) {
             if (logger.isInfoEnabled()) {
-                logger.info("RDB " + auxKey + ": " + auxValue);
+                logger.info("RDB {}: {}", auxKey, auxValue);
             }
             if (auxKey.equals("repl-id")) replicator.getConfiguration().setReplId(auxValue);
             if (auxKey.equals("repl-offset")) replicator.getConfiguration().setReplOffset(parseLong(auxValue));
@@ -193,7 +193,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             return new AuxField(auxKey, auxValue);
         } else {
             if (logger.isWarnEnabled()) {
-                logger.warn("unrecognized RDB AUX field: " + auxKey + ", value: " + auxValue);
+                logger.warn("unrecognized RDB AUX field: {}, value: {}", auxKey, auxValue);
             }
             return null;
         }

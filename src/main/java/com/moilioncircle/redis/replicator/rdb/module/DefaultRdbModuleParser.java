@@ -20,8 +20,8 @@ import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -38,7 +38,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 public class DefaultRdbModuleParser {
-    protected static final Log logger = LogFactory.getLog(DefaultRdbModuleParser.class);
+    protected static final Logger logger = LoggerFactory.getLogger(DefaultRdbModuleParser.class);
 
     private final RedisInputStream in;
     private final BaseRdbParser parser;

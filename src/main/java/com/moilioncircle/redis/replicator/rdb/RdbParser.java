@@ -22,8 +22,8 @@ import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -63,7 +63,7 @@ public class RdbParser {
     protected final RedisInputStream in;
     protected final RdbVisitor rdbVisitor;
     protected final AbstractReplicator replicator;
-    protected static final Log logger = LogFactory.getLog(RdbParser.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RdbParser.class);
 
     public RdbParser(RedisInputStream in, AbstractReplicator replicator) {
         this.in = in;
@@ -90,31 +90,31 @@ public class RdbParser {
      * <p>
      * VALUE      =    $value-type, ( $string
      * <p>
-     *                              | $list
+     * | $list
      * <p>
-     *                              | $set
+     * | $set
      * <p>
-     *                              | $zset
+     * | $zset
      * <p>
-     *                              | $hash
+     * | $hash
      * <p>
-     *                              | $zset2                  (*Introduced in rdb version 8*)
+     * | $zset2                  (*Introduced in rdb version 8*)
      * <p>
-     *                              | $module                 (*Introduced in rdb version 8*)
+     * | $module                 (*Introduced in rdb version 8*)
      * <p>
-     *                              | $module2                (*Introduced in rdb version 8*)
+     * | $module2                (*Introduced in rdb version 8*)
      * <p>
-     *                              | $hashzipmap
+     * | $hashzipmap
      * <p>
-     *                              | $listziplist
+     * | $listziplist
      * <p>
-     *                              | $setintset
+     * | $setintset
      * <p>
-     *                              | $zsetziplist
+     * | $zsetziplist
      * <p>
-     *                              | $hashziplist
+     * | $hashziplist
      * <p>
-     *                              | $listquicklist);        (*Introduced in rdb version 7*)
+     * | $listquicklist);        (*Introduced in rdb version 7*)
      * <p>
      *
      * @return read bytes
@@ -204,7 +204,7 @@ public class RdbParser {
                     throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");
             }
             if (event == null) continue;
-            if (replicator.verbose() && logger.isDebugEnabled()) logger.debug(event);
+            if (replicator.verbose() && logger.isDebugEnabled()) logger.debug("{}", event);
             this.replicator.submitEvent(event);
         }
         return in.total();

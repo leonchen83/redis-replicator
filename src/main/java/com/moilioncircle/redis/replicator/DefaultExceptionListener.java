@@ -16,18 +16,18 @@
 
 package com.moilioncircle.redis.replicator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
 public class DefaultExceptionListener implements ExceptionListener {
-    private static final Log logger = LogFactory.getLog(DefaultExceptionListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionListener.class);
 
     @Override
     public void handle(Replicator replicator, Throwable throwable, Object event) {
-        logger.error("error on event [" + event + "]", throwable);
+        logger.error("error on event [{}]", event, throwable);
     }
 }

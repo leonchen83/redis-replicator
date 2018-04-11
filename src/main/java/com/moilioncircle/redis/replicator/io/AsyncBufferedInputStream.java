@@ -17,8 +17,8 @@
 
 package com.moilioncircle.redis.replicator.io;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class AsyncBufferedInputStream extends InputStream implements Runnable {
     //
-    private static final Log logger = LogFactory.getLog(AsyncBufferedInputStream.class);
+    private static final Logger logger = LoggerFactory.getLogger(AsyncBufferedInputStream.class);
 
     //
     private static final int DEFAULT_CAPACITY = 2 * 1024 * 1024;

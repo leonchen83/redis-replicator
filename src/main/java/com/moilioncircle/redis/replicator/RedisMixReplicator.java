@@ -24,8 +24,8 @@ import com.moilioncircle.redis.replicator.io.PeekableInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 import com.moilioncircle.redis.replicator.util.Arrays;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.EOFException;
 import java.io.File;
@@ -44,7 +44,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 public class RedisMixReplicator extends AbstractReplicator {
-    protected static final Log logger = LogFactory.getLog(RedisMixReplicator.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RedisMixReplicator.class);
     protected final ReplyParser replyParser;
     protected final PeekableInputStream peekable;
 
@@ -98,12 +98,12 @@ public class RedisMixReplicator extends AbstractReplicator {
                 final CommandParser<? extends Command> parser;
                 //if command do not register. ignore
                 if ((parser = commands.get(name)) == null) {
-                    logger.warn("command [" + name + "] not register. raw command:[" + Arrays.deepToString(raw) + "]");
+                    logger.warn("command [{}] not register. raw command:[{}]", name, Arrays.deepToString(raw));
                     continue;
                 }
                 submitEvent(parser.parse(raw));
             } else {
-                logger.info("unexpected redis reply:" + obj);
+                logger.info("unexpected redis reply:{}", obj);
             }
         }
     }

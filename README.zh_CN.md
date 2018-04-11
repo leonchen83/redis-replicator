@@ -84,7 +84,7 @@ Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实�
 # 2. 安装  
 ## 2.1. 安装前置条件  
 jdk 1.7+  
-maven-3.2.3+  
+maven-3.3.1+(支持 [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
 redis 2.6 - 4.0.x  
 
 ## 2.2. Maven依赖  
@@ -92,14 +92,19 @@ redis 2.6 - 4.0.x
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.5.0</version>
+        <version>2.6.0</version>
     </dependency>
 ```
 
 ## 2.3. 安装源码到本地maven仓库  
   
 ```
-    $mvn clean install package -Dmaven.test.skip=true
+    step 1: 安装 jdk-1.8.x
+    step 2: 安装 jdk-9.0.x
+    step 3: git clone https://github.com/leonchen83/redis-replicator.git
+    step 4: cd ./redis-replicator 
+            替换toolchains.xml中相应的jdk路径并保存
+    step 5: $mvn clean install package -Dmaven.test.skip=true --global-toolchains ./toolchains.xml
 ```  
 
 ## 2.4. 选择一个版本

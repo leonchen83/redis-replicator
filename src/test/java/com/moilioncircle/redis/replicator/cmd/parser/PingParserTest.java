@@ -38,7 +38,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.SAddCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SDiffStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SInterStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SUnionStoreCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.ScriptFlushCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ScriptLoadCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SetBitCommand;
@@ -56,12 +55,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class PingParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         {
             PingParser parser = new PingParser();
             PingCommand cmd = parser.parse(toObjectArray("ping msg".split(" ")));
             assertEquals("msg", cmd.getMessage());
-            System.out.println(cmd);
         }
 
         {
@@ -69,14 +67,12 @@ public class PingParserTest extends AbstractParserTest {
             MoveCommand cmd = parser.parse(toObjectArray("move key 2".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(2, cmd.getDb());
-            System.out.println(cmd);
         }
 
         {
             SelectParser parser = new SelectParser();
             SelectCommand cmd = parser.parse(toObjectArray("select 2".split(" ")));
             assertEquals(2, cmd.getIndex());
-            System.out.println(cmd);
         }
 
         {
@@ -84,7 +80,6 @@ public class PingParserTest extends AbstractParserTest {
             RenameCommand cmd = parser.parse(toObjectArray("rename key key1".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("key1", cmd.getNewKey());
-            System.out.println(cmd);
         }
 
         {
@@ -92,7 +87,6 @@ public class PingParserTest extends AbstractParserTest {
             RenameNxCommand cmd = parser.parse(toObjectArray("renamenx key key1".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("key1", cmd.getNewKey());
-            System.out.println(cmd);
         }
 
         {
@@ -100,7 +94,6 @@ public class PingParserTest extends AbstractParserTest {
             AppendCommand cmd = parser.parse(toObjectArray("append key val".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("val", cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -109,7 +102,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(10, cmd.getOffset());
             assertEquals(0, cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -118,7 +110,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(10, cmd.getIndex());
             assertEquals("val", cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -126,7 +117,6 @@ public class PingParserTest extends AbstractParserTest {
             GetSetCommand cmd = parser.parse(toObjectArray("getset key val".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("val", cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -135,7 +125,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals("fie", cmd.getField());
             assertEquals("val", cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -144,7 +133,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals("fie", cmd.getField());
             assertEquals("val", cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -153,7 +141,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(1, cmd.getIndex());
             assertEquals("val", cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -162,7 +149,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(1, cmd.getEx());
             assertEquals("val", cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -171,7 +157,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals("v1", cmd.getMembers()[0]);
             assertEquals("v2", cmd.getMembers()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -179,7 +164,6 @@ public class PingParserTest extends AbstractParserTest {
             SetNxCommand cmd = parser.parse(toObjectArray("setnx key v1".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("v1", cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
@@ -187,7 +171,6 @@ public class PingParserTest extends AbstractParserTest {
             ExpireAtCommand cmd = parser.parse(toObjectArray("expireat key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
-            System.out.println(cmd);
         }
 
         {
@@ -195,7 +178,6 @@ public class PingParserTest extends AbstractParserTest {
             ExpireCommand cmd = parser.parse(toObjectArray("expire key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
-            System.out.println(cmd);
         }
 
         {
@@ -203,7 +185,6 @@ public class PingParserTest extends AbstractParserTest {
             PExpireAtCommand cmd = parser.parse(toObjectArray("pexpireat key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
-            System.out.println(cmd);
         }
 
         {
@@ -211,7 +192,6 @@ public class PingParserTest extends AbstractParserTest {
             PExpireCommand cmd = parser.parse(toObjectArray("pexpire key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
-            System.out.println(cmd);
         }
 
         {
@@ -220,7 +200,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("des", cmd.getDestination());
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -229,7 +208,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("des", cmd.getDestination());
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -238,7 +216,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("des", cmd.getDestination());
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -251,7 +228,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(2, cmd.getWeights()[0], 0);
             assertEquals(3, cmd.getWeights()[1], 0);
             assertEquals(AggregateType.SUM, cmd.getAggregateType());
-            System.out.println(cmd);
         }
 
         {
@@ -264,7 +240,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(2, cmd.getWeights()[0], 0);
             assertEquals(3, cmd.getWeights()[1], 0);
             assertEquals(AggregateType.MIN, cmd.getAggregateType());
-            System.out.println(cmd);
         }
 
         {
@@ -273,7 +248,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("return redis.call('set',KEYS[1],'bar')", cmd.getScript());
             assertEquals(1, cmd.getNumkeys());
             assertEquals("foo", cmd.getKeys()[0]);
-            System.out.println(cmd);
         }
 
         {
@@ -282,20 +256,17 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("2fa2b029f72572e803ff55a09b1282699aecae6a", cmd.getSha());
             assertEquals(1, cmd.getNumkeys());
             assertEquals("foo", cmd.getKeys()[0]);
-            System.out.println(cmd);
         }
 
         {
             ScriptParser parser = new ScriptParser();
             ScriptLoadCommand cmd = (ScriptLoadCommand) parser.parse(toObjectArray(new Object[]{"script", "load", "return redis.call('set',KEYS[1],'bar')"}));
             assertEquals("return redis.call('set',KEYS[1],'bar')", cmd.getScript());
-            System.out.println(cmd);
         }
 
         {
             ScriptParser parser = new ScriptParser();
-            ScriptFlushCommand cmd = (ScriptFlushCommand) parser.parse(toObjectArray(new Object[]{"script", "flush"}));
-            System.out.println(cmd);
+            parser.parse(toObjectArray(new Object[]{"script", "flush"}));
         }
 
         {
@@ -305,7 +276,6 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("mykey", cmd.getKey());
             assertEquals(0L, cmd.getTtl());
             assertEquals(null, cmd.getReplace());
-            System.out.println(cmd);
         }
 
     }

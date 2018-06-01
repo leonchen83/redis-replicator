@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 public class HMSetParserTest extends AbstractParserTest {
 
     @Test
-    public void testParse() throws Exception {
+    public void testParse() {
         {
             HMSetParser hmSetParser = new HMSetParser();
             HMSetCommand command = hmSetParser.parse(toObjectArray(new Object[]{"hmset", "key", "field", "value"}));

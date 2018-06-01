@@ -19,9 +19,11 @@ package com.moilioncircle.redis.replicator.rdb.iterable;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
@@ -83,6 +85,10 @@ public abstract class ValueIterableRdbListener extends RdbListener.Adaptor {
     }
 
     public void handleModule(KeyValuePair<Module> kv, int batch, boolean last) {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+
+    public void handleStream(KeyValuePair<Stream> kv, int batch, boolean last) {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
@@ -165,6 +171,8 @@ public abstract class ValueIterableRdbListener extends RdbListener.Adaptor {
             if (!last) handleZSetEntry(create(kv, next), batch++, true);
         } else if (kv instanceof KeyStringValueModule) {
             handleModule((KeyStringValueModule) kv, batch, true);
+        } else if (kv instanceof KeyStringValueStream) {
+            handleStream((KeyStringValueStream) kv, batch, true);
         }
     }
 

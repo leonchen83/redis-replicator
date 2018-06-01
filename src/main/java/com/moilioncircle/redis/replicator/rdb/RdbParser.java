@@ -31,6 +31,9 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_AUX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME_MS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_MODULE_AUX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
@@ -43,6 +46,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -74,17 +78,23 @@ public class RdbParser {
     /**
      * The RDB E-BNF
      * <p>
-     * RDB        =    'REDIS', $version, [AUX], {SELECTDB, [RESIZEDB], {RECORD}}, '0xFF', [$checksum];
+     * RDB        =    'REDIS', $version, [AUX], [MODULE_AUX], {SELECTDB, [RESIZEDB], {RECORD}}, '0xFF', [$checksum];
      * <p>
-     * RECORD     =    [EXPIRED], KEY, VALUE;
+     * RECORD     =    [EXPIRED], [IDLE | FREQ], KEY, VALUE;
      * <p>
      * SELECTDB   =    '0xFE', $length;
      * <p>
      * AUX        =    {'0xFA', $string, $string};            (*Introduced in rdb version 7*)
      * <p>
+     * MODULE_AUX =    {'0xF7', $length};                     (*Introduced in rdb version 9*)
+     * <p>
      * RESIZEDB   =    '0xFB', $length, $length;              (*Introduced in rdb version 7*)
      * <p>
      * EXPIRED    =    ('0xFD', $second) | ('0xFC', $millisecond);
+     * <p>
+     * IDLE       =    {'0xF8', $value-type};                 (*Introduced in rdb version 9*)
+     * <p>
+     * FREQ       =    {'0xF9', $length};                     (*Introduced in rdb version 9*)
      * <p>
      * KEY        =    $string;
      * <p>
@@ -114,7 +124,9 @@ public class RdbParser {
      * <p>
      * | $hashziplist
      * <p>
-     * | $listquicklist);        (*Introduced in rdb version 7*)
+     * | $listquicklist          (*Introduced in rdb version 7*)
+     * <p>
+     * | $streamlistpacks);      (*Introduced in rdb version 9*)
      * <p>
      *
      * @return read bytes
@@ -145,8 +157,17 @@ public class RdbParser {
                 case RDB_OPCODE_EXPIRETIME_MS:
                     event = rdbVisitor.applyExpireTimeMs(in, db, version);
                     break;
+                case RDB_OPCODE_FREQ:
+                    event = rdbVisitor.applyFreq(in, db, version);
+                    break;
+                case RDB_OPCODE_IDLE:
+                    event = rdbVisitor.applyIdle(in, db, version);
+                    break;
                 case RDB_OPCODE_AUX:
                     event = rdbVisitor.applyAux(in, version);
+                    break;
+                case RDB_OPCODE_MODULE_AUX:
+                    event = rdbVisitor.applyModuleAux(in, version);
                     break;
                 case RDB_OPCODE_RESIZEDB:
                     rdbVisitor.applyResizeDB(in, db, version);
@@ -199,6 +220,9 @@ public class RdbParser {
                     break;
                 case RDB_TYPE_MODULE_2:
                     event = rdbVisitor.applyModule2(in, db, version);
+                    break;
+                case RDB_TYPE_STREAM_LISTPACKS:
+                    event = rdbVisitor.applyStreamListPacks(in, db, version);
                     break;
                 default:
                     throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");

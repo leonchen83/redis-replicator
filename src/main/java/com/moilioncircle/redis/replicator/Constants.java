@@ -63,12 +63,15 @@ public class Constants {
     /**
      * rdb protocol
      */
-    public static final int RDB_OPCODE_AUX = 0xfa; /*250*/
-    public static final int RDB_OPCODE_RESIZEDB = 0xfb; /*251*/
-    public static final int RDB_OPCODE_EXPIRETIME_MS = 0xfc;/* 252 */
-    public static final int RDB_OPCODE_EXPIRETIME = 0xfd; /* 253 */
-    public static final int RDB_OPCODE_SELECTDB = 0xfe; /* 254 */
-    public static final int RDB_OPCODE_EOF = 0xff; /* 255 */
+    public static final int RDB_OPCODE_MODULE_AUX = 247;
+    public static final int RDB_OPCODE_IDLE = 248;
+    public static final int RDB_OPCODE_FREQ = 249;
+    public static final int RDB_OPCODE_AUX = 250;
+    public static final int RDB_OPCODE_RESIZEDB = 251;
+    public static final int RDB_OPCODE_EXPIRETIME_MS = 252;
+    public static final int RDB_OPCODE_EXPIRETIME = 253;
+    public static final int RDB_OPCODE_SELECTDB = 254;
+    public static final int RDB_OPCODE_EOF = 255;
 
     /**
      * rdb object encoding
@@ -87,12 +90,12 @@ public class Constants {
     public static final int RDB_TYPE_ZSET_ZIPLIST = 12;
     public static final int RDB_TYPE_HASH_ZIPLIST = 13;
     public static final int RDB_TYPE_LIST_QUICKLIST = 14;
+    public static final int RDB_TYPE_STREAM_LISTPACKS = 15;
 
     /**
      * Module serialized values sub opcodes
      */
     public static final int RDB_MODULE_OPCODE_EOF = 0; /* End of module value. */
-    // this variable only used in rdb check tool. useless for now.
     public static final int RDB_MODULE_OPCODE_SINT = 1; /* Signed integer. */
     public static final int RDB_MODULE_OPCODE_UINT = 2; /* Unsigned integer. */
     public static final int RDB_MODULE_OPCODE_FLOAT = 3; /* Float. */
@@ -107,6 +110,13 @@ public class Constants {
     public static final int ZIP_INT_24B = 0xc0 | 3 << 4; /* 11110000*/
     public static final int ZIP_INT_32B = 0xc0 | 1 << 4; /* 11010000*/
     public static final int ZIP_INT_64B = 0xc0 | 2 << 4; /* 11100000*/
+    
+    /**
+     * list pack
+     */
+    public static final int STREAM_ITEM_FLAG_NONE = 0; /* No special flags. */
+    public static final int STREAM_ITEM_FLAG_DELETED = (1 << 0); /* Entry is delted. Skip it. */
+    public static final int STREAM_ITEM_FLAG_SAMEFIELDS = (1 << 1); /* Same fields as master entry. */
 
     /**
      * transfer protocol

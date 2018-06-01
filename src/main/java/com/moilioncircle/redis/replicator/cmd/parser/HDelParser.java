@@ -19,8 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.HDelCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,14 +30,14 @@ public class HDelParser implements CommandParser<HDelCommand> {
     @Override
     public HDelCommand parse(Object[] command) {
         int idx = 1;
-        String key = objToString(command[idx]);
-        byte[] rawKey = objToBytes(command[idx]);
+        String key = toRune(command[idx]);
+        byte[] rawKey = toBytes(command[idx]);
         idx++;
         String[] fields = new String[command.length - 2];
         byte[][] rawFields = new byte[command.length - 2][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            fields[j] = objToString(command[i]);
-            rawFields[j] = objToBytes(command[i]);
+            fields[j] = toRune(command[i]);
+            rawFields[j] = toBytes(command[i]);
         }
         return new HDelCommand(key, fields, rawKey, rawFields);
     }

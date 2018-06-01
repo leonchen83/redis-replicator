@@ -29,15 +29,23 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.module.DefaultRdbModuleParser;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
+import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
+import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen
@@ -50,39 +58,182 @@ public class ModuleTest {
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof KeyStringValueModule) {
                     KeyStringValueModule ksvm = (KeyStringValueModule) kv;
-                    System.out.println(kv);
                     assertEquals(12123123112L, ((HelloTypeModule) ksvm.getValue()).getValue()[0]);
                 }
             }
+    
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
         });
-
+    
         replicator.open();
-
+    
         replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly6.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
-
+    
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
                 if (command instanceof HelloTypeCommand) {
                     HelloTypeCommand htc = (HelloTypeCommand) command;
-                    System.out.println(command);
                     assertEquals(12123123112L, htc.getValue());
                 }
             }
         });
-
+    
         replicator.open();
     }
-
+    
+    @Test
+    public void testSkipModule() {
+        @SuppressWarnings("resource")
+        Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+            
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+            }
+            
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+        });
+        try {
+            replicator.open();
+            fail();
+        } catch (Throwable e) {
+        }
+    }
+    
+    @Test
+    public void testSkipModule1() {
+        @SuppressWarnings("resource")
+        Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
+    
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+        
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+        });
+        try {
+            replicator.open();
+            fail();
+        } catch (Throwable e) {
+        }
+    
+        replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
+        replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
+    
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+        
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+        });
+        try {
+            replicator.open();
+        } catch (Throwable e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testDumpModule1() {
+        @SuppressWarnings("resource")
+        Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+            
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+            }
+            
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+        });
+        try {
+            replicator.open();
+            fail();
+        } catch (Throwable e) {
+        }
+    
+        replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+    
+        final Map<String, byte[]> map = new HashMap<>();
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+        
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                if (kv instanceof DumpKeyValuePair) {
+                    DumpKeyValuePair dkv = (DumpKeyValuePair) kv;
+                    map.put(dkv.getKey(), dkv.getValue());
+                }
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+        });
+        try {
+            replicator.open();
+        } catch (Throwable e) {
+            fail();
+        }
+    
+        TestCase.assertEquals(27, map.size());
+        for (Map.Entry<String, byte[]> entry : map.entrySet()) {
+            assertNotNull(entry.getValue());
+        }
+    }
+    
     public static class HelloTypeModuleParser implements ModuleParser<HelloTypeModule> {
-
+    
         @Override
         public HelloTypeModule parse(RedisInputStream in, int version) throws IOException {
             DefaultRdbModuleParser parser = new DefaultRdbModuleParser(in);
@@ -95,21 +246,21 @@ public class ModuleTest {
             return new HelloTypeModule(ary);
         }
     }
-
+    
     public static class HelloTypeModule implements Module {
-
+        
         private static final long serialVersionUID = 1L;
-
+        
         private final long[] value;
-
+        
         public HelloTypeModule(long[] value) {
             this.value = value;
         }
-
+        
         public long[] getValue() {
             return value;
         }
-
+        
         @Override
         public String toString() {
             return "HelloTypeModule{" +
@@ -117,7 +268,7 @@ public class ModuleTest {
                     '}';
         }
     }
-
+    
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
@@ -126,25 +277,25 @@ public class ModuleTest {
             return new HelloTypeCommand(key, value);
         }
     }
-
+    
     public static class HelloTypeCommand implements Command {
         private static final long serialVersionUID = 1L;
         private final String key;
         private final long value;
-
+        
         public long getValue() {
             return value;
         }
-
+        
         public String getKey() {
             return key;
         }
-
+        
         public HelloTypeCommand(String key, long value) {
             this.key = key;
             this.value = value;
         }
-
+        
         @Override
         public String toString() {
             return "HelloTypeCommand{" +
@@ -152,6 +303,6 @@ public class ModuleTest {
                     ", value=" + value +
                     '}';
         }
-
+        
     }
 }

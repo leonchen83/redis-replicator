@@ -33,13 +33,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class MSetNxParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         {
             MSetNxParser parser = new MSetNxParser();
             MSetNxCommand cmd = parser.parse(toObjectArray("msetnx k1 v1 k2 v2".split(" ")));
             assertEquals("v1", cmd.getKv().get("k1"));
             assertEquals("v2", cmd.getKv().get("k2"));
-            System.out.println(cmd);
         }
 
         {
@@ -47,14 +46,12 @@ public class MSetNxParserTest extends AbstractParserTest {
             MSetCommand cmd = parser.parse(toObjectArray("mset k1 v1 k2 v2".split(" ")));
             assertEquals("v1", cmd.getKv().get("k1"));
             assertEquals("v2", cmd.getKv().get("k2"));
-            System.out.println(cmd);
         }
 
         {
             PersistParser parser = new PersistParser();
             PersistCommand cmd = parser.parse(toObjectArray("persist k1".split(" ")));
             assertEquals("k1", cmd.getKey());
-            System.out.println(cmd);
         }
 
         {
@@ -63,7 +60,6 @@ public class MSetNxParserTest extends AbstractParserTest {
             assertEquals("k1", cmd.getKey());
             assertEquals("e1", cmd.getElements()[0]);
             assertEquals("e2", cmd.getElements()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -71,7 +67,6 @@ public class MSetNxParserTest extends AbstractParserTest {
             PFCountCommand cmd = parser.parse(toObjectArray("pfcount k1 k2".split(" ")));
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -80,7 +75,6 @@ public class MSetNxParserTest extends AbstractParserTest {
             assertEquals("des", cmd.getDestkey());
             assertEquals("k1", cmd.getSourcekeys()[0]);
             assertEquals("k2", cmd.getSourcekeys()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -89,7 +83,6 @@ public class MSetNxParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
             assertEquals("val", cmd.getValue());
-            System.out.println(cmd);
         }
     }
 

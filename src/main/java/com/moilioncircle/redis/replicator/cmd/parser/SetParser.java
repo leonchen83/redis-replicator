@@ -20,8 +20,9 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,30 +32,30 @@ public class SetParser implements CommandParser<SetCommand> {
 
     @Override
     public SetCommand parse(Object[] command) {
-        String key = objToString(command[1]);
-        byte[] rawKey = objToBytes(command[1]);
-        String value = objToString(command[2]);
-        byte[] rawValue = objToBytes(command[2]);
+        String key = toRune(command[1]);
+        byte[] rawKey = toBytes(command[1]);
+        String value = toRune(command[2]);
+        byte[] rawValue = toBytes(command[2]);
         int idx = 3;
         ExistType existType = ExistType.NONE;
         Integer ex = null;
         Long px = null;
         boolean et = false, st = false;
         while (idx < command.length) {
-            String param = objToString(command[idx++]);
-            if (!et && "NX".equalsIgnoreCase(param)) {
+            String param = toRune(command[idx++]);
+            if (!et && eq(param, "NX")) {
                 existType = ExistType.NX;
                 et = true;
-            } else if (!et && "XX".equalsIgnoreCase(param)) {
+            } else if (!et && eq(param, "XX")) {
                 existType = ExistType.XX;
                 et = true;
             }
 
-            if (!st && "EX".equalsIgnoreCase(param)) {
-                ex = Integer.valueOf(objToString(command[idx++]));
+            if (!st && eq(param, "EX")) {
+                ex = Integer.valueOf(toRune(command[idx++]));
                 st = true;
-            } else if (!st && "PX".equalsIgnoreCase(param)) {
-                px = Long.valueOf(objToString(command[idx++]));
+            } else if (!st && eq(param, "PX")) {
+                px = Long.valueOf(toRune(command[idx++]));
                 st = true;
             }
         }

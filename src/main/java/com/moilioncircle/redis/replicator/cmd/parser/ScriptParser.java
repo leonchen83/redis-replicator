@@ -21,8 +21,9 @@ import com.moilioncircle.redis.replicator.cmd.impl.ScriptCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ScriptFlushCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ScriptLoadCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -32,16 +33,16 @@ public class ScriptParser implements CommandParser<ScriptCommand> {
     @Override
     public ScriptCommand parse(Object[] command) {
         int idx = 1;
-        String keyWord = objToString(command[idx++]);
-        if ("LOAD".equalsIgnoreCase(keyWord)) {
-            String script = objToString(command[idx]);
-            byte[] rawScript = objToBytes(command[idx]);
+        String keyword = toRune(command[idx++]);
+        if (eq(keyword, "LOAD")) {
+            String script = toRune(command[idx]);
+            byte[] rawScript = toBytes(command[idx]);
             idx++;
             return new ScriptLoadCommand(script, rawScript);
-        } else if ("FLUSH".equalsIgnoreCase(keyWord)) {
+        } else if (eq(keyword, "FLUSH")) {
             return new ScriptFlushCommand();
         }
-        throw new AssertionError("SCRIPT " + keyWord);
+        throw new AssertionError("SCRIPT " + keyword);
     }
 
 

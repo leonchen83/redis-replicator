@@ -39,7 +39,7 @@ import static org.junit.Assert.fail;
 @SuppressWarnings("unchecked")
 public class RdbV8ParserTest {
     @Test
-    public void testParse() throws Exception {
+    public void testParse() {
         ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
         String[] resources = new String[]{"rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb"};
         for (String resource : resources) {
@@ -61,10 +61,20 @@ public class RdbV8ParserTest {
             Replicator replicator = new RedisReplicator(RdbParserTest.class.
                     getClassLoader().getResourceAsStream(filename)
                     , FileType.RDB, Configuration.defaultSetting());
-            replicator.addRdbListener(new RdbListener.Adaptor() {
+            replicator.addRdbListener(new RdbListener() {
+                @Override
+                public void preFullSync(Replicator replicator) {
+            
+                }
+    
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {
                     map.put(kv.getKey(), kv);
+                }
+        
+                @Override
+                public void postFullSync(Replicator replicator, long checksum) {
+            
                 }
             });
             replicator.open();

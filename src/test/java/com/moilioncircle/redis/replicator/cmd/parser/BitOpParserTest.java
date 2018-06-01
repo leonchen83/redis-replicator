@@ -28,14 +28,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class BitOpParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         BitOpParser parser = new BitOpParser();
         BitOpCommand cmd = parser.parse(toObjectArray("bitop and des key1 key2".split(" ")));
         assertEquals("des", cmd.getDestkey());
         assertEquals(Op.AND, cmd.getOp());
         assertEquals("key1", cmd.getKeys()[0]);
         assertEquals("key2", cmd.getKeys()[1]);
-        System.out.println(cmd);
     }
 
 }

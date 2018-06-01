@@ -36,12 +36,17 @@ import static org.junit.Assert.assertEquals;
 public class CloseTest {
     @Test
     @SuppressWarnings("resource")
-    public void testRdbClose() throws IOException, InterruptedException {
+    public void testRdbClose() throws IOException {
         Replicator r = new RedisReplicator(
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 acc.incrementAndGet();
@@ -53,11 +58,10 @@ public class CloseTest {
                     }
                 }
             }
-        });
-        r.addCloseListener(new CloseListener() {
+        
             @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testRdbClose");
+            public void postFullSync(Replicator replicator, long checksum) {
+            
             }
         });
         r.open();
@@ -84,12 +88,6 @@ public class CloseTest {
                 }
             }
         });
-        r.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testAofClose");
-            }
-        });
         r.open();
         assertEquals(30, acc.get());
     }
@@ -102,7 +100,12 @@ public class CloseTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 acc.incrementAndGet();
@@ -114,17 +117,16 @@ public class CloseTest {
                     }
                 }
             }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            
+            }
         });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
                 acc1.incrementAndGet();
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testMixClose1");
             }
         });
         replicator.open();
@@ -140,10 +142,20 @@ public class CloseTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 acc.incrementAndGet();
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            
             }
         });
         replicator.addCommandListener(new CommandListener() {
@@ -157,12 +169,6 @@ public class CloseTest {
                         e.printStackTrace();
                     }
                 }
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testMixClose2");
             }
         });
         replicator.open();
@@ -183,7 +189,6 @@ public class CloseTest {
                     @Override
                     public void handle(Replicator replicator) {
                         acc.incrementAndGet();
-                        System.out.println("close testMixClose3");
                     }
                 });
                 try {
@@ -210,18 +215,22 @@ public class CloseTest {
         new Thread() {
             @Override
             public void run() {
-                replicator.addRdbListener(new RdbListener.Adaptor() {
+                replicator.addRdbListener(new RdbListener() {
+                    @Override
+                    public void preFullSync(Replicator replicator) {
+            
+                    }
+    
                     @Override
                     public void handle(Replicator replicator, KeyValuePair<?> kv) {
                         if (replicator.getStatus() == DISCONNECTED) {
                             acc.incrementAndGet();
                         }
                     }
-                });
-                replicator.addCloseListener(new CloseListener() {
+        
                     @Override
-                    public void handle(Replicator replicator) {
-                        System.out.println("close testMixClose4");
+                    public void postFullSync(Replicator replicator, long checksum) {
+            
                     }
                 });
                 try {

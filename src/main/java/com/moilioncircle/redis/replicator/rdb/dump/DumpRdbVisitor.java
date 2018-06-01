@@ -44,6 +44,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -57,23 +58,23 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.5.0
  */
 public class DumpRdbVisitor extends DefaultRdbVisitor {
-
+    
     private class DefaultRawByteListener implements RawByteListener {
         private final int version;
         private final ByteBuilder builder;
-
+        
         private DefaultRawByteListener(byte type, int version) {
             this.builder = ByteBuilder.allocate(DumpRdbVisitor.this.size);
             this.builder.put(type);
             int ver = DumpRdbVisitor.this.version;
             this.version = ver == -1 ? version : ver;
         }
-
+        
         @Override
         public void handle(byte... rawBytes) {
             for (byte b : rawBytes) this.builder.put(b);
         }
-
+        
         public byte[] getBytes() {
             this.builder.put((byte) version);
             this.builder.put((byte) 0x00);
@@ -85,14 +86,14 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
             return this.builder.array();
         }
     }
-
+    
     private final int size;
     private final int version;
-
+    
     public DumpRdbVisitor(Replicator replicator) {
         this(replicator, -1);
     }
-
+    
     /**
      * @param replicator the replicator
      * @param version    dumped version : redis 2.8.x = 6, redis 3.x = 7, redis 4.0.x = 8, -1 means dumped version = rdb version
@@ -101,13 +102,13 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
     public DumpRdbVisitor(Replicator replicator, int version) {
         this(replicator, version, 8192);
     }
-
+    
     public DumpRdbVisitor(Replicator replicator, int version, int size) {
         super(replicator);
         this.version = version;
         this.size = size;
     }
-
+    
     @Override
     public Event applyString(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -124,7 +125,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o0.setRawKey(key);
         return o0;
     }
-
+    
     @Override
     public Event applyList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -134,8 +135,9 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.addRawByteListener(listener);
         SkipRdbParser skipParser = new SkipRdbParser(in);
         long len = skipParser.rdbLoadLen().len;
-        for (int i = 0; i < len; i++) {
+        while (len > 0) {
             skipParser.rdbLoadEncodedStringObject();
+            len--;
         }
         replicator.removeRawByteListener(listener);
         o1.setValueRdbType(RDB_TYPE_LIST);
@@ -145,7 +147,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o1.setRawKey(key);
         return o1;
     }
-
+    
     @Override
     public Event applySet(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -155,8 +157,9 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.addRawByteListener(listener);
         SkipRdbParser skipParser = new SkipRdbParser(in);
         long len = skipParser.rdbLoadLen().len;
-        for (int i = 0; i < len; i++) {
+        while (len > 0) {
             skipParser.rdbLoadEncodedStringObject();
+            len--;
         }
         replicator.removeRawByteListener(listener);
         o2.setValueRdbType(RDB_TYPE_SET);
@@ -166,7 +169,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o2.setRawKey(key);
         return o2;
     }
-
+    
     @Override
     public Event applyZSet(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -189,7 +192,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o3.setRawKey(key);
         return o3;
     }
-
+    
     @Override
     public Event applyZSet2(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -212,7 +215,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o5.setRawKey(key);
         return o5;
     }
-
+    
     @Override
     public Event applyHash(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -235,7 +238,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o4.setRawKey(key);
         return o4;
     }
-
+    
     @Override
     public Event applyHashZipMap(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -252,7 +255,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o9.setRawKey(key);
         return o9;
     }
-
+    
     @Override
     public Event applyListZipList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -269,7 +272,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o10.setRawKey(key);
         return o10;
     }
-
+    
     @Override
     public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -286,7 +289,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o11.setRawKey(key);
         return o11;
     }
-
+    
     @Override
     public Event applyZSetZipList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -303,7 +306,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o12.setRawKey(key);
         return o12;
     }
-
+    
     @Override
     public Event applyHashZipList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -320,7 +323,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o13.setRawKey(key);
         return o13;
     }
-
+    
     @Override
     public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -341,7 +344,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o14.setRawKey(key);
         return o14;
     }
-
+    
     @Override
     public Event applyModule(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -359,7 +362,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         int moduleVersion = (int) (moduleid & 1023);
         ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
         if (moduleParser == null) {
-            throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
+            throw new NoSuchElementException("module parser[" + moduleName + ", " + moduleVersion + "] not register. rdb type: [RDB_TYPE_MODULE]");
         }
         moduleParser.parse(in, 1);
         replicator.removeRawByteListener(listener);
@@ -370,7 +373,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o6.setRawKey(key);
         return o6;
     }
-
+    
     @Override
     public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -388,12 +391,14 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         int moduleVersion = (int) (moduleid & 1023);
         ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
         if (moduleParser == null) {
-            throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
-        }
-        moduleParser.parse(in, 2);
-        long eof = skipParser.rdbLoadLen().len;
-        if (eof != RDB_MODULE_OPCODE_EOF) {
-            throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName + "' that is not terminated by the proper module value EOF marker");
+            SkipRdbParser skipRdbParser = new SkipRdbParser(in);
+            skipRdbParser.rdbLoadCheckModuleValue();
+        } else {
+            moduleParser.parse(in, 2);
+            long eof = parser.rdbLoadLen().len;
+            if (eof != RDB_MODULE_OPCODE_EOF) {
+                throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName + "' that is not terminated by the proper module value EOF marker");
+            }
         }
         replicator.removeRawByteListener(listener);
         o7.setValueRdbType(RDB_TYPE_MODULE_2);
@@ -403,5 +408,50 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o7.setRawKey(key);
         return o7;
     }
-
+    
+    @Override
+    public Event applyStreamListPacks(RedisInputStream in, DB db, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        DumpKeyValuePair o15 = new DumpKeyValuePair();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_STREAM_LISTPACKS, version);
+        replicator.addRawByteListener(listener);
+        SkipRdbParser skipParser = new SkipRdbParser(in);
+        long listpacks = skipParser.rdbLoadLen().len;
+        while (listpacks-- > 0) {
+            skipParser.rdbLoadPlainStringObject();
+            skipParser.rdbLoadPlainStringObject();
+        }
+        skipParser.rdbLoadLen();
+        skipParser.rdbLoadLen();
+        skipParser.rdbLoadLen();
+        long groupCount = skipParser.rdbLoadLen().len;
+        while (groupCount-- > 0) {
+            skipParser.rdbLoadPlainStringObject();
+            skipParser.rdbLoadLen();
+            skipParser.rdbLoadLen();
+            long globalPel = skipParser.rdbLoadLen().len;
+            while (globalPel-- > 0) {
+                in.skip(16);
+                skipParser.rdbLoadMillisecondTime();
+                skipParser.rdbLoadLen();
+            }
+            long consumerCount = skipParser.rdbLoadLen().len;
+            while (consumerCount-- > 0) {
+                skipParser.rdbLoadPlainStringObject();
+                skipParser.rdbLoadMillisecondTime();
+                long pel = skipParser.rdbLoadLen().len;
+                while (pel-- > 0) {
+                    in.skip(16);
+                }
+            }
+        }
+        replicator.removeRawByteListener(listener);
+        o15.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
+        o15.setValue(listener.getBytes());
+        o15.setDb(db);
+        o15.setKey(new String(key, UTF_8));
+        o15.setRawKey(key);
+        return o15;
+    }
 }

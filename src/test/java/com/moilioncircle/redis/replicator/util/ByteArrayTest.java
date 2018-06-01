@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class ByteArrayTest {
     @Test
-    public void test() throws Exception {
+    public void test() {
 
         String str = "sdajkl;jlqwjqejqweq89080c中jlxczksaouwq9823djadj";
         ByteArray bytes = new ByteArray(str.getBytes().length, 10);

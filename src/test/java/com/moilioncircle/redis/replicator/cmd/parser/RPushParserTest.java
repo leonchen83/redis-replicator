@@ -32,14 +32,13 @@ import static org.junit.Assert.assertEquals;
  */
 public class RPushParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         {
             RPushParser parser = new RPushParser();
             RPushCommand cmd = parser.parse(toObjectArray("rpush key v1 v2".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("v1", cmd.getValues()[0]);
             assertEquals("v2", cmd.getValues()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -48,7 +47,6 @@ public class RPushParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals("v1", cmd.getValues()[0]);
             assertEquals("v2", cmd.getValues()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -57,7 +55,6 @@ public class RPushParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals("v1", cmd.getValues()[0]);
             assertEquals("v2", cmd.getValues()[1]);
-            System.out.println(cmd);
         }
 
         {
@@ -66,21 +63,18 @@ public class RPushParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals("v1", cmd.getValues()[0]);
             assertEquals("v2", cmd.getValues()[1]);
-            System.out.println(cmd);
         }
 
         {
             LPopParser parser = new LPopParser();
             LPopCommand cmd = parser.parse(toObjectArray("lpop key".split(" ")));
             assertEquals("key", cmd.getKey());
-            System.out.println(cmd);
         }
 
         {
             RPopParser parser = new RPopParser();
             RPopCommand cmd = parser.parse(toObjectArray("rpop key".split(" ")));
             assertEquals("key", cmd.getKey());
-            System.out.println(cmd);
         }
     }
 

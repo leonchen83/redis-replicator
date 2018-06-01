@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class ZAddParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         ZAddParser parser = new ZAddParser();
         ZAddCommand cmd = parser.parse(toObjectArray("zadd abc nx ch incr 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
@@ -40,7 +40,6 @@ public class ZAddParserTest extends AbstractParserTest {
         assertEquals(Boolean.TRUE, cmd.getIncr());
         assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
-        System.out.println(cmd);
 
         cmd = parser.parse(toObjectArray("zadd abc 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
@@ -49,7 +48,6 @@ public class ZAddParserTest extends AbstractParserTest {
         assertEquals(null, cmd.getIncr());
         assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
-        System.out.println(cmd);
 
         cmd = parser.parse(toObjectArray("zadd abc xx 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
@@ -58,7 +56,6 @@ public class ZAddParserTest extends AbstractParserTest {
         assertEquals(null, cmd.getIncr());
         assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
-        System.out.println(cmd);
 
         cmd = parser.parse(toObjectArray("zadd abc incr 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
@@ -67,7 +64,6 @@ public class ZAddParserTest extends AbstractParserTest {
         assertEquals(Boolean.TRUE, cmd.getIncr());
         assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
-        System.out.println(cmd);
 
         {
             ZRemRangeByLexParser parser1 = new ZRemRangeByLexParser();
@@ -75,7 +71,6 @@ public class ZAddParserTest extends AbstractParserTest {
             assertEquals("myzset", cmd1.getKey());
             assertEquals("[alpha", cmd1.getMin());
             assertEquals("[omega", cmd1.getMax());
-            System.out.println(cmd1);
         }
 
         {
@@ -84,7 +79,6 @@ public class ZAddParserTest extends AbstractParserTest {
             assertEquals("myzset", cmd1.getKey());
             assertEquals("-inf", cmd1.getMin());
             assertEquals("(2", cmd1.getMax());
-            System.out.println(cmd1);
         }
 
         {
@@ -93,7 +87,6 @@ public class ZAddParserTest extends AbstractParserTest {
             assertEquals("myzset", cmd1.getKey());
             assertEquals(0L, cmd1.getStart());
             assertEquals(1L, cmd1.getStop());
-            System.out.println(cmd1);
         }
 
     }

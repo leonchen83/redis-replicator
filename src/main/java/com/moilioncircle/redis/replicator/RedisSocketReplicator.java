@@ -36,8 +36,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
@@ -48,6 +50,8 @@ import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.CONNECTING;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -59,12 +63,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected static final Logger logger = LoggerFactory.getLogger(RedisSocketReplicator.class);
 
     protected final int port;
-    protected Timer heartbeat;
     protected final String host;
-    protected volatile Socket socket;
-    protected volatile ReplyParser replyParser;
-    protected volatile RedisOutputStream outputStream;
+    protected Socket socket;
+    protected ReplyParser replyParser;
+    protected ScheduledFuture<?> heartbeat;
+    protected RedisOutputStream outputStream;
     protected final RedisSocketFactory socketFactory;
+    protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         Objects.requireNonNull(host);
@@ -92,6 +97,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
         } finally {
             doClose();
             doCloseListener(this);
+            if (!this.executor.isShutdown()) this.executor.shutdown();
+            try {
+                this.executor.awaitTermination(configuration.getConnectionTimeout(), TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -236,20 +247,15 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
     }
 
-    protected synchronized void heartbeat() {
-        heartbeat = new Timer("heartbeat", true);
-        //bug fix. in this point closed by other thread. multi-thread issue
-        heartbeat.schedule(new TimerTask() {
+    protected void heartbeat() {
+        assert heartbeat == null || heartbeat.isCancelled();
+        heartbeat = executor.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                try {
-                    send("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
-                } catch (IOException e) {
-                    //NOP
-                }
+                sendQuietly("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
             }
-        }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod());
-        logger.info("heartbeat thread started.");
+        }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod(), TimeUnit.MILLISECONDS);
+        logger.info("heartbeat started.");
     }
 
     protected void send(byte[] command) throws IOException {
@@ -273,6 +279,14 @@ public class RedisSocketReplicator extends AbstractReplicator {
             outputStream.writeCrLf();
         }
         outputStream.flush();
+    }
+
+    protected void sendQuietly(byte[] command, final byte[]... args) {
+        try {
+            send(command, args);
+        } catch (IOException e) {
+            //NOP
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -311,12 +325,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
         connected.compareAndSet(CONNECTED, DISCONNECTING);
 
         try {
-            synchronized (this) {
-                if (heartbeat != null) {
-                    heartbeat.cancel();
-                    heartbeat = null;
-                    logger.info("heartbeat canceled.");
-                }
+            if (heartbeat != null) {
+                if (!heartbeat.isCancelled()) heartbeat.cancel(true);
+                logger.info("heartbeat canceled.");
             }
 
             try {
@@ -394,7 +405,18 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         logger.warn("command [{}] not register. raw command:[{}]", name, Arrays.deepToString(raw));
                         continue;
                     }
-                    submitEvent(parser.parse(raw));
+                    if (eq(toRune(raw[0]), "PING")) {
+                        // NOP
+                    } else if (eq(toRune(raw[0]), "REPLCONF") && eq(toRune(raw[1]), "GETACK")) {
+                        if (mode == PSYNC) executor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                sendQuietly("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
+                            }
+                        });
+                    } else {
+                        submitEvent(parser.parse(raw));
+                    }
                 } else {
                     logger.info("unexpected redis reply:{}", obj);
                 }

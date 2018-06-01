@@ -20,8 +20,9 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.LInsertCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LInsertType;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -32,20 +33,20 @@ public class LInsertParser implements CommandParser<LInsertCommand> {
     public LInsertCommand parse(Object[] command) {
         int idx = 1;
         LInsertType lInsertType = null;
-        String key = objToString(command[idx]);
-        byte[] rawKey = objToBytes(command[idx]);
+        String key = toRune(command[idx]);
+        byte[] rawKey = toBytes(command[idx]);
         idx++;
-        String keyWord = objToString(command[idx++]);
-        if ("BEFORE".equalsIgnoreCase(keyWord)) {
+        String keyword = toRune(command[idx++]);
+        if (eq(keyword, "BEFORE")) {
             lInsertType = LInsertType.BEFORE;
-        } else if ("AFTER".equalsIgnoreCase(keyWord)) {
+        } else if (eq(keyword, "AFTER")) {
             lInsertType = LInsertType.AFTER;
         }
-        String pivot = objToString(command[idx]);
-        byte[] rawPivot = objToBytes(command[idx]);
+        String pivot = toRune(command[idx]);
+        byte[] rawPivot = toBytes(command[idx]);
         idx++;
-        String value = objToString(command[idx]);
-        byte[] rawValue = objToBytes(command[idx]);
+        String value = toRune(command[idx]);
+        byte[] rawValue = toBytes(command[idx]);
         idx++;
         return new LInsertCommand(key, lInsertType, pivot, value, rawKey, rawPivot, rawValue);
     }

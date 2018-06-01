@@ -19,8 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PFMergeCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,14 +30,14 @@ public class PFMergeParser implements CommandParser<PFMergeCommand> {
     @Override
     public PFMergeCommand parse(Object[] command) {
         int idx = 1;
-        String destkey = objToString(command[idx]);
-        byte[] rawDestkey = objToBytes(command[idx]);
+        String destkey = toRune(command[idx]);
+        byte[] rawDestkey = toBytes(command[idx]);
         idx++;
         String[] sourcekeys = new String[command.length - 2];
         byte[][] rawSourcekeys = new byte[command.length - 2][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            sourcekeys[j] = objToString(command[i]);
-            rawSourcekeys[j] = objToBytes(command[i]);
+            sourcekeys[j] = toRune(command[i]);
+            rawSourcekeys[j] = toBytes(command[i]);
         }
         return new PFMergeCommand(destkey, sourcekeys, rawDestkey, rawSourcekeys);
     }

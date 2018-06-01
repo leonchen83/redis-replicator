@@ -45,12 +45,6 @@ public class RedisAofReplicatorTest {
                 acc.incrementAndGet();
             }
         });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close open");
-            }
-        });
         replicator.open();
         assertEquals(4, acc.get());
     }
@@ -69,13 +63,6 @@ public class RedisAofReplicatorTest {
                 }
             }
         });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close open2");
-
-            }
-        });
         replicator.open();
         assertEquals(48000, acc.get());
     }
@@ -92,12 +79,6 @@ public class RedisAofReplicatorTest {
                 acc.incrementAndGet();
             }
         });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close open3");
-            }
-        });
         replicator.open();
         assertEquals(92539, acc.get());
     }
@@ -112,12 +93,6 @@ public class RedisAofReplicatorTest {
             @Override
             public void handle(Replicator replicator, Command command) {
                 acc.incrementAndGet();
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close open4");
             }
         });
         replicator.open();

@@ -27,13 +27,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class SetExParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         SetExParser parser = new SetExParser();
         SetExCommand cmd = parser.parse(toObjectArray("setex key 100 value".split(" ")));
         assertEquals("key", cmd.getKey());
         assertEquals(100, cmd.getEx());
         assertEquals("value", cmd.getValue());
-        System.out.println(cmd);
     }
 
 }

@@ -836,7 +836,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 consumers.add(consumer);
             }
     
-            group.setId(groupId);
+            group.setLastId(groupId);
             group.setName(new String(groupName, UTF_8));
             group.setPendingEntries(groupPendingEntries);
             group.setConsumers(consumers);

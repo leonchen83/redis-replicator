@@ -142,7 +142,7 @@ public class Stream implements Serializable {
     public static class Group implements Serializable {
         private static final long serialVersionUID = 1L;
         private String name;
-        private ID id;
+        private ID lastId;
         private NavigableMap<ID, Nack> pendingEntries;
         private List<Consumer> consumers;
         private byte[] rawName;
@@ -150,14 +150,14 @@ public class Stream implements Serializable {
         public Group() {
         
         }
-        
-        public Group(String name, ID id, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers) {
-            this(name, id, pendingEntries, consumers, null);
+    
+        public Group(String name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers) {
+            this(name, lastId, pendingEntries, consumers, null);
         }
-        
-        public Group(String name, ID id, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers, byte[] rawName) {
+    
+        public Group(String name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers, byte[] rawName) {
             this.name = name;
-            this.id = id;
+            this.lastId = lastId;
             this.pendingEntries = pendingEntries;
             this.consumers = consumers;
             this.rawName = rawName;
@@ -170,13 +170,13 @@ public class Stream implements Serializable {
         public void setName(String name) {
             this.name = name;
         }
-        
-        public ID getId() {
-            return id;
+    
+        public ID getLastId() {
+            return lastId;
         }
-        
-        public void setId(ID id) {
-            this.id = id;
+    
+        public void setLastId(ID lastId) {
+            this.lastId = lastId;
         }
         
         public NavigableMap<ID, Nack> getPendingEntries() {
@@ -207,7 +207,7 @@ public class Stream implements Serializable {
         public String toString() {
             return "Group{" +
                     "name='" + name + '\'' +
-                    ", id=" + id +
+                    ", lastId=" + lastId +
                     ", consumers=" + consumers +
                     '}';
         }

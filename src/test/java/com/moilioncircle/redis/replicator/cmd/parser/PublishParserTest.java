@@ -27,12 +27,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class PublishParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         PublishParser parser = new PublishParser();
         PublishCommand cmd = parser.parse(toObjectArray("publish channel msg".split(" ")));
         assertEquals("channel", cmd.getChannel());
         assertEquals("msg", cmd.getMessage());
-        System.out.println(cmd);
     }
 
 }

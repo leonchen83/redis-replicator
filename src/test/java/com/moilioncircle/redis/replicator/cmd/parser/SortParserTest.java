@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class SortParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
 
         {
             SortParser parser = new SortParser();
@@ -38,7 +38,6 @@ public class SortParserTest extends AbstractParserTest {
             assertEquals(NONE, cmd.getOrder());
             assertEquals(0, cmd.getGetPatterns().length);
             assertEquals(null, cmd.getAlpha());
-            System.out.println(cmd);
         }
 
         {
@@ -48,7 +47,6 @@ public class SortParserTest extends AbstractParserTest {
             assertEquals(DESC, cmd.getOrder());
             assertEquals(0, cmd.getGetPatterns().length);
             assertEquals(null, cmd.getAlpha());
-            System.out.println(cmd);
         }
 
         {
@@ -58,7 +56,6 @@ public class SortParserTest extends AbstractParserTest {
             assertEquals(DESC, cmd.getOrder());
             assertEquals(0, cmd.getGetPatterns().length);
             assertEquals(true, cmd.getAlpha());
-            System.out.println(cmd);
         }
 
         {
@@ -70,7 +67,6 @@ public class SortParserTest extends AbstractParserTest {
             assertEquals(true, cmd.getAlpha());
             assertEquals(0L, cmd.getLimit().getOffset());
             assertEquals(10L, cmd.getLimit().getCount());
-            System.out.println(cmd);
         }
 
         {
@@ -83,7 +79,6 @@ public class SortParserTest extends AbstractParserTest {
             assertEquals(0L, cmd.getLimit().getOffset());
             assertEquals(10L, cmd.getLimit().getCount());
             assertEquals("weight_*", cmd.getByPattern());
-            System.out.println(cmd);
         }
 
         {
@@ -98,7 +93,6 @@ public class SortParserTest extends AbstractParserTest {
             assertEquals(2, cmd.getGetPatterns().length);
             assertEquals("object_*", cmd.getGetPatterns()[0]);
             assertEquals("#", cmd.getGetPatterns()[1]);
-            System.out.println(cmd);
         }
 
     }

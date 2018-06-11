@@ -28,28 +28,25 @@ import static org.junit.Assert.assertEquals;
  */
 public class SetParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         SetParser parser = new SetParser();
         SetCommand cmd = parser.parse(toObjectArray("set a b ex 15 nx".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
         assertEquals(15, cmd.getEx().intValue());
         assertEquals(ExistType.NX, cmd.getExistType());
-        System.out.println(cmd);
 
         cmd = parser.parse(toObjectArray("set a b px 123 xx".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
         assertEquals(123L, cmd.getPx().longValue());
         assertEquals(ExistType.XX, cmd.getExistType());
-        System.out.println(cmd);
 
         cmd = parser.parse(toObjectArray("set a b xx px 123".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
         assertEquals(123L, cmd.getPx().longValue());
         assertEquals(ExistType.XX, cmd.getExistType());
-        System.out.println(cmd);
 
     }
 

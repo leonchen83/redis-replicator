@@ -54,7 +54,7 @@ public class RdbBinaryParserTest {
     public static final byte[] b5 = new byte[]{0, 0, 0, 0, -1};
 
     @Test
-    public void testParse() throws Exception {
+    public void testParse() {
         ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
         String[] resources = new String[]{"dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
@@ -245,10 +245,21 @@ public class RdbBinaryParserTest {
             Replicator replicator = new RedisReplicator(RdbBinaryParserTest.class.
                     getClassLoader().getResourceAsStream(filename)
                     , FileType.RDB, Configuration.defaultSetting());
-            replicator.addRdbListener(new RdbListener.Adaptor() {
+            replicator.addRdbListener(new RdbListener() {
+        
+                @Override
+                public void preFullSync(Replicator replicator) {
+            
+                }
+    
                 @Override
                 public void handle(Replicator replicator, KeyValuePair<?> kv) {
                     map.put(kv.getKey(), kv);
+                }
+        
+                @Override
+                public void postFullSync(Replicator replicator, long checksum) {
+            
                 }
             });
             replicator.open();

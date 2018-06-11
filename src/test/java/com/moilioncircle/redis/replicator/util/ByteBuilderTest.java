@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class ByteBuilderTest {
     @Test
-    public void put() throws Exception {
+    public void put() {
         ByteBuilder bytes = ByteBuilder.allocate(20);
         String test = "fjdsklafjsdklafjaklfdsjkfsdkjakjdkasjdkajdkajqwieuiqwueiqweqwieuqidasjkasjkajdkcnxzcnzxasjdksadasiuqwieuqwiejaskdajskcxnzcznczkxnasdjasjdjadqweiqwueidjdskdjaskdjskajdakjcncnzxknczxjkasdjaskdjqwieuqwiuakdakncxzkjsakdasjdiqwueijcnkdasjdiuewiqeqdijqdsahdiadiwqueqiwqidjaskdjaskdjqwjieuqfhhaksjduqiwehcaskdjasdaiqwewiqdhashdadashjqweyqwuh";
         test.getBytes();

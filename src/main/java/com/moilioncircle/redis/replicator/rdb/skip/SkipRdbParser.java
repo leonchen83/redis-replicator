@@ -25,31 +25,37 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT16;
 import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT32;
 import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT8;
 import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_LZF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_DOUBLE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_FLOAT;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_SINT;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_STRING;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_UINT;
 
 /**
  * @author Leon Chen
  * @since 2.4.6
  */
 public class SkipRdbParser {
-
+    
     protected final RedisInputStream in;
-
+    
     public SkipRdbParser(RedisInputStream in) {
         this.in = in;
     }
-
+    
     public void rdbLoadTime() throws IOException {
         in.skip(4);
     }
-
+    
     public void rdbLoadMillisecondTime() throws IOException {
         in.skip(8);
     }
-
+    
     public BaseRdbParser.Len rdbLoadLen() throws IOException {
         return new BaseRdbParser(in).rdbLoadLen();
     }
-
+    
     public void rdbLoadIntegerObject(int enctype) throws IOException {
         switch (enctype) {
             case RDB_ENC_INT8:
@@ -65,13 +71,13 @@ public class SkipRdbParser {
                 break;
         }
     }
-
+    
     public void rdbLoadLzfStringObject() throws IOException {
         long clen = rdbLoadLen().len;
         rdbLoadLen();
         in.skip(clen);
     }
-
+    
     public void rdbGenericLoadStringObject() throws IOException {
         BaseRdbParser.Len lenObj = rdbLoadLen();
         long len = (int) lenObj.len;
@@ -92,15 +98,15 @@ public class SkipRdbParser {
         }
         in.skip(len);
     }
-
+    
     public void rdbLoadPlainStringObject() throws IOException {
         rdbGenericLoadStringObject();
     }
-
+    
     public void rdbLoadEncodedStringObject() throws IOException {
         rdbGenericLoadStringObject();
     }
-
+    
     public void rdbLoadDoubleValue() throws IOException {
         int len = in.read();
         switch (len) {
@@ -112,8 +118,27 @@ public class SkipRdbParser {
                 in.skip(len);
         }
     }
-
+    
     public void rdbLoadBinaryDoubleValue() throws IOException {
         in.skip(8);
+    }
+    
+    public float rdbLoadBinaryFloatValue() throws IOException {
+        return in.skip(4);
+    }
+    
+    public void rdbLoadCheckModuleValue() throws IOException {
+        int opcode;
+        while ((opcode = (int) rdbLoadLen().len) != RDB_MODULE_OPCODE_EOF) {
+            if (opcode == RDB_MODULE_OPCODE_SINT || opcode == RDB_MODULE_OPCODE_UINT) {
+                rdbLoadLen();
+            } else if (opcode == RDB_MODULE_OPCODE_STRING) {
+                rdbGenericLoadStringObject();
+            } else if (opcode == RDB_MODULE_OPCODE_FLOAT) {
+                rdbLoadBinaryFloatValue();
+            } else if (opcode == RDB_MODULE_OPCODE_DOUBLE) {
+                rdbLoadBinaryDoubleValue();
+            }
+        }
     }
 }

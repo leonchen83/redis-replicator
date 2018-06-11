@@ -19,9 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SwapDBCommand;
 
-import java.math.BigDecimal;
-
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toInt;
 
 /**
  * @author Leon Chen
@@ -32,8 +30,8 @@ public class SwapDBParser implements CommandParser<SwapDBCommand> {
     @Override
     public SwapDBCommand parse(Object[] command) {
         int idx = 1;
-        int source = new BigDecimal(objToString(command[idx++])).intValueExact();
-        int target = new BigDecimal(objToString(command[idx++])).intValueExact();
+        int source = toInt(command[idx++]);
+        int target = toInt(command[idx++]);
         return new SwapDBCommand(source, target);
     }
 }

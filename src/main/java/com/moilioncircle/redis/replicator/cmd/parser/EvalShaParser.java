@@ -19,12 +19,12 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.EvalShaCommand;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toInt;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -34,22 +34,22 @@ public class EvalShaParser implements CommandParser<EvalShaCommand> {
     @Override
     public EvalShaCommand parse(Object[] command) {
         int idx = 1;
-        String sha = objToString(command[idx]);
-        byte[] rawSha = objToBytes(command[idx]);
+        String sha = toRune(command[idx]);
+        byte[] rawSha = toBytes(command[idx]);
         idx++;
-        int numkeys = new BigDecimal(objToString(command[idx++])).intValueExact();
+        int numkeys = toInt(command[idx++]);
         String[] keys = new String[numkeys];
         byte[][] rawKeys = new byte[numkeys][];
         for (int i = 0; i < numkeys; i++) {
-            keys[i] = objToString(command[idx]);
-            rawKeys[i] = objToBytes(command[idx]);
+            keys[i] = toRune(command[idx]);
+            rawKeys[i] = toBytes(command[idx]);
             idx++;
         }
         List<String> list = new ArrayList<>();
         List<byte[]> rawList = new ArrayList<>();
         while (idx < command.length) {
-            list.add(objToString(command[idx]));
-            rawList.add(objToBytes(command[idx]));
+            list.add(toRune(command[idx]));
+            rawList.add(toBytes(command[idx]));
             idx++;
         }
         String[] args = new String[list.size()];

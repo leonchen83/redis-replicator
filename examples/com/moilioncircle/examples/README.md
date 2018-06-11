@@ -32,6 +32,10 @@ Broadcast event, TimerTask example.
 
 Replication data via Socket.  
 
+### stream
+
+Redis-5.0 stream example.  
+
 ### util
 
 Utility tools.  

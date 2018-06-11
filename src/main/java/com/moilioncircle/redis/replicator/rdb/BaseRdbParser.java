@@ -45,11 +45,11 @@ import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_8B;
  */
 public class BaseRdbParser {
     protected final RedisInputStream in;
-
+    
     public BaseRdbParser(RedisInputStream in) {
         this.in = in;
     }
-
+    
     /**
      * "expiry time in seconds". After that, expiry time is read as a 4 byte unsigned int
      * <p>
@@ -60,7 +60,7 @@ public class BaseRdbParser {
     public int rdbLoadTime() throws IOException {
         return in.readInt(4);
     }
-
+    
     /**
      * "expiry time in ms". After that, expiry time is read as a 8 byte unsigned long
      * <p>
@@ -71,7 +71,7 @@ public class BaseRdbParser {
     public long rdbLoadMillisecondTime() throws IOException {
         return in.readLong(8);
     }
-
+    
     /**
      * read bytes 1 or 2 or 5
      * <p>
@@ -110,7 +110,7 @@ public class BaseRdbParser {
         }
         return new Len(value, isencoded);
     }
-
+    
     /**
      * @param enctype 0,1,2
      * @param flags   RDB_LOAD_ENC: encoded string.RDB_LOAD_PLAIN | RDB_LOAD_NONE:raw bytes
@@ -145,7 +145,7 @@ public class BaseRdbParser {
             return new ByteArray(value);
         }
     }
-
+    
     /**
      * |11xxxxxx| remaining 6bit is 3,then lzf compressed string follows
      * <p>
@@ -179,7 +179,7 @@ public class BaseRdbParser {
             return Lzf.decode(in.readBytes(clen), len);
         }
     }
-
+    
     /**
      * 1.|11xxxxxx|xxxxxxxx| remaining 6bit is 0, then an 8 bit integer follows
      * <p>
@@ -224,7 +224,7 @@ public class BaseRdbParser {
             return in.readBytes(len);
         }
     }
-
+    
     /**
      * @return ByteArray rdb object with byte[]
      * @throws IOException when read timeout
@@ -232,7 +232,7 @@ public class BaseRdbParser {
     public ByteArray rdbLoadPlainStringObject() throws IOException {
         return rdbGenericLoadStringObject(RDB_LOAD_PLAIN);
     }
-
+    
     /**
      * @return ByteArray rdb object with byte[]
      * @throws IOException when read timeout
@@ -240,7 +240,7 @@ public class BaseRdbParser {
     public ByteArray rdbLoadEncodedStringObject() throws IOException {
         return rdbGenericLoadStringObject(RDB_LOAD_ENC);
     }
-
+    
     public double rdbLoadDoubleValue() throws IOException {
         int len = in.read();
         switch (len) {
@@ -255,11 +255,11 @@ public class BaseRdbParser {
                 return Double.valueOf(new String(bytes));
         }
     }
-
+    
     public double rdbLoadBinaryDoubleValue() throws IOException {
         return Double.longBitsToDouble(in.readLong(8));
     }
-
+    
     /**
      * @return single precision float
      * @throws IOException io exception
@@ -268,36 +268,36 @@ public class BaseRdbParser {
     public float rdbLoadBinaryFloatValue() throws IOException {
         return Float.intBitsToFloat(in.readInt(4));
     }
-
+    
     /**
      * @see #rdbLoadLen
      */
     public static class Len {
         public final long len;
         public final boolean isencoded;
-
+    
         private Len(long len, boolean isencoded) {
             this.len = len;
             this.isencoded = isencoded;
         }
     }
-
+    
     public static class StringHelper {
         private StringHelper() {
         }
-
+        
         public static String str(RedisInputStream in, int len) throws IOException {
             return in.readString(len);
         }
-
+        
         public static byte[] bytes(RedisInputStream in, int len) throws IOException {
             return in.readBytes(len).first();
         }
-
+        
         public static long skip(RedisInputStream in, long len) throws IOException {
             return in.skip(len);
         }
-
+        
         /*
          * length-prev-entry special-flag raw-bytes-of-entry
          * length-prev-entry format
@@ -350,21 +350,54 @@ public class BaseRdbParser {
                     return String.valueOf(special - 0xf1).getBytes();
             }
         }
+        
+        public static byte[] listPackEntry(RedisInputStream in) throws IOException {
+            int special = in.read();
+            byte[] value;
+            if ((special & 0x80) == 0) {
+                value = String.valueOf(special & 0x7f).getBytes();
+            } else if ((special & 0xc0) == 0x80) {
+                int len = special & 0x3f;
+                value = bytes(in, len);
+            } else if ((special & 0xe0) == 0xc0) {
+                int next = in.read();
+                value = String.valueOf((((special & 0x1f) << 8) | next) << 19 >> 19).getBytes();
+            } else if ((special & 0xff) == 0xf1) {
+                value = String.valueOf(in.readInt(2)).getBytes();
+            } else if ((special & 0xff) == 0xf2) {
+                value = String.valueOf(in.readInt(3)).getBytes();
+            } else if ((special & 0xff) == 0xf3) {
+                value = String.valueOf(in.readInt(4)).getBytes();
+            } else if ((special & 0xff) == 0xf4) {
+                value = String.valueOf(in.readLong(8)).getBytes();
+            } else if ((special & 0xf0) == 0xe0) {
+                int len = ((special & 0x0f) << 8) | in.read();
+                value = bytes(in, len);
+            } else if ((special & 0xff) == 0xf0) {
+                int len = in.readInt(4, false);
+                value = bytes(in, len);
+            } else {
+                throw new UnsupportedOperationException(String.valueOf(special));
+            }
+            
+            while ((in.read() & 0x80) == 1) ; // skip [1]xxxxxxx
+            return value;
+        }
     }
-
+    
     public static class LenHelper {
         private LenHelper() {
         }
-
+        
         //zip hash
         public static int zmlen(RedisInputStream in) throws IOException {
             return in.read();
         }
-
+        
         public static int free(RedisInputStream in) throws IOException {
             return in.read();
         }
-
+        
         public static int zmElementLen(RedisInputStream in) throws IOException {
             int len = in.read();
             if (len >= 0 && len <= 253) {
@@ -375,29 +408,29 @@ public class BaseRdbParser {
                 return len;
             }
         }
-
+        
         //zip list
         public static int zlbytes(RedisInputStream in) throws IOException {
             return in.readInt(4);
         }
-
+        
         public static int zlend(RedisInputStream in) throws IOException {
             return in.read();
         }
-
+        
         public static int zltail(RedisInputStream in) throws IOException {
             return in.readInt(4);
         }
-
+        
         public static int zllen(RedisInputStream in) throws IOException {
             return in.readInt(2);
         }
-
+        
         //int set
         public static int encoding(RedisInputStream in) throws IOException {
             return in.readInt(4);
         }
-
+        
         public static long lenOfContent(RedisInputStream in) throws IOException {
             return in.readUInt(4);
         }

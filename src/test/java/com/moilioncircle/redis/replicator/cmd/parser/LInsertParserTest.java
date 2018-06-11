@@ -28,22 +28,19 @@ import static org.junit.Assert.assertEquals;
  */
 public class LInsertParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         LInsertParser parser = new LInsertParser();
         LInsertCommand cmd = parser.parse(toObjectArray("LINSERT mylist BEFORE World There".split(" ")));
         assertEquals("mylist", cmd.getKey());
         assertEquals(LInsertType.BEFORE, cmd.getlInsertType());
         assertEquals("World", cmd.getPivot());
         assertEquals("There", cmd.getValue());
-        System.out.println(cmd);
 
         cmd = parser.parse(toObjectArray("LINSERT mylist AFTER World There".split(" ")));
         assertEquals("mylist", cmd.getKey());
         assertEquals(LInsertType.AFTER, cmd.getlInsertType());
         assertEquals("World", cmd.getPivot());
         assertEquals("There", cmd.getValue());
-
-        System.out.println(cmd);
     }
 
 }

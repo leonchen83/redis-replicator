@@ -18,8 +18,9 @@ package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * @author Leon Chen
@@ -34,7 +35,7 @@ public interface RdbListener {
 
     abstract class Adaptor implements RdbListener {
 
-        private static final Log logger = LogFactory.getLog(Adaptor.class);
+        private static final Logger logger = LoggerFactory.getLogger(Adaptor.class);
 
         public void preFullSync(Replicator replicator) {
             logger.info("pre full sync");

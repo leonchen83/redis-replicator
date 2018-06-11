@@ -51,12 +51,12 @@ public class SkipRdbVisitorTest {
                 "regular_sorted_set.rdb", "sorted_set_as_ziplist.rdb", "uncompressible_string_keys.rdb",
                 "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
                 "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
-                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb", "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "binarydump.rdb", "module.rdb"};
+                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb", "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "binarydump.rdb", "module.rdb", "dump-stream.rdb"};
         for (String file : resources) {
             testFile(file);
         }
     }
-
+    
     private void testFile(String fileName) {
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong count = new AtomicLong(0);
@@ -76,12 +76,12 @@ public class SkipRdbVisitorTest {
                 acc.incrementAndGet();
                 replicator.addRawByteListener(rawByteListener);
             }
-
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 acc.incrementAndGet();
             }
-
+    
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
                 acc.incrementAndGet();
@@ -96,15 +96,15 @@ public class SkipRdbVisitorTest {
             fail();
         }
     }
-
+    
     private static class CountInputStream extends InputStream {
         private long count;
         private InputStream in;
-
+        
         private CountInputStream(InputStream in) {
             this.in = in;
         }
-
+        
         @Override
         public int read() throws IOException {
             int i = in.read();
@@ -113,7 +113,7 @@ public class SkipRdbVisitorTest {
             }
             return i;
         }
-
+        
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             int i = in.read(b, off, len);
@@ -122,7 +122,7 @@ public class SkipRdbVisitorTest {
             }
             return i;
         }
-
+        
         @Override
         public long skip(long n) throws IOException {
             long i = in.skip(n);
@@ -131,7 +131,7 @@ public class SkipRdbVisitorTest {
             }
             return i;
         }
-
+        
         @Override
         public void close() throws IOException {
             in.close();

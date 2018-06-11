@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 public class BitFieldParserTest extends AbstractParserTest {
 
     @Test
-    public void testParse() throws Exception {
+    public void testParse() {
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
@@ -36,11 +36,8 @@ public class BitFieldParserTest extends AbstractParserTest {
             assertEquals("mykey", command.getKey());
             assertEquals(0, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
-            System.out.println(command);
         }
 
-
-        //
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
@@ -48,10 +45,8 @@ public class BitFieldParserTest extends AbstractParserTest {
             assertEquals("mykey", command.getKey());
             assertEquals(1, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
-            System.out.println(command);
         }
 
-        //
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
@@ -59,10 +54,8 @@ public class BitFieldParserTest extends AbstractParserTest {
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
-            System.out.println(command);
         }
 
-        //
         {
             BitFieldParser parser = new BitFieldParser();
             BitFieldCommand command = parser.parse(
@@ -70,7 +63,6 @@ public class BitFieldParserTest extends AbstractParserTest {
             assertEquals("mykey", command.getKey());
             assertEquals(2, command.getStatements().size());
             assertEquals(1, command.getOverFlows().size());
-            System.out.println(command);
         }
 
         {
@@ -81,7 +73,6 @@ public class BitFieldParserTest extends AbstractParserTest {
             assertEquals(2, command.getStatements().size());
             assertEquals(3, command.getOverFlows().size());
             assertEquals(2, command.getOverFlows().get(0).getStatements().size());
-            System.out.println(command);
         }
 
         {
@@ -92,7 +83,6 @@ public class BitFieldParserTest extends AbstractParserTest {
             assertEquals(2, command.getStatements().size());
             assertEquals(3, command.getOverFlows().size());
             assertEquals(2, command.getOverFlows().get(0).getStatements().size());
-            System.out.println(command);
         }
 
     }

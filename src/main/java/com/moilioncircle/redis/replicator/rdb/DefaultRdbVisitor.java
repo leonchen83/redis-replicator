@@ -18,38 +18,45 @@ package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.io.ByteArrayInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueZSet;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
-import com.moilioncircle.redis.replicator.util.ByteArray;
+import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.TreeMap;
 
 import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
@@ -60,10 +67,14 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.STREAM_ITEM_FLAG_DELETED;
+import static com.moilioncircle.redis.replicator.Constants.STREAM_ITEM_FLAG_SAMEFIELDS;
+import static com.moilioncircle.redis.replicator.rdb.BaseRdbParser.StringHelper.listPackEntry;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -73,38 +84,40 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @since 2.1.0
  */
 public class DefaultRdbVisitor extends RdbVisitor {
-
-    protected static final Log logger = LogFactory.getLog(DefaultRdbVisitor.class);
-
+    
+    protected static final Logger logger = LoggerFactory.getLogger(DefaultRdbVisitor.class);
+    
+    protected static final Comparator<Stream.ID> STREAM_COMPARATOR = Stream.ID.comparator();
+    
     protected final Replicator replicator;
-
+    
     public DefaultRdbVisitor(final Replicator replicator) {
         this.replicator = replicator;
     }
-
+    
     @Override
     public String applyMagic(RedisInputStream in) throws IOException {
-        String magicString = BaseRdbParser.StringHelper.str(in, 5);//REDIS
-        if (!magicString.equals("REDIS")) {
-            throw new UnsupportedOperationException("can't read MAGIC STRING [REDIS] ,value:" + magicString);
+        String magic = BaseRdbParser.StringHelper.str(in, 5);//REDIS
+        if (!magic.equals("REDIS")) {
+            throw new UnsupportedOperationException("can't read MAGIC STRING [REDIS] ,value:" + magic);
         }
-        return magicString;
+        return magic;
     }
-
+    
     @Override
     public int applyVersion(RedisInputStream in) throws IOException {
         int version = parseInt(BaseRdbParser.StringHelper.str(in, 4));
-        if (version < 2 || version > 8) {
+        if (version < 2 || version > 9) {
             throw new UnsupportedOperationException(String.valueOf("can't handle RDB format version " + version));
         }
         return version;
     }
-
+    
     @Override
     public int applyType(RedisInputStream in) throws IOException {
         return in.read();
     }
-
+    
     @Override
     public DB applySelectDB(RedisInputStream in, int version) throws IOException {
         /*
@@ -116,7 +129,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         long dbNumber = parser.rdbLoadLen().len;
         return new DB(dbNumber);
     }
-
+    
     @Override
     public DB applyResizeDB(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -126,7 +139,36 @@ public class DefaultRdbVisitor extends RdbVisitor {
         if (db != null) db.setExpires(expiresSize);
         return db;
     }
-
+    
+    @Override
+    public Event applyAux(RedisInputStream in, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        String auxKey = new String(parser.rdbLoadEncodedStringObject().first(), UTF_8);
+        String auxValue = new String(parser.rdbLoadEncodedStringObject().first(), UTF_8);
+        if (!auxKey.startsWith("%")) {
+            if (logger.isInfoEnabled()) {
+                logger.info("RDB {}: {}", auxKey, auxValue);
+            }
+            if (auxKey.equals("repl-id")) replicator.getConfiguration().setReplId(auxValue);
+            if (auxKey.equals("repl-offset")) replicator.getConfiguration().setReplOffset(parseLong(auxValue));
+            if (auxKey.equals("repl-stream-db")) replicator.getConfiguration().setReplStreamDB(parseInt(auxValue));
+            return new AuxField(auxKey, auxValue);
+        } else {
+            if (logger.isWarnEnabled()) {
+                logger.warn("unrecognized RDB AUX field: {}, value: {}", auxKey, auxValue);
+            }
+            return null;
+        }
+    }
+    
+    @Override
+    public Event applyModuleAux(RedisInputStream in, int version) throws IOException {
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadLen();
+        parser.rdbLoadCheckModuleValue();
+        return null;
+    }
+    
     @Override
     public long applyEof(RedisInputStream in, int version) throws IOException {
         /*
@@ -139,7 +181,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         if (version >= 5) return in.readLong(8);
         return 0L;
     }
-
+    
     @Override
     public Event applyExpireTime(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -152,13 +194,20 @@ public class DefaultRdbVisitor extends RdbVisitor {
          */
         BaseRdbParser parser = new BaseRdbParser(in);
         int expiredSec = parser.rdbLoadTime();
-        int valueType = applyType(in);
-        KeyValuePair<?> kv = rdbLoadObject(in, db, valueType, version);
+        int type = applyType(in);
+        KeyValuePair<?> kv;
+        if (type == RDB_OPCODE_FREQ) {
+            kv = (KeyValuePair<?>) applyFreq(in, db, version);
+        } else if (type == RDB_OPCODE_IDLE) {
+            kv = (KeyValuePair<?>) applyIdle(in, db, version);
+        } else {
+            kv = rdbLoadObject(in, db, type, version);
+        }
         kv.setExpiredType(ExpiredType.SECOND);
         kv.setExpiredValue((long) expiredSec);
         return kv;
     }
-
+    
     @Override
     public Event applyExpireTimeMs(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -171,34 +220,41 @@ public class DefaultRdbVisitor extends RdbVisitor {
          */
         BaseRdbParser parser = new BaseRdbParser(in);
         long expiredMs = parser.rdbLoadMillisecondTime();
-        int valueType = applyType(in);
-        KeyValuePair<?> kv = rdbLoadObject(in, db, valueType, version);
+        int type = applyType(in);
+        KeyValuePair<?> kv;
+        if (type == RDB_OPCODE_FREQ) {
+            kv = (KeyValuePair<?>) applyFreq(in, db, version);
+        } else if (type == RDB_OPCODE_IDLE) {
+            kv = (KeyValuePair<?>) applyIdle(in, db, version);
+        } else {
+            kv = rdbLoadObject(in, db, type, version);
+        }
         kv.setExpiredType(ExpiredType.MS);
         kv.setExpiredValue(expiredMs);
         return kv;
     }
-
+    
     @Override
-    public Event applyAux(RedisInputStream in, int version) throws IOException {
-        BaseRdbParser parser = new BaseRdbParser(in);
-        String auxKey = new String(parser.rdbLoadEncodedStringObject().first(), UTF_8);
-        String auxValue = new String(parser.rdbLoadEncodedStringObject().first(), UTF_8);
-        if (!auxKey.startsWith("%")) {
-            if (logger.isInfoEnabled()) {
-                logger.info("RDB " + auxKey + ": " + auxValue);
-            }
-            if (auxKey.equals("repl-id")) replicator.getConfiguration().setReplId(auxValue);
-            if (auxKey.equals("repl-offset")) replicator.getConfiguration().setReplOffset(parseLong(auxValue));
-            if (auxKey.equals("repl-stream-db")) replicator.getConfiguration().setReplStreamDB(parseInt(auxValue));
-            return new AuxField(auxKey, auxValue);
-        } else {
-            if (logger.isWarnEnabled()) {
-                logger.warn("unrecognized RDB AUX field: " + auxKey + ", value: " + auxValue);
-            }
-            return null;
-        }
+    public Event applyFreq(RedisInputStream in, DB db, int version) throws IOException {
+        long lfuFreq = in.read();
+        int valueType = applyType(in);
+        KeyValuePair<?> kv = rdbLoadObject(in, db, valueType, version);
+        kv.setEvictType(EvictType.LFU);
+        kv.setEvictValue(lfuFreq);
+        return kv;
     }
-
+    
+    @Override
+    public Event applyIdle(RedisInputStream in, DB db, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        long lruIdle = parser.rdbLoadLen().len;
+        int valueType = applyType(in);
+        KeyValuePair<?> kv = rdbLoadObject(in, db, valueType, version);
+        kv.setEvictType(EvictType.LRU);
+        kv.setEvictValue(lruIdle);
+        return kv;
+    }
+    
     @Override
     public Event applyString(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -217,7 +273,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o0.setRawKey(key);
         return o0;
     }
-
+    
     @Override
     public Event applyList(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -230,10 +286,11 @@ public class DefaultRdbVisitor extends RdbVisitor {
         long len = parser.rdbLoadLen().len;
         List<String> list = new ArrayList<>();
         List<byte[]> rawList = new ArrayList<>();
-        for (int i = 0; i < len; i++) {
+        while (len > 0) {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
             list.add(new String(element, UTF_8));
             rawList.add(element);
+            len--;
         }
         o1.setValueRdbType(RDB_TYPE_LIST);
         o1.setValue(list);
@@ -243,7 +300,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o1.setRawKey(key);
         return o1;
     }
-
+    
     @Override
     public Event applySet(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -256,10 +313,11 @@ public class DefaultRdbVisitor extends RdbVisitor {
         long len = parser.rdbLoadLen().len;
         Set<String> set = new LinkedHashSet<>();
         Set<byte[]> rawSet = new LinkedHashSet<>();
-        for (int i = 0; i < len; i++) {
+        while (len > 0) {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
             set.add(new String(element, UTF_8));
             rawSet.add(element);
+            len--;
         }
         o2.setValueRdbType(RDB_TYPE_SET);
         o2.setValue(set);
@@ -269,7 +327,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o2.setRawKey(key);
         return o2;
     }
-
+    
     @Override
     public Event applyZSet(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -294,7 +352,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o3.setRawKey(key);
         return o3;
     }
-
+    
     @Override
     public Event applyZSet2(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -320,7 +378,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o5.setRawKey(key);
         return o5;
     }
-
+    
     @Override
     public Event applyHash(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -348,7 +406,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o4.setRawKey(key);
         return o4;
     }
-
+    
     @Override
     public Event applyHashZipMap(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -358,8 +416,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueHash o9 = new KeyStringValueHash();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
+        RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
         Map<String, String> map = new LinkedHashMap<>();
         ByteArrayMap<byte[]> rawMap = new ByteArrayMap<>();
         BaseRdbParser.LenHelper.zmlen(stream); // zmlen
@@ -395,7 +452,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             rawMap.put(field, value);
         }
     }
-
+    
     @Override
     public Event applyListZipList(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -405,9 +462,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueList o10 = new KeyStringValueList();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
-
+        RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        
         List<String> list = new ArrayList<>();
         List<byte[]> rawList = new ArrayList<>();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
@@ -430,7 +486,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o10.setRawKey(key);
         return o10;
     }
-
+    
     @Override
     public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -440,9 +496,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueSet o11 = new KeyStringValueSet();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
-
+        RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        
         Set<String> set = new LinkedHashSet<>();
         Set<byte[]> rawSet = new LinkedHashSet<>();
         int encoding = BaseRdbParser.LenHelper.encoding(stream);
@@ -476,7 +531,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o11.setRawKey(key);
         return o11;
     }
-
+    
     @Override
     public Event applyZSetZipList(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -486,9 +541,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueZSet o12 = new KeyStringValueZSet();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
-
+        RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        
         Set<ZSetEntry> zset = new LinkedHashSet<>();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
@@ -511,7 +565,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o12.setRawKey(key);
         return o12;
     }
-
+    
     @Override
     public Event applyHashZipList(RedisInputStream in, DB db, int version) throws IOException {
         /*
@@ -521,9 +575,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueHash o13 = new KeyStringValueHash();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
-
+        RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        
         Map<String, String> map = new LinkedHashMap<>();
         ByteArrayMap<byte[]> rawMap = new ByteArrayMap<>();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
@@ -549,7 +602,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o13.setRawKey(key);
         return o13;
     }
-
+    
     @Override
     public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -559,9 +612,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         List<String> list = new ArrayList<>();
         List<byte[]> rawList = new ArrayList<>();
         for (int i = 0; i < len; i++) {
-            ByteArray element = parser.rdbGenericLoadStringObject(RDB_LOAD_NONE);
-            RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(element));
-
+            RedisInputStream stream = new RedisInputStream(parser.rdbGenericLoadStringObject(RDB_LOAD_NONE));
+    
             BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
             BaseRdbParser.LenHelper.zltail(stream); // zltail
             int zllen = BaseRdbParser.LenHelper.zllen(stream);
@@ -583,7 +635,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o14.setRawKey(key);
         return o14;
     }
-
+    
     @Override
     public Event applyModule(RedisInputStream in, DB db, int version) throws IOException {
         //|6|6|6|6|6|6|6|6|6|10|
@@ -599,7 +651,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         int moduleVersion = (int) (moduleid & 1023);
         ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
         if (moduleParser == null) {
-            throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
+            throw new NoSuchElementException("module parser[" + moduleName + ", " + moduleVersion + "] not register. rdb type: [RDB_TYPE_MODULE]");
         }
         o6.setValueRdbType(RDB_TYPE_MODULE);
         o6.setValue(moduleParser.parse(in, 1));
@@ -608,21 +660,14 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o6.setRawKey(key);
         return o6;
     }
-
-    /**
-     * @param in      input stream
-     * @param db      redis db
-     * @param version rdb version
-     * @return module object
-     * @throws IOException IOException
-     * @since 2.3.0
-     */
+    
     @Override
     public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
         //|6|6|6|6|6|6|6|6|6|10|
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueModule o7 = new KeyStringValueModule();
-        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        byte[] rawKey = parser.rdbLoadEncodedStringObject().first();
+        String key = new String(rawKey, UTF_8);
         char[] c = new char[9];
         long moduleid = parser.rdbLoadLen().len;
         for (int i = 0; i < c.length; i++) {
@@ -631,27 +676,186 @@ public class DefaultRdbVisitor extends RdbVisitor {
         String moduleName = new String(c);
         int moduleVersion = (int) (moduleid & 1023);
         ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
+        Module module = null;
         if (moduleParser == null) {
-            throw new NoSuchElementException("module[" + moduleName + "," + moduleVersion + "] not exist.");
+            logger.warn("module parser[{}, {}] not register. rdb type: [RDB_TYPE_MODULE_2]. key: [{}]. module parse skipped.", moduleName, moduleVersion, key);
+            SkipRdbParser skipRdbParser = new SkipRdbParser(in);
+            skipRdbParser.rdbLoadCheckModuleValue();
+        } else {
+            module = moduleParser.parse(in, 2);
+            long eof = parser.rdbLoadLen().len;
+            if (eof != RDB_MODULE_OPCODE_EOF) {
+                throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName + "' that is not terminated by the proper module value EOF marker");
+            }
         }
         o7.setValueRdbType(RDB_TYPE_MODULE_2);
-        o7.setValue(moduleParser.parse(in, 2));
+        o7.setValue(module);
         o7.setDb(db);
-        o7.setKey(new String(key, UTF_8));
-        o7.setRawKey(key);
-
-        /* Module v2 serialization has an EOF mark at the end. */
-        long eof = parser.rdbLoadLen().len;
-        if (eof != RDB_MODULE_OPCODE_EOF) {
-            throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName + "' that is not terminated by the proper module value EOF marker");
-        }
+        o7.setKey(new String(rawKey, UTF_8));
+        o7.setRawKey(rawKey);
         return o7;
     }
-
+    
     protected ModuleParser<? extends Module> lookupModuleParser(String moduleName, int moduleVersion) {
         return replicator.getModuleParser(moduleName, moduleVersion);
     }
-
+    
+    @Override
+    @SuppressWarnings("resource")
+    public Event applyStreamListPacks(RedisInputStream in, DB db, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyStringValueStream o15 = new KeyStringValueStream();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        Stream stream = new Stream();
+        
+        // Entries
+        NavigableMap<Stream.ID, Stream.Entry> entries = new TreeMap<>(STREAM_COMPARATOR);
+        long listPacks = parser.rdbLoadLen().len;
+        while (listPacks-- > 0) {
+            RedisInputStream rawid = new RedisInputStream(parser.rdbLoadPlainStringObject());
+            Stream.ID masterid = new Stream.ID(rawid.readLong(8, false), rawid.readLong(8, false));
+            RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+            listPack.skip(4);
+            listPack.skip(2);
+            /*
+             * Master entry
+             * +-------+---------+------------+---------+--/--+---------+---------+-+
+             * | count | deleted | num-fields | field_1 | field_2 | ... | field_N |0|
+             * +-------+---------+------------+---------+--/--+---------+---------+-+
+             */
+            long count = Long.parseLong(new String(listPackEntry(listPack), UTF_8)); // count
+            long deleted = Long.parseLong(new String(listPackEntry(listPack), UTF_8)); // deleted
+            int numfields = Integer.parseInt(new String(listPackEntry(listPack), UTF_8)); // num-fields
+            byte[][] tempFields = new byte[numfields][];
+            for (int i = 0; i < numfields; i++) {
+                tempFields[i] = listPackEntry(listPack);
+            }
+            listPackEntry(listPack); // 0
+    
+            long total = count + deleted;
+            while (total-- > 0) {
+                Map<String, String> fields = new LinkedHashMap<>();
+                Map<byte[], byte[]> rawFields = new ByteArrayMap<>();
+                /*
+                 * FLAG
+                 * +-----+--------+
+                 * |flags|entry-id|
+                 * +-----+--------+
+                 */
+                int flag = Integer.parseInt(new String(listPackEntry(listPack), UTF_8));
+                long ms = Long.parseLong(new String(listPackEntry(listPack), UTF_8));
+                long seq = Long.parseLong(new String(listPackEntry(listPack), UTF_8));
+                Stream.ID id = masterid.delta(ms, seq);
+                boolean delete = (flag & STREAM_ITEM_FLAG_DELETED) != 0;
+                if ((flag & STREAM_ITEM_FLAG_SAMEFIELDS) != 0) {
+                    /*
+                     * SAMEFIELD
+                     * +-------+-/-+-------+--------+
+                     * |value-1|...|value-N|lp-count|
+                     * +-------+-/-+-------+--------+
+                     */
+                    for (int i = 0; i < numfields; i++) {
+                        byte[] rawValue = listPackEntry(listPack);
+                        String value = new String(rawValue, UTF_8);
+                        byte[] rawField = tempFields[i];
+                        String field = new String(rawField, UTF_8);
+                        fields.put(field, value);
+                        rawFields.put(rawField, rawValue);
+                    }
+                    entries.put(id, new Stream.Entry(id, delete, fields, rawFields));
+                } else {
+                    /*
+                     * NONEFIELD
+                     * +----------+-------+-------+-/-+-------+-------+--------+
+                     * |num-fields|field-1|value-1|...|field-N|value-N|lp-count|
+                     * +----------+-------+-------+-/-+-------+-------+--------+
+                     */
+                    numfields = Integer.parseInt(new String(listPackEntry(listPack), UTF_8));
+                    for (int i = 0; i < numfields; i++) {
+                        byte[] rawField = listPackEntry(listPack);
+                        String field = new String(rawField, UTF_8);
+                        byte[] rawValue = listPackEntry(listPack);
+                        String value = new String(rawValue, UTF_8);
+                        fields.put(field, value);
+                        rawFields.put(rawField, rawValue);
+                    }
+                    entries.put(id, new Stream.Entry(id, delete, fields, rawFields));
+                }
+                listPackEntry(listPack); // lp-count
+            }
+            int lpend = listPack.read();
+            if (lpend != 255) {
+                throw new AssertionError("listpack expect 255 but " + lpend);
+            }
+        }
+        
+        parser.rdbLoadLen(); // skip entries length
+        Stream.ID lastId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
+        
+        // Group
+        List<Stream.Group> groups = new ArrayList<>();
+        long groupCount = parser.rdbLoadLen().len;
+        while (groupCount-- > 0) {
+            Stream.Group group = new Stream.Group();
+            byte[] groupName = parser.rdbLoadPlainStringObject().first();
+            Stream.ID groupId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
+    
+            // Global PEL
+            NavigableMap<Stream.ID, Stream.Nack> globalPendingEntries = new TreeMap<>(STREAM_COMPARATOR);
+            long globalPel = parser.rdbLoadLen().len;
+            while (globalPel-- > 0) {
+                Stream.ID rawId = new Stream.ID(in.readLong(8, false), in.readLong(8, false));
+                long deliveryTime = parser.rdbLoadMillisecondTime();
+                long deliveryCount = parser.rdbLoadLen().len;
+                globalPendingEntries.put(rawId, new Stream.Nack(rawId, null, deliveryTime, deliveryCount));
+            }
+    
+            // Consumer
+            List<Stream.Consumer> consumers = new ArrayList<>();
+            long consumerCount = parser.rdbLoadLen().len;
+            while (consumerCount-- > 0) {
+                Stream.Consumer consumer = new Stream.Consumer();
+                byte[] consumerName = parser.rdbLoadPlainStringObject().first();
+                long seenTime = parser.rdbLoadMillisecondTime();
+    
+                // PEL
+                NavigableMap<Stream.ID, Stream.Nack> pendingEntries = new TreeMap<>(STREAM_COMPARATOR);
+                long pel = parser.rdbLoadLen().len;
+                while (pel-- > 0) {
+                    Stream.ID rawId = new Stream.ID(in.readLong(8, false), in.readLong(8, false));
+                    Stream.Nack nack = globalPendingEntries.get(rawId);
+                    nack.setConsumer(consumer);
+                    pendingEntries.put(rawId, nack);
+                }
+    
+                consumer.setName(new String(consumerName, UTF_8));
+                consumer.setSeenTime(seenTime);
+                consumer.setPendingEntries(pendingEntries);
+                consumer.setRawName(consumerName);
+                consumers.add(consumer);
+            }
+    
+            group.setId(groupId);
+            group.setName(new String(groupName, UTF_8));
+            group.setGlobalPendingEntries(globalPendingEntries);
+            group.setConsumers(consumers);
+            group.setRawName(groupName);
+            groups.add(group);
+        }
+        
+        stream.setGroups(groups);
+        stream.setLastId(lastId);
+        stream.setEntries(entries);
+        
+        o15.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
+        o15.setDb(db);
+        o15.setValue(stream);
+        o15.setKey(new String(key, UTF_8));
+        o15.setRawKey(key);
+        return o15;
+    }
+    
     protected KeyValuePair<?> rdbLoadObject(RedisInputStream in, DB db, int valueType, int version) throws IOException {
         /*
          * ----------------------------
@@ -689,6 +893,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?>) applyModule(in, db, version);
             case RDB_TYPE_MODULE_2:
                 return (KeyValuePair<?>) applyModule2(in, db, version);
+            case RDB_TYPE_STREAM_LISTPACKS:
+                return (KeyValuePair<?>) applyStreamListPacks(in, db, version);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
         }

@@ -54,10 +54,20 @@ public class RdbBinaryTest {
         final List<KeyValuePair<?>> list = new ArrayList<>();
         Replicator r = new RedisReplicator(RdbBinaryTest.class.getClassLoader().getResourceAsStream("binarydump.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 list.add(kv);
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            
             }
         });
         r.open();

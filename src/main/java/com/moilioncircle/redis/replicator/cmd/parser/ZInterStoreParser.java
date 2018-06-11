@@ -20,10 +20,11 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
 
-import java.math.BigDecimal;
-
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toDouble;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toInt;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -34,35 +35,35 @@ public class ZInterStoreParser implements CommandParser<ZInterStoreCommand> {
     public ZInterStoreCommand parse(Object[] command) {
         int idx = 1;
         AggregateType aggregateType = null;
-        String destination = objToString(command[idx]);
-        byte[] rawDestination = objToBytes(command[idx]);
+        String destination = toRune(command[idx]);
+        byte[] rawDestination = toBytes(command[idx]);
         idx++;
-        int numkeys = new BigDecimal(objToString(command[idx++])).intValueExact();
+        int numkeys = toInt(command[idx++]);
         String[] keys = new String[numkeys];
         byte[][] rawKeys = new byte[numkeys][];
         for (int i = 0; i < numkeys; i++) {
-            keys[i] = objToString(command[idx]);
-            rawKeys[i] = objToBytes(command[idx]);
+            keys[i] = toRune(command[idx]);
+            rawKeys[i] = toBytes(command[idx]);
             idx++;
         }
         double[] weights = null;
         while (idx < command.length) {
-            String param = objToString(command[idx]);
-            if ("WEIGHTS".equalsIgnoreCase(param)) {
+            String param = toRune(command[idx]);
+            if (eq(param, "WEIGHTS")) {
                 idx++;
                 weights = new double[numkeys];
                 for (int i = 0; i < numkeys; i++) {
-                    weights[i] = Double.parseDouble(objToString(command[idx++]));
+                    weights[i] = toDouble(command[idx++]);
                 }
             }
-            if ("AGGREGATE".equalsIgnoreCase(param)) {
+            if (eq(param, "AGGREGATE")) {
                 idx++;
-                String next = objToString(command[idx++]);
-                if ("SUM".equalsIgnoreCase(next)) {
+                String next = toRune(command[idx++]);
+                if (eq(next, "SUM")) {
                     aggregateType = AggregateType.SUM;
-                } else if ("MIN".equalsIgnoreCase(next)) {
+                } else if (eq(next, "MIN")) {
                     aggregateType = AggregateType.MIN;
-                } else if ("MAX".equalsIgnoreCase(next)) {
+                } else if (eq(next, "MAX")) {
                     aggregateType = AggregateType.MAX;
                 }
             }

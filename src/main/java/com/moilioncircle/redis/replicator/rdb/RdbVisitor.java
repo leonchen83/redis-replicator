@@ -27,6 +27,7 @@ import java.io.IOException;
  * @since 2.1.0
  */
 public abstract class RdbVisitor {
+
     /*
      * rdb prefix
      */
@@ -67,6 +68,17 @@ public abstract class RdbVisitor {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
+    /**
+     * @param in      input stream
+     * @param version rdb version
+     * @return null for now
+     * @throws IOException IOException
+     * @since 2.6.0
+     */
+    public Event applyModuleAux(RedisInputStream in, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+
     /*
      * entity
      */
@@ -75,6 +87,30 @@ public abstract class RdbVisitor {
     }
 
     public Event applyExpireTimeMs(RedisInputStream in, DB db, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+
+    /**
+     * @param in      input stream
+     * @param db      redis db
+     * @param version rdb version
+     * @return kv object
+     * @throws IOException IOException
+     * @since 2.6.0
+     */
+    public Event applyFreq(RedisInputStream in, DB db, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+
+    /**
+     * @param in      input stream
+     * @param db      redis db
+     * @param version rdb version
+     * @return kv object
+     * @throws IOException IOException
+     * @since 2.6.0
+     */
+    public Event applyIdle(RedisInputStream in, DB db, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
@@ -139,6 +175,18 @@ public abstract class RdbVisitor {
      * @since 2.3.0
      */
     public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+
+    /**
+     * @param in      input stream
+     * @param db      redis db
+     * @param version rdb version
+     * @return module object
+     * @throws IOException IOException
+     * @since 2.6.0
+     */
+    public Event applyStreamListPacks(RedisInputStream in, DB db, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 }

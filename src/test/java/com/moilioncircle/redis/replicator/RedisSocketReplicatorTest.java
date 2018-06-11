@@ -84,12 +84,6 @@ public class RedisSocketReplicatorTest {
                 }
             }
         });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testSet");
-            }
-        });
         replicator.open();
         assertEquals("ok", ref.get());
     }
@@ -144,12 +138,6 @@ public class RedisSocketReplicatorTest {
                     } catch (IOException e) {
                     }
                 }
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testZInterStore");
             }
         });
         replicator.open();
@@ -208,30 +196,18 @@ public class RedisSocketReplicatorTest {
                 }
             }
         });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testZUnionStore");
-            }
-        });
         replicator.open();
         assertEquals("ok", ref.get());
     }
 
     @Test
-    public void testCloseListener() throws InterruptedException {
+    public void testCloseListener() {
         final AtomicInteger acc = new AtomicInteger(0);
         Replicator replicator = new RedisReplicator("127.0.0.1", 6666, Configuration.defaultSetting().setUseDefaultExceptionListener(false));
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
                 acc.incrementAndGet();
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testCloseListener");
             }
         });
         try {
@@ -289,13 +265,6 @@ public class RedisSocketReplicatorTest {
 
             }
         });
-
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testZAdd");
-            }
-        });
         replicator.open();
         assertEquals("2", ref.get());
     }
@@ -337,12 +306,6 @@ public class RedisSocketReplicatorTest {
                 }
             }
         });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testV7");
-            }
-        });
         replicator.open();
         assertEquals("ok", ref.get());
     }
@@ -378,12 +341,6 @@ public class RedisSocketReplicatorTest {
                 }
             }
         });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testExpireV6");
-            }
-        });
         replicator.open();
         for (KeyValuePair<?> kv : list) {
             if (kv.getKey().equals("abc")) {
@@ -395,7 +352,7 @@ public class RedisSocketReplicatorTest {
     }
 
     @Test
-    public void testCount() throws IOException, InterruptedException {
+    public void testCount() throws IOException {
         Jedis jedis = new Jedis("127.0.0.1", 6379);
         for (int i = 0; i < 8000; i++) {
             jedis.del("test_" + i);
@@ -427,12 +384,6 @@ public class RedisSocketReplicatorTest {
                     replicator.close();
                 } catch (IOException e) {
                 }
-            }
-        });
-        redisReplicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testCount");
             }
         });
         redisReplicator.open();

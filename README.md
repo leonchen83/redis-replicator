@@ -3,8 +3,8 @@ Table of Contents([中文说明](./README.zh_CN.md))
 
    * [1. Redis-replicator](#1-redis-replicator)
       * [1.1. Brief introduction](#11-brief-introduction)
-      * [1.2. QQ group](#12-qq-group)
-      * [1.3. Contract author](#13-contract-author)
+      * [1.2. Chat with author](#12-chat-with-author)
+      * [1.3. Contract the author](#13-contract-the-author)
    * [2. Install](#2-install)
       * [2.1. Requirements](#21-requirements)
       * [2.2. Maven dependency](#22-maven-dependency)
@@ -35,9 +35,10 @@ Table of Contents([中文说明](./README.zh_CN.md))
          * [4.2.4. Write a command parser](#424-write-a-command-parser)
          * [4.2.5. Register this module parser and command parser and handle event](#425-register-this-module-parser-and-command-parser-and-handle-event)
          * [4.2.6. Put them together](#426-put-them-together)
-      * [4.3. Write your own rdb parser](#43-write-your-own-rdb-parser)
-      * [4.4. Event timeline](#44-event-timeline)
-      * [4.5. Redis URI](#45-redis-uri)
+      * [4.3. Stream](#43-stream)
+      * [4.4. Write your own rdb parser](#44-write-your-own-rdb-parser)
+      * [4.5. Event timeline](#45-event-timeline)
+      * [4.6. Redis URI](#46-redis-uri)
    * [5. Other topics](#5-other-topics)
       * [5.1. Built-in command parser](#51-built-in-command-parser)
       * [5.2. EOFException](#52-eofexception)
@@ -58,49 +59,54 @@ Table of Contents([中文说明](./README.zh_CN.md))
 # 1. Redis-replicator  
 
 ## 1.1. Brief introduction
-[![Join the chat at https://gitter.im/leonchen83/redis-replicator](https://badges.gitter.im/leonchen83/redis-replicator.svg)](https://gitter.im/leonchen83/redis-replicator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/leonchen83/redis-replicator.svg?branch=master)](https://travis-ci.org/leonchen83/redis-replicator)
 [![Coverage Status](https://coveralls.io/repos/github/leonchen83/redis-replicator/badge.svg?branch=master)](https://coveralls.io/github/leonchen83/redis-replicator?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.moilioncircle/redis-replicator/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.moilioncircle/redis-replicator)
 [![Javadocs](http://www.javadoc.io/badge/com.moilioncircle/redis-replicator.svg)](http://www.javadoc.io/doc/com.moilioncircle/redis-replicator)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)  
   
-Redis Replicator implement Redis Replication protocol written in java. It can parse, filter, broadcast the RDB and AOF events in a real time manner. It also can synchronize redis data to your local cache or to database. The following I mentioned `Command` which means `Writable Command`(e.g. `set`,`hmset`) in Redis and excludes the `Readable Command`(e.g. `get`,`hmget`)  
+Redis Replicator implement Redis Replication protocol written in java. It can parse, filter, broadcast the RDB and AOF events in a real time manner. It also can synchronize redis data to your local cache or to database. The following I mentioned `Command` which means `Writable Command`(e.g. `set`,`hmset`) in Redis and excludes the `Readable Command`(e.g. `get`,`hmget`), Supported redis-5.0 and former redis versions.  
 
-## 1.2. QQ group  
+## 1.2. Chat with author  
   
-**479688557**  
+[![Join the chat at https://gitter.im/leonchen83/redis-replicator](https://badges.gitter.im/leonchen83/redis-replicator.svg)](https://gitter.im/leonchen83/redis-replicator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
 
-## 1.3. Contract author
+## 1.3. Contract the author
 
 **chen.bao.yi@gmail.com**
   
 # 2. Install  
 ## 2.1. Requirements  
 jdk 1.7+  
-maven-3.2.3+  
-redis 2.6 - 4.0.x  
+maven-3.3.1+(support [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
+redis 2.6 - 5.0-rc1  
 
 ## 2.2. Maven dependency  
 ```xml  
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.5.0</version>
+        <version>2.6.0-RC1</version>
     </dependency>
 ```
 
 ## 2.3. Install from source code  
   
 ```
-    $mvn clean install package -Dmaven.test.skip=true
+    step 1: install jdk-1.8.x for compile
+    step 2: install jdk-9.0.x for compile
+    step 3: git clone https://github.com/leonchen83/redis-replicator.git
+    step 4: $cd ./redis-replicator 
+            replace jdk path in toolchains.xml and save it.
+    step 5: $mvn clean install package -Dmaven.test.skip=true --global-toolchains ./toolchains.xml
 ```  
 
 ## 2.4. Select a version
 
 |     **redis version**        |**redis-replicator version**  |  
 | ---------------------------- | ---------------------------- |  
-|  \[2.6, 4.0.x\]              |           \[2.3.0, \]        |  
+|  \[2.6, 5.0.x\]              |       \[2.6.0, \]            |  
+|  \[2.6, 4.0.x\]              |       \[2.3.0, 2.5.0\]       |  
 |  \[2.6, 4.0-RC3\]            |       \[2.1.0, 2.2.0\]       |  
 |  \[2.6, 3.2.x\]              |  \[1.0.18\](not supported)   |  
 
@@ -381,12 +387,52 @@ See [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extensi
 
 See [ModuleExtensionExample.java](./examples/com/moilioncircle/examples/extension/ModuleExtensionExample.java)  
 
-## 4.3. Write your own rdb parser  
+## 4.3. Stream
+  
+Since Redis 5.0+, Redis add a new data structure `STREAM`. Redis-replicator parse the `STREAM` like the following:  
+  
+```java  
 
-* Extends `RdbVisitor`  
+        Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
+        r.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                if (kv instanceof KeyStringValueStream) {
+                    // key
+                    String key = kv.getKey();
+                    
+                    // stream
+                    Stream stream = kv.getValueAsStream();
+                    // last stream id
+                    stream.getLastId();
+                    
+                    // entries
+                    NavigableMap<Stream.ID, Stream.Entry> entries = stream.getEntries();
+                    
+                    // optional : group
+                    for (Stream.Group group : stream.getGroups()) {
+                        // global PEL(pending entries list)
+                        NavigableMap<Stream.ID, Stream.Nack> gpel = group.getGlobalPendingEntries();
+                        
+                        // consumer
+                        for (Stream.Consumer consumer : group.getConsumers()) {
+                            // PEL(pending entries list)
+                            NavigableMap<Stream.ID, Stream.Nack> pel = consumer.getPendingEntries();
+                        }
+                    }
+                }
+            }
+        });
+        r.open();
+
+```
+
+## 4.4. Write your own rdb parser  
+
+* Write `YourRdbVisitor` extends `RdbVisitor`  
 * Register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 
-## 4.4. Event timeline  
+## 4.5. Event timeline  
 
 ```java  
         |                     full resynchronization              |  partial resynchronization  |
@@ -397,7 +443,7 @@ See [ModuleExtensionExample.java](./examples/com/moilioncircle/examples/extensio
           prefullsync    auxfields...  rdbs...   postfullsync                  cmds...       
 ```
 
-## 4.5. Redis URI
+## 4.6. Redis URI
 
 Before redis-replicator-2.4.0, We construct `RedisReplicator` like the following:  
 
@@ -408,7 +454,7 @@ Replicator replicator = new RedisReplicator(new File("/path/to/appendonly.aof", 
 Replicator replicator = new RedisReplicator(new File("/path/to/appendonly.aof", FileType.MIXED, Configuration.defaultSetting());
 ```
 
-After redis-replicator-2.4.0, We introduced a new concept(Redis URI) which simplify the constructor of `RedisReplicator`.  
+After redis-replicator-2.4.0, We introduced a new concept(Redis URI) which simplify the construction process of `RedisReplicator`.  
 
 ```java  
 Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
@@ -438,7 +484,8 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 |**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
 |**PUBLISH** |  **BITOP**   |**SETBIT**      | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
 |**RENAME**  |  **MULTI**   |  **EXEC**      | **LTRIM**  |**RPOPLPUSH** |     **SORT**       |  
-|**EVALSHA** |              |                |            |              |                    |  
+|**EVALSHA** | **ZPOPMAX**  | **ZPOPMIN**    | **XACK**   | **XADD**     |  **XCLAIM**        |  
+|**XDEL**    | **XGROUP**   | **XTRIM**      |            |              |                    |  
   
 ## 5.2. EOFException
   
@@ -527,7 +574,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
   
 ## 5.8. Handle raw bytes  
   
-* For any `KeyValuePair` type except `KeyStringValueModule`, we can get the raw bytes. In some cases(e.g. HyperLogLog),this is very useful.  
+* For any `KeyValuePair` type except `KeyStringValueModule`, we can get the raw bytes. In some cases, this is very useful.  
 
   
 ```java  
@@ -551,7 +598,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
         replicator.open();
 ```  
   
-For easy operation, the key of return type `Map<byte[], byte[]>` of `KeyStringValueHash.getRawValue`, we can `get` and `put` the key as [value type](https://en.wikipedia.org/wiki/Value_type)  
+The `KeyStringValueHash.getRawValue` will return `Map<byte[], byte[]>`, the `key` of this `map` is [value type](http://www.tutorialsteacher.com/csharp/csharp-value-type-and-reference-type) like the following  
 
 ```java  
 KeyStringValueHash ksvh = (KeyStringValueHash) kv;

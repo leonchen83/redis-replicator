@@ -16,8 +16,8 @@
 
 package com.moilioncircle.redis.replicator.io;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +29,7 @@ import static java.lang.System.currentTimeMillis;
  * @since 2.3.2
  */
 public class RateLimitInputStream extends InputStream {
-    private static final Log logger = LogFactory.getLog(RateLimitInputStream.class);
+    private static final Logger logger = LoggerFactory.getLogger(RateLimitInputStream.class);
 
     private static final int DEFAULT_PERMITS = 100 * 1024 * 1000; // 97.65MB/sec
 
@@ -44,7 +44,7 @@ public class RateLimitInputStream extends InputStream {
     public RateLimitInputStream(InputStream in, int permits) {
         if (permits <= 1000) permits = 1000;
         else if (permits > 1000) permits = permits / 1000 * 1000;
-        logger.info("rate limit force set to " + permits);
+        logger.info("rate limit force set to {}", permits);
 
         this.in = in;
         this.permits = permits;

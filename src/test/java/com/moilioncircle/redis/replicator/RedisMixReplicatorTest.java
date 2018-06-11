@@ -41,22 +41,26 @@ public class RedisMixReplicatorTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 acc.incrementAndGet();
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            
             }
         });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
                 acc1.incrementAndGet();
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testOpen");
             }
         });
         replicator.open();
@@ -71,22 +75,26 @@ public class RedisMixReplicatorTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 acc.incrementAndGet();
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            
             }
         });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
                 acc1.incrementAndGet();
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testOpen1");
             }
         });
         replicator.open();

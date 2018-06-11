@@ -19,8 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PFCountCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -32,8 +32,8 @@ public class PFCountParser implements CommandParser<PFCountCommand> {
         String[] keys = new String[command.length - 1];
         byte[][] rawKeys = new byte[command.length - 1][];
         for (int i = 1, j = 0; i < command.length; i++, j++) {
-            keys[j] = objToString(command[i]);
-            rawKeys[j] = objToBytes(command[i]);
+            keys[j] = toRune(command[i]);
+            rawKeys[j] = toBytes(command[i]);
         }
         return new PFCountCommand(keys, rawKeys);
     }

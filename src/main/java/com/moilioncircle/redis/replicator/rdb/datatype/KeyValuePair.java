@@ -35,6 +35,8 @@ public class KeyValuePair<T> implements Event {
     protected int valueRdbType;
     protected ExpiredType expiredType = ExpiredType.NONE;
     protected Long expiredValue;
+    protected EvictType evictType = EvictType.NONE;
+    protected Long evictValue;
     protected String key;
     protected T value;
     protected byte[] rawKey;
@@ -61,6 +63,22 @@ public class KeyValuePair<T> implements Event {
 
     public void setExpiredValue(Long expiredValue) {
         this.expiredValue = expiredValue;
+    }
+
+    public EvictType getEvictType() {
+        return evictType;
+    }
+
+    public void setEvictType(EvictType evictType) {
+        this.evictType = evictType;
+    }
+
+    public Long getEvictValue() {
+        return evictValue;
+    }
+
+    public void setEvictValue(Long evictValue) {
+        this.evictValue = evictValue;
     }
 
     public String getKey() {
@@ -151,6 +169,13 @@ public class KeyValuePair<T> implements Event {
         return (Module) value;
     }
 
+    /**
+     * @return RDB_TYPE_STREAM_LISTPACKS
+     */
+    public Stream getValueAsStream() {
+        return (Stream) value;
+    }
+
     @Override
     public String toString() {
         return "KeyValuePair{" +
@@ -158,6 +183,8 @@ public class KeyValuePair<T> implements Event {
                 ", valueRdbType=" + valueRdbType +
                 ", expiredType=" + expiredType +
                 ", expiredValue=" + expiredValue +
+                ", evictType=" + evictType +
+                ", evictValue=" + evictValue +
                 ", key='" + key + '\'' +
                 ", value=" + value +
                 '}';

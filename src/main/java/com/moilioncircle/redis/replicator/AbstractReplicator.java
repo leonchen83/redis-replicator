@@ -68,6 +68,7 @@ import com.moilioncircle.redis.replicator.cmd.parser.RPushParser;
 import com.moilioncircle.redis.replicator.cmd.parser.RPushXParser;
 import com.moilioncircle.redis.replicator.cmd.parser.RenameNxParser;
 import com.moilioncircle.redis.replicator.cmd.parser.RenameParser;
+import com.moilioncircle.redis.replicator.cmd.parser.ReplConfParser;
 import com.moilioncircle.redis.replicator.cmd.parser.RestoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SAddParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SDiffStoreParser;
@@ -85,9 +86,17 @@ import com.moilioncircle.redis.replicator.cmd.parser.SetRangeParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SortParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SwapDBParser;
 import com.moilioncircle.redis.replicator.cmd.parser.UnLinkParser;
+import com.moilioncircle.redis.replicator.cmd.parser.XAckParser;
+import com.moilioncircle.redis.replicator.cmd.parser.XAddParser;
+import com.moilioncircle.redis.replicator.cmd.parser.XClaimParser;
+import com.moilioncircle.redis.replicator.cmd.parser.XDelParser;
+import com.moilioncircle.redis.replicator.cmd.parser.XGroupParser;
+import com.moilioncircle.redis.replicator.cmd.parser.XTrimParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZAddParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZIncrByParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZInterStoreParser;
+import com.moilioncircle.redis.replicator.cmd.parser.ZPopMaxParser;
+import com.moilioncircle.redis.replicator.cmd.parser.ZPopMinParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZRemParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByLexParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByRankParser;
@@ -121,7 +130,7 @@ import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
  */
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
-    protected volatile RedisInputStream inputStream;
+    protected RedisInputStream inputStream;
     protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
     protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
@@ -279,6 +288,15 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("LTRIM"), new LTrimParser());
         addCommandParser(CommandName.name("SORT"), new SortParser());
         addCommandParser(CommandName.name("RPOPLPUSH"), new RPopLPushParser());
+        addCommandParser(CommandName.name("ZPOPMIN"), new ZPopMinParser());
+        addCommandParser(CommandName.name("ZPOPMAX"), new ZPopMaxParser());
+        addCommandParser(CommandName.name("REPLCONF"), new ReplConfParser());
+        addCommandParser(CommandName.name("XACK"), new XAckParser());
+        addCommandParser(CommandName.name("XADD"), new XAddParser());
+        addCommandParser(CommandName.name("XCLAIM"), new XClaimParser());
+        addCommandParser(CommandName.name("XDEL"), new XDelParser());
+        addCommandParser(CommandName.name("XGROUP"), new XGroupParser());
+        addCommandParser(CommandName.name("XTRIM"), new XTrimParser());
     }
 
     @Override

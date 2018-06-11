@@ -25,12 +25,13 @@ import com.moilioncircle.redis.replicator.cmd.impl.OverFlowType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetTypeOffsetValue;
 import com.moilioncircle.redis.replicator.cmd.impl.Statement;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -41,8 +42,8 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
     @Override
     public BitFieldCommand parse(Object[] command) {
         int idx = 1;
-        String key = objToString(command[idx]);
-        byte[] rawKey = objToBytes(command[idx]);
+        String key = toRune(command[idx]);
+        byte[] rawKey = toBytes(command[idx]);
         idx++;
         List<Statement> list = new ArrayList<>();
         if (idx < command.length) {
@@ -50,37 +51,37 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
             do {
                 idx = parseStatement(idx, command, list);
                 if (idx >= command.length) break;
-                token = objToString(command[idx]);
+                token = toRune(command[idx]);
             }
-            while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
+            while (token != null && (eq(token, "GET") || eq(token, "SET") || eq(token, "INCRBY")));
         }
-        List<OverFlow> overFlowList = null;
+        List<OverFlow> overflows = null;
         if (idx < command.length) {
-            overFlowList = new ArrayList<>();
+            overflows = new ArrayList<>();
             do {
                 OverFlow overFlow = new OverFlow();
                 idx = parseOverFlow(idx, command, overFlow);
-                overFlowList.add(overFlow);
+                overflows.add(overFlow);
                 if (idx >= command.length) break;
-            } while ("OVERFLOW".equalsIgnoreCase(objToString(command[idx])));
+            } while (eq(toRune(command[idx]), "OVERFLOW"));
         }
 
-        return new BitFieldCommand(key, list, overFlowList, rawKey);
+        return new BitFieldCommand(key, list, overflows, rawKey);
     }
 
     private int parseOverFlow(int i, Object[] params, OverFlow overFlow) {
         int idx = i;
-        accept(objToString(params[idx++]), "OVERFLOW");
-        OverFlowType overFlowType;
-        String keyWord = objToString(params[idx++]);
-        if ("WRAP".equalsIgnoreCase(keyWord)) {
-            overFlowType = OverFlowType.WRAP;
-        } else if ("SAT".equalsIgnoreCase(keyWord)) {
-            overFlowType = OverFlowType.SAT;
-        } else if ("FAIL".equalsIgnoreCase(keyWord)) {
-            overFlowType = OverFlowType.FAIL;
+        accept(toRune(params[idx++]), "OVERFLOW");
+        OverFlowType overflow;
+        String keyword = toRune(params[idx++]);
+        if (eq(keyword, "WRAP")) {
+            overflow = OverFlowType.WRAP;
+        } else if (eq(keyword, "SAT")) {
+            overflow = OverFlowType.SAT;
+        } else if (eq(keyword, "FAIL")) {
+            overflow = OverFlowType.FAIL;
         } else {
-            throw new AssertionError("parse [BITFIELD] command error." + keyWord);
+            throw new AssertionError("parse [BITFIELD] command error." + keyword);
         }
         List<Statement> list = new ArrayList<>();
         if (idx < params.length) {
@@ -88,28 +89,28 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
             do {
                 idx = parseStatement(idx, params, list);
                 if (idx >= params.length) break;
-                token = objToString(params[idx]);
+                token = toRune(params[idx]);
             }
-            while (token != null && (token.equalsIgnoreCase("GET") || token.equalsIgnoreCase("SET") || token.equalsIgnoreCase("INCRBY")));
+            while (token != null && (eq(token, "GET") || eq(token, "SET") || eq(token, "INCRBY")));
         }
-        overFlow.setOverFlowType(overFlowType);
+        overFlow.setOverFlowType(overflow);
         overFlow.setStatements(list);
         return idx;
     }
 
     private int parseStatement(int i, Object[] params, List<Statement> list) {
         int idx = i;
-        String keyWord = objToString(params[idx++]);
+        String keyword = toRune(params[idx++]);
         Statement statement;
-        if ("GET".equalsIgnoreCase(keyWord)) {
+        if (eq(keyword, "GET")) {
             GetTypeOffset getTypeOffset = new GetTypeOffset();
             idx = parseGet(idx - 1, params, getTypeOffset);
             statement = getTypeOffset;
-        } else if ("SET".equalsIgnoreCase(keyWord)) {
+        } else if (eq(keyword, "SET")) {
             SetTypeOffsetValue setTypeOffsetValue = new SetTypeOffsetValue();
             idx = parseSet(idx - 1, params, setTypeOffsetValue);
             statement = setTypeOffsetValue;
-        } else if ("INCRBY".equalsIgnoreCase(keyWord)) {
+        } else if (eq(keyword, "INCRBY")) {
             IncrByTypeOffsetIncrement incrByTypeOffsetIncrement = new IncrByTypeOffsetIncrement();
             idx = parseIncrBy(idx - 1, params, incrByTypeOffsetIncrement);
             statement = incrByTypeOffsetIncrement;
@@ -122,14 +123,14 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
 
     private int parseIncrBy(int i, Object[] params, IncrByTypeOffsetIncrement incrByTypeOffsetIncrement) {
         int idx = i;
-        accept(objToString(params[idx++]), "INCRBY");
-        String type = objToString(params[idx]);
-        byte[] rawType = objToBytes(params[idx]);
+        accept(toRune(params[idx++]), "INCRBY");
+        String type = toRune(params[idx]);
+        byte[] rawType = toBytes(params[idx]);
         idx++;
-        String offset = objToString(params[idx]);
-        byte[] rawOffset = objToBytes(params[idx]);
+        String offset = toRune(params[idx]);
+        byte[] rawOffset = toBytes(params[idx]);
         idx++;
-        long increment = new BigDecimal(objToString(params[idx++])).longValueExact();
+        long increment = toLong(params[idx++]);
         incrByTypeOffsetIncrement.setType(type);
         incrByTypeOffsetIncrement.setOffset(offset);
         incrByTypeOffsetIncrement.setIncrement(increment);
@@ -140,14 +141,14 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
 
     private int parseSet(int i, Object[] params, SetTypeOffsetValue setTypeOffsetValue) {
         int idx = i;
-        accept(objToString(params[idx++]), "SET");
-        String type = objToString(params[idx]);
-        byte[] rawType = objToBytes(params[idx]);
+        accept(toRune(params[idx++]), "SET");
+        String type = toRune(params[idx]);
+        byte[] rawType = toBytes(params[idx]);
         idx++;
-        String offset = objToString(params[idx]);
-        byte[] rawOffset = objToBytes(params[idx]);
+        String offset = toRune(params[idx]);
+        byte[] rawOffset = toBytes(params[idx]);
         idx++;
-        long value = new BigDecimal(objToString(params[idx++])).longValueExact();
+        long value = toLong(params[idx++]);
         setTypeOffsetValue.setType(type);
         setTypeOffsetValue.setOffset(offset);
         setTypeOffsetValue.setValue(value);
@@ -158,12 +159,12 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
 
     private int parseGet(int i, Object[] params, GetTypeOffset getTypeOffset) {
         int idx = i;
-        accept(objToString(params[idx++]), "GET");
-        String type = objToString(params[idx]);
-        byte[] rawType = objToBytes(params[idx]);
+        accept(toRune(params[idx++]), "GET");
+        String type = toRune(params[idx]);
+        byte[] rawType = toBytes(params[idx]);
         idx++;
-        String offset = objToString(params[idx]);
-        byte[] rawOffset = objToBytes(params[idx]);
+        String offset = toRune(params[idx]);
+        byte[] rawOffset = toBytes(params[idx]);
         idx++;
         getTypeOffset.setType(type);
         getTypeOffset.setOffset(offset);
@@ -173,7 +174,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
     }
 
     private void accept(String actual, String expect) {
-        if (actual.equalsIgnoreCase(expect)) return;
+        if (eq(actual, expect)) return;
         throw new AssertionError("expect " + expect + " but actual " + actual);
     }
 

@@ -20,8 +20,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.BitOpCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.Op;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,16 +31,16 @@ public class BitOpParser implements CommandParser<BitOpCommand> {
     @Override
     public BitOpCommand parse(Object[] command) {
         int idx = 1;
-        String strOp = objToString(command[idx++]);
+        String strOp = toRune(command[idx++]);
         Op op = Op.valueOf(strOp.toUpperCase());
-        String destKey = objToString(command[idx]);
-        byte[] rawDestKey = objToBytes(command[idx]);
+        String destKey = toRune(command[idx]);
+        byte[] rawDestKey = toBytes(command[idx]);
         idx++;
         String[] keys = new String[command.length - 3];
         byte[][] rawKeys = new byte[command.length - 3][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            keys[j] = objToString(command[i]);
-            rawKeys[j] = objToBytes(command[i]);
+            keys[j] = toRune(command[i]);
+            rawKeys[j] = toBytes(command[i]);
         }
         return new BitOpCommand(op, destKey, keys, rawDestKey, rawKeys);
     }

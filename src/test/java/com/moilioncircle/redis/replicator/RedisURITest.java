@@ -51,7 +51,11 @@ public class RedisURITest {
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong atomicChecksum = new AtomicLong(0);
         Replicator r = new RedisReplicator(redisURI.toString());
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 acc.incrementAndGet();
@@ -59,14 +63,7 @@ public class RedisURITest {
 
             @Override
             public void postFullSync(Replicator replicator, long checksum) {
-                super.postFullSync(replicator, checksum);
                 atomicChecksum.compareAndSet(0, checksum);
-            }
-        });
-        r.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close testChecksumV7");
             }
         });
         r.open();
@@ -111,12 +108,6 @@ public class RedisURITest {
                 }
             }
         });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close RedisURI testSet");
-            }
-        });
         replicator.open();
         assertEquals("ok", ref.get());
     }
@@ -130,22 +121,26 @@ public class RedisURITest {
         Replicator replicator = new RedisReplicator(redisURI.toString());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 acc.incrementAndGet();
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            
             }
         });
         replicator.addCommandListener(new CommandListener() {
             @Override
             public void handle(Replicator replicator, Command command) {
                 acc1.incrementAndGet();
-            }
-        });
-        replicator.addCloseListener(new CloseListener() {
-            @Override
-            public void handle(Replicator replicator) {
-                System.out.println("close RedisURI testOpen1");
             }
         });
         replicator.open();

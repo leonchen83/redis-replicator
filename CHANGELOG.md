@@ -1,3 +1,8 @@
+### 2.6.0
+
+Add new command : `ZPOPMAX`, `ZPOPMIN`, `XACK`, `XADD`, `XCLAIM`, `XDEL`, `XGROUP`, `XTRIM`.  
+Support redis-5.0-rc1 `STREAM`.  
+
 ### 2.5.0
 
 Add `ValueIterableRdbListener` to handle huge kv.  

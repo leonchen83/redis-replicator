@@ -27,6 +27,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.DefaultCommandParser;
 import com.moilioncircle.redis.replicator.cmd.parser.PingParser;
+import com.moilioncircle.redis.replicator.cmd.parser.ReplConfParser;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
@@ -125,7 +126,10 @@ public class MigrationExample {
 
     public static Replicator dress(Replicator r) {
         r.setRdbVisitor(new DumpRdbVisitor(r));
+        // ignore PING REPLCONF GETACK
         r.addCommandParser(CommandName.name("PING"), new PingParser());
+        r.addCommandParser(CommandName.name("REPLCONF"), new ReplConfParser());
+        //
         r.addCommandParser(CommandName.name("APPEND"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("SET"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("SETEX"), new DefaultCommandParser());
@@ -199,6 +203,14 @@ public class MigrationExample {
         r.addCommandParser(CommandName.name("LTRIM"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("SORT"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("RPOPLPUSH"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZPOPMIN"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZPOPMAX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("XACK"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("XADD"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("XCLAIM"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("XDEL"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("XGROUP"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("XTRIM"), new DefaultCommandParser());
         return r;
     }
 

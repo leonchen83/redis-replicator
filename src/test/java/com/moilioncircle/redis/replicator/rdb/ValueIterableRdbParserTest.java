@@ -67,7 +67,12 @@ public class ValueIterableRdbParserTest {
         Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof KeyStringValueByteArrayIterator) {
@@ -95,6 +100,11 @@ public class ValueIterableRdbParserTest {
                     acc.incrementAndGet();
                 }
             }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            
+            }
         });
         try {
             r.open();
@@ -110,7 +120,12 @@ public class ValueIterableRdbParserTest {
         @SuppressWarnings("resource")
         Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB, Configuration.defaultSetting());
         r.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            
+            }
+    
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
                 if (kv instanceof KeyStringValueList) {
@@ -136,6 +151,11 @@ public class ValueIterableRdbParserTest {
                 } else {
                     acc.incrementAndGet();
                 }
+            }
+        
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            
             }
         });
         try {

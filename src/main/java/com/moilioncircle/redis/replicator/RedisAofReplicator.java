@@ -22,8 +22,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.util.Arrays;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.EOFException;
 import java.io.File;
@@ -43,7 +43,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class RedisAofReplicator extends AbstractReplicator {
 
-    protected static final Log logger = LogFactory.getLog(RedisAofReplicator.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RedisAofReplicator.class);
     protected final ReplyParser replyParser;
 
     public RedisAofReplicator(File file, Configuration configuration) throws FileNotFoundException {
@@ -87,12 +87,12 @@ public class RedisAofReplicator extends AbstractReplicator {
                 CommandName name = CommandName.name(new String((byte[]) raw[0], UTF_8));
                 final CommandParser<? extends Command> parser;
                 if ((parser = commands.get(name)) == null) {
-                    logger.warn("command [" + name + "] not register. raw command:[" + Arrays.deepToString(raw) + "]");
+                    logger.warn("command [{}] not register. raw command:[{}]", name, Arrays.deepToString(raw));
                     continue;
                 }
                 submitEvent(parser.parse(raw));
             } else {
-                logger.info("unexpected redis reply:" + obj);
+                logger.info("unexpected redis reply:{}", obj);
             }
         }
     }

@@ -23,8 +23,8 @@ import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -35,17 +35,17 @@ public class HMSetParser implements CommandParser<HMSetCommand> {
     @Override
     public HMSetCommand parse(Object[] command) {
         int idx = 1;
-        String key = objToString(command[idx]);
-        byte[] rawKey = objToBytes(command[idx]);
+        String key = toRune(command[idx]);
+        byte[] rawKey = toBytes(command[idx]);
         idx++;
         Map<String, String> fields = new LinkedHashMap<>();
         ByteArrayMap<byte[]> rawFields = new ByteArrayMap<>();
         while (idx < command.length) {
-            String field = objToString(command[idx]);
-            byte[] rawField = objToBytes(command[idx]);
+            String field = toRune(command[idx]);
+            byte[] rawField = toBytes(command[idx]);
             idx++;
-            String value = idx == command.length ? null : objToString(command[idx]);
-            byte[] rawValue = idx == command.length ? null : objToBytes(command[idx]);
+            String value = idx == command.length ? null : toRune(command[idx]);
+            byte[] rawValue = idx == command.length ? null : toBytes(command[idx]);
             idx++;
             fields.put(field, value);
             rawFields.put(rawField, rawValue);

@@ -19,8 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.RPopCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -29,8 +29,8 @@ import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objTo
 public class RPopParser implements CommandParser<RPopCommand> {
     @Override
     public RPopCommand parse(Object[] command) {
-        String key = objToString(command[1]);
-        byte[] rawKey = objToBytes(command[1]);
+        String key = toRune(command[1]);
+        byte[] rawKey = toBytes(command[1]);
         return new RPopCommand(key, rawKey);
     }
 

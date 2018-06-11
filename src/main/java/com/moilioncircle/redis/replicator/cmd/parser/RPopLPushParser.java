@@ -19,8 +19,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.RPopLPushCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,11 +30,11 @@ public class RPopLPushParser implements CommandParser<RPopLPushCommand> {
     @Override
     public RPopLPushCommand parse(Object[] command) {
         int idx = 1;
-        String source = objToString(command[idx]);
-        byte[] rawSource = objToBytes(command[idx]);
+        String source = toRune(command[idx]);
+        byte[] rawSource = toBytes(command[idx]);
         idx++;
-        String destination = objToString(command[idx]);
-        byte[] rawDestination = objToBytes(command[idx]);
+        String destination = toRune(command[idx]);
+        byte[] rawDestination = toBytes(command[idx]);
         idx++;
         return new RPopLPushCommand(source, destination, rawSource, rawDestination);
     }

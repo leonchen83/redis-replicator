@@ -32,35 +32,30 @@ import static org.junit.Assert.assertEquals;
  */
 public class DecrByParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         {
             DecrByParser parser = new DecrByParser();
             DecrByCommand cmd = parser.parse(toObjectArray("decrby key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
             IncrByParser parser = new IncrByParser();
             IncrByCommand cmd = parser.parse(toObjectArray("incrby key 5".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals(5, cmd.getValue());
-            System.out.println(cmd);
         }
 
         {
             DecrParser parser = new DecrParser();
             DecrCommand cmd = parser.parse(toObjectArray("decr key".split(" ")));
             assertEquals("key", cmd.getKey());
-            System.out.println(cmd);
         }
 
         {
             IncrParser parser = new IncrParser();
             IncrCommand cmd = parser.parse(toObjectArray("incr key".split(" ")));
             assertEquals("key", cmd.getKey());
-            System.out.println(cmd);
         }
 
         {
@@ -69,7 +64,6 @@ public class DecrByParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getIncrement(), 0);
             assertEquals("mem", cmd.getMember());
-            System.out.println(cmd);
         }
 
         {
@@ -78,7 +72,6 @@ public class DecrByParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getIncrement());
             assertEquals("mem", cmd.getField());
-            System.out.println(cmd);
         }
     }
 

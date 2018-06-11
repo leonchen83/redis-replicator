@@ -19,7 +19,6 @@ package com.moilioncircle.redis.replicator.rdb.iterable;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.UncheckedIOException;
 import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.io.ByteArrayInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
@@ -28,7 +27,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
-import com.moilioncircle.redis.replicator.util.ByteArray;
 
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -242,8 +240,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueMapEntryIterator o9 = new KeyStringValueMapEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
+        RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
         BaseRdbParser.LenHelper.zmlen(stream); // zmlen
         o9.setValue(new HashZipMapIter(stream));
         o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
@@ -262,8 +259,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueByteArrayIterator o10 = new KeyStringValueByteArrayIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        final RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
+        final RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
 
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
@@ -310,8 +306,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueByteArrayIterator o11 = new KeyStringValueByteArrayIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        final RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
+        final RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
 
         final int encoding = BaseRdbParser.LenHelper.encoding(stream);
         long lenOfContent = BaseRdbParser.LenHelper.lenOfContent(stream);
@@ -361,8 +356,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueZSetEntryIterator o12 = new KeyStringValueZSetEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        final RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
+        final RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
 
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
@@ -411,8 +405,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyStringValueMapEntryIterator o13 = new KeyStringValueMapEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        ByteArray aux = parser.rdbLoadPlainStringObject();
-        final RedisInputStream stream = new RedisInputStream(new ByteArrayInputStream(aux));
+        final RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
 
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
@@ -537,8 +530,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         public byte[] next() {
             try {
                 if (zllen == -1 && condition > 0) {
-                    ByteArray element = parser.rdbGenericLoadStringObject(RDB_LOAD_NONE);
-                    this.stream = new RedisInputStream(new ByteArrayInputStream(element));
+                    this.stream = new RedisInputStream(parser.rdbGenericLoadStringObject(RDB_LOAD_NONE));
                     BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
                     BaseRdbParser.LenHelper.zltail(stream); // zltail
                     this.zllen = BaseRdbParser.LenHelper.zllen(stream);

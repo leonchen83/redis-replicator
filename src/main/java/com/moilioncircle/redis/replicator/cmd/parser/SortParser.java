@@ -20,15 +20,16 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.Limit;
 import com.moilioncircle.redis.replicator.cmd.impl.SortCommand;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.ASC;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.DESC;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.NONE;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -39,8 +40,8 @@ public class SortParser implements CommandParser<SortCommand> {
     public SortCommand parse(Object[] command) {
         int idx = 1;
         SortCommand sort = new SortCommand();
-        String key = objToString(command[idx]);
-        byte[] rawKey = objToBytes(command[idx]);
+        String key = toRune(command[idx]);
+        byte[] rawKey = toBytes(command[idx]);
         idx++;
         sort.setKey(key);
         sort.setRawKey(rawKey);
@@ -48,35 +49,35 @@ public class SortParser implements CommandParser<SortCommand> {
         List<String> getPatterns = new ArrayList<>();
         List<byte[]> rawGetPatterns = new ArrayList<>();
         while (idx < command.length) {
-            String param = objToString(command[idx]);
-            if ("ASC".equalsIgnoreCase(param)) {
+            String param = toRune(command[idx]);
+            if (eq(param, "ASC")) {
                 sort.setOrder(ASC);
-            } else if ("DESC".equalsIgnoreCase(param)) {
+            } else if (eq(param, "DESC")) {
                 sort.setOrder(DESC);
-            } else if ("ALPHA".equalsIgnoreCase(param)) {
+            } else if (eq(param, "ALPHA")) {
                 sort.setAlpha(true);
-            } else if ("LIMIT".equalsIgnoreCase(param) && idx + 2 < command.length) {
+            } else if (eq(param, "LIMIT") && idx + 2 < command.length) {
                 idx++;
-                long offset = new BigDecimal(objToString(command[idx])).longValueExact();
+                long offset = toLong(command[idx]);
                 idx++;
-                long count = new BigDecimal(objToString(command[idx])).longValueExact();
+                long count = toLong(command[idx]);
                 sort.setLimit(new Limit(offset, count));
-            } else if ("STORE".equalsIgnoreCase(param) && idx + 1 < command.length) {
+            } else if (eq(param, "STORE") && idx + 1 < command.length) {
                 idx++;
-                String destination = objToString(command[idx]);
-                byte[] rawDestination = objToBytes(command[idx]);
+                String destination = toRune(command[idx]);
+                byte[] rawDestination = toBytes(command[idx]);
                 sort.setDestination(destination);
                 sort.setRawDestination(rawDestination);
-            } else if ("BY".equalsIgnoreCase(param) && idx + 1 < command.length) {
+            } else if (eq(param, "BY") && idx + 1 < command.length) {
                 idx++;
-                String byPattern = objToString(command[idx]);
-                byte[] rawByPattern = objToBytes(command[idx]);
+                String byPattern = toRune(command[idx]);
+                byte[] rawByPattern = toBytes(command[idx]);
                 sort.setByPattern(byPattern);
                 sort.setRawByPattern(rawByPattern);
-            } else if ("GET".equalsIgnoreCase(param) && idx + 1 < command.length) {
+            } else if (eq(param, "GET") && idx + 1 < command.length) {
                 idx++;
-                String getPattern = objToString(command[idx]);
-                byte[] rawGetPattern = objToBytes(command[idx]);
+                String getPattern = toRune(command[idx]);
+                byte[] rawGetPattern = toBytes(command[idx]);
                 getPatterns.add(getPattern);
                 rawGetPatterns.add(rawGetPattern);
             }

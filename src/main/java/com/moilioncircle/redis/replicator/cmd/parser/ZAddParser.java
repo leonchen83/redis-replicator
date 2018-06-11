@@ -24,8 +24,9 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.objToString;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -39,32 +40,32 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
         Boolean isCh = null, isIncr = null;
         ExistType existType = ExistType.NONE;
         List<ZSetEntry> list = new ArrayList<>();
-        String key = objToString(command[idx]);
-        byte[] rawKey = objToBytes(command[idx]);
+        String key = toRune(command[idx]);
+        byte[] rawKey = toBytes(command[idx]);
         idx++;
         boolean et = false;
         while (idx < command.length) {
-            String param = objToString(command[idx]);
-            if (!et && "NX".equalsIgnoreCase(param)) {
+            String param = toRune(command[idx]);
+            if (!et && eq(param, "NX")) {
                 existType = ExistType.NX;
                 et = true;
                 idx++;
                 continue;
-            } else if (!et && "XX".equalsIgnoreCase(param)) {
+            } else if (!et && eq(param, "XX")) {
                 existType = ExistType.XX;
                 et = true;
                 idx++;
                 continue;
             }
-            if (isCh == null && "CH".equalsIgnoreCase(param)) {
+            if (isCh == null && eq(param, "CH")) {
                 isCh = true;
-            } else if (isIncr == null && "INCR".equalsIgnoreCase(param)) {
+            } else if (isIncr == null && eq(param, "INCR")) {
                 isIncr = true;
             } else {
                 double score = Double.parseDouble(param);
                 idx++;
-                String member = objToString(command[idx]);
-                byte[] rawMember = objToBytes(command[idx]);
+                String member = toRune(command[idx]);
+                byte[] rawMember = toBytes(command[idx]);
                 list.add(new ZSetEntry(member, score, rawMember));
             }
             idx++;

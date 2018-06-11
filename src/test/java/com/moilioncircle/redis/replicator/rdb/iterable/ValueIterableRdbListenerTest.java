@@ -6,6 +6,7 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.fail;
 
 public class ValueIterableRdbListenerTest {
-
+    
     @Test
     public void test() {
         final AtomicInteger string = new AtomicInteger(0);
@@ -29,31 +30,40 @@ public class ValueIterableRdbListenerTest {
         Replicator r = new RedisReplicator(ValueIterableRdbListenerTest.class.getClassLoader().getResourceAsStream("dump-huge-kv.rdb"), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new ValueIterableRdbListener(3) {
+    
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+    
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+            
             @Override
             public void handleString(KeyValuePair<byte[]> kv, int batch, boolean last) {
                 string.incrementAndGet();
             }
-
+    
             @Override
             public void handleList(KeyValuePair<List<byte[]>> kv, int batch, boolean last) {
                 list.incrementAndGet();
             }
-
+    
             @Override
             public void handleSet(KeyValuePair<Set<byte[]>> kv, int batch, boolean last) {
                 set.incrementAndGet();
             }
-
+    
             @Override
             public void handleMap(KeyValuePair<Map<byte[], byte[]>> kv, int batch, boolean last) {
                 map.incrementAndGet();
             }
-
+    
             @Override
             public void handleZSetEntry(KeyValuePair<Set<ZSetEntry>> kv, int batch, boolean last) {
                 zset.incrementAndGet();
             }
-
+    
             @Override
             public void handleModule(KeyValuePair<Module> kv, int batch, boolean last) {
             }
@@ -69,7 +79,7 @@ public class ValueIterableRdbListenerTest {
         assertEquals(4, set.get());
         assertEquals(4, zset.get());
     }
-
+    
     @Test
     public void test1() {
         final AtomicInteger string = new AtomicInteger(0);
@@ -80,31 +90,40 @@ public class ValueIterableRdbListenerTest {
         Replicator r = new RedisReplicator(ValueIterableRdbListenerTest.class.getClassLoader().getResourceAsStream("dump-huge-kv.rdb"), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addRdbListener(new ValueIterableRdbListener(2) {
+    
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+    
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+            
             @Override
             public void handleString(KeyValuePair<byte[]> kv, int batch, boolean last) {
                 string.incrementAndGet();
             }
-
+    
             @Override
             public void handleList(KeyValuePair<List<byte[]>> kv, int batch, boolean last) {
                 list.incrementAndGet();
             }
-
+    
             @Override
             public void handleSet(KeyValuePair<Set<byte[]>> kv, int batch, boolean last) {
                 set.incrementAndGet();
             }
-
+    
             @Override
             public void handleMap(KeyValuePair<Map<byte[], byte[]>> kv, int batch, boolean last) {
                 map.incrementAndGet();
             }
-
+    
             @Override
             public void handleZSetEntry(KeyValuePair<Set<ZSetEntry>> kv, int batch, boolean last) {
                 zset.incrementAndGet();
             }
-
+    
             @Override
             public void handleModule(KeyValuePair<Module> kv, int batch, boolean last) {
             }
@@ -119,5 +138,33 @@ public class ValueIterableRdbListenerTest {
         assertEquals(5, list.get());
         assertEquals(5, set.get());
         assertEquals(5, zset.get());
+    }
+    
+    @Test
+    public void test2() {
+        final AtomicInteger stream = new AtomicInteger(0);
+        Replicator r = new RedisReplicator(ValueIterableRdbListenerTest.class.getClassLoader().getResourceAsStream("dump-stream.rdb"), FileType.RDB, Configuration.defaultSetting());
+        r.setRdbVisitor(new ValueIterableRdbVisitor(r));
+        r.addRdbListener(new ValueIterableRdbListener(2) {
+    
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+    
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+            
+            @Override
+            public void handleStream(KeyValuePair<Stream> kv, int batch, boolean last) {
+                stream.incrementAndGet();
+            }
+        });
+        try {
+            r.open();
+        } catch (Exception e) {
+            fail();
+        }
+        assertEquals(5, stream.get());
     }
 }

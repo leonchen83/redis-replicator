@@ -41,6 +41,10 @@ public class RedisInputStream extends InputStream {
     protected final InputStream in;
     protected List<RawByteListener> rawByteListeners;
 
+    public RedisInputStream(ByteArray array) {
+        this(new ByteArrayInputStream(array));
+    }
+
     public RedisInputStream(final InputStream in) {
         this(in, 8192);
     }

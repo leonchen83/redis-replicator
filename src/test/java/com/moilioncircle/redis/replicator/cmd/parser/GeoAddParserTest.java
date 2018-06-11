@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class GeoAddParserTest extends AbstractParserTest {
     @Test
-    public void parse() throws Exception {
+    public void parse() {
         GeoAddParser parser = new GeoAddParser();
         GeoAddCommand cmd = parser.parse(toObjectArray("GEOADD Sicily 13.361389 38.115556 Palermo 15.087269 37.502669 Catania".split(" ")));
         assertEquals("Sicily", cmd.getKey());
@@ -38,7 +38,6 @@ public class GeoAddParserTest extends AbstractParserTest {
         assertEquals(15.087269, cmd.getGeos()[1].getLongitude(), 0.000001);
         assertEquals(37.502669, cmd.getGeos()[1].getLatitude(), 0.000001);
         assertEquals("Catania", cmd.getGeos()[1].getMember());
-        System.out.println(cmd);
     }
 
 }

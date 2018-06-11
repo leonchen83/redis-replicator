@@ -5,7 +5,8 @@ jdk:
     - oraclejdk9
 branches:
   only:
-    - jdk9
+    - dev
+    - master
 services:
   - redis-server
 before_install:

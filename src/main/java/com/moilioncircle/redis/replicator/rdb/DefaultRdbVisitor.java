@@ -801,14 +801,14 @@ public class DefaultRdbVisitor extends RdbVisitor {
             byte[] groupName = parser.rdbLoadPlainStringObject().first();
             Stream.ID groupId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
     
-            // Global PEL
-            NavigableMap<Stream.ID, Stream.Nack> globalPendingEntries = new TreeMap<>(STREAM_COMPARATOR);
+            // Group PEL
+            NavigableMap<Stream.ID, Stream.Nack> groupPendingEntries = new TreeMap<>(STREAM_COMPARATOR);
             long globalPel = parser.rdbLoadLen().len;
             while (globalPel-- > 0) {
                 Stream.ID rawId = new Stream.ID(in.readLong(8, false), in.readLong(8, false));
                 long deliveryTime = parser.rdbLoadMillisecondTime();
                 long deliveryCount = parser.rdbLoadLen().len;
-                globalPendingEntries.put(rawId, new Stream.Nack(rawId, null, deliveryTime, deliveryCount));
+                groupPendingEntries.put(rawId, new Stream.Nack(rawId, null, deliveryTime, deliveryCount));
             }
     
             // Consumer
@@ -819,26 +819,26 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 byte[] consumerName = parser.rdbLoadPlainStringObject().first();
                 long seenTime = parser.rdbLoadMillisecondTime();
     
-                // PEL
-                NavigableMap<Stream.ID, Stream.Nack> pendingEntries = new TreeMap<>(STREAM_COMPARATOR);
+                // Consumer PEL
+                NavigableMap<Stream.ID, Stream.Nack> consumerPendingEntries = new TreeMap<>(STREAM_COMPARATOR);
                 long pel = parser.rdbLoadLen().len;
                 while (pel-- > 0) {
                     Stream.ID rawId = new Stream.ID(in.readLong(8, false), in.readLong(8, false));
-                    Stream.Nack nack = globalPendingEntries.get(rawId);
+                    Stream.Nack nack = groupPendingEntries.get(rawId);
                     nack.setConsumer(consumer);
-                    pendingEntries.put(rawId, nack);
+                    consumerPendingEntries.put(rawId, nack);
                 }
     
                 consumer.setName(new String(consumerName, UTF_8));
                 consumer.setSeenTime(seenTime);
-                consumer.setPendingEntries(pendingEntries);
+                consumer.setPendingEntries(consumerPendingEntries);
                 consumer.setRawName(consumerName);
                 consumers.add(consumer);
             }
     
             group.setId(groupId);
             group.setName(new String(groupName, UTF_8));
-            group.setGlobalPendingEntries(globalPendingEntries);
+            group.setPendingEntries(groupPendingEntries);
             group.setConsumers(consumers);
             group.setRawName(groupName);
             groups.add(group);

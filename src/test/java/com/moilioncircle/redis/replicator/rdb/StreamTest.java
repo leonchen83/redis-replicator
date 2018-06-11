@@ -88,20 +88,20 @@ public class StreamTest {
                 
                 for (Stream.Group group : stream.getGroups()) {
                     if (group.getName().equals("g1")) {
-                        assertEquals(4, group.getGlobalPendingEntries().size());
+                        assertEquals(4, group.getPendingEntries().size());
                         assertEquals(2, group.getConsumers().size());
                         assertEquals(2, group.getConsumers().get(0).getPendingEntries().size());
                         assertEquals(2, group.getConsumers().get(1).getPendingEntries().size());
                     } else if (group.getName().equals("g2")) {
-                        assertEquals(1, group.getGlobalPendingEntries().size());
+                        assertEquals(1, group.getPendingEntries().size());
                         assertEquals(1, group.getConsumers().size());
                         assertEquals(1, group.getConsumers().get(0).getPendingEntries().size());
                     } else if (group.getName().equals("g3")) {
-                        assertEquals(2, group.getGlobalPendingEntries().size());
+                        assertEquals(2, group.getPendingEntries().size());
                         assertEquals(2, group.getConsumers().size());
                         assertEquals(2, group.getConsumers().get(0).getPendingEntries().size());
                     } else if (group.getName().equals("g4")) {
-                        assertEquals(0, group.getGlobalPendingEntries().size());
+                        assertEquals(0, group.getPendingEntries().size());
                         assertEquals(0, group.getConsumers().size());
                     }
                 }

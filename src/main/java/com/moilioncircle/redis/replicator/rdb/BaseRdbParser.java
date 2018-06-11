@@ -354,33 +354,52 @@ public class BaseRdbParser {
         public static byte[] listPackEntry(RedisInputStream in) throws IOException {
             int special = in.read();
             byte[] value;
+            long skip;
             if ((special & 0x80) == 0) {
+                skip = 1;
                 value = String.valueOf(special & 0x7f).getBytes();
             } else if ((special & 0xc0) == 0x80) {
                 int len = special & 0x3f;
+                skip = 1 + len;
                 value = bytes(in, len);
             } else if ((special & 0xe0) == 0xc0) {
+                skip = 2;
                 int next = in.read();
                 value = String.valueOf((((special & 0x1f) << 8) | next) << 19 >> 19).getBytes();
             } else if ((special & 0xff) == 0xf1) {
+                skip = 3;
                 value = String.valueOf(in.readInt(2)).getBytes();
             } else if ((special & 0xff) == 0xf2) {
+                skip = 4;
                 value = String.valueOf(in.readInt(3)).getBytes();
             } else if ((special & 0xff) == 0xf3) {
+                skip = 5;
                 value = String.valueOf(in.readInt(4)).getBytes();
             } else if ((special & 0xff) == 0xf4) {
+                skip = 9;
                 value = String.valueOf(in.readLong(8)).getBytes();
             } else if ((special & 0xf0) == 0xe0) {
                 int len = ((special & 0x0f) << 8) | in.read();
+                skip = 2 + len;
                 value = bytes(in, len);
             } else if ((special & 0xff) == 0xf0) {
                 int len = in.readInt(4, false);
+                skip = 5 + len;
                 value = bytes(in, len);
             } else {
                 throw new UnsupportedOperationException(String.valueOf(special));
             }
-            
-            while ((in.read() & 0x80) == 1) ; // skip [1]xxxxxxx
+            if (skip <= 127) {
+                in.skip(1);
+            } else if (skip < 16383) {
+                in.skip(2);
+            } else if (skip < 2097151) {
+                in.skip(3);
+            } else if (skip < 268435455) {
+                in.skip(4);
+            } else {
+                in.skip(5);
+            }
             return value;
         }
     }

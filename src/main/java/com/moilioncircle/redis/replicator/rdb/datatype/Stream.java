@@ -143,7 +143,7 @@ public class Stream implements Serializable {
         private static final long serialVersionUID = 1L;
         private String name;
         private ID id;
-        private NavigableMap<ID, Nack> globalPendingEntries;
+        private NavigableMap<ID, Nack> pendingEntries;
         private List<Consumer> consumers;
         private byte[] rawName;
         
@@ -151,14 +151,14 @@ public class Stream implements Serializable {
         
         }
         
-        public Group(String name, ID id, NavigableMap<ID, Nack> globalPendingEntries, List<Consumer> consumers) {
-            this(name, id, globalPendingEntries, consumers, null);
+        public Group(String name, ID id, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers) {
+            this(name, id, pendingEntries, consumers, null);
         }
         
-        public Group(String name, ID id, NavigableMap<ID, Nack> globalPendingEntries, List<Consumer> consumers, byte[] rawName) {
+        public Group(String name, ID id, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers, byte[] rawName) {
             this.name = name;
             this.id = id;
-            this.globalPendingEntries = globalPendingEntries;
+            this.pendingEntries = pendingEntries;
             this.consumers = consumers;
             this.rawName = rawName;
         }
@@ -179,12 +179,12 @@ public class Stream implements Serializable {
             this.id = id;
         }
         
-        public NavigableMap<ID, Nack> getGlobalPendingEntries() {
-            return globalPendingEntries;
+        public NavigableMap<ID, Nack> getPendingEntries() {
+            return pendingEntries;
         }
         
-        public void setGlobalPendingEntries(NavigableMap<ID, Nack> globalPendingEntries) {
-            this.globalPendingEntries = globalPendingEntries;
+        public void setPendingEntries(NavigableMap<ID, Nack> pendingEntries) {
+            this.pendingEntries = pendingEntries;
         }
         
         public List<Consumer> getConsumers() {

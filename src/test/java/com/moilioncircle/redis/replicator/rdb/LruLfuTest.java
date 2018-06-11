@@ -51,7 +51,6 @@ public class LruLfuTest {
             
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
                 map.put(kv.getKey(), kv);
             }
             
@@ -85,7 +84,6 @@ public class LruLfuTest {
             
             @Override
             public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
                 map.put(kv.getKey(), kv);
             }
             

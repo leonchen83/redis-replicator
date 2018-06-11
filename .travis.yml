@@ -5,6 +5,7 @@ jdk:
     - oraclejdk9
 branches:
   only:
+    - dev
     - jdk9
 services:
   - redis-server

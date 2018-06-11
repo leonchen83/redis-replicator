@@ -6,7 +6,7 @@ jdk:
 branches:
   only:
     - dev
-    - jdk9
+    - master
 services:
   - redis-server
 before_install:

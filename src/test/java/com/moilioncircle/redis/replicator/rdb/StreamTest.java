@@ -185,6 +185,55 @@ public class StreamTest {
     }
     
     @Test
+    public void testStream1() throws IOException {
+        @SuppressWarnings("resource") final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dump-stream1.rdb"), FileType.RDB, Configuration.defaultSetting());
+        final Map<String, Stream> kvs = new HashMap<>();
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+            
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                if (kv instanceof KeyStringValueStream) {
+                    kvs.put(kv.getKey(), kv.getValueAsStream());
+                }
+            }
+            
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+        });
+        replicator.open();
+        for (Map.Entry<String, Stream> e : kvs.entrySet()) {
+            String key = e.getKey();
+            Stream stream = e.getValue();
+            
+            if (key.equals("trim")) {
+                assertEquals(120L, stream.getLength());
+                NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
+                {
+                    int i = 0;
+                    for (Stream.Entry entry : map.values()) {
+                        if (i < 30) {
+                            assertTrue(entry.isDeleted());
+                        } else {
+                            if (entry.getId().equals(Stream.ID.valueOf("1528512149341-0"))) {
+                                assertTrue(entry.isDeleted());
+                            } else if (entry.getId().equals(Stream.ID.valueOf("1528512149742-0"))) {
+                                assertTrue(entry.isDeleted());
+                            } else {
+                                assertFalse(entry.isDeleted());
+                            }
+                        }
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+    
+    @Test
     public void testSkip() {
         @SuppressWarnings("resource") final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dump-stream.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));

@@ -31,15 +31,17 @@ public class Stream implements Serializable {
     private static final long serialVersionUID = 1L;
     private ID lastId;
     private NavigableMap<ID, Entry> entries;
+    private long length;
     private List<Group> groups;
     
     public Stream() {
     
     }
     
-    public Stream(ID lastId, NavigableMap<ID, Entry> entries, List<Group> groups) {
+    public Stream(ID lastId, NavigableMap<ID, Entry> entries, long length, List<Group> groups) {
         this.lastId = lastId;
         this.entries = entries;
+        this.length = length;
         this.groups = groups;
     }
     
@@ -59,6 +61,14 @@ public class Stream implements Serializable {
         this.entries = entries;
     }
     
+    public long getLength() {
+        return length;
+    }
+    
+    public void setLength(long length) {
+        this.length = length;
+    }
+    
     public List<Group> getGroups() {
         return groups;
     }
@@ -71,6 +81,7 @@ public class Stream implements Serializable {
     public String toString() {
         return "Stream{" +
                 "lastId=" + lastId +
+                ", length=" + length +
                 ", groups=" + groups +
                 '}';
     }

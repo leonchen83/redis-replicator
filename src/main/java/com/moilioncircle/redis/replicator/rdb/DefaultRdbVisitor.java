@@ -789,8 +789,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 throw new AssertionError("listpack expect 255 but " + lpend);
             }
         }
-        
-        parser.rdbLoadLen(); // skip entries length
+    
+        long length = parser.rdbLoadLen().len;
         Stream.ID lastId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
         
         // Group
@@ -844,9 +844,10 @@ public class DefaultRdbVisitor extends RdbVisitor {
             groups.add(group);
         }
         
-        stream.setGroups(groups);
         stream.setLastId(lastId);
         stream.setEntries(entries);
+        stream.setLength(length);
+        stream.setGroups(groups);
         
         o15.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
         o15.setDb(db);

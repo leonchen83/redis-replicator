@@ -402,19 +402,21 @@ public class Stream implements Serializable {
         
         @Override
         public int compareTo(ID that) {
-            if (this.ms > that.ms) return 1;
-            else if (this.ms < that.ms) return -1;
-            else {
-                if (this.seq > that.seq) return 1;
-                else if (this.seq < that.seq) return -1;
-                else return 0;
-            }
+            int r = Long.compare(this.ms, that.ms);
+            if (r == 0) return Long.compare(this.seq, that.seq);
+            return r;
         }
         
         public static ID valueOf(String id) {
             int idx = id.indexOf('-');
             long ms = Long.parseLong(id.substring(0, idx));
             long seq = Long.parseLong(id.substring(idx + 1, id.length()));
+            return new ID(ms, seq);
+        }
+    
+        public static ID valueOf(String strMs, String strSeq) {
+            long ms = Long.parseLong(strMs);
+            long seq = Long.parseLong(strSeq);
             return new ID(ms, seq);
         }
         

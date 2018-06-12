@@ -417,8 +417,8 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_STREAM_LISTPACKS, version);
         replicator.addRawByteListener(listener);
         SkipRdbParser skipParser = new SkipRdbParser(in);
-        long listpacks = skipParser.rdbLoadLen().len;
-        while (listpacks-- > 0) {
+        long listPacks = skipParser.rdbLoadLen().len;
+        while (listPacks-- > 0) {
             skipParser.rdbLoadPlainStringObject();
             skipParser.rdbLoadPlainStringObject();
         }
@@ -430,8 +430,8 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
             skipParser.rdbLoadPlainStringObject();
             skipParser.rdbLoadLen();
             skipParser.rdbLoadLen();
-            long globalPel = skipParser.rdbLoadLen().len;
-            while (globalPel-- > 0) {
+            long groupPel = skipParser.rdbLoadLen().len;
+            while (groupPel-- > 0) {
                 in.skip(16);
                 skipParser.rdbLoadMillisecondTime();
                 skipParser.rdbLoadLen();
@@ -440,8 +440,8 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
             while (consumerCount-- > 0) {
                 skipParser.rdbLoadPlainStringObject();
                 skipParser.rdbLoadMillisecondTime();
-                long pel = skipParser.rdbLoadLen().len;
-                while (pel-- > 0) {
+                long consumerPel = skipParser.rdbLoadLen().len;
+                while (consumerPel-- > 0) {
                     in.skip(16);
                 }
             }

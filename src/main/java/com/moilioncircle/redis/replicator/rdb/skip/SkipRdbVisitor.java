@@ -300,8 +300,8 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
             parser.rdbLoadPlainStringObject();
             parser.rdbLoadLen();
             parser.rdbLoadLen();
-            long globalPel = parser.rdbLoadLen().len;
-            while (globalPel-- > 0) {
+            long groupPel = parser.rdbLoadLen().len;
+            while (groupPel-- > 0) {
                 in.skip(16);
                 parser.rdbLoadMillisecondTime();
                 parser.rdbLoadLen();
@@ -310,8 +310,8 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
             while (consumerCount-- > 0) {
                 parser.rdbLoadPlainStringObject();
                 parser.rdbLoadMillisecondTime();
-                long pel = parser.rdbLoadLen().len;
-                while (pel-- > 0) {
+                long consumerPel = parser.rdbLoadLen().len;
+                while (consumerPel-- > 0) {
                     in.skip(16);
                 }
             }

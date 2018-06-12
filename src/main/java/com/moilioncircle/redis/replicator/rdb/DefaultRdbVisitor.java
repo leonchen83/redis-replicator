@@ -713,11 +713,11 @@ public class DefaultRdbVisitor extends RdbVisitor {
         NavigableMap<Stream.ID, Stream.Entry> entries = new TreeMap<>(STREAM_COMPARATOR);
         long listPacks = parser.rdbLoadLen().len;
         while (listPacks-- > 0) {
-            RedisInputStream rawid = new RedisInputStream(parser.rdbLoadPlainStringObject());
-            Stream.ID masterid = new Stream.ID(rawid.readLong(8, false), rawid.readLong(8, false));
+            RedisInputStream rawId = new RedisInputStream(parser.rdbLoadPlainStringObject());
+            Stream.ID baseId = new Stream.ID(rawId.readLong(8, false), rawId.readLong(8, false));
             RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
-            listPack.skip(4);
-            listPack.skip(2);
+            listPack.skip(4); // total-bytes
+            listPack.skip(2); // num-elements
             /*
              * Master entry
              * +-------+---------+------------+---------+--/--+---------+---------+-+
@@ -726,9 +726,9 @@ public class DefaultRdbVisitor extends RdbVisitor {
              */
             long count = Long.parseLong(new String(listPackEntry(listPack), UTF_8)); // count
             long deleted = Long.parseLong(new String(listPackEntry(listPack), UTF_8)); // deleted
-            int numfields = Integer.parseInt(new String(listPackEntry(listPack), UTF_8)); // num-fields
-            byte[][] tempFields = new byte[numfields][];
-            for (int i = 0; i < numfields; i++) {
+            int numFields = Integer.parseInt(new String(listPackEntry(listPack), UTF_8)); // num-fields
+            byte[][] tempFields = new byte[numFields][];
+            for (int i = 0; i < numFields; i++) {
                 tempFields[i] = listPackEntry(listPack);
             }
             listPackEntry(listPack); // 0
@@ -746,7 +746,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 int flag = Integer.parseInt(new String(listPackEntry(listPack), UTF_8));
                 long ms = Long.parseLong(new String(listPackEntry(listPack), UTF_8));
                 long seq = Long.parseLong(new String(listPackEntry(listPack), UTF_8));
-                Stream.ID id = masterid.delta(ms, seq);
+                Stream.ID id = baseId.delta(ms, seq);
                 boolean delete = (flag & STREAM_ITEM_FLAG_DELETED) != 0;
                 if ((flag & STREAM_ITEM_FLAG_SAMEFIELDS) != 0) {
                     /*
@@ -755,7 +755,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
                      * |value-1|...|value-N|lp-count|
                      * +-------+-/-+-------+--------+
                      */
-                    for (int i = 0; i < numfields; i++) {
+                    for (int i = 0; i < numFields; i++) {
                         byte[] rawValue = listPackEntry(listPack);
                         String value = new String(rawValue, UTF_8);
                         byte[] rawField = tempFields[i];
@@ -771,8 +771,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                      * |num-fields|field-1|value-1|...|field-N|value-N|lp-count|
                      * +----------+-------+-------+-/-+-------+-------+--------+
                      */
-                    numfields = Integer.parseInt(new String(listPackEntry(listPack), UTF_8));
-                    for (int i = 0; i < numfields; i++) {
+                    numFields = Integer.parseInt(new String(listPackEntry(listPack), UTF_8));
+                    for (int i = 0; i < numFields; i++) {
                         byte[] rawField = listPackEntry(listPack);
                         String field = new String(rawField, UTF_8);
                         byte[] rawValue = listPackEntry(listPack);
@@ -784,7 +784,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 }
                 listPackEntry(listPack); // lp-count
             }
-            int lpend = listPack.read();
+            int lpend = listPack.read(); // lp-end
             if (lpend != 255) {
                 throw new AssertionError("listpack expect 255 but " + lpend);
             }
@@ -799,7 +799,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         while (groupCount-- > 0) {
             Stream.Group group = new Stream.Group();
             byte[] groupName = parser.rdbLoadPlainStringObject().first();
-            Stream.ID groupId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
+            Stream.ID groupLastId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
     
             // Group PEL
             NavigableMap<Stream.ID, Stream.Nack> groupPendingEntries = new TreeMap<>(STREAM_COMPARATOR);
@@ -835,9 +835,9 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 consumer.setRawName(consumerName);
                 consumers.add(consumer);
             }
-    
-            group.setLastId(groupId);
+
             group.setName(new String(groupName, UTF_8));
+            group.setLastId(groupLastId);
             group.setPendingEntries(groupPendingEntries);
             group.setConsumers(consumers);
             group.setRawName(groupName);

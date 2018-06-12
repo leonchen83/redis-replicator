@@ -31,15 +31,17 @@ public class Stream implements Serializable {
     private static final long serialVersionUID = 1L;
     private ID lastId;
     private NavigableMap<ID, Entry> entries;
+    private long length;
     private List<Group> groups;
     
     public Stream() {
     
     }
     
-    public Stream(ID lastId, NavigableMap<ID, Entry> entries, List<Group> groups) {
+    public Stream(ID lastId, NavigableMap<ID, Entry> entries, long length, List<Group> groups) {
         this.lastId = lastId;
         this.entries = entries;
+        this.length = length;
         this.groups = groups;
     }
     
@@ -59,6 +61,14 @@ public class Stream implements Serializable {
         this.entries = entries;
     }
     
+    public long getLength() {
+        return length;
+    }
+    
+    public void setLength(long length) {
+        this.length = length;
+    }
+    
     public List<Group> getGroups() {
         return groups;
     }
@@ -71,6 +81,7 @@ public class Stream implements Serializable {
     public String toString() {
         return "Stream{" +
                 "lastId=" + lastId +
+                ", length=" + length +
                 ", groups=" + groups +
                 '}';
     }
@@ -142,23 +153,23 @@ public class Stream implements Serializable {
     public static class Group implements Serializable {
         private static final long serialVersionUID = 1L;
         private String name;
-        private ID id;
-        private NavigableMap<ID, Nack> globalPendingEntries;
+        private ID lastId;
+        private NavigableMap<ID, Nack> pendingEntries;
         private List<Consumer> consumers;
         private byte[] rawName;
         
         public Group() {
         
         }
-        
-        public Group(String name, ID id, NavigableMap<ID, Nack> globalPendingEntries, List<Consumer> consumers) {
-            this(name, id, globalPendingEntries, consumers, null);
+    
+        public Group(String name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers) {
+            this(name, lastId, pendingEntries, consumers, null);
         }
-        
-        public Group(String name, ID id, NavigableMap<ID, Nack> globalPendingEntries, List<Consumer> consumers, byte[] rawName) {
+    
+        public Group(String name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers, byte[] rawName) {
             this.name = name;
-            this.id = id;
-            this.globalPendingEntries = globalPendingEntries;
+            this.lastId = lastId;
+            this.pendingEntries = pendingEntries;
             this.consumers = consumers;
             this.rawName = rawName;
         }
@@ -170,21 +181,21 @@ public class Stream implements Serializable {
         public void setName(String name) {
             this.name = name;
         }
-        
-        public ID getId() {
-            return id;
+    
+        public ID getLastId() {
+            return lastId;
+        }
+    
+        public void setLastId(ID lastId) {
+            this.lastId = lastId;
         }
         
-        public void setId(ID id) {
-            this.id = id;
+        public NavigableMap<ID, Nack> getPendingEntries() {
+            return pendingEntries;
         }
         
-        public NavigableMap<ID, Nack> getGlobalPendingEntries() {
-            return globalPendingEntries;
-        }
-        
-        public void setGlobalPendingEntries(NavigableMap<ID, Nack> globalPendingEntries) {
-            this.globalPendingEntries = globalPendingEntries;
+        public void setPendingEntries(NavigableMap<ID, Nack> pendingEntries) {
+            this.pendingEntries = pendingEntries;
         }
         
         public List<Consumer> getConsumers() {
@@ -207,7 +218,7 @@ public class Stream implements Serializable {
         public String toString() {
             return "Group{" +
                     "name='" + name + '\'' +
-                    ", id=" + id +
+                    ", lastId=" + lastId +
                     ", consumers=" + consumers +
                     '}';
         }

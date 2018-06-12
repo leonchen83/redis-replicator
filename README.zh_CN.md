@@ -417,13 +417,13 @@ Redis-5.0+ 增加了一个新的数据结构 `STREAM`. Redis-replicator 用下�
                     
                     // optional : group
                     for (Stream.Group group : stream.getGroups()) {
-                        // global PEL(pending entries list)
-                        NavigableMap<Stream.ID, Stream.Nack> gpel = group.getGlobalPendingEntries();
+                        // group PEL(pending entries list)
+                        NavigableMap<Stream.ID, Stream.Nack> gpel = group.getPendingEntries();
                         
                         // consumer
                         for (Stream.Consumer consumer : group.getConsumers()) {
-                            // PEL(pending entries list)
-                            NavigableMap<Stream.ID, Stream.Nack> pel = consumer.getPendingEntries();
+                            // consumer PEL(pending entries list)
+                            NavigableMap<Stream.ID, Stream.Nack> cpel = consumer.getPendingEntries();
                         }
                     }
                 }

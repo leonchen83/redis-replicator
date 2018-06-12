@@ -23,6 +23,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.XDelCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelConsumerCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupDestroyCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
 import org.junit.Test;
 
@@ -255,6 +257,22 @@ public class StreamParserTest extends AbstractParserTest {
                 fail();
             }
         }
+    
+        {
+            XGroupParser parser = new XGroupParser();
+            XGroupCommand cmd = parser.parse(toObjectArray("XGROUP setid key group 1528524899760-0".split(" ")));
+            if (cmd instanceof XGroupSetIdCommand) {
+                XGroupSetIdCommand ccmd = (XGroupSetIdCommand) cmd;
+                assertEquals("key", ccmd.getKey());
+                assertEquals("key".getBytes().length, ccmd.getRawKey().length);
+                assertEquals("group", ccmd.getGroup());
+                assertEquals("group".getBytes().length, ccmd.getRawGroup().length);
+                assertEquals("1528524899760-0", ccmd.getId());
+                assertEquals("1528524899760-0".getBytes().length, ccmd.getRawId().length);
+            } else if (cmd instanceof XGroupDelConsumerCommand) {
+                fail();
+            }
+        }
         
         {
             XGroupParser parser = new XGroupParser();
@@ -269,6 +287,20 @@ public class StreamParserTest extends AbstractParserTest {
                 assertEquals("group".getBytes().length, ccmd.getRawGroup().length);
                 assertEquals("consumer", ccmd.getConsumer());
                 assertEquals("consumer".getBytes().length, ccmd.getRawConsumer().length);
+            }
+        }
+    
+        {
+            XGroupParser parser = new XGroupParser();
+            XGroupCommand cmd = parser.parse(toObjectArray("XGROUP DESTROY key group".split(" ")));
+            if (cmd instanceof XGroupCreateCommand) {
+                fail();
+            } else if (cmd instanceof XGroupDestroyCommand) {
+                XGroupDestroyCommand ccmd = (XGroupDestroyCommand) cmd;
+                assertEquals("key", ccmd.getKey());
+                assertEquals("key".getBytes().length, ccmd.getRawKey().length);
+                assertEquals("group", ccmd.getGroup());
+                assertEquals("group".getBytes().length, ccmd.getRawGroup().length);
             }
         }
         

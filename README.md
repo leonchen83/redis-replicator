@@ -411,13 +411,13 @@ Since Redis 5.0+, Redis add a new data structure `STREAM`. Redis-replicator pars
                     
                     // optional : group
                     for (Stream.Group group : stream.getGroups()) {
-                        // global PEL(pending entries list)
-                        NavigableMap<Stream.ID, Stream.Nack> gpel = group.getGlobalPendingEntries();
+                        // group PEL(pending entries list)
+                        NavigableMap<Stream.ID, Stream.Nack> gpel = group.getPendingEntries();
                         
                         // consumer
                         for (Stream.Consumer consumer : group.getConsumers()) {
-                            // PEL(pending entries list)
-                            NavigableMap<Stream.ID, Stream.Nack> pel = consumer.getPendingEntries();
+                            // consumer PEL(pending entries list)
+                            NavigableMap<Stream.ID, Stream.Nack> cpel = consumer.getPendingEntries();
                         }
                     }
                 }

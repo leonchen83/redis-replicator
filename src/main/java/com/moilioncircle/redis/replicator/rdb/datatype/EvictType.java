@@ -23,5 +23,19 @@ import java.io.Serializable;
  * @since 2.6.0
  */
 public enum EvictType implements Serializable {
-    LRU, LFU, NONE
+
+    /**
+     * maxmemory-policy : volatile-lru, allkeys-lru. unit : second
+     */
+    LRU,
+
+    /**
+     * maxmemory-policy : volatile-lfu, allkeys-lfu.
+     */
+    LFU,
+
+    /**
+     * maxmemory-policy : noeviction, volatile-random, allkeys-random, volatile-ttl.
+     */
+    NONE
 }

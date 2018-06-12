@@ -88,20 +88,20 @@ public class StreamTest {
                 
                 for (Stream.Group group : stream.getGroups()) {
                     if (group.getName().equals("g1")) {
-                        assertEquals(4, group.getGlobalPendingEntries().size());
+                        assertEquals(4, group.getPendingEntries().size());
                         assertEquals(2, group.getConsumers().size());
                         assertEquals(2, group.getConsumers().get(0).getPendingEntries().size());
                         assertEquals(2, group.getConsumers().get(1).getPendingEntries().size());
                     } else if (group.getName().equals("g2")) {
-                        assertEquals(1, group.getGlobalPendingEntries().size());
+                        assertEquals(1, group.getPendingEntries().size());
                         assertEquals(1, group.getConsumers().size());
                         assertEquals(1, group.getConsumers().get(0).getPendingEntries().size());
                     } else if (group.getName().equals("g3")) {
-                        assertEquals(2, group.getGlobalPendingEntries().size());
+                        assertEquals(2, group.getPendingEntries().size());
                         assertEquals(2, group.getConsumers().size());
                         assertEquals(2, group.getConsumers().get(0).getPendingEntries().size());
                     } else if (group.getName().equals("g4")) {
-                        assertEquals(0, group.getGlobalPendingEntries().size());
+                        assertEquals(0, group.getPendingEntries().size());
                         assertEquals(0, group.getConsumers().size());
                     }
                 }
@@ -180,6 +180,55 @@ public class StreamTest {
                 
                 assertTrue(list.get(17).getFields().containsKey(String.valueOf(-200)));
                 assertTrue(list.get(17).getFields().containsValue(String.valueOf(200)));
+            }
+        }
+    }
+    
+    @Test
+    public void testStream1() throws IOException {
+        @SuppressWarnings("resource") final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dump-stream1.rdb"), FileType.RDB, Configuration.defaultSetting());
+        final Map<String, Stream> kvs = new HashMap<>();
+        replicator.addRdbListener(new RdbListener() {
+            @Override
+            public void preFullSync(Replicator replicator) {
+            }
+            
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                if (kv instanceof KeyStringValueStream) {
+                    kvs.put(kv.getKey(), kv.getValueAsStream());
+                }
+            }
+            
+            @Override
+            public void postFullSync(Replicator replicator, long checksum) {
+            }
+        });
+        replicator.open();
+        for (Map.Entry<String, Stream> e : kvs.entrySet()) {
+            String key = e.getKey();
+            Stream stream = e.getValue();
+            
+            if (key.equals("trim")) {
+                assertEquals(120L, stream.getLength());
+                NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
+                {
+                    int i = 0;
+                    for (Stream.Entry entry : map.values()) {
+                        if (i < 30) {
+                            assertTrue(entry.isDeleted());
+                        } else {
+                            if (entry.getId().equals(Stream.ID.valueOf("1528512149341-0"))) {
+                                assertTrue(entry.isDeleted());
+                            } else if (entry.getId().equals(Stream.ID.valueOf("1528512149742-0"))) {
+                                assertTrue(entry.isDeleted());
+                            } else {
+                                assertFalse(entry.isDeleted());
+                            }
+                        }
+                        i++;
+                    }
+                }
             }
         }
     }

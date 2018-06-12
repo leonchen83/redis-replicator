@@ -235,7 +235,7 @@ public class StreamTest {
     
     @Test
     public void testSkip() {
-        @SuppressWarnings("resource") final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dump-stream.rdb"), FileType.RDB, Configuration.defaultSetting());
+        final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dump-stream.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
         replicator.addRdbListener(new RdbListener() {
             @Override
@@ -259,7 +259,7 @@ public class StreamTest {
     
     @Test
     public void testDump() {
-        @SuppressWarnings("resource") final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dump-stream.rdb"), FileType.RDB, Configuration.defaultSetting());
+        final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dump-stream.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
         final Map<String, byte[]> map = new HashMap<>();
         replicator.addRdbListener(new RdbListener() {

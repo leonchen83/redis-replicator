@@ -67,7 +67,6 @@ public class MigrationExample {
      * 3. Use Jedis RESTORE command to restore that dump format to target redis.
      * 4. Get aof stream from source redis and sync to target redis.
      */
-    @SuppressWarnings("resource")
     public static void sync(String sourceUri, String targetUri) throws IOException, URISyntaxException {
         RedisURI suri = new RedisURI(sourceUri);
         RedisURI turi = new RedisURI(targetUri);

@@ -122,7 +122,6 @@ public class ModuleTest {
     
     @Test
     public void testSkipModule1() {
-        @SuppressWarnings("resource")
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
@@ -173,7 +172,6 @@ public class ModuleTest {
     
     @Test
     public void testDumpModule1() {
-        @SuppressWarnings("resource")
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.setRdbVisitor(new DumpRdbVisitor(replicator));

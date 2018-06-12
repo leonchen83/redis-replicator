@@ -81,7 +81,7 @@ public class XGroupDestroyCommand extends XGroupCommand {
     
     @Override
     public String toString() {
-        return "XGroupDelGroupCommand{" +
+        return "XGroupDestroyCommand{" +
                 "key='" + key + '\'' +
                 ", group='" + group + '\'' +
                 '}';

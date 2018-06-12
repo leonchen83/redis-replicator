@@ -23,7 +23,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.XDelCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelConsumerCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelGroupCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupDestroyCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
 import org.junit.Test;
@@ -292,11 +292,11 @@ public class StreamParserTest extends AbstractParserTest {
     
         {
             XGroupParser parser = new XGroupParser();
-            XGroupCommand cmd = parser.parse(toObjectArray("XGROUP DELGROUP key group".split(" ")));
+            XGroupCommand cmd = parser.parse(toObjectArray("XGROUP DESTROY key group".split(" ")));
             if (cmd instanceof XGroupCreateCommand) {
                 fail();
-            } else if (cmd instanceof XGroupDelGroupCommand) {
-                XGroupDelGroupCommand ccmd = (XGroupDelGroupCommand) cmd;
+            } else if (cmd instanceof XGroupDestroyCommand) {
+                XGroupDestroyCommand ccmd = (XGroupDestroyCommand) cmd;
                 assertEquals("key", ccmd.getKey());
                 assertEquals("key".getBytes().length, ccmd.getRawKey().length);
                 assertEquals("group", ccmd.getGroup());

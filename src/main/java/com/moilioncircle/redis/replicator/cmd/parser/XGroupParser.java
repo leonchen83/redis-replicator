@@ -20,7 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelConsumerCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelGroupCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupDestroyCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
@@ -58,14 +58,14 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             byte[] rawId = toBytes(command[idx]);
             idx++;
             return new XGroupSetIdCommand(key, group, id, rawKey, rawGroup, rawId);
-        } else if (eq(next, "DELGROUP")) {
+        } else if (eq(next, "DESTROY")) {
             String key = toRune(command[idx]);
             byte[] rawKey = toBytes(command[idx]);
             idx++;
             String group = toRune(command[idx]);
             byte[] rawGroup = toBytes(command[idx]);
             idx++;
-            return new XGroupDelGroupCommand(key, group, rawKey, rawGroup);
+            return new XGroupDestroyCommand(key, group, rawKey, rawGroup);
         } else if (eq(next, "DELCONSUMER")) {
             String key = toRune(command[idx]);
             byte[] rawKey = toBytes(command[idx]);

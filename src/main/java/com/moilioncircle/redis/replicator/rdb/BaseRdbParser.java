@@ -299,11 +299,13 @@ public class BaseRdbParser {
         }
         
         /*
-         * length-prev-entry special-flag raw-bytes-of-entry
-         * length-prev-entry format
+         * <length-prev-entry> <special-flag> <raw-bytes-of-entry>
+         *
+         * <length-prev-entry> :
          * |xxxxxxxx| if first byte value &lt 254. then 1 byte as prev len.
          * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| if first byte &gt=254 then next 4 byte as prev len.
-         * special-flag
+         *
+         * <special-flag> :
          * |00xxxxxx| remaining 6 bit as string len.
          * |01xxxxxx|xxxxxxxx| combined 14 bit as string len.
          * |10xxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 byte as string len.
@@ -350,7 +352,27 @@ public class BaseRdbParser {
                     return String.valueOf(special - 0xf1).getBytes();
             }
         }
-        
+    
+        /*
+         * <encoding-type> <element-data> <element-tot-len>
+         *
+         * <encoding-type> :
+         * |0xxxxxxx| 7 bit unsigned integer
+         * |10xxxxxx| 6 bit unsigned integer as string length. then read the `length` bytes as string.
+         * |110xxxxx|xxxxxxxx| 13 bit signed integer
+         * |1110xxxx|xxxxxxxx| string with length up to 4095
+         * |11110001|xxxxxxxx|xxxxxxxx| next 2 bytes as 16bit int
+         * |11110010|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 3 bytes as 24bit int
+         * |11110011|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 bytes as 32bit int
+         * |11110100|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 8 bytes as 64bit long
+         * |11110000|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 bytes as string length. then read the `length` bytes as string.
+         *
+         * <element-data> :
+         * TBD
+         *
+         * <element-tot-len> :
+         * TBD
+         */
         public static byte[] listPackEntry(RedisInputStream in) throws IOException {
             int special = in.read();
             byte[] value;
@@ -389,6 +411,7 @@ public class BaseRdbParser {
             } else {
                 throw new UnsupportedOperationException(String.valueOf(special));
             }
+            // <element-tot-len>
             if (skip <= 127) {
                 in.skip(1);
             } else if (skip < 16383) {

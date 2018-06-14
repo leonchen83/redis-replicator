@@ -81,7 +81,7 @@ Redis Replicator implement Redis Replication protocol written in java. It can pa
 ## 2.1. Requirements  
 jdk 1.7+  
 maven-3.3.1+(support [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
-redis 2.6 - 5.0-rc1  
+redis 2.6 - 5.0  
 
 ## 2.2. Maven dependency  
 ```xml  

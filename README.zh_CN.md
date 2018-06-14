@@ -87,7 +87,7 @@ Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实�
 ## 2.1. 安装前置条件  
 jdk 1.7+  
 maven-3.3.1+(支持 [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
-redis 2.6 - 5.0-rc1  
+redis 2.6 - 5.0  
 
 ## 2.2. Maven依赖  
 ```xml  

@@ -79,11 +79,10 @@ public class Stream implements Serializable {
     
     @Override
     public String toString() {
-        return "Stream{" +
-                "lastId=" + lastId +
-                ", length=" + length +
-                ", groups=" + groups +
-                '}';
+        String r = "Stream{" + "lastId=" + lastId + ", length=" + length;
+        if (groups != null && !groups.isEmpty()) r += ", groups=" + groups;
+        if (entries != null && !entries.isEmpty()) r += ", entries=" + entries.size();
+        return r + '}';
     }
     
     public static class Entry implements Serializable {
@@ -216,11 +215,10 @@ public class Stream implements Serializable {
         
         @Override
         public String toString() {
-            return "Group{" +
-                    "name='" + name + '\'' +
-                    ", lastId=" + lastId +
-                    ", consumers=" + consumers +
-                    '}';
+            String r = "Group{" + "name='" + name + '\'' + ", lastId=" + lastId;
+            if (consumers != null && !consumers.isEmpty()) r += ", consumers=" + consumers;
+            if (pendingEntries != null && !pendingEntries.isEmpty()) r += ", gpel=" + pendingEntries.size();
+            return r + '}';
         }
     }
     
@@ -280,10 +278,9 @@ public class Stream implements Serializable {
         
         @Override
         public String toString() {
-            return "Consumer{" +
-                    "name='" + name + '\'' +
-                    ", seenTime=" + seenTime +
-                    '}';
+            String r = "Consumer{" + "name='" + name + '\'' + ", seenTime=" + seenTime;
+            if (pendingEntries != null && !pendingEntries.isEmpty()) r += ", cpel=" + pendingEntries.size();
+            return r + '}';
         }
     }
     

@@ -36,7 +36,4 @@ Replication data via Socket.
 
 Redis-5.0 stream example.  
 
-### util
-
-Utility tools.  
 

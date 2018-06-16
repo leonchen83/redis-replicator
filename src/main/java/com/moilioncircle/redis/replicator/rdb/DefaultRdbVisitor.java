@@ -87,7 +87,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
     
     protected static final Logger logger = LoggerFactory.getLogger(DefaultRdbVisitor.class);
     
-    protected static final Comparator<Stream.ID> STREAM_COMPARATOR = Stream.ID.comparator();
+    protected static final Comparator<Stream.ID> STREAM_ID_COMPARATOR = Stream.ID.comparator();
     
     protected final Replicator replicator;
     
@@ -710,7 +710,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         Stream stream = new Stream();
         
         // Entries
-        NavigableMap<Stream.ID, Stream.Entry> entries = new TreeMap<>(STREAM_COMPARATOR);
+        NavigableMap<Stream.ID, Stream.Entry> entries = new TreeMap<>(STREAM_ID_COMPARATOR);
         long listPacks = parser.rdbLoadLen().len;
         while (listPacks-- > 0) {
             RedisInputStream rawId = new RedisInputStream(parser.rdbLoadPlainStringObject());
@@ -802,7 +802,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
             Stream.ID groupLastId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
     
             // Group PEL
-            NavigableMap<Stream.ID, Stream.Nack> groupPendingEntries = new TreeMap<>(STREAM_COMPARATOR);
+            NavigableMap<Stream.ID, Stream.Nack> groupPendingEntries = new TreeMap<>(STREAM_ID_COMPARATOR);
             long globalPel = parser.rdbLoadLen().len;
             while (globalPel-- > 0) {
                 Stream.ID rawId = new Stream.ID(in.readLong(8, false), in.readLong(8, false));
@@ -820,7 +820,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 long seenTime = parser.rdbLoadMillisecondTime();
     
                 // Consumer PEL
-                NavigableMap<Stream.ID, Stream.Nack> consumerPendingEntries = new TreeMap<>(STREAM_COMPARATOR);
+                NavigableMap<Stream.ID, Stream.Nack> consumerPendingEntries = new TreeMap<>(STREAM_ID_COMPARATOR);
                 long pel = parser.rdbLoadLen().len;
                 while (pel-- > 0) {
                     Stream.ID rawId = new Stream.ID(in.readLong(8, false), in.readLong(8, false));

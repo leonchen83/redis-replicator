@@ -2,6 +2,7 @@
 Support jdk9, jdk10.  
 **Breaking change**: migrate `commons-longging-1.2` to `slf4j-api-1.8.0-beta2`.  
 Add new command : `ZPOPMAX`, `ZPOPMIN`, `XACK`, `XADD`, `XCLAIM`, `XDEL`, `XGROUP`, `XTRIM`.  
+Change `RESTORE` command to `RESTORE key ttl serialized [REPLACE] [ABSTTL] [IDLETIME time] [FREQ freq]`.  
 Support redis-5.0-rc1 `STREAM`.  
 
 ### 2.5.0

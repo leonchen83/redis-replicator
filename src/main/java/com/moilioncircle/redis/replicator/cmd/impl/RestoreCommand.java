@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 
 /**
  * @author Leon Chen
@@ -30,21 +31,27 @@ public class RestoreCommand implements Command {
     private long ttl;
     private String serializedValue;
     private Boolean isReplace;
+    private Boolean absTtl;
+    protected EvictType evictType = EvictType.NONE;
+    protected Long evictValue;
     private byte[] rawKey;
     private byte[] rawSerializedValue;
 
     public RestoreCommand() {
     }
-
-    public RestoreCommand(String key, long ttl, String serializedValue, Boolean isReplace) {
-        this(key, ttl, serializedValue, isReplace, null, null);
+    
+    public RestoreCommand(String key, long ttl, String serializedValue, Boolean isReplace, Boolean absTtl, EvictType evictType, Long evictValue) {
+        this(key, ttl, serializedValue, isReplace, absTtl, evictType, evictValue, null, null);
     }
-
-    public RestoreCommand(String key, long ttl, String serializedValue, Boolean isReplace, byte[] rawKey, byte[] rawSerializedValue) {
+    
+    public RestoreCommand(String key, long ttl, String serializedValue, Boolean isReplace, Boolean absTtl, EvictType evictType, Long evictValue, byte[] rawKey, byte[] rawSerializedValue) {
         this.key = key;
         this.ttl = ttl;
         this.serializedValue = serializedValue;
         this.isReplace = isReplace;
+        this.absTtl = absTtl;
+        this.evictType = evictType;
+        this.evictValue = evictValue;
         this.rawKey = rawKey;
         this.rawSerializedValue = rawSerializedValue;
     }
@@ -80,7 +87,31 @@ public class RestoreCommand implements Command {
     public void setReplace(Boolean replace) {
         isReplace = replace;
     }
-
+    
+    public Boolean getAbsTtl() {
+        return absTtl;
+    }
+    
+    public void setAbsTtl(Boolean absTtl) {
+        this.absTtl = absTtl;
+    }
+    
+    public EvictType getEvictType() {
+        return evictType;
+    }
+    
+    public void setEvictType(EvictType evictType) {
+        this.evictType = evictType;
+    }
+    
+    public Long getEvictValue() {
+        return evictValue;
+    }
+    
+    public void setEvictValue(Long evictValue) {
+        this.evictValue = evictValue;
+    }
+    
     public byte[] getRawKey() {
         return rawKey;
     }
@@ -96,7 +127,7 @@ public class RestoreCommand implements Command {
     public void setRawSerializedValue(byte[] rawSerializedValue) {
         this.rawSerializedValue = rawSerializedValue;
     }
-
+    
     @Override
     public String toString() {
         return "RestoreCommand{" +
@@ -104,6 +135,9 @@ public class RestoreCommand implements Command {
                 ", ttl=" + ttl +
                 ", serializedValue='" + serializedValue + '\'' +
                 ", isReplace=" + isReplace +
+                ", absTtl=" + absTtl +
+                ", evictType=" + evictType +
+                ", evictValue=" + evictValue +
                 '}';
     }
 }

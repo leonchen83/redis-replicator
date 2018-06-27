@@ -98,7 +98,7 @@ public class RedisMixReplicator extends AbstractReplicator {
                 final CommandParser<? extends Command> parser;
                 //if command do not register. ignore
                 if ((parser = commands.get(name)) == null) {
-                    logger.warn("command [{}] not register. raw command:{}", name, format(raw));
+                    logger.warn("command [{}] not register. raw command:[{}]", name, format(raw));
                     continue;
                 }
                 submitEvent(parser.parse(raw));

@@ -402,7 +402,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     CommandName name = CommandName.name(new String((byte[]) raw[0], UTF_8));
                     final CommandParser<? extends Command> parser;
                     if ((parser = commands.get(name)) == null) {
-                        logger.warn("command [{}] not register. raw command:{}", name, format(raw));
+                        logger.warn("command [{}] not register. raw command:[{}]", name, format(raw));
                         continue;
                     }
                     if (eq(toRune(raw[0]), "PING")) {

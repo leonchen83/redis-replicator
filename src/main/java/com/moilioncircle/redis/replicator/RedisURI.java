@@ -156,7 +156,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
         if (this.uri.getScheme() != null && this.uri.getScheme().equalsIgnoreCase("redis")) {
             this.scheme = "redis";
         } else {
-            throw new IllegalArgumentException("scheme must be [redis].");
+            throw new URISyntaxException(uri, "scheme must be [redis].");
         }
         this.host = this.uri.getHost();
         this.path = this.uri.getPath();

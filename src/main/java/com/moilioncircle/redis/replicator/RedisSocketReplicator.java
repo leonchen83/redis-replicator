@@ -28,7 +28,6 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
-import com.moilioncircle.redis.replicator.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +50,7 @@ import static com.moilioncircle.redis.replicator.Status.CONNECTING;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.format;
 import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -397,12 +397,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 //command
                 if (obj instanceof Object[]) {
                     if (verbose() && logger.isDebugEnabled())
-                        logger.debug(Arrays.deepToString((Object[]) obj));
+                        logger.debug(format((Object[]) obj));
                     Object[] raw = (Object[]) obj;
                     CommandName name = CommandName.name(new String((byte[]) raw[0], UTF_8));
                     final CommandParser<? extends Command> parser;
                     if ((parser = commands.get(name)) == null) {
-                        logger.warn("command [{}] not register. raw command:[{}]", name, Arrays.deepToString(raw));
+                        logger.warn("command [{}] not register. raw command:{}", name, format(raw));
                         continue;
                     }
                     if (eq(toRune(raw[0]), "PING")) {

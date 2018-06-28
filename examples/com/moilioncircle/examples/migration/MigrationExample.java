@@ -33,6 +33,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
+import com.moilioncircle.redis.replicator.util.Strings;
 import redis.clients.jedis.Client;
 import redis.clients.jedis.Protocol;
 
@@ -40,7 +41,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static redis.clients.jedis.Protocol.Command.AUTH;
 import static redis.clients.jedis.Protocol.Command.RESTORE;
 import static redis.clients.jedis.Protocol.Command.SELECT;
@@ -230,14 +230,14 @@ public class MigrationExample {
             sendCommand(cmd, args);
             Object r = getOne();
             if (r instanceof byte[]) {
-                return new String((byte[]) r, UTF_8);
+                return Strings.toString(r);
             } else {
                 return r;
             }
         }
 
         public Object send(final byte[] cmd, final byte[]... args) {
-            return send(Protocol.Command.valueOf(new String(cmd, UTF_8).toUpperCase()), args);
+            return send(Protocol.Command.valueOf(Strings.toString(cmd).toUpperCase()), args);
         }
 
         public Object restore(byte[] key, long expired, byte[] dumped, boolean replace) {

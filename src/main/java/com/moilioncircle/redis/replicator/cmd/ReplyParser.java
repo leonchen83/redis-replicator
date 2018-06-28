@@ -65,7 +65,7 @@ public class ReplyParser {
             int c = in.read();
             switch (c) {
                 case DOLLAR:
-                    //RESP Bulk Strings
+                    // RESP Bulk Strings
                     ByteBuilder builder = ByteBuilder.allocate(128);
                     while (true) {
                         while ((c = in.read()) != '\r') {
@@ -106,7 +106,7 @@ public class ReplyParser {
                             builder.put((byte) c);
                         }
                     }
-                    //as integer
+                    // As integer
                     return Long.parseLong(builder.toString());
                 case STAR:
                     // RESP Arrays
@@ -156,10 +156,10 @@ public class ReplyParser {
                         }
                     }
                 case '\n':
-                    //skip +CONTINUE\r\n[\n]
-                    //skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
-                    //At this stage just a newline works as a PING in order to take the connection live
-                    //bug fix
+                    // skip +CONTINUE\r\n[\n]
+                    // skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
+                    // At this stage just a newline works as a PING in order to take the connection live
+                    // bug fix
                     break;
                 default:
                     throw new AssertionError("expect [$,:,*,+,-] but: " + (char) c);

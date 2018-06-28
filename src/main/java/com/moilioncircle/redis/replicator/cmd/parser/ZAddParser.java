@@ -24,9 +24,9 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.eq;
 
 /**
  * @author Leon Chen

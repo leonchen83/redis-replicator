@@ -102,7 +102,7 @@ public class Lzf {
             }
 
             long len = ctrl >> 5;
-            ctrl = -((ctrl & 0x1f) << 8) - 1;
+            ctrl = -((ctrl & 0x1F) << 8) - 1;
             if (len < 7) {
                 ctrl -= in.get(inPos++) & 255;
                 out.set(outPos, out.get(outPos++ + ctrl));

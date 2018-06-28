@@ -19,7 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.format;
+import static com.moilioncircle.redis.replicator.util.Strings.format;
 
 /**
  * @author Leon Chen
@@ -35,7 +35,7 @@ public class DefaultCommandParser implements CommandParser<DefaultCommand> {
             } else if (command[i] instanceof byte[]) {
                 args[j++] = (byte[]) command[i];
             } else if (command[i] instanceof Object[]) {
-                throw new UnsupportedOperationException(format(command, "[", "]", " "));
+                throw new UnsupportedOperationException(format(command));
             }
         }
         return new DefaultCommand((byte[]) command[0], args);

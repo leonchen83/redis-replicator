@@ -19,8 +19,6 @@ package com.moilioncircle.redis.replicator.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * @author Leon Chen
  * @since 2.2.0
@@ -106,7 +104,7 @@ public class Arrays {
         if (a == null) return "null";
         int iMax = a.length - 1;
         if (iMax == -1) return "";
-        return new String(a, UTF_8);
+        return Strings.toString(a);
     }
     
 }

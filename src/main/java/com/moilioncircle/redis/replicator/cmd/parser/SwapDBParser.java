@@ -19,7 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SwapDBCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toInt;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
 
 /**
  * @author Leon Chen

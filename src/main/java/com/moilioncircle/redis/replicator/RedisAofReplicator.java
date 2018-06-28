@@ -21,6 +21,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +35,7 @@ import java.util.Objects;
 
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.format;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.format;
 
 /**
  * @author Leon Chen
@@ -84,10 +84,10 @@ public class RedisAofReplicator extends AbstractReplicator {
                 if (verbose() && logger.isDebugEnabled())
                     logger.debug(format((Object[]) obj));
                 Object[] raw = (Object[]) obj;
-                CommandName name = CommandName.name(toRune(raw[0]));
+                CommandName name = CommandName.name(Strings.toString(raw[0]));
                 final CommandParser<? extends Command> parser;
                 if ((parser = commands.get(name)) == null) {
-                    logger.warn("command [{}] not register. raw command:[{}]", name, format(raw));
+                    logger.warn("command [{}] not register. raw command:{}", name, format(raw));
                     continue;
                 }
                 submitEvent(parser.parse(raw));

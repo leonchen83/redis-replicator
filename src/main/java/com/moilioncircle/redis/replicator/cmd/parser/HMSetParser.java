@@ -23,8 +23,8 @@ import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen

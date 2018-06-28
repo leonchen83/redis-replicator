@@ -28,6 +28,7 @@ import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -51,7 +52,6 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
 import static com.moilioncircle.redis.replicator.util.CRC64.crc64;
 import static com.moilioncircle.redis.replicator.util.CRC64.longToByteArray;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -121,7 +121,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o0.setValueRdbType(RDB_TYPE_STRING);
         o0.setValue(listener.getBytes());
         o0.setDb(db);
-        o0.setKey(new String(key, UTF_8));
+        o0.setKey(Strings.toString(key));
         o0.setRawKey(key);
         return o0;
     }
@@ -143,7 +143,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o1.setValueRdbType(RDB_TYPE_LIST);
         o1.setValue(listener.getBytes());
         o1.setDb(db);
-        o1.setKey(new String(key, UTF_8));
+        o1.setKey(Strings.toString(key));
         o1.setRawKey(key);
         return o1;
     }
@@ -165,7 +165,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o2.setValueRdbType(RDB_TYPE_SET);
         o2.setValue(listener.getBytes());
         o2.setDb(db);
-        o2.setKey(new String(key, UTF_8));
+        o2.setKey(Strings.toString(key));
         o2.setRawKey(key);
         return o2;
     }
@@ -188,7 +188,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o3.setValueRdbType(RDB_TYPE_ZSET);
         o3.setValue(listener.getBytes());
         o3.setDb(db);
-        o3.setKey(new String(key, UTF_8));
+        o3.setKey(Strings.toString(key));
         o3.setRawKey(key);
         return o3;
     }
@@ -211,7 +211,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o5.setValueRdbType(RDB_TYPE_ZSET_2);
         o5.setValue(listener.getBytes());
         o5.setDb(db);
-        o5.setKey(new String(key, UTF_8));
+        o5.setKey(Strings.toString(key));
         o5.setRawKey(key);
         return o5;
     }
@@ -234,7 +234,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o4.setValueRdbType(RDB_TYPE_HASH);
         o4.setValue(listener.getBytes());
         o4.setDb(db);
-        o4.setKey(new String(key, UTF_8));
+        o4.setKey(Strings.toString(key));
         o4.setRawKey(key);
         return o4;
     }
@@ -251,7 +251,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
         o9.setValue(listener.getBytes());
         o9.setDb(db);
-        o9.setKey(new String(key, UTF_8));
+        o9.setKey(Strings.toString(key));
         o9.setRawKey(key);
         return o9;
     }
@@ -268,7 +268,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
         o10.setValue(listener.getBytes());
         o10.setDb(db);
-        o10.setKey(new String(key, UTF_8));
+        o10.setKey(Strings.toString(key));
         o10.setRawKey(key);
         return o10;
     }
@@ -285,7 +285,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o11.setValueRdbType(RDB_TYPE_SET_INTSET);
         o11.setValue(listener.getBytes());
         o11.setDb(db);
-        o11.setKey(new String(key, UTF_8));
+        o11.setKey(Strings.toString(key));
         o11.setRawKey(key);
         return o11;
     }
@@ -302,7 +302,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
         o12.setValue(listener.getBytes());
         o12.setDb(db);
-        o12.setKey(new String(key, UTF_8));
+        o12.setKey(Strings.toString(key));
         o12.setRawKey(key);
         return o12;
     }
@@ -319,7 +319,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
         o13.setValue(listener.getBytes());
         o13.setDb(db);
-        o13.setKey(new String(key, UTF_8));
+        o13.setKey(Strings.toString(key));
         o13.setRawKey(key);
         return o13;
     }
@@ -340,7 +340,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
         o14.setValue(listener.getBytes());
         o14.setDb(db);
-        o14.setKey(new String(key, UTF_8));
+        o14.setKey(Strings.toString(key));
         o14.setRawKey(key);
         return o14;
     }
@@ -369,7 +369,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o6.setValueRdbType(RDB_TYPE_MODULE);
         o6.setValue(listener.getBytes());
         o6.setDb(db);
-        o6.setKey(new String(key, UTF_8));
+        o6.setKey(Strings.toString(key));
         o6.setRawKey(key);
         return o6;
     }
@@ -404,7 +404,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o7.setValueRdbType(RDB_TYPE_MODULE_2);
         o7.setValue(listener.getBytes());
         o7.setDb(db);
-        o7.setKey(new String(key, UTF_8));
+        o7.setKey(Strings.toString(key));
         o7.setRawKey(key);
         return o7;
     }
@@ -450,7 +450,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o15.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
         o15.setValue(listener.getBytes());
         o15.setDb(db);
-        o15.setKey(new String(key, UTF_8));
+        o15.setKey(Strings.toString(key));
         o15.setRawKey(key);
         return o15;
     }

@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator;
 
+import com.moilioncircle.redis.replicator.util.Strings;
+
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -31,8 +33,6 @@ import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -236,7 +236,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
                     break;
             }
             bb.flip();
-            CharBuffer cb = UTF_8.decode(bb);
+            CharBuffer cb = Strings.decode(bb);
             sb.append(cb.toString());
         }
 
@@ -271,7 +271,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
         }
 
         String ns = Normalizer.normalize(s, Normalizer.Form.NFC);
-        ByteBuffer bb = UTF_8.encode(CharBuffer.wrap(ns));
+        ByteBuffer bb = Strings.encode(CharBuffer.wrap(ns));
 
         StringBuilder sb = new StringBuilder();
         while (bb.hasRemaining()) {

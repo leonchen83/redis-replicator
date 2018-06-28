@@ -37,7 +37,7 @@ import java.util.Objects;
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -94,7 +94,7 @@ public class RedisMixReplicator extends AbstractReplicator {
                 if (verbose() && logger.isDebugEnabled())
                     logger.debug(format((Object[]) obj));
                 Object[] raw = (Object[]) obj;
-                CommandName name = CommandName.name(new String((byte[]) raw[0], UTF_8));
+                CommandName name = CommandName.name(toRune(raw[0]));
                 final CommandParser<? extends Command> parser;
                 //if command do not register. ignore
                 if ((parser = commands.get(name)) == null) {

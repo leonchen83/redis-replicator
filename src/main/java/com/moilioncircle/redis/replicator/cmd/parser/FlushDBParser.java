@@ -20,7 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.FlushDBCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.eq;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -30,7 +30,7 @@ public class FlushDBParser implements CommandParser<FlushDBCommand> {
     @Override
     public FlushDBCommand parse(Object[] command) {
         Boolean isAsync = null;
-        if (command.length == 2 && eq(toRune(command[1]), "ASYNC")) {
+        if (command.length == 2 && isEquals(toRune(command[1]), "ASYNC")) {
             isAsync = true;
         }
         return new FlushDBCommand(isAsync);

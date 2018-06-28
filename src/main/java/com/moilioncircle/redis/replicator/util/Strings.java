@@ -38,11 +38,11 @@ public class Strings {
         return new String((byte[]) object, charset);
     }
 
-    public static boolean eq(String o1, String o2) {
-        return eq(o1, o2, false);
+    public static boolean isEquals(String o1, String o2) {
+        return isEquals(o1, o2, false);
     }
 
-    public static boolean eq(String o1, String o2, boolean strict) {
+    public static boolean isEquals(String o1, String o2, boolean strict) {
         Objects.requireNonNull(o1);
         Objects.requireNonNull(o2);
         return strict ? o1.equals(o2) : o1.equalsIgnoreCase(o2);

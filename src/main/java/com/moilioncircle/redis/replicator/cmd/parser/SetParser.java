@@ -22,7 +22,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.eq;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -43,18 +43,18 @@ public class SetParser implements CommandParser<SetCommand> {
         boolean et = false, st = false;
         while (idx < command.length) {
             String param = toRune(command[idx++]);
-            if (!et && eq(param, "NX")) {
+            if (!et && isEquals(param, "NX")) {
                 existType = ExistType.NX;
                 et = true;
-            } else if (!et && eq(param, "XX")) {
+            } else if (!et && isEquals(param, "XX")) {
                 existType = ExistType.XX;
                 et = true;
             }
 
-            if (!st && eq(param, "EX")) {
+            if (!st && isEquals(param, "EX")) {
                 ex = Integer.valueOf(toRune(command[idx++]));
                 st = true;
-            } else if (!st && eq(param, "PX")) {
+            } else if (!st && isEquals(param, "PX")) {
                 px = Long.valueOf(toRune(command[idx++]));
                 st = true;
             }

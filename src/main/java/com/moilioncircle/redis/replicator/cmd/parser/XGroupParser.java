@@ -25,7 +25,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.eq;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -36,7 +36,7 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
     public XGroupCommand parse(Object[] command) {
         int idx = 1;
         String next = toRune(command[idx++]);
-        if (eq(next, "CREATE")) {
+        if (isEquals(next, "CREATE")) {
             String key = toRune(command[idx]);
             byte[] rawKey = toBytes(command[idx]);
             idx++;
@@ -47,7 +47,7 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             byte[] rawId = toBytes(command[idx]);
             idx++;
             return new XGroupCreateCommand(key, group, id, rawKey, rawGroup, rawId);
-        } else if (eq(next, "SETID")) {
+        } else if (isEquals(next, "SETID")) {
             String key = toRune(command[idx]);
             byte[] rawKey = toBytes(command[idx]);
             idx++;
@@ -58,7 +58,7 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             byte[] rawId = toBytes(command[idx]);
             idx++;
             return new XGroupSetIdCommand(key, group, id, rawKey, rawGroup, rawId);
-        } else if (eq(next, "DESTROY")) {
+        } else if (isEquals(next, "DESTROY")) {
             String key = toRune(command[idx]);
             byte[] rawKey = toBytes(command[idx]);
             idx++;
@@ -66,7 +66,7 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             byte[] rawGroup = toBytes(command[idx]);
             idx++;
             return new XGroupDestroyCommand(key, group, rawKey, rawGroup);
-        } else if (eq(next, "DELCONSUMER")) {
+        } else if (isEquals(next, "DELCONSUMER")) {
             String key = toRune(command[idx]);
             byte[] rawKey = toBytes(command[idx]);
             idx++;

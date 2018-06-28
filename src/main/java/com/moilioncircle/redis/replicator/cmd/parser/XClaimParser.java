@@ -26,7 +26,7 @@ import java.util.Objects;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.eq;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -62,22 +62,22 @@ public class XClaimParser implements CommandParser<XClaimCommand> {
         boolean justId = false;
         while (idx < command.length) {
             String next = toRune(command[idx]);
-            if (eq(next, "IDLE")) {
+            if (isEquals(next, "IDLE")) {
                 idx++;
                 idle = toLong(command[idx]);
                 idx++;
-            } else if (eq(next, "TIME")) {
+            } else if (isEquals(next, "TIME")) {
                 idx++;
                 time = toLong(command[idx]);
                 idx++;
-            } else if (eq(next, "RETRYCOUNT")) {
+            } else if (isEquals(next, "RETRYCOUNT")) {
                 idx++;
                 retryCount = toLong(command[idx]);
                 idx++;
-            } else if (eq(next, "FORCE")) {
+            } else if (isEquals(next, "FORCE")) {
                 idx++;
                 force = true;
-            } else if (eq(next, "JUSTID")) {
+            } else if (isEquals(next, "JUSTID")) {
                 idx++;
                 justId = true;
             } else {

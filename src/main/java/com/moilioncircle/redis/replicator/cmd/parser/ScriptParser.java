@@ -23,7 +23,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.ScriptLoadCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.eq;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -34,12 +34,12 @@ public class ScriptParser implements CommandParser<ScriptCommand> {
     public ScriptCommand parse(Object[] command) {
         int idx = 1;
         String keyword = toRune(command[idx++]);
-        if (eq(keyword, "LOAD")) {
+        if (isEquals(keyword, "LOAD")) {
             String script = toRune(command[idx]);
             byte[] rawScript = toBytes(command[idx]);
             idx++;
             return new ScriptLoadCommand(script, rawScript);
-        } else if (eq(keyword, "FLUSH")) {
+        } else if (isEquals(keyword, "FLUSH")) {
             return new ScriptFlushCommand();
         }
         throw new AssertionError("SCRIPT " + keyword);

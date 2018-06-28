@@ -21,7 +21,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.ReplConfCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ReplConfGetAckCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.eq;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -33,7 +33,7 @@ public class ReplConfParser implements CommandParser<ReplConfCommand> {
 		int idx = 1;
 		String type = toRune(command[idx]);
 		idx++;
-		if (eq(type, "GETACK")) {
+		if (isEquals(type, "GETACK")) {
 			return new ReplConfGetAckCommand();
 		} else {
 			throw new AssertionError("parse [REPLCONF] command error." + type);

@@ -23,7 +23,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.eq;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -45,15 +45,15 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
         EvictType evictType = EvictType.NONE;
         Long evictValue = null;
         for (; idx < command.length; idx++) {
-            if (eq(toRune(command[idx]), "REPLACE")) {
+            if (isEquals(toRune(command[idx]), "REPLACE")) {
                 isReplace = true;
-            } else if (eq(toRune(command[idx]), "ABSTTL")) {
+            } else if (isEquals(toRune(command[idx]), "ABSTTL")) {
                 absTtl = true;
-            } else if (eq(toRune(command[idx]), "IDLETIME")) {
+            } else if (isEquals(toRune(command[idx]), "IDLETIME")) {
                 evictType = EvictType.LRU;
                 idx++;
                 evictValue = toLong(command[idx]);
-            } else if (eq(toRune(command[idx]), "FREQ")) {
+            } else if (isEquals(toRune(command[idx]), "FREQ")) {
                 evictType = EvictType.LFU;
                 idx++;
                 evictValue = toLong(command[idx]);

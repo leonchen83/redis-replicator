@@ -25,7 +25,6 @@ import java.util.List;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toDouble;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -35,21 +34,19 @@ public class GeoAddParser implements CommandParser<GeoAddCommand> {
     @Override
     public GeoAddCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         List<Geo> list = new ArrayList<>();
         while (idx < command.length) {
             double longitude = toDouble(command[idx++]);
             double latitude = toDouble(command[idx++]);
-            String member = toRune(command[idx]);
-            byte[] rawMember = toBytes(command[idx]);
+            byte[] member = toBytes(command[idx]);
             idx++;
-            list.add(new Geo(member, longitude, latitude, rawMember));
+            list.add(new Geo(member, longitude, latitude));
         }
         Geo[] geos = new Geo[list.size()];
         list.toArray(geos);
-        return new GeoAddCommand(key, geos, rawKey);
+        return new GeoAddCommand(key, geos);
     }
 
 }

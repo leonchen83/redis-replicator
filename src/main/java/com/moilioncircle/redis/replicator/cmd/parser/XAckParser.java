@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.XAckCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,18 +29,14 @@ public class XAckParser implements CommandParser<XAckCommand> {
     @Override
     public XAckCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String group = toRune(command[idx]);
-        byte[] rawGroup = toBytes(command[idx]);
+        byte[] group = toBytes(command[idx]);
         idx++;
-        String[] ids = new String[command.length - 3];
-        byte[][] rawIds = new byte[command.length - 3][];
+        byte[][] ids = new byte[command.length - 3][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            ids[j] = toRune(command[i]);
-            rawIds[j] = toBytes(command[i]);
+            ids[j] = toBytes(command[i]);
         }
-        return new XAckCommand(key, group, ids, rawKey, rawGroup, rawIds);
+        return new XAckCommand(key, group, ids);
     }
 }

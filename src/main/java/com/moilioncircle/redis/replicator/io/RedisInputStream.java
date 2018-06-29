@@ -61,26 +61,6 @@ public class RedisInputStream extends InputStream {
         this.rawByteListeners = rawByteListeners;
     }
 
-    /**
-     * @param rawByteListener raw bytes listener
-     * @since 2.2.0
-     * @deprecated use {@link #setRawByteListeners} instead. will remove in version 3.0.0
-     */
-    @Deprecated
-    public synchronized void addRawByteListener(RawByteListener rawByteListener) {
-        if (rawByteListeners != null) this.rawByteListeners.add(rawByteListener);
-    }
-
-    /**
-     * @param rawByteListener raw bytes listener
-     * @since 2.2.0
-     * @deprecated use {@link #setRawByteListeners} instead. will remove in version 3.0.0
-     */
-    @Deprecated
-    public synchronized void removeRawByteListener(RawByteListener rawByteListener) {
-        if (rawByteListeners != null) this.rawByteListeners.remove(rawByteListener);
-    }
-
     protected void notify(byte... bytes) {
         if (rawByteListeners == null || rawByteListeners.isEmpty()) return;
         for (RawByteListener listener : rawByteListeners) {

@@ -19,17 +19,11 @@ package com.moilioncircle.examples.huge;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import com.moilioncircle.redis.replicator.rdb.datatype.Module;
-import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
-import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
-import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyValuePair;
 
 /**
  * @author Leon Chen
@@ -40,48 +34,17 @@ public class HugeKVSocketExample {
     public static void main(String[] args) throws Exception {
         Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
-        r.addRdbListener(new ValueIterableRdbListener(128) {
+        r.addEventListener(new ValueIterableEventListener(new EventListener() {
             @Override
-            public void handleString(KeyValuePair<byte[]> kv, int batch, boolean last) {
-                // your business code goes here.
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof BatchedKeyValuePair<?, ?>) {
+                    // do something
+                }
+                if (event instanceof Command) {
+                    System.out.println(event);
+                }
             }
-
-            @Override
-            public void handleList(KeyValuePair<List<byte[]>> kv, int batch, boolean last) {
-                // your business code goes here.
-            }
-
-            @Override
-            public void handleSet(KeyValuePair<Set<byte[]>> kv, int batch, boolean last) {
-                // your business code goes here.
-            }
-
-            @Override
-            public void handleMap(KeyValuePair<Map<byte[], byte[]>> kv, int batch, boolean last) {
-                // your business code goes here.
-            }
-
-            @Override
-            public void handleZSetEntry(KeyValuePair<Set<ZSetEntry>> kv, int batch, boolean last) {
-                // your business code goes here.
-            }
-
-            @Override
-            public void handleModule(KeyValuePair<Module> kv, int batch, boolean last) {
-                // your business code goes here.
-            }
-    
-            @Override
-            public void handleStream(KeyValuePair<Stream> kv, int batch, boolean last) {
-                // your business code goes here.
-            }
-        });
-        r.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
-            }
-        });
+        }));
         r.open();
     }
 }

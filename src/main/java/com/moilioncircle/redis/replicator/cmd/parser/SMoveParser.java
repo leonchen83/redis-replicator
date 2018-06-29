@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SMoveCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,16 +30,13 @@ public class SMoveParser implements CommandParser<SMoveCommand> {
     @Override
     public SMoveCommand parse(Object[] command) {
         int idx = 1;
-        String source = toRune(command[idx]);
-        byte[] rawSource = toBytes(command[idx]);
+        byte[] source = toBytes(command[idx]);
         idx++;
-        String destination = toRune(command[idx]);
-        byte[] rawDestination = toBytes(command[idx]);
+        byte[] destination = toBytes(command[idx]);
         idx++;
-        String member = toRune(command[idx]);
-        byte[] rawMember = toBytes(command[idx]);
+        byte[] member = toBytes(command[idx]);
         idx++;
-        return new SMoveCommand(source, destination, member, rawSource, rawDestination, rawMember);
+        return new SMoveCommand(source, destination, member);
     }
 
 }

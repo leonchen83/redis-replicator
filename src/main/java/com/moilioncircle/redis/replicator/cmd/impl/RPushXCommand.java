@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @version 2.1.1
@@ -29,62 +27,30 @@ public class RPushXCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String[] values;
-    private byte[] rawKey;
-    private byte[][] rawValues;
+    private byte[] key;
+    private byte[][] values;
 
     public RPushXCommand() {
     }
 
-    public RPushXCommand(String key, String[] values) {
-        this(key, values, null, null);
-    }
-
-    public RPushXCommand(String key, String[] values, byte[] rawKey, byte[][] rawValues) {
+    public RPushXCommand(byte[] key, byte[][] values) {
         this.key = key;
         this.values = values;
-        this.rawKey = rawKey;
-        this.rawValues = rawValues;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String[] getValues() {
+    public byte[][] getValues() {
         return values;
     }
 
-    public void setValues(String[] values) {
+    public void setValues(byte[][] values) {
         this.values = values;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[][] getRawValues() {
-        return rawValues;
-    }
-
-    public void setRawValues(byte[][] rawValues) {
-        this.rawValues = rawValues;
-    }
-
-    @Override
-    public String toString() {
-        return "RPushXCommand{" +
-                "key='" + key + '\'' +
-                ", values=" + Arrays.toString(values) +
-                '}';
     }
 }

@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.HIncrByCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -32,14 +31,12 @@ public class HIncrByParser implements CommandParser<HIncrByCommand> {
     @Override
     public HIncrByCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String field = toRune(command[idx]);
-        byte[] rawField = toBytes(command[idx]);
+        byte[] field = toBytes(command[idx]);
         idx++;
         long increment = toLong(command[idx++]);
-        return new HIncrByCommand(key, field, increment, rawKey, rawField);
+        return new HIncrByCommand(key, field, increment);
     }
 
 }

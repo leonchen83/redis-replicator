@@ -26,40 +26,32 @@ public class BRPopLPushCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String source;
-    private String destination;
+    private byte[] source;
+    private byte[] destination;
     private int timeout;
-    private byte[] rawSource;
-    private byte[] rawDestination;
 
     public BRPopLPushCommand() {
     }
 
-    public BRPopLPushCommand(String source, String destination, int timeout) {
-        this(source, destination, timeout, null, null);
-    }
-
-    public BRPopLPushCommand(String source, String destination, int timeout, byte[] rawSource, byte[] rawDestination) {
+    public BRPopLPushCommand(byte[] source, byte[] destination, int timeout) {
         this.source = source;
         this.destination = destination;
         this.timeout = timeout;
-        this.rawSource = rawSource;
-        this.rawDestination = rawDestination;
     }
 
-    public String getSource() {
+    public byte[] getSource() {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(byte[] source) {
         this.source = source;
     }
 
-    public String getDestination() {
+    public byte[] getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(byte[] destination) {
         this.destination = destination;
     }
 
@@ -69,30 +61,5 @@ public class BRPopLPushCommand implements Command {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
-    }
-
-    public byte[] getRawSource() {
-        return rawSource;
-    }
-
-    public void setRawSource(byte[] rawSource) {
-        this.rawSource = rawSource;
-    }
-
-    public byte[] getRawDestination() {
-        return rawDestination;
-    }
-
-    public void setRawDestination(byte[] rawDestination) {
-        this.rawDestination = rawDestination;
-    }
-
-    @Override
-    public String toString() {
-        return "BRPopLPushCommand{" +
-                "source='" + source + '\'' +
-                ", destination='" + destination + '\'' +
-                ", timeout=" + timeout +
-                '}';
     }
 }

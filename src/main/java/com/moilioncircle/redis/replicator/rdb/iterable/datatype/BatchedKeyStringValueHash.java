@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.rdb;
+package com.moilioncircle.redis.replicator.rdb.iterable.datatype;
 
-import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
+import java.util.Map;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public interface AuxFieldListener {
-    void handle(Replicator replicator, AuxField auxField);
+public class BatchedKeyStringValueHash extends BatchedKeyValuePair<byte[], Map<byte[], byte[]>> {
+    private static final long serialVersionUID = 1L;
 }

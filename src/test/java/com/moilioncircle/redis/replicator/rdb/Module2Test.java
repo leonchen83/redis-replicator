@@ -21,12 +21,14 @@ import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.RedisSocketReplicatorTest;
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -45,7 +47,7 @@ import static org.junit.Assert.fail;
  * @since 2.6.0
  */
 public class Module2Test {
-    
+
     @Test
     public void test() throws IOException {
         @SuppressWarnings("resource")
@@ -53,52 +55,38 @@ public class Module2Test {
                 Configuration.defaultSetting());
         replicator.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
         final List<long[]> list = new ArrayList<>();
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-            
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueModule) {
-                    ModuleTest.HelloTypeModule module = (ModuleTest.HelloTypeModule) kv.getValueAsModule();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueModule) {
+                    KeyStringValueModule kv = (KeyStringValueModule) event;
+                    ModuleTest.HelloTypeModule module = (ModuleTest.HelloTypeModule) kv.getValue();
                     long[] value = module.getValue();
                     list.add(value);
                 }
             }
-            
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            }
         });
-        
+
         replicator.open();
         assertEquals(1, list.size());
         assertEquals(-1025L, list.get(0)[0]);
         assertEquals(-1024L, list.get(0)[1]);
     }
-    
+
     @Test
     public void testSkipModule() {
         @SuppressWarnings("resource")
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
-        
+
         final Map<String, Module> map = new HashMap<>();
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-            
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueModule) {
-                    map.put(kv.getKey(), kv.getValueAsModule());
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueModule) {
+                    KeyStringValueModule kv = (KeyStringValueModule) event;
+                    map.put(Strings.toString(kv.getKey()), kv.getValue());
                 }
-            }
-            
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
             }
         });
         try {
@@ -106,85 +94,51 @@ public class Module2Test {
         } catch (Throwable e) {
             fail();
         }
-        
+
         assertEquals(1, map.size());
         for (Map.Entry<String, Module> entry : map.entrySet()) {
             assertNull(entry.getValue());
         }
     }
-    
+
     @Test
     public void testSkipModule1() {
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
-        
+
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-            }
-        
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            }
-        });
         try {
             replicator.open();
         } catch (Throwable e) {
             fail();
         }
-    
+
         replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-            }
-        
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            }
-        });
         try {
             replicator.open();
         } catch (Throwable e) {
             fail();
         }
     }
-    
+
     @Test
     public void testDumpModule1() {
         {
             Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                     Configuration.defaultSetting());
             replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
-        
+
             final Map<String, byte[]> map = new HashMap<>();
-            replicator.addRdbListener(new RdbListener() {
+            replicator.addEventListener(new EventListener() {
                 @Override
-                public void preFullSync(Replicator replicator) {
-                }
-            
-                @Override
-                public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                    if (kv instanceof DumpKeyValuePair) {
-                        DumpKeyValuePair dkv = (DumpKeyValuePair) kv;
-                        map.put(dkv.getKey(), dkv.getValue());
+                public void onEvent(Replicator replicator, Event event) {
+                    if (event instanceof DumpKeyValuePair) {
+                        DumpKeyValuePair dkv = (DumpKeyValuePair) event;
+                        map.put(Strings.toString(dkv.getKey()), dkv.getValue());
                     }
-                }
-            
-                @Override
-                public void postFullSync(Replicator replicator, long checksum) {
                 }
             });
             try {
@@ -192,35 +146,27 @@ public class Module2Test {
             } catch (Throwable e) {
                 fail();
             }
-        
+
             assertEquals(1, map.size());
             for (Map.Entry<String, byte[]> entry : map.entrySet()) {
                 assertNotNull(entry.getValue());
             }
         }
-    
+
         {
             Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                     Configuration.defaultSetting());
             replicator.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
             replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
-        
+
             final Map<String, byte[]> map = new HashMap<>();
-            replicator.addRdbListener(new RdbListener() {
+            replicator.addEventListener(new EventListener() {
                 @Override
-                public void preFullSync(Replicator replicator) {
-                }
-            
-                @Override
-                public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                    if (kv instanceof DumpKeyValuePair) {
-                        DumpKeyValuePair dkv = (DumpKeyValuePair) kv;
-                        map.put(dkv.getKey(), dkv.getValue());
+                public void onEvent(Replicator replicator, Event event) {
+                    if (event instanceof DumpKeyValuePair) {
+                        DumpKeyValuePair dkv = (DumpKeyValuePair) event;
+                        map.put(Strings.toString(dkv.getKey()), dkv.getValue());
                     }
-                }
-            
-                @Override
-                public void postFullSync(Replicator replicator, long checksum) {
                 }
             });
             try {
@@ -228,12 +174,12 @@ public class Module2Test {
             } catch (Throwable e) {
                 fail();
             }
-        
+
             assertEquals(1, map.size());
             for (Map.Entry<String, byte[]> entry : map.entrySet()) {
                 assertNotNull(entry.getValue());
             }
         }
-        
+
     }
 }

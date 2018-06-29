@@ -35,15 +35,12 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreCommand> {
     public ZUnionStoreCommand parse(Object[] command) {
         int idx = 1;
         AggregateType aggregateType = null;
-        String destination = toRune(command[idx]);
-        byte[] rawDestination = toBytes(command[idx]);
+        byte[] destination = toBytes(command[idx]);
         idx++;
         int numkeys = toInt(command[idx++]);
-        String[] keys = new String[numkeys];
-        byte[][] rawKeys = new byte[numkeys][];
+        byte[][] keys = new byte[numkeys][];
         for (int i = 0; i < numkeys; i++) {
-            keys[i] = toRune(command[idx]);
-            rawKeys[i] = toBytes(command[idx]);
+            keys[i] = toBytes(command[idx]);
             idx++;
         }
         double[] weights = null;
@@ -67,7 +64,7 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreCommand> {
                 }
             }
         }
-        return new ZUnionStoreCommand(destination, numkeys, keys, weights, aggregateType, rawDestination, rawKeys);
+        return new ZUnionStoreCommand(destination, numkeys, keys, weights, aggregateType);
     }
 
 }

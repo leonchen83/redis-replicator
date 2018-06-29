@@ -24,89 +24,43 @@ public class XGroupDelConsumerCommand extends XGroupCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
 
-    private String group;
+    private byte[] group;
 
-    private String consumer;
-
-    private byte[] rawKey;
-
-    private byte[] rawGroup;
-
-    private byte[] rawConsumer;
+    private byte[] consumer;
 
     public XGroupDelConsumerCommand() {
 
     }
 
-    public XGroupDelConsumerCommand(String key, String group, String consumer) {
-        this(key, group, consumer, null, null, null);
-    }
-
-    public XGroupDelConsumerCommand(String key, String group, String consumer, byte[] rawKey, byte[] rawGroup, byte[] rawConsumer) {
+    public XGroupDelConsumerCommand(byte[] key, byte[] group, byte[] consumer) {
         this.key = key;
         this.group = group;
         this.consumer = consumer;
-        this.rawKey = rawKey;
-        this.rawGroup = rawGroup;
-        this.rawConsumer = rawConsumer;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String getGroup() {
+    public byte[] getGroup() {
         return group;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(byte[] group) {
         this.group = group;
     }
 
-    public String getConsumer() {
+    public byte[] getConsumer() {
         return consumer;
     }
 
-    public void setConsumer(String consumer) {
+    public void setConsumer(byte[] consumer) {
         this.consumer = consumer;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawGroup() {
-        return rawGroup;
-    }
-
-    public void setRawGroup(byte[] rawGroup) {
-        this.rawGroup = rawGroup;
-    }
-
-    public byte[] getRawConsumer() {
-        return rawConsumer;
-    }
-
-    public void setRawConsumer(byte[] rawConsumer) {
-        this.rawConsumer = rawConsumer;
-    }
-
-    @Override
-    public String toString() {
-        return "XGroupDelConsumerCommand{" +
-                "key='" + key + '\'' +
-                ", group='" + group + '\'' +
-                ", consumer='" + consumer + '\'' +
-                '}';
     }
 }

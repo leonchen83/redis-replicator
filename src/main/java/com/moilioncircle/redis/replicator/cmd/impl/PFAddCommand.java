@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,62 +26,30 @@ public class PFAddCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String[] elements;
-    private byte[] rawKey;
-    private byte[][] rawElements;
+    private byte[] key;
+    private byte[][] elements;
 
     public PFAddCommand() {
     }
 
-    public PFAddCommand(String key, String[] elements) {
-        this(key, elements, null, null);
-    }
-
-    public PFAddCommand(String key, String[] elements, byte[] rawKey, byte[][] rawElements) {
+    public PFAddCommand(byte[] key, byte[][] elements) {
         this.key = key;
         this.elements = elements;
-        this.rawKey = rawKey;
-        this.rawElements = rawElements;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String[] getElements() {
+    public byte[][] getElements() {
         return elements;
     }
 
-    public void setElements(String[] elements) {
+    public void setElements(byte[][] elements) {
         this.elements = elements;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[][] getRawElements() {
-        return rawElements;
-    }
-
-    public void setRawElements(byte[][] rawElements) {
-        this.rawElements = rawElements;
-    }
-
-    @Override
-    public String toString() {
-        return "PFAddCommand{" +
-                "key='" + key + '\'' +
-                ", element=" + Arrays.toString(elements) +
-                '}';
     }
 }

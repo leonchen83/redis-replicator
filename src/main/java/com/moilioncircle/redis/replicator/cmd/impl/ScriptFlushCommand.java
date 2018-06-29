@@ -23,9 +23,4 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 public class ScriptFlushCommand extends ScriptCommand {
 
     private static final long serialVersionUID = 1L;
-
-    @Override
-    public String toString() {
-        return "ScriptFlushCommand{}";
-    }
 }

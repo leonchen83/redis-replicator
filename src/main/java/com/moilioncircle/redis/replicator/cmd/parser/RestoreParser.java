@@ -33,15 +33,13 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
     @Override
     public RestoreCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         long ttl = toLong(command[idx++]);
-        String serializedValue = toRune(command[idx]);
-        byte[] rawSerializedValue = toBytes(command[idx]);
+        byte[] serializedValue = toBytes(command[idx]);
         idx++;
-        Boolean isReplace = null;
-        Boolean absTtl = null;
+        boolean isReplace = false;
+        boolean absTtl = false;
         EvictType evictType = EvictType.NONE;
         Long evictValue = null;
         for (; idx < command.length; idx++) {
@@ -61,7 +59,7 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
                 throw new UnsupportedOperationException(toRune(command[idx]));
             }
         }
-        return new RestoreCommand(key, ttl, serializedValue, isReplace, absTtl, evictType, evictValue, rawKey, rawSerializedValue);
+        return new RestoreCommand(key, ttl, serializedValue, isReplace, absTtl, evictType, evictValue);
     }
     
 }

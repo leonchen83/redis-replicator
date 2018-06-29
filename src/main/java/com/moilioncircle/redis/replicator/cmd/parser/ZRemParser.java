@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,18 +30,15 @@ public class ZRemParser implements CommandParser<ZRemCommand> {
     @Override
     public ZRemCommand parse(Object[] command) {
         int idx = 1, newIdx = 0;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String[] members = new String[command.length - 2];
-        byte[][] rawMembers = new byte[command.length - 2][];
+        byte[][] members = new byte[command.length - 2][];
         while (idx < command.length) {
-            members[newIdx] = toRune(command[idx]);
-            rawMembers[newIdx] = toBytes(command[idx]);
+            members[newIdx] = toBytes(command[idx]);
             newIdx++;
             idx++;
         }
-        return new ZRemCommand(key, members, rawKey, rawMembers);
+        return new ZRemCommand(key, members);
     }
 
 }

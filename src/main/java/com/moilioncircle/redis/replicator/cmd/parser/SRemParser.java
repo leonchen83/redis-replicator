@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SRemCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,16 +30,13 @@ public class SRemParser implements CommandParser<SRemCommand> {
     @Override
     public SRemCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        final String[] members = new String[command.length - 2];
-        final byte[][] rawMembers = new byte[command.length - 2][];
+        final byte[][] members = new byte[command.length - 2][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            members[j] = toRune(command[i]);
-            rawMembers[j] = toBytes(command[i]);
+            members[j] = toBytes(command[i]);
         }
-        return new SRemCommand(key, members, rawKey, rawMembers);
+        return new SRemCommand(key, members);
     }
 
 }

@@ -23,6 +23,7 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
@@ -64,7 +65,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 1 or 5 bytes |    string contents    |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueByteArrayIterator o1 = new KeyStringValueByteArrayIterator();
+        KeyValuePair<byte[], Iterator<byte[]>> o1 = new KeyStringValueByteArrayIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         o1.setValue(new Iter<byte[]>(len, parser) {
@@ -86,8 +87,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o1.setValueRdbType(RDB_TYPE_LIST);
         o1.setDb(db);
-        o1.setKey(Strings.toString(key));
-        o1.setRawKey(key);
+        o1.setKey(key);
         return o1;
     }
 
@@ -98,7 +98,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 1 or 5 bytes |    string contents    |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueByteArrayIterator o2 = new KeyStringValueByteArrayIterator();
+        KeyValuePair<byte[], Iterator<byte[]>> o2 = new KeyStringValueByteArrayIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         o2.setValue(new Iter<byte[]>(len, parser) {
@@ -120,8 +120,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o2.setValueRdbType(RDB_TYPE_SET);
         o2.setDb(db);
-        o2.setKey(Strings.toString(key));
-        o2.setRawKey(key);
+        o2.setKey(key);
         return o2;
     }
 
@@ -132,7 +131,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 1 or 5 bytes |    string contents    |    double content    |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueZSetEntryIterator o3 = new KeyStringValueZSetEntryIterator();
+        KeyValuePair<byte[], Iterator<ZSetEntry>> o3 = new KeyStringValueZSetEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         o3.setValue(new Iter<ZSetEntry>(len, parser) {
@@ -147,7 +146,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
                     byte[] element = parser.rdbLoadEncodedStringObject().first();
                     double score = parser.rdbLoadDoubleValue();
                     condition--;
-                    return new ZSetEntry(Strings.toString(element), score, element);
+                    return new ZSetEntry(element, score);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -155,8 +154,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o3.setValueRdbType(RDB_TYPE_ZSET);
         o3.setDb(db);
-        o3.setKey(Strings.toString(key));
-        o3.setRawKey(key);
+        o3.setKey(key);
         return o3;
     }
 
@@ -167,7 +165,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 1 or 5 bytes |    string contents    |    binary double     |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueZSetEntryIterator o5 = new KeyStringValueZSetEntryIterator();
+        KeyValuePair<byte[], Iterator<ZSetEntry>> o5 = new KeyStringValueZSetEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         /* rdb version 8*/
         long len = parser.rdbLoadLen().len;
@@ -183,7 +181,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
                     byte[] element = parser.rdbLoadEncodedStringObject().first();
                     double score = parser.rdbLoadBinaryDoubleValue();
                     condition--;
-                    return new ZSetEntry(Strings.toString(element), score, element);
+                    return new ZSetEntry(element, score);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -191,8 +189,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o5.setValueRdbType(RDB_TYPE_ZSET_2);
         o5.setDb(db);
-        o5.setKey(Strings.toString(key));
-        o5.setRawKey(key);
+        o5.setKey(key);
         return o5;
     }
 
@@ -203,7 +200,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 1 or 5 bytes |    string contents    |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueMapEntryIterator o4 = new KeyStringValueMapEntryIterator();
+        KeyValuePair<byte[], Iterator<Map.Entry<byte[], byte[]>>> o4 = new KeyStringValueMapEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         o4.setValue(new Iter<Map.Entry<byte[], byte[]>>(len, parser) {
@@ -226,8 +223,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o4.setValueRdbType(RDB_TYPE_HASH);
         o4.setDb(db);
-        o4.setKey(Strings.toString(key));
-        o4.setRawKey(key);
+        o4.setKey(key);
         return o4;
     }
 
@@ -238,15 +234,14 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 1 byte | 1 or 5 byte | content |1 or 5 byte | 1 byte | content | 1 byte |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueMapEntryIterator o9 = new KeyStringValueMapEntryIterator();
+        KeyValuePair<byte[], Iterator<Map.Entry<byte[], byte[]>>> o9 = new KeyStringValueMapEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
         BaseRdbParser.LenHelper.zmlen(stream); // zmlen
         o9.setValue(new HashZipMapIter(stream));
         o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
         o9.setDb(db);
-        o9.setKey(Strings.toString(key));
-        o9.setRawKey(key);
+        o9.setKey(key);
         return o9;
     }
 
@@ -257,7 +252,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueByteArrayIterator o10 = new KeyStringValueByteArrayIterator();
+        KeyValuePair<byte[], Iterator<byte[]>> o10 = new KeyStringValueByteArrayIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         final RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
 
@@ -292,8 +287,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
         o10.setDb(db);
-        o10.setKey(Strings.toString(key));
-        o10.setRawKey(key);
+        o10.setKey(key);
         return o10;
     }
 
@@ -304,7 +298,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 4 bytes  |            4 bytes  | 2 bytes element| 4 bytes element | 8 bytes element |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueByteArrayIterator o11 = new KeyStringValueByteArrayIterator();
+        KeyValuePair<byte[], Iterator<byte[]>> o11 = new KeyStringValueByteArrayIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         final RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
 
@@ -342,8 +336,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o11.setValueRdbType(RDB_TYPE_SET_INTSET);
         o11.setDb(db);
-        o11.setKey(Strings.toString(key));
-        o11.setRawKey(key);
+        o11.setKey(key);
         return o11;
     }
 
@@ -354,7 +347,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueZSetEntryIterator o12 = new KeyStringValueZSetEntryIterator();
+        KeyValuePair<byte[], Iterator<ZSetEntry>> o12 = new KeyStringValueZSetEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         final RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
 
@@ -383,7 +376,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
                     condition--;
                     double score = Double.valueOf(Strings.toString(BaseRdbParser.StringHelper.zipListEntry(stream)));
                     condition--;
-                    return new ZSetEntry(Strings.toString(element), score, element);
+                    return new ZSetEntry(element, score);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }
@@ -391,8 +384,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
         o12.setDb(db);
-        o12.setKey(Strings.toString(key));
-        o12.setRawKey(key);
+        o12.setKey(key);
         return o12;
     }
 
@@ -403,7 +395,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueMapEntryIterator o13 = new KeyStringValueMapEntryIterator();
+        KeyValuePair<byte[], Iterator<Map.Entry<byte[], byte[]>>> o13 = new KeyStringValueMapEntryIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         final RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
 
@@ -440,22 +432,20 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         });
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
         o13.setDb(db);
-        o13.setKey(Strings.toString(key));
-        o13.setRawKey(key);
+        o13.setKey(key);
         return o13;
     }
 
     @Override
     public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
-        KeyStringValueByteArrayIterator o14 = new KeyStringValueByteArrayIterator();
+        KeyValuePair<byte[], Iterator<byte[]>> o14 = new KeyStringValueByteArrayIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         o14.setValue(new QuickListIter(len, parser));
         o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
         o14.setDb(db);
-        o14.setKey(Strings.toString(key));
-        o14.setRawKey(key);
+        o14.setKey(key);
         return o14;
     }
 

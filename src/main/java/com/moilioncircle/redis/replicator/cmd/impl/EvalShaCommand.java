@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.4.7
@@ -28,36 +26,26 @@ public class EvalShaCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String sha;
+    private byte[] sha;
     private int numkeys;
-    private String[] keys;
-    private String[] args;
-    private byte[] rawSha;
-    private byte[][] rawKeys;
-    private byte[][] rawArgs;
+    private byte[][] keys;
+    private byte[][] args;
 
     public EvalShaCommand() {
     }
 
-    public EvalShaCommand(String sha, int numkeys, String[] keys, String[] args) {
-        this(sha, numkeys, keys, args, null, null, null);
-    }
-
-    public EvalShaCommand(String sha, int numkeys, String[] keys, String[] args, byte[] rawSha, byte[][] rawKeys, byte[][] rawArgs) {
+    public EvalShaCommand(byte[] sha, int numkeys, byte[][] keys, byte[][] args) {
         this.sha = sha;
         this.numkeys = numkeys;
         this.keys = keys;
         this.args = args;
-        this.rawSha = rawSha;
-        this.rawKeys = rawKeys;
-        this.rawArgs = rawArgs;
     }
 
-    public String getSha() {
+    public byte[] getSha() {
         return sha;
     }
 
-    public void setSha(String sha) {
+    public void setSha(byte[] sha) {
         this.sha = sha;
     }
 
@@ -69,53 +57,19 @@ public class EvalShaCommand implements Command {
         this.numkeys = numkeys;
     }
 
-    public String[] getKeys() {
+    public byte[][] getKeys() {
         return keys;
     }
 
-    public void setKeys(String[] keys) {
+    public void setKeys(byte[][] keys) {
         this.keys = keys;
     }
 
-    public String[] getArgs() {
+    public byte[][] getArgs() {
         return args;
     }
 
-    public void setArgs(String[] args) {
+    public void setArgs(byte[][] args) {
         this.args = args;
-    }
-
-    public byte[] getRawSha() {
-        return rawSha;
-    }
-
-    public void setRawSha(byte[] rawSha) {
-        this.rawSha = rawSha;
-    }
-
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
-
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
-
-    public byte[][] getRawArgs() {
-        return rawArgs;
-    }
-
-    public void setRawArgs(byte[][] rawArgs) {
-        this.rawArgs = rawArgs;
-    }
-
-    @Override
-    public String toString() {
-        return "EvalShaCommand{" +
-                "sha='" + sha + '\'' +
-                ", numkeys=" + numkeys +
-                ", keys=" + Arrays.toString(keys) +
-                ", args=" + Arrays.toString(args) +
-                '}';
     }
 }

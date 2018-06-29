@@ -17,13 +17,11 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.PeekableInputStream;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
@@ -127,26 +125,6 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public boolean addRdbListener(RdbListener listener) {
-        return replicator.addRdbListener(listener);
-    }
-
-    @Override
-    public boolean removeRdbListener(RdbListener listener) {
-        return replicator.removeRdbListener(listener);
-    }
-
-    @Override
-    public boolean addAuxFieldListener(AuxFieldListener listener) {
-        return replicator.addAuxFieldListener(listener);
-    }
-
-    @Override
-    public boolean removeAuxFieldListener(AuxFieldListener listener) {
-        return replicator.removeAuxFieldListener(listener);
-    }
-
-    @Override
     public boolean addRawByteListener(RawByteListener listener) {
         return replicator.addRawByteListener(listener);
     }
@@ -202,13 +180,13 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public boolean addCommandListener(CommandListener listener) {
-        return replicator.addCommandListener(listener);
+    public boolean addEventListener(EventListener listener) {
+        return replicator.addEventListener(listener);
     }
 
     @Override
-    public boolean removeCommandListener(CommandListener listener) {
-        return replicator.removeCommandListener(listener);
+    public boolean removeEventListener(EventListener listener) {
+        return replicator.removeEventListener(listener);
     }
 
     @Override
@@ -254,16 +232,5 @@ public class RedisReplicator implements Replicator {
     @Override
     public void close() throws IOException {
         replicator.close();
-    }
-
-    /**
-     * @param rawBytes input stream raw bytes
-     * @since 2.2.0
-     * @deprecated notice that this method will remove in version 3.0.0
-     */
-    @Deprecated
-    public void handle(byte... rawBytes) {
-        if (!(replicator instanceof AbstractReplicatorListener)) return;
-        ((AbstractReplicatorListener) replicator).doRawByteListener(rawBytes);
     }
 }

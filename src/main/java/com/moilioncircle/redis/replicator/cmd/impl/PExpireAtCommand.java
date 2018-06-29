@@ -26,28 +26,22 @@ public class PExpireAtCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private long ex;
-    private byte[] rawKey;
 
     public PExpireAtCommand() {
     }
 
-    public PExpireAtCommand(String key, long ex) {
-        this(key, ex, null);
-    }
-
-    public PExpireAtCommand(String key, long ex, byte[] rawKey) {
+    public PExpireAtCommand(byte[] key, long ex) {
         this.key = key;
         this.ex = ex;
-        this.rawKey = rawKey;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -57,21 +51,5 @@ public class PExpireAtCommand implements Command {
 
     public void setEx(long ex) {
         this.ex = ex;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    @Override
-    public String toString() {
-        return "PExpireAtCommand{" +
-                "key='" + key + '\'' +
-                ", ex=" + ex +
-                '}';
     }
 }

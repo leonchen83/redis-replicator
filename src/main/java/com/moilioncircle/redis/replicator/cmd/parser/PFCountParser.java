@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PFCountCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -29,13 +28,11 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 public class PFCountParser implements CommandParser<PFCountCommand> {
     @Override
     public PFCountCommand parse(Object[] command) {
-        String[] keys = new String[command.length - 1];
-        byte[][] rawKeys = new byte[command.length - 1][];
+        byte[][] keys = new byte[command.length - 1][];
         for (int i = 1, j = 0; i < command.length; i++, j++) {
-            keys[j] = toRune(command[i]);
-            rawKeys[j] = toBytes(command[i]);
+            keys[j] = toBytes(command[i]);
         }
-        return new PFCountCommand(keys, rawKeys);
+        return new PFCountCommand(keys);
     }
 
 }

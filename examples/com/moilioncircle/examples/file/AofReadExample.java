@@ -21,7 +21,8 @@ import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,10 +38,12 @@ public class AofReadExample {
         final Replicator replicator = new RedisReplicator(
                 new File("./src/test/resources/appendonly1.aof"),
                 FileType.AOF, Configuration.defaultSetting());
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof Command) {
+                    System.out.println(event);
+                }
             }
         });
 
@@ -52,10 +55,12 @@ public class AofReadExample {
         final Replicator replicator = new RedisReplicator(
                 AofReadExample.class.getResourceAsStream("/appendonly1.aof"), FileType.AOF,
                 Configuration.defaultSetting());
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof Command) {
+                    System.out.println(event);
+                }
             }
         });
 

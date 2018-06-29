@@ -53,12 +53,4 @@ public class OverFlow implements Serializable {
     public void setStatements(List<Statement> statements) {
         this.statements = statements;
     }
-
-    @Override
-    public String toString() {
-        return "OverFlow{" +
-                "overFlowType=" + overFlowType +
-                ", statements=" + statements +
-                '}';
-    }
 }

@@ -20,37 +20,6 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class KeyStringValueString extends KeyValuePair<String> {
-
+public class KeyStringValueString extends KeyValuePair<byte[], byte[]> {
     private static final long serialVersionUID = 1L;
-
-    protected byte[] rawValue;
-
-    /**
-     * @return raw bytes
-     * @since 2.2.0
-     * @deprecated use {@link #getRawValue} instead. will remove in version 3.0.0
-     */
-    @Deprecated
-    public byte[] getRawBytes() {
-        return rawValue;
-    }
-
-    /**
-     * @param rawBytes raw bytes
-     * @since 2.2.0
-     * @deprecated use {@link #setRawValue} instead. will remove in version 3.0.0
-     */
-    @Deprecated
-    public void setRawBytes(byte[] rawBytes) {
-        this.rawValue = rawBytes;
-    }
-
-    public byte[] getRawValue() {
-        return rawValue;
-    }
-
-    public void setRawValue(byte[] rawValue) {
-        this.rawValue = rawValue;
-    }
 }

@@ -16,10 +16,8 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 
 /**
  * @author Leon Chen
@@ -27,15 +25,11 @@ import com.moilioncircle.redis.replicator.rdb.RdbListener;
  */
 public interface ReplicatorListener {
     /*
-     * Rdb
+     * Event
      */
-    boolean addRdbListener(RdbListener listener);
+    boolean addEventListener(EventListener listener);
 
-    boolean removeRdbListener(RdbListener listener);
-
-    boolean addAuxFieldListener(AuxFieldListener listener);
-
-    boolean removeAuxFieldListener(AuxFieldListener listener);
+    boolean removeEventListener(EventListener listener);
 
     /*
      * Raw byte
@@ -43,13 +37,6 @@ public interface ReplicatorListener {
     boolean addRawByteListener(RawByteListener listener);
 
     boolean removeRawByteListener(RawByteListener listener);
-
-    /*
-     * Command
-     */
-    boolean addCommandListener(CommandListener listener);
-
-    boolean removeCommandListener(CommandListener listener);
 
     /*
      * Close

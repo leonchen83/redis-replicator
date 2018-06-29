@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,11 +30,10 @@ public class ExpireParser implements CommandParser<ExpireCommand> {
     @Override
     public ExpireCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         int ex = toInt(command[idx++]);
-        return new ExpireCommand(key, ex, rawKey);
+        return new ExpireCommand(key, ex);
     }
 
 }

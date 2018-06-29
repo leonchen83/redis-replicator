@@ -16,12 +16,13 @@
 
 package com.moilioncircle.redis.replicator;
 
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -45,19 +46,15 @@ public class RedisRdbReplicatorTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong atomicChecksum = new AtomicLong(0);
-        redisReplicator.addRdbListener(new RdbListener() {
+        redisReplicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-            
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                atomicChecksum.compareAndSet(0, checksum);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostFullSyncEvent) {
+                    atomicChecksum.compareAndSet(0, ((PostFullSyncEvent) event).getChecksum());
+                }
             }
         });
         redisReplicator.open();
@@ -72,19 +69,15 @@ public class RedisRdbReplicatorTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong atomicChecksum = new AtomicLong(0);
-        redisReplicator.addRdbListener(new RdbListener() {
+        redisReplicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-            
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-            
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                atomicChecksum.compareAndSet(0, checksum);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostFullSyncEvent) {
+                    atomicChecksum.compareAndSet(0, ((PostFullSyncEvent) event).getChecksum());
+                }
             }
         });
         redisReplicator.open();
@@ -114,36 +107,27 @@ public class RedisRdbReplicatorTest {
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), 1000), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        final List<KeyValuePair<?>> list = new ArrayList<>();
-        redisReplicator.addRdbListener(new RdbListener() {
+        final List<KeyValuePair<?, ?>> list = new ArrayList<>();
+        redisReplicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-            
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                list.add(kv);
-                acc.incrementAndGet();
-            }
-            
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    list.add((KeyValuePair<?, ?>) event);
+                    acc.incrementAndGet();
+                }
             }
         });
         redisReplicator.open();
         assertEquals(19, acc.get());
-        for (KeyValuePair<?> kv : list) {
-            if (kv.getKey().equals("abcd")) {
-                KeyStringValueString ksvs = (KeyStringValueString) kv;
-                assertEquals("abcd", ksvs.getValue());
+        for (KeyValuePair<?, ?> kv : list) {
+            if (Strings.toString(kv.getKey()).equals("abcd")) {
+                assertEquals("abcd", Strings.toString(kv.getValue()));
             }
-            if (kv.getKey().equals("foo")) {
-                KeyStringValueString ksvs = (KeyStringValueString) kv;
-                assertEquals("bar", ksvs.getValue());
+            if (Strings.toString(kv.getKey()).equals("foo")) {
+                assertEquals("bar", Strings.toString(kv.getValue()));
             }
-            if (kv.getKey().equals("aaa")) {
-                KeyStringValueString ksvs = (KeyStringValueString) kv;
-                assertEquals("bbb", ksvs.getValue());
+            if (Strings.toString(kv.getKey()).equals("aaa")) {
+                assertEquals("bbb", Strings.toString(kv.getValue()));
             }
         }
     }
@@ -154,20 +138,14 @@ public class RedisRdbReplicatorTest {
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), 1000), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        redisReplicator.addRdbListener(new RdbListener() {
+        redisReplicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-            
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv.getValueRdbType() == 0) {
-                    acc.incrementAndGet();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    if (((KeyValuePair<?, ?>) event).getValueRdbType() == 0) {
+                        acc.incrementAndGet();
+                    }
                 }
-            }
-            
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
             }
         });
         redisReplicator.open();
@@ -180,19 +158,12 @@ public class RedisRdbReplicatorTest {
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), 1000), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        redisReplicator.addRdbListener(new RdbListener() {
-            
+        redisReplicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-            
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-            
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
             }
         });
         redisReplicator.open();
@@ -206,26 +177,15 @@ public class RedisRdbReplicatorTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        redisReplicator.addAuxFieldListener(new AuxFieldListener() {
+        redisReplicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, AuxField auxField) {
-                acc1.incrementAndGet();
-            }
-        });
-        redisReplicator.addRdbListener(new RdbListener() {
-            
-            @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-            
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-            
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof AuxField) {
+                    acc1.incrementAndGet();
+                }
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
             }
         });
         redisReplicator.open();

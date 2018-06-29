@@ -17,10 +17,12 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
@@ -51,19 +53,15 @@ public class RedisURITest {
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong atomicChecksum = new AtomicLong(0);
         Replicator r = new RedisReplicator(redisURI.toString());
-        r.addRdbListener(new RdbListener() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                atomicChecksum.compareAndSet(0, checksum);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostFullSyncEvent) {
+                    atomicChecksum.compareAndSet(0, ((PostFullSyncEvent) event).getChecksum());
+                }
             }
         });
         r.open();
@@ -76,30 +74,19 @@ public class RedisURITest {
     public void testSet() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
         Replicator replicator = new RedisReplicator("redis://localhost?retries=0");
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                Jedis jedis = new Jedis("localhost", 6379);
-                jedis.del("abca");
-                jedis.set("abca", "bcd");
-                jedis.close();
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if (command instanceof SetCommand) {
-                    SetCommand setCommand = (SetCommand) command;
-                    assertEquals("abca", setCommand.getKey());
-                    assertEquals("bcd", setCommand.getValue());
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PostFullSyncEvent) {
+                    Jedis jedis = new Jedis("localhost", 6379);
+                    jedis.del("abca");
+                    jedis.set("abca", "bcd");
+                    jedis.close();
+                }
+                if (event instanceof SetCommand) {
+                    SetCommand setCommand = (SetCommand) event;
+                    assertEquals("abca", Strings.toString(setCommand.getKey()));
+                    assertEquals("bcd", Strings.toString(setCommand.getValue()));
                     ref.compareAndSet(null, "ok");
                     try {
                         replicator.close();
@@ -108,6 +95,7 @@ public class RedisURITest {
                 }
             }
         });
+
         replicator.open();
         assertEquals("ok", ref.get());
     }
@@ -121,26 +109,15 @@ public class RedisURITest {
         Replicator replicator = new RedisReplicator(redisURI.toString());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                acc1.incrementAndGet();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof Command) {
+                    acc1.incrementAndGet();
+                }
             }
         });
         replicator.open();

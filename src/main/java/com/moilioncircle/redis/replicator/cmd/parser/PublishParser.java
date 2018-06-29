@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PublishCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,13 +29,11 @@ public class PublishParser implements CommandParser<PublishCommand> {
     @Override
     public PublishCommand parse(Object[] command) {
         int idx = 1;
-        String channel = toRune(command[idx]);
-        byte[] rawChannel = toBytes(command[idx]);
+        byte[] channel = toBytes(command[idx]);
         idx++;
-        String message = toRune(command[idx]);
-        byte[] rawMessage = toBytes(command[idx]);
+        byte[] message = toBytes(command[idx]);
         idx++;
-        return new PublishCommand(channel, message, rawChannel, rawMessage);
+        return new PublishCommand(channel, message);
     }
 
 }

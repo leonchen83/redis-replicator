@@ -18,16 +18,12 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
 
 import com.moilioncircle.redis.replicator.event.Event;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
 @SuppressWarnings("unchecked")
-public class KeyValuePair<T> implements Event {
+public class KeyValuePair<K, V> implements Event {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,9 +33,8 @@ public class KeyValuePair<T> implements Event {
     protected Long expiredValue;
     protected EvictType evictType = EvictType.NONE;
     protected Long evictValue;
-    protected String key;
-    protected T value;
-    protected byte[] rawKey;
+    protected K key;
+    protected V value;
 
     public int getValueRdbType() {
         return valueRdbType;
@@ -81,19 +76,19 @@ public class KeyValuePair<T> implements Event {
         this.evictValue = evictValue;
     }
 
-    public String getKey() {
+    public K getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(K key) {
         this.key = key;
     }
 
-    public T getValue() {
+    public V getValue() {
         return value;
     }
 
-    public void setValue(T value) {
+    public void setValue(V value) {
         this.value = value;
     }
 
@@ -103,14 +98,6 @@ public class KeyValuePair<T> implements Event {
 
     public void setDb(DB db) {
         this.db = db;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
     }
 
     /**
@@ -125,55 +112,6 @@ public class KeyValuePair<T> implements Event {
      */
     public Long getExpiredMs() {
         return expiredValue;
-    }
-
-    /**
-     * @return RDB_TYPE_STRING
-     */
-    public String getValueAsString() {
-        return (String) value;
-    }
-
-    /**
-     * @return RDB_TYPE_HASH, RDB_TYPE_HASH_ZIPMAP, RDB_TYPE_HASH_ZIPLIST
-     */
-    public Map<String, String> getValueAsHash() {
-        return (Map<String, String>) value;
-    }
-
-    /**
-     * @return RDB_TYPE_SET, RDB_TYPE_SET_INTSET
-     */
-    public Set<String> getValueAsSet() {
-        return (Set<String>) value;
-    }
-
-    /**
-     * @return RDB_TYPE_ZSET, RDB_TYPE_ZSET_2, RDB_TYPE_ZSET_ZIPLIST
-     */
-    public Set<ZSetEntry> getValueAsZSet() {
-        return (Set<ZSetEntry>) value;
-    }
-
-    /**
-     * @return RDB_TYPE_LIST, RDB_TYPE_LIST_ZIPLIST, RDB_TYPE_LIST_QUICKLIST
-     */
-    public List<String> getValueAsStringList() {
-        return (List<String>) value;
-    }
-
-    /**
-     * @return RDB_TYPE_MODULE
-     */
-    public Module getValueAsModule() {
-        return (Module) value;
-    }
-
-    /**
-     * @return RDB_TYPE_STREAM_LISTPACKS
-     */
-    public Stream getValueAsStream() {
-        return (Stream) value;
     }
 
     @Override

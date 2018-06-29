@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,62 +26,30 @@ public class PFMergeCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String destkey;
-    private String[] sourcekeys;
-    private byte[] rawDestkey;
-    private byte[][] rawSourcekeys;
+    private byte[] destkey;
+    private byte[][] sourcekeys;
 
     public PFMergeCommand() {
     }
 
-    public PFMergeCommand(String destkey, String[] sourcekeys) {
-        this(destkey, sourcekeys, null, null);
-    }
-
-    public PFMergeCommand(String destkey, String[] sourcekeys, byte[] rawDestkey, byte[][] rawSourcekeys) {
+    public PFMergeCommand(byte[] destkey, byte[][] sourcekeys) {
         this.destkey = destkey;
         this.sourcekeys = sourcekeys;
-        this.rawDestkey = rawDestkey;
-        this.rawSourcekeys = rawSourcekeys;
     }
 
-    public String getDestkey() {
+    public byte[] getDestkey() {
         return destkey;
     }
 
-    public void setDestkey(String destkey) {
+    public void setDestkey(byte[] destkey) {
         this.destkey = destkey;
     }
 
-    public String[] getSourcekeys() {
+    public byte[][] getSourcekeys() {
         return sourcekeys;
     }
 
-    public void setSourcekeys(String[] sourcekeys) {
+    public void setSourcekeys(byte[][] sourcekeys) {
         this.sourcekeys = sourcekeys;
-    }
-
-    public byte[] getRawDestkey() {
-        return rawDestkey;
-    }
-
-    public void setRawDestkey(byte[] rawDestkey) {
-        this.rawDestkey = rawDestkey;
-    }
-
-    public byte[][] getRawSourcekeys() {
-        return rawSourcekeys;
-    }
-
-    public void setRawSourcekeys(byte[][] rawSourcekeys) {
-        this.rawSourcekeys = rawSourcekeys;
-    }
-
-    @Override
-    public String toString() {
-        return "PFMergeCommand{" +
-                "destkey='" + destkey + '\'' +
-                ", sourcekey=" + Arrays.toString(sourcekeys) +
-                '}';
     }
 }

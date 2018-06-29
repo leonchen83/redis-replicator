@@ -26,62 +26,30 @@ public class RenameNxCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String newKey;
-    private byte[] rawKey;
-    private byte[] rawNewKey;
+    private byte[] key;
+    private byte[] newKey;
 
     public RenameNxCommand() {
     }
 
-    public RenameNxCommand(String key, String newKey) {
-        this(key, newKey, null, null);
-    }
-
-    public RenameNxCommand(String key, String newKey, byte[] rawKey, byte[] rawNewKey) {
+    public RenameNxCommand(byte[] key, byte[] newKey) {
         this.key = key;
         this.newKey = newKey;
-        this.rawKey = rawKey;
-        this.rawNewKey = rawNewKey;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String getNewKey() {
+    public byte[] getNewKey() {
         return newKey;
     }
 
-    public void setNewKey(String newKey) {
+    public void setNewKey(byte[] newKey) {
         this.newKey = newKey;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawNewKey() {
-        return rawNewKey;
-    }
-
-    public void setRawNewKey(byte[] rawNewKey) {
-        this.rawNewKey = rawNewKey;
-    }
-
-    @Override
-    public String toString() {
-        return "RenameNxCommand{" +
-                "key='" + key + '\'' +
-                ", newKey=" + newKey +
-                '}';
     }
 }

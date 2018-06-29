@@ -52,12 +52,4 @@ public class Limit implements Serializable {
     public void setCount(long count) {
         this.count = count;
     }
-
-    @Override
-    public String toString() {
-        return "Limit{" +
-                "offset=" + offset +
-                ", count=" + count +
-                '}';
-    }
 }

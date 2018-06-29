@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator;
 
+import com.moilioncircle.redis.replicator.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class DefaultExceptionListener implements ExceptionListener {
     private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionListener.class);
 
     @Override
-    public void handle(Replicator replicator, Throwable throwable, Object event) {
+    public void handle(Replicator replicator, Throwable throwable, Event event) {
         logger.error("error on event [{}]", event, throwable);
     }
 }

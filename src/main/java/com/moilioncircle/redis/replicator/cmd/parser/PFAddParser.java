@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PFAddCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,16 +29,13 @@ public class PFAddParser implements CommandParser<PFAddCommand> {
     @Override
     public PFAddCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String[] elements = new String[command.length - 2];
-        byte[][] rawElements = new byte[command.length - 2][];
+        byte[][] elements = new byte[command.length - 2][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            elements[j] = toRune(command[i]);
-            rawElements[j] = toBytes(command[i]);
+            elements[j] = toBytes(command[i]);
         }
-        return new PFAddCommand(key, elements, rawKey, rawElements);
+        return new PFAddCommand(key, elements);
     }
 
 }

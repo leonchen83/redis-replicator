@@ -28,9 +28,4 @@ public class MultiCommand implements Command {
 
     public MultiCommand() {
     }
-
-    @Override
-    public String toString() {
-        return "MultiCommand{}";
-    }
 }

@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByLexCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,15 +30,12 @@ public class ZRemRangeByLexParser implements CommandParser<ZRemRangeByLexCommand
     @Override
     public ZRemRangeByLexCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String min = toRune(command[idx]);
-        byte[] rawMin = toBytes(command[idx]);
+        byte[] min = toBytes(command[idx]);
         idx++;
-        String max = toRune(command[idx]);
-        byte[] rawMax = toBytes(command[idx]);
+        byte[] max = toBytes(command[idx]);
         idx++;
-        return new ZRemRangeByLexCommand(key, min, max, rawKey, rawMin, rawMax);
+        return new ZRemRangeByLexCommand(key, min, max);
     }
 }

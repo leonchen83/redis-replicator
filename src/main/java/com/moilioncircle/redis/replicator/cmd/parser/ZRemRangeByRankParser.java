@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByRankCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -32,11 +31,10 @@ public class ZRemRangeByRankParser implements CommandParser<ZRemRangeByRankComma
     @Override
     public ZRemRangeByRankCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         long start = toLong(command[idx++]);
         long stop = toLong(command[idx++]);
-        return new ZRemRangeByRankCommand(key, start, stop, rawKey);
+        return new ZRemRangeByRankCommand(key, start, stop);
     }
 }

@@ -22,57 +22,35 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @author Leon Chen
  * @since 2.6.0
  */
-public class ZPopMinCommand  implements Command {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private String key;
-	private Integer count;
-	private byte[] rawKey;
-	
-	public ZPopMinCommand() {
-	}
-	
-	public ZPopMinCommand(String key, Integer count) {
-		this(key, count, null);
-	}
-	
-	public ZPopMinCommand(String key, Integer count, byte[] rawKey) {
-		this.key = key;
-		this.count = count;
-		this.rawKey = rawKey;
-	}
-	
-	public String getKey() {
-		return key;
-	}
-	
-	public void setKey(String key) {
-		this.key = key;
-	}
-	
-	public Integer getCount() {
-		return count;
-	}
-	
-	public void setCount(Integer count) {
-		this.count = count;
-	}
-	
-	public byte[] getRawKey() {
-		return rawKey;
-	}
-	
-	public void setRawKey(byte[] rawKey) {
-		this.rawKey = rawKey;
-	}
-	
-	@Override
-	public String toString() {
-		return "ZPopMinCommand{" +
-				"key='" + key + '\'' +
-				", count=" + count +
-				'}';
-	}
+public class ZPopMinCommand implements Command {
+
+    private static final long serialVersionUID = 1L;
+
+    private byte[] key;
+    private int count = 1;
+
+    public ZPopMinCommand() {
+    }
+
+    public ZPopMinCommand(byte[] key, int count) {
+        this.key = key;
+        this.count = count;
+    }
+
+    public byte[] getKey() {
+        return key;
+    }
+
+    public void setKey(byte[] key) {
+        this.key = key;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
 }
 

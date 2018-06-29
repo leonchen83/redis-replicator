@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.IncrByCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,11 +30,10 @@ public class IncrByParser implements CommandParser<IncrByCommand> {
     @Override
     public IncrByCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         long value = toLong(command[idx++]);
-        return new IncrByCommand(key, value, rawKey);
+        return new IncrByCommand(key, value);
     }
 
 }

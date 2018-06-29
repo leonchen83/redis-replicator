@@ -32,10 +32,8 @@ public class SetParser implements CommandParser<SetCommand> {
 
     @Override
     public SetCommand parse(Object[] command) {
-        String key = toRune(command[1]);
-        byte[] rawKey = toBytes(command[1]);
-        String value = toRune(command[2]);
-        byte[] rawValue = toBytes(command[2]);
+        byte[] key = toBytes(command[1]);
+        byte[] value = toBytes(command[2]);
         int idx = 3;
         ExistType existType = ExistType.NONE;
         Integer ex = null;
@@ -59,7 +57,7 @@ public class SetParser implements CommandParser<SetCommand> {
                 st = true;
             }
         }
-        return new SetCommand(key, value, ex, px, existType, rawKey, rawValue);
+        return new SetCommand(key, value, ex, px, existType);
     }
 
 }

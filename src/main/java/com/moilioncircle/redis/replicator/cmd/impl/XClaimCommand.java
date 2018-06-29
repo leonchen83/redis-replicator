@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.6.0
@@ -28,15 +26,15 @@ public class XClaimCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
 
-    private String group;
+    private byte[] group;
 
-    private String consumer;
+    private byte[] consumer;
 
     private long minIdle;
 
-    private String[] ids;
+    private byte[][] ids;
 
     private Long idle;
 
@@ -48,23 +46,11 @@ public class XClaimCommand implements Command {
 
     private boolean justId;
 
-    private byte[] rawKey;
-
-    private byte[] rawGroup;
-
-    private byte[] rawConsumer;
-
-    private byte[][] rawIds;
-
     public XClaimCommand() {
 
     }
-    
-    public XClaimCommand(String key, String group, String consumer, long minIdle, String[] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId) {
-        this(key, group, consumer, minIdle, ids, idle, time, retryCount, force, justId, null, null, null, null);
-    }
-    
-    public XClaimCommand(String key, String group, String consumer, long minIdle, String[] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId, byte[] rawKey, byte[] rawGroup, byte[] rawConsumer, byte[][] rawIds) {
+
+    public XClaimCommand(byte[] key, byte[] group, byte[] consumer, long minIdle, byte[][] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId) {
         this.key = key;
         this.group = group;
         this.consumer = consumer;
@@ -75,33 +61,29 @@ public class XClaimCommand implements Command {
         this.retryCount = retryCount;
         this.force = force;
         this.justId = justId;
-        this.rawKey = rawKey;
-        this.rawGroup = rawGroup;
-        this.rawConsumer = rawConsumer;
-        this.rawIds = rawIds;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String getGroup() {
+    public byte[] getGroup() {
         return group;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(byte[] group) {
         this.group = group;
     }
 
-    public String getConsumer() {
+    public byte[] getConsumer() {
         return consumer;
     }
 
-    public void setConsumer(String consumer) {
+    public void setConsumer(byte[] consumer) {
         this.consumer = consumer;
     }
 
@@ -113,11 +95,11 @@ public class XClaimCommand implements Command {
         this.minIdle = minIdle;
     }
 
-    public String[] getIds() {
+    public byte[][] getIds() {
         return ids;
     }
 
-    public void setIds(String[] ids) {
+    public void setIds(byte[][] ids) {
         this.ids = ids;
     }
 
@@ -159,53 +141,5 @@ public class XClaimCommand implements Command {
 
     public void setJustId(boolean justId) {
         this.justId = justId;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawGroup() {
-        return rawGroup;
-    }
-
-    public void setRawGroup(byte[] rawGroup) {
-        this.rawGroup = rawGroup;
-    }
-
-    public byte[] getRawConsumer() {
-        return rawConsumer;
-    }
-
-    public void setRawConsumer(byte[] rawConsumer) {
-        this.rawConsumer = rawConsumer;
-    }
-
-    public byte[][] getRawIds() {
-        return rawIds;
-    }
-
-    public void setRawIds(byte[][] rawIds) {
-        this.rawIds = rawIds;
-    }
-
-    @Override
-    public String toString() {
-        return "XClaimCommand{" +
-                "key='" + key + '\'' +
-                ", group='" + group + '\'' +
-                ", consumer='" + consumer + '\'' +
-                ", minIdle=" + minIdle +
-                ", ids=" + Arrays.toString(ids) +
-                ", idle=" + idle +
-                ", time=" + time +
-                ", retryCount=" + retryCount +
-                ", force=" + force +
-                ", justId=" + justId +
-                '}';
     }
 }

@@ -28,9 +28,4 @@ public class ExecCommand implements Command {
 
     public ExecCommand() {
     }
-
-    @Override
-    public String toString() {
-        return "ExecCommand{}";
-    }
 }

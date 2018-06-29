@@ -24,7 +24,6 @@ import java.util.List;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -34,29 +33,22 @@ public class EvalShaParser implements CommandParser<EvalShaCommand> {
     @Override
     public EvalShaCommand parse(Object[] command) {
         int idx = 1;
-        String sha = toRune(command[idx]);
-        byte[] rawSha = toBytes(command[idx]);
+        byte[] sha = toBytes(command[idx]);
         idx++;
         int numkeys = toInt(command[idx++]);
-        String[] keys = new String[numkeys];
-        byte[][] rawKeys = new byte[numkeys][];
+        byte[][] keys = new byte[numkeys][];
         for (int i = 0; i < numkeys; i++) {
-            keys[i] = toRune(command[idx]);
-            rawKeys[i] = toBytes(command[idx]);
+            keys[i] = toBytes(command[idx]);
             idx++;
         }
-        List<String> list = new ArrayList<>();
-        List<byte[]> rawList = new ArrayList<>();
+        List<byte[]> list = new ArrayList<>();
         while (idx < command.length) {
-            list.add(toRune(command[idx]));
-            rawList.add(toBytes(command[idx]));
+            list.add(toBytes(command[idx]));
             idx++;
         }
-        String[] args = new String[list.size()];
-        byte[][] rawArgs = new byte[rawList.size()][];
+        byte[][] args = new byte[list.size()][];
         list.toArray(args);
-        rawList.toArray(rawArgs);
-        return new EvalShaCommand(sha, numkeys, keys, args, rawSha, rawKeys, rawArgs);
+        return new EvalShaCommand(sha, numkeys, keys, args);
     }
 
 }

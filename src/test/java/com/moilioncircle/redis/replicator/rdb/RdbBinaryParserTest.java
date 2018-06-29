@@ -20,12 +20,11 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -37,6 +36,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -55,7 +63,7 @@ public class RdbBinaryParserTest {
 
     @Test
     public void testParse() {
-        ConcurrentHashMap<String, KeyValuePair<?>> map = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, KeyValuePair<byte[], ?>> map = new ConcurrentHashMap<>();
         String[] resources = new String[]{"dictionary.rdb",
                 "easily_compressible_string_key.rdb", "empty_database.rdb",
                 "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
@@ -171,42 +179,42 @@ public class RdbBinaryParserTest {
         assertEquals(new Date(1671963072573L), new Date(map.get("expires_ms_precision").getExpiredMs()));
     }
 
-    public void assertByteArray(byte[] bytes, KeyValuePair<?> kv) {
-        if (kv instanceof KeyStringValueString) {
-            KeyStringValueString ksvs = (KeyStringValueString) kv;
-            assertEquals(true, Arrays.equals(bytes, ksvs.getRawValue()));
+    public void assertByteArray(byte[] bytes, KeyValuePair<byte[], ?> kv) {
+        if (kv.getValueRdbType() == RDB_TYPE_STRING) {
+            KeyValuePair<byte[], byte[]> ksvs = (KeyValuePair<byte[], byte[]>) kv;
+            assertEquals(true, Arrays.equals(bytes, ksvs.getValue()));
         } else {
             fail();
         }
     }
 
-    public void assertByteArray(byte[] bytes, KeyValuePair<?> kv, String field) {
-        if (kv instanceof KeyStringValueHash) {
-            KeyStringValueHash ksvh = (KeyStringValueHash) kv;
-            Map<byte[], byte[]> m = ksvh.getRawValue();
+    public void assertByteArray(byte[] bytes, KeyValuePair<byte[], ?> kv, String field) {
+        if (kv.getValueRdbType() == RDB_TYPE_HASH || kv.getValueRdbType() == RDB_TYPE_HASH_ZIPMAP || kv.getValueRdbType() == RDB_TYPE_HASH_ZIPLIST) {
+            KeyValuePair<byte[], Map<byte[], byte[]>> ksvh = (KeyValuePair<byte[], Map<byte[], byte[]>>) kv;
+            Map<byte[], byte[]> m = ksvh.getValue();
             assertEquals(true, Arrays.equals(bytes, m.get(field.getBytes())));
         } else {
             fail();
         }
     }
 
-    public void assertByteArray(byte[] bytes, KeyValuePair<?> kv, int index) {
-        if (kv instanceof KeyStringValueList) {
-            KeyStringValueList ksvh = (KeyStringValueList) kv;
-            assertEquals(true, Arrays.equals(bytes, ksvh.getRawValue().get(index)));
+    public void assertByteArray(byte[] bytes, KeyValuePair<byte[], ?> kv, int index) {
+        if (kv.getValueRdbType() == RDB_TYPE_LIST || kv.getValueRdbType() == RDB_TYPE_LIST_ZIPLIST || kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST) {
+            KeyValuePair<byte[], List<byte[]>> ksvh = (KeyValuePair<byte[], List<byte[]>>) kv;
+            assertEquals(true, Arrays.equals(bytes, ksvh.getValue().get(index)));
         } else {
             fail();
         }
     }
 
-    public void assertContains(List<String> list, KeyValuePair<?> kv) {
+    public void assertContains(List<String> list, KeyValuePair<byte[], ?> kv) {
         List<String> source = new ArrayList<>(list.size());
         for (String s : list) {
             source.add(Arrays.toString(s.getBytes()));
         }
-        if (kv instanceof KeyStringValueSet) {
-            KeyStringValueSet ksvh = (KeyStringValueSet) kv;
-            Set<byte[]> bytes = ksvh.getRawValue();
+        if (kv.getValueRdbType() == RDB_TYPE_SET || kv.getValueRdbType() == RDB_TYPE_SET_INTSET) {
+            KeyValuePair<byte[], Set<byte[]>> ksvh = (KeyValuePair<byte[], Set<byte[]>>) kv;
+            Set<byte[]> bytes = ksvh.getValue();
             List<String> target = new ArrayList<>();
             for (byte[] b : bytes) {
                 target.add(Arrays.toString(b));
@@ -219,14 +227,14 @@ public class RdbBinaryParserTest {
         }
     }
 
-    public void assertContainsList(List<String> list, KeyValuePair<?> kv) {
+    public void assertContainsList(List<String> list, KeyValuePair<byte[], ?> kv) {
         List<String> source = new ArrayList<>(list.size());
         for (String s : list) {
             source.add(Arrays.toString(s.getBytes()));
         }
-        if (kv instanceof KeyStringValueList) {
-            KeyStringValueList ksvh = (KeyStringValueList) kv;
-            List<byte[]> bytes = ksvh.getRawValue();
+        if (kv.getValueRdbType() == RDB_TYPE_LIST || kv.getValueRdbType() == RDB_TYPE_LIST_ZIPLIST || kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST) {
+            KeyValuePair<byte[], List<byte[]>> ksvh = (KeyValuePair<byte[], List<byte[]>>) kv;
+            List<byte[]> bytes = ksvh.getValue();
             List<String> target = new ArrayList<>();
             for (byte[] b : bytes) {
                 target.add(Arrays.toString(b));
@@ -239,27 +247,19 @@ public class RdbBinaryParserTest {
         }
     }
 
-    public void template(String filename, final ConcurrentHashMap<String, KeyValuePair<?>> map) {
+    public void template(String filename, final ConcurrentHashMap<String, KeyValuePair<byte[], ?>> map) {
         try {
             @SuppressWarnings("resource")
             Replicator replicator = new RedisReplicator(RdbBinaryParserTest.class.
                     getClassLoader().getResourceAsStream(filename)
                     , FileType.RDB, Configuration.defaultSetting());
-            replicator.addRdbListener(new RdbListener() {
-        
+            replicator.addEventListener(new EventListener() {
                 @Override
-                public void preFullSync(Replicator replicator) {
-            
-                }
-    
-                @Override
-                public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                    map.put(kv.getKey(), kv);
-                }
-        
-                @Override
-                public void postFullSync(Replicator replicator, long checksum) {
-            
+                public void onEvent(Replicator replicator, Event event) {
+                    if (event instanceof KeyValuePair) {
+                        KeyValuePair<byte[], ?> kv = (KeyValuePair<byte[], ?>) event;
+                        map.put(Strings.toString(kv.getKey()), kv);
+                    }
                 }
             });
             replicator.open();

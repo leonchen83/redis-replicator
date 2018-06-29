@@ -17,9 +17,9 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 
@@ -41,27 +41,19 @@ public class CloseTest {
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        r.addRdbListener(new RdbListener() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-                if (acc.get() == 10) {
-                    try {
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                    if (acc.get() == 10) {
+                        try {
+                            replicator.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
             }
         });
         r.open();
@@ -75,15 +67,17 @@ public class CloseTest {
                 RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        r.addCommandListener(new CommandListener() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                acc.incrementAndGet();
-                if (acc.get() == 30) {
-                    try {
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof Command) {
+                    acc.incrementAndGet();
+                    if (acc.get() == 30) {
+                        try {
+                            replicator.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -100,33 +94,22 @@ public class CloseTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-                if (acc.get() == 100) {
-                    try {
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                    if (acc.get() == 100) {
+                        try {
+                            replicator.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                acc1.incrementAndGet();
+                if (event instanceof Command) {
+                    acc1.incrementAndGet();
+                }
             }
         });
         replicator.open();
@@ -142,35 +125,25 @@ public class CloseTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                acc1.incrementAndGet();
-                if (acc1.get() == 100) {
-                    try {
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof Command) {
+                    acc1.incrementAndGet();
+                    if (acc1.get() == 100) {
+                        try {
+                            replicator.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
         });
+
         replicator.open();
         assertEquals(244653, acc.get());
         assertEquals(100, acc1.get());
@@ -215,22 +188,14 @@ public class CloseTest {
         new Thread() {
             @Override
             public void run() {
-                replicator.addRdbListener(new RdbListener() {
+                replicator.addEventListener(new EventListener() {
                     @Override
-                    public void preFullSync(Replicator replicator) {
-            
-                    }
-    
-                    @Override
-                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                        if (replicator.getStatus() == DISCONNECTED) {
-                            acc.incrementAndGet();
+                    public void onEvent(Replicator replicator, Event event) {
+                        if (event instanceof KeyValuePair<?, ?>) {
+                            if (replicator.getStatus() == DISCONNECTED) {
+                                acc.incrementAndGet();
+                            }
                         }
-                    }
-        
-                    @Override
-                    public void postFullSync(Replicator replicator, long checksum) {
-            
                     }
                 });
                 try {

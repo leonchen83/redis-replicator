@@ -33,8 +33,7 @@ public class LInsertParser implements CommandParser<LInsertCommand> {
     public LInsertCommand parse(Object[] command) {
         int idx = 1;
         LInsertType lInsertType = null;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         String keyword = toRune(command[idx++]);
         if (isEquals(keyword, "BEFORE")) {
@@ -42,13 +41,11 @@ public class LInsertParser implements CommandParser<LInsertCommand> {
         } else if (isEquals(keyword, "AFTER")) {
             lInsertType = LInsertType.AFTER;
         }
-        String pivot = toRune(command[idx]);
-        byte[] rawPivot = toBytes(command[idx]);
+        byte[] pivot = toBytes(command[idx]);
         idx++;
-        String value = toRune(command[idx]);
-        byte[] rawValue = toBytes(command[idx]);
+        byte[] value = toBytes(command[idx]);
         idx++;
-        return new LInsertCommand(key, lInsertType, pivot, value, rawKey, rawPivot, rawValue);
+        return new LInsertCommand(key, lInsertType, pivot, value);
     }
 
 }

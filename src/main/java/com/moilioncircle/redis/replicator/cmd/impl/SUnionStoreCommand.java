@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,63 +26,30 @@ public class SUnionStoreCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String destination;
-    private String[] keys;
-    private byte[] rawDestination;
-    private byte[][] rawKeys;
+    private byte[] destination;
+    private byte[][] keys;
 
     public SUnionStoreCommand() {
     }
 
-    public SUnionStoreCommand(String destination, String[] keys) {
-        this(destination, keys, null, null);
-    }
-
-    public SUnionStoreCommand(String destination, String[] keys, byte[] rawDestination, byte[][] rawKeys) {
+    public SUnionStoreCommand(byte[] destination, byte[][] keys) {
         this.destination = destination;
         this.keys = keys;
-        this.rawDestination = rawDestination;
-        this.rawKeys = rawKeys;
     }
 
-    public String getDestination() {
+    public byte[] getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(byte[] destination) {
         this.destination = destination;
     }
 
-    public String[] getKeys() {
+    public byte[][] getKeys() {
         return keys;
     }
 
-    public void setKeys(String[] keys) {
+    public void setKeys(byte[][] keys) {
         this.keys = keys;
     }
-
-    public byte[] getRawDestination() {
-        return rawDestination;
-    }
-
-    public void setRawDestination(byte[] rawDestination) {
-        this.rawDestination = rawDestination;
-    }
-
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
-
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
-
-    @Override
-    public String toString() {
-        return "SUnionStoreCommand{" +
-                "destination='" + destination + '\'' +
-                ", key=" + Arrays.toString(keys) +
-                '}';
-    }
-
 }

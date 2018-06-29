@@ -21,9 +21,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByLexCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByRankCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByScoreCommand;
+import junit.framework.TestCase;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen
@@ -35,34 +34,34 @@ public class ZAddParserTest extends AbstractParserTest {
         ZAddParser parser = new ZAddParser();
         ZAddCommand cmd = parser.parse(toObjectArray("zadd abc nx ch incr 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
-        assertEquals(ExistType.NX, cmd.getExistType());
-        assertEquals(Boolean.TRUE, cmd.getCh());
-        assertEquals(Boolean.TRUE, cmd.getIncr());
-        assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
+        TestCase.assertEquals(ExistType.NX, cmd.getExistType());
+        assertEquals(true, cmd.isCh());
+        assertEquals(true, cmd.isIncr());
+        TestCase.assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
 
         cmd = parser.parse(toObjectArray("zadd abc 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
-        assertEquals(ExistType.NONE, cmd.getExistType());
-        assertEquals(null, cmd.getCh());
-        assertEquals(null, cmd.getIncr());
-        assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
+        TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+        assertEquals(false, cmd.isCh());
+        assertEquals(false, cmd.isIncr());
+        TestCase.assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
 
         cmd = parser.parse(toObjectArray("zadd abc xx 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
-        assertEquals(ExistType.XX, cmd.getExistType());
-        assertEquals(null, cmd.getCh());
-        assertEquals(null, cmd.getIncr());
-        assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+        assertEquals(false, cmd.isCh());
+        assertEquals(false, cmd.isIncr());
+        TestCase.assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
 
         cmd = parser.parse(toObjectArray("zadd abc incr 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
-        assertEquals(ExistType.NONE, cmd.getExistType());
-        assertEquals(null, cmd.getCh());
-        assertEquals(Boolean.TRUE, cmd.getIncr());
-        assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
+        TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+        assertEquals(false, cmd.isCh());
+        assertEquals(true, cmd.isIncr());
+        TestCase.assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
 
         {

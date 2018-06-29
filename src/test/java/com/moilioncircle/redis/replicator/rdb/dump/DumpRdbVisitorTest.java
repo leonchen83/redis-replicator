@@ -4,8 +4,8 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import org.junit.Test;
 
@@ -29,21 +29,22 @@ public class DumpRdbVisitorTest {
         final AtomicReference<byte[]> aset = new AtomicReference<>();
         Replicator r = new RedisReplicator(DumpRdbVisitorTest.class.getClassLoader().getResourceAsStream("dump-huge-kv.rdb"), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new DumpRdbVisitor(r));
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (!(kv instanceof DumpKeyValuePair)) return;
-                DumpKeyValuePair dkv = (DumpKeyValuePair) kv;
-                if (dkv.getKey().equals("k10")) {
-                    amap.set(dkv.getValue());
-                } else if (dkv.getKey().equals("list10")) {
-                    alist.set(dkv.getValue());
-                } else if (dkv.getKey().equals("zset")) {
-                    azset.set(dkv.getValue());
-                } else if (dkv.getKey().equals("set")) {
-                    aset.set(dkv.getValue());
-                } else if (dkv.getKey().equals("s")) {
-                    astring.set(dkv.getValue());
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof DumpKeyValuePair) {
+                    DumpKeyValuePair dkv = (DumpKeyValuePair) event;
+                    if (dkv.getKey().equals("k10")) {
+                        amap.set(dkv.getValue());
+                    } else if (dkv.getKey().equals("list10")) {
+                        alist.set(dkv.getValue());
+                    } else if (dkv.getKey().equals("zset")) {
+                        azset.set(dkv.getValue());
+                    } else if (dkv.getKey().equals("set")) {
+                        aset.set(dkv.getValue());
+                    } else if (dkv.getKey().equals("s")) {
+                        astring.set(dkv.getValue());
+                    }
                 }
             }
         });

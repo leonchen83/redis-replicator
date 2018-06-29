@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.6.0
@@ -28,89 +26,43 @@ public class XAckCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
 
-    private String group;
+    private byte[] group;
 
-    private String[] ids;
-
-    private byte[] rawKey;
-
-    private byte[] rawGroup;
-
-    private byte[][] rawIds;
+    private byte[][] ids;
 
     public XAckCommand() {
 
     }
 
-    public XAckCommand(String key, String group, String[] ids) {
-        this(key, group, ids, null, null, null);
-    }
-
-    public XAckCommand(String key, String group, String[] ids, byte[] rawKey, byte[] rawGroup, byte[][] rawIds) {
+    public XAckCommand(byte[] key, byte[] group, byte[][] ids) {
         this.key = key;
         this.group = group;
         this.ids = ids;
-        this.rawKey = rawKey;
-        this.rawGroup = rawGroup;
-        this.rawIds = rawIds;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String getGroup() {
+    public byte[] getGroup() {
         return group;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(byte[] group) {
         this.group = group;
     }
 
-    public String[] getIds() {
+    public byte[][] getIds() {
         return ids;
     }
 
-    public void setIds(String[] ids) {
+    public void setIds(byte[][] ids) {
         this.ids = ids;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawGroup() {
-        return rawGroup;
-    }
-
-    public void setRawGroup(byte[] rawGroup) {
-        this.rawGroup = rawGroup;
-    }
-
-    public byte[][] getRawIds() {
-        return rawIds;
-    }
-
-    public void setRawIds(byte[][] rawIds) {
-        this.rawIds = rawIds;
-    }
-
-    @Override
-    public String toString() {
-        return "XAckCommand{" +
-                "key='" + key + '\'' +
-                ", group='" + group + '\'' +
-                ", ids=" + Arrays.toString(ids) +
-                '}';
     }
 }

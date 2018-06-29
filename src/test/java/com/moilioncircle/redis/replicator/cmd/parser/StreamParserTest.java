@@ -28,7 +28,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -46,67 +45,48 @@ public class StreamParserTest extends AbstractParserTest {
             XAckParser parser = new XAckParser();
             XAckCommand cmd = parser.parse(toObjectArray("xack key group 1528524799760-0".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals("key".getBytes().length, cmd.getRawKey().length);
             assertEquals("group", cmd.getGroup());
-            assertEquals("group".getBytes().length, cmd.getRawGroup().length);
             assertEquals(1, cmd.getIds().length);
             assertEquals("1528524799760-0", cmd.getIds()[0]);
-            assertEquals("1528524799760-0".getBytes().length, cmd.getRawIds()[0].length);
         }
         
         {
             XAckParser parser = new XAckParser();
             XAckCommand cmd = parser.parse(toObjectArray("xack key group 1528524799760-0 1528524789760-0".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals("key".getBytes().length, cmd.getRawKey().length);
             assertEquals("group", cmd.getGroup());
-            assertEquals("group".getBytes().length, cmd.getRawGroup().length);
             assertEquals(2, cmd.getIds().length);
             assertEquals("1528524789760-0", cmd.getIds()[1]);
-            assertEquals("1528524789760-0".getBytes().length, cmd.getRawIds()[1].length);
         }
         
         {
             XAddParser parser = new XAddParser();
             XAddCommand cmd = parser.parse(toObjectArray("XADD key * field value".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals("key".getBytes().length, cmd.getRawKey().length);
             assertEquals("*", cmd.getId());
-            assertEquals("*".getBytes().length, cmd.getRawId().length);
             assertNull(cmd.getMaxLen());
-            assertTrue(cmd.getFields().containsKey("field"));
-            assertTrue(cmd.getFields().containsValue("value"));
-            assertTrue(cmd.getRawFields().containsKey("field".getBytes()));
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
         }
         
         {
             XAddParser parser = new XAddParser();
             XAddCommand cmd = parser.parse(toObjectArray("XADD key maxlen 100 * field value".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals("key".getBytes().length, cmd.getRawKey().length);
             assertEquals("*", cmd.getId());
-            assertEquals("*".getBytes().length, cmd.getRawId().length);
             assertEquals(100L, cmd.getMaxLen().getCount());
             assertFalse(cmd.getMaxLen().isApproximation());
-            assertTrue(cmd.getFields().containsKey("field"));
-            assertTrue(cmd.getFields().containsValue("value"));
-            assertTrue(cmd.getRawFields().containsKey("field".getBytes()));
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
         }
         
         {
             XAddParser parser = new XAddParser();
             XAddCommand cmd = parser.parse(toObjectArray("XADD key maxlen ~ 100 * field value field1 value1".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals("key".getBytes().length, cmd.getRawKey().length);
             assertEquals("*", cmd.getId());
-            assertEquals("*".getBytes().length, cmd.getRawId().length);
             assertEquals(100L, cmd.getMaxLen().getCount());
             assertTrue(cmd.getMaxLen().isApproximation());
-            assertTrue(cmd.getFields().containsKey("field"));
-            assertTrue(cmd.getFields().containsValue("value"));
-            assertTrue(cmd.getFields().containsKey("field1"));
-            assertTrue(cmd.getFields().containsValue("value1"));
-            assertTrue(cmd.getRawFields().containsKey("field".getBytes()));
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
+            assertTrue(cmd.getFields().containsKey("field1".getBytes()));
         }
         
         {
@@ -218,12 +198,9 @@ public class StreamParserTest extends AbstractParserTest {
             XDelParser parser = new XDelParser();
             XDelCommand cmd = parser.parse(toObjectArray("xdel key 1528524799760-0 1528524899760-0".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals("key".getBytes().length, cmd.getRawKey().length);
             assertEquals(2, cmd.getIds().length);
             assertEquals("1528524799760-0", cmd.getIds()[0]);
             assertEquals("1528524899760-0", cmd.getIds()[1]);
-            assertEquals("1528524799760-0".getBytes().length, cmd.getRawIds()[0].length);
-            assertEquals("1528524899760-0".getBytes().length, cmd.getRawIds()[0].length);
         }
         
         {
@@ -232,11 +209,8 @@ public class StreamParserTest extends AbstractParserTest {
             if (cmd instanceof XGroupCreateCommand) {
                 XGroupCreateCommand ccmd = (XGroupCreateCommand) cmd;
                 assertEquals("key", ccmd.getKey());
-                assertEquals("key".getBytes().length, ccmd.getRawKey().length);
                 assertEquals("group", ccmd.getGroup());
-                assertEquals("group".getBytes().length, ccmd.getRawGroup().length);
                 assertEquals("$", ccmd.getId());
-                assertEquals("$".getBytes().length, ccmd.getRawId().length);
             } else if (cmd instanceof XGroupDelConsumerCommand) {
                 fail();
             }
@@ -248,11 +222,8 @@ public class StreamParserTest extends AbstractParserTest {
             if (cmd instanceof XGroupCreateCommand) {
                 XGroupCreateCommand ccmd = (XGroupCreateCommand) cmd;
                 assertEquals("key", ccmd.getKey());
-                assertEquals("key".getBytes().length, ccmd.getRawKey().length);
                 assertEquals("group", ccmd.getGroup());
-                assertEquals("group".getBytes().length, ccmd.getRawGroup().length);
                 assertEquals("1528524899760-0", ccmd.getId());
-                assertEquals("1528524899760-0".getBytes().length, ccmd.getRawId().length);
             } else if (cmd instanceof XGroupDelConsumerCommand) {
                 fail();
             }
@@ -264,11 +235,8 @@ public class StreamParserTest extends AbstractParserTest {
             if (cmd instanceof XGroupSetIdCommand) {
                 XGroupSetIdCommand ccmd = (XGroupSetIdCommand) cmd;
                 assertEquals("key", ccmd.getKey());
-                assertEquals("key".getBytes().length, ccmd.getRawKey().length);
                 assertEquals("group", ccmd.getGroup());
-                assertEquals("group".getBytes().length, ccmd.getRawGroup().length);
                 assertEquals("1528524899760-0", ccmd.getId());
-                assertEquals("1528524899760-0".getBytes().length, ccmd.getRawId().length);
             } else if (cmd instanceof XGroupDelConsumerCommand) {
                 fail();
             }
@@ -282,11 +250,8 @@ public class StreamParserTest extends AbstractParserTest {
             } else if (cmd instanceof XGroupDelConsumerCommand) {
                 XGroupDelConsumerCommand ccmd = (XGroupDelConsumerCommand) cmd;
                 assertEquals("key", ccmd.getKey());
-                assertEquals("key".getBytes().length, ccmd.getRawKey().length);
                 assertEquals("group", ccmd.getGroup());
-                assertEquals("group".getBytes().length, ccmd.getRawGroup().length);
                 assertEquals("consumer", ccmd.getConsumer());
-                assertEquals("consumer".getBytes().length, ccmd.getRawConsumer().length);
             }
         }
     
@@ -298,9 +263,7 @@ public class StreamParserTest extends AbstractParserTest {
             } else if (cmd instanceof XGroupDestroyCommand) {
                 XGroupDestroyCommand ccmd = (XGroupDestroyCommand) cmd;
                 assertEquals("key", ccmd.getKey());
-                assertEquals("key".getBytes().length, ccmd.getRawKey().length);
                 assertEquals("group", ccmd.getGroup());
-                assertEquals("group".getBytes().length, ccmd.getRawGroup().length);
             }
         }
         
@@ -308,7 +271,6 @@ public class StreamParserTest extends AbstractParserTest {
             XTrimParser parser = new XTrimParser();
             XTrimCommand cmd = parser.parse(toObjectArray("XTRIM key maxlen 100".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals("key".getBytes().length, cmd.getRawKey().length);
             assertEquals(100L, cmd.getMaxLen().getCount());
             assertFalse(cmd.getMaxLen().isApproximation());
         }
@@ -317,7 +279,6 @@ public class StreamParserTest extends AbstractParserTest {
             XTrimParser parser = new XTrimParser();
             XTrimCommand cmd = parser.parse(toObjectArray("XTRIM key maxlen ~ 100".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals("key".getBytes().length, cmd.getRawKey().length);
             assertEquals(100L, cmd.getMaxLen().getCount());
             assertTrue(cmd.getMaxLen().isApproximation());
         }

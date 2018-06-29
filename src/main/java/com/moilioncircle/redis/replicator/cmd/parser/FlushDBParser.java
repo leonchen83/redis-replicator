@@ -29,7 +29,7 @@ import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 public class FlushDBParser implements CommandParser<FlushDBCommand> {
     @Override
     public FlushDBCommand parse(Object[] command) {
-        Boolean isAsync = null;
+        boolean isAsync = false;
         if (command.length == 2 && isEquals(toRune(command[1]), "ASYNC")) {
             isAsync = true;
         }

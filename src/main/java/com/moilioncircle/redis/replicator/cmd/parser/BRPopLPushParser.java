@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.BRPopLPushCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,14 +30,12 @@ public class BRPopLPushParser implements CommandParser<BRPopLPushCommand> {
     @Override
     public BRPopLPushCommand parse(Object[] command) {
         int idx = 1;
-        String source = toRune(command[idx]);
-        byte[] rawSource = toBytes(command[idx]);
+        byte[] source = toBytes(command[idx]);
         idx++;
-        String destination = toRune(command[idx]);
-        byte[] rawDestination = toBytes(command[idx]);
+        byte[] destination = toBytes(command[idx]);
         idx++;
         int timeout = toInt(command[idx++]);
-        return new BRPopLPushCommand(source, destination, timeout, rawSource, rawDestination);
+        return new BRPopLPushCommand(source, destination, timeout);
     }
 
 }

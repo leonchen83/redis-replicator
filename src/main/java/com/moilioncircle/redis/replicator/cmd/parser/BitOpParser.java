@@ -33,16 +33,13 @@ public class BitOpParser implements CommandParser<BitOpCommand> {
         int idx = 1;
         String strOp = toRune(command[idx++]);
         Op op = Op.valueOf(strOp.toUpperCase());
-        String destKey = toRune(command[idx]);
-        byte[] rawDestKey = toBytes(command[idx]);
+        byte[] destKey = toBytes(command[idx]);
         idx++;
-        String[] keys = new String[command.length - 3];
-        byte[][] rawKeys = new byte[command.length - 3][];
+        byte[][] keys = new byte[command.length - 3][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            keys[j] = toRune(command[i]);
-            rawKeys[j] = toBytes(command[i]);
+            keys[j] = toBytes(command[i]);
         }
-        return new BitOpCommand(op, destKey, keys, rawDestKey, rawKeys);
+        return new BitOpCommand(op, destKey, keys);
     }
 
 }

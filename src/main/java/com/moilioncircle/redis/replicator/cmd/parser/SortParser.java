@@ -40,14 +40,11 @@ public class SortParser implements CommandParser<SortCommand> {
     public SortCommand parse(Object[] command) {
         int idx = 1;
         SortCommand sort = new SortCommand();
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         sort.setKey(key);
-        sort.setRawKey(rawKey);
         sort.setOrder(NONE);
-        List<String> getPatterns = new ArrayList<>();
-        List<byte[]> rawGetPatterns = new ArrayList<>();
+        List<byte[]> getPatterns = new ArrayList<>();
         while (idx < command.length) {
             String param = toRune(command[idx]);
             if (isEquals(param, "ASC")) {
@@ -64,27 +61,20 @@ public class SortParser implements CommandParser<SortCommand> {
                 sort.setLimit(new Limit(offset, count));
             } else if (isEquals(param, "STORE") && idx + 1 < command.length) {
                 idx++;
-                String destination = toRune(command[idx]);
-                byte[] rawDestination = toBytes(command[idx]);
+                byte[] destination = toBytes(command[idx]);
                 sort.setDestination(destination);
-                sort.setRawDestination(rawDestination);
             } else if (isEquals(param, "BY") && idx + 1 < command.length) {
                 idx++;
-                String byPattern = toRune(command[idx]);
-                byte[] rawByPattern = toBytes(command[idx]);
+                byte[] byPattern = toBytes(command[idx]);
                 sort.setByPattern(byPattern);
-                sort.setRawByPattern(rawByPattern);
             } else if (isEquals(param, "GET") && idx + 1 < command.length) {
                 idx++;
-                String getPattern = toRune(command[idx]);
-                byte[] rawGetPattern = toBytes(command[idx]);
+                byte[] getPattern = toBytes(command[idx]);
                 getPatterns.add(getPattern);
-                rawGetPatterns.add(rawGetPattern);
             }
             idx++;
         }
-        sort.setGetPatterns(getPatterns.toArray(new String[getPatterns.size()]));
-        sort.setRawGetPatterns(rawGetPatterns.toArray(new byte[rawGetPatterns.size()][]));
+        sort.setGetPatterns(getPatterns.toArray(new byte[getPatterns.size()][]));
         return sort;
     }
 }

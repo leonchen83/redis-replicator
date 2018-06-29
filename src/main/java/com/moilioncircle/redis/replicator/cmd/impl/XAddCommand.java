@@ -28,43 +28,30 @@ public class XAddCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
 
     private MaxLen maxLen;
 
-    private String id;
+    private byte[] id;
 
-    private Map<String, String> fields;
-
-    private byte[] rawKey;
-
-    private byte[] rawId;
-
-    private Map<byte[], byte[]> rawFields;
+    private Map<byte[], byte[]> fields;
 
     public XAddCommand() {
 
     }
 
-    public XAddCommand(String key, MaxLen maxLen, String id, Map<String, String> fields) {
-        this(key, maxLen, id, fields, null, null, null);
-    }
-
-    public XAddCommand(String key, MaxLen maxLen, String id, Map<String, String> fields, byte[] rawKey, byte[] rawId, Map<byte[], byte[]> rawFields) {
+    public XAddCommand(byte[] key, MaxLen maxLen, byte[] id, Map<byte[], byte[]> fields) {
         this.key = key;
         this.maxLen = maxLen;
         this.id = id;
         this.fields = fields;
-        this.rawKey = rawKey;
-        this.rawId = rawId;
-        this.rawFields = rawFields;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -76,53 +63,19 @@ public class XAddCommand implements Command {
         this.maxLen = maxLen;
     }
 
-    public String getId() {
+    public byte[] getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(byte[] id) {
         this.id = id;
     }
 
-    public Map<String, String> getFields() {
+    public Map<byte[], byte[]> getFields() {
         return fields;
     }
 
-    public void setFields(Map<String, String> fields) {
+    public void setFields(Map<byte[], byte[]> fields) {
         this.fields = fields;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawId() {
-        return rawId;
-    }
-
-    public void setRawId(byte[] rawId) {
-        this.rawId = rawId;
-    }
-
-    public Map<byte[], byte[]> getRawFields() {
-        return rawFields;
-    }
-
-    public void setRawFields(Map<byte[], byte[]> rawFields) {
-        this.rawFields = rawFields;
-    }
-
-    @Override
-    public String toString() {
-        return "XAddCommand{" +
-                "key='" + key + '\'' +
-                ", maxLen=" + maxLen +
-                ", id='" + id + '\'' +
-                ", fields=" + fields +
-                '}';
     }
 }

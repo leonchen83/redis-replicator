@@ -17,9 +17,11 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,10 +41,12 @@ public class RedisAofReplicatorTest {
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"), 1000), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                acc.incrementAndGet();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof Command) {
+                    acc.incrementAndGet();
+                }
             }
         });
         replicator.open();
@@ -55,10 +59,10 @@ public class RedisAofReplicatorTest {
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly2.aof"), 1024 * 1000), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                if (command instanceof SetCommand && ((SetCommand) command).getKey().startsWith("test_")) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof SetCommand && Strings.toString(((SetCommand) event).getKey()).startsWith("test_")) {
                     acc.incrementAndGet();
                 }
             }
@@ -73,10 +77,12 @@ public class RedisAofReplicatorTest {
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly3.aof"), 1024 * 1000), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                acc.incrementAndGet();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof Command) {
+                    acc.incrementAndGet();
+                }
             }
         });
         replicator.open();
@@ -89,10 +95,12 @@ public class RedisAofReplicatorTest {
                 new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), 1000), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                acc.incrementAndGet();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof Command) {
+                    acc.incrementAndGet();
+                }
             }
         });
         replicator.open();

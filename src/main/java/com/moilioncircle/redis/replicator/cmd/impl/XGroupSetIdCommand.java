@@ -23,90 +23,44 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 public class XGroupSetIdCommand extends XGroupCommand {
     
     private static final long serialVersionUID = 1L;
-    
-    private String key;
-    
-    private String group;
-    
-    private String id;
-    
-    private byte[] rawKey;
-    
-    private byte[] rawGroup;
-    
-    private byte[] rawId;
-    
+
+    private byte[] key;
+
+    private byte[] group;
+
+    private byte[] id;
+
     public XGroupSetIdCommand() {
     
     }
-    
-    public XGroupSetIdCommand(String key, String group, String id) {
-        this(key, group, id, null, null, null);
-    }
-    
-    public XGroupSetIdCommand(String key, String group, String id, byte[] rawKey, byte[] rawGroup, byte[] rawId) {
+
+    public XGroupSetIdCommand(byte[] key, byte[] group, byte[] id) {
         this.key = key;
         this.group = group;
         this.id = id;
-        this.rawKey = rawKey;
-        this.rawGroup = rawGroup;
-        this.rawId = rawId;
     }
-    
-    public String getKey() {
+
+    public byte[] getKey() {
         return key;
     }
-    
-    public void setKey(String key) {
+
+    public void setKey(byte[] key) {
         this.key = key;
     }
-    
-    public String getGroup() {
+
+    public byte[] getGroup() {
         return group;
     }
-    
-    public void setGroup(String group) {
+
+    public void setGroup(byte[] group) {
         this.group = group;
     }
-    
-    public String getId() {
+
+    public byte[] getId() {
         return id;
     }
-    
-    public void setId(String id) {
+
+    public void setId(byte[] id) {
         this.id = id;
-    }
-    
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-    
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-    
-    public byte[] getRawGroup() {
-        return rawGroup;
-    }
-    
-    public void setRawGroup(byte[] rawGroup) {
-        this.rawGroup = rawGroup;
-    }
-    
-    public byte[] getRawId() {
-        return rawId;
-    }
-    
-    public void setRawId(byte[] rawId) {
-        this.rawId = rawId;
-    }
-    
-    @Override
-    public String toString() {
-        return "XGroupSetIdCommand{" +
-                "key='" + key + '\'' +
-                ", group='" + group + '\'' +
-                ", id='" + id + '\'' +
-                '}';
     }
 }

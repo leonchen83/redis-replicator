@@ -19,8 +19,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -29,34 +27,28 @@ public class ZAddCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private ExistType existType;
-    private Boolean isCh;
-    private Boolean isIncr;
+    private boolean isCh;
+    private boolean isIncr;
     private ZSetEntry[] zSetEntries;
-    private byte[] rawKey;
 
     public ZAddCommand() {
     }
 
-    public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries) {
-        this(key, existType, isCh, isIncr, zSetEntries, null);
-    }
-
-    public ZAddCommand(String key, ExistType existType, Boolean isCh, Boolean isIncr, ZSetEntry[] zSetEntries, byte[] rawKey) {
+    public ZAddCommand(byte[] key, ExistType existType, boolean isCh, boolean isIncr, ZSetEntry[] zSetEntries) {
         this.key = key;
         this.existType = existType;
         this.isCh = isCh;
         this.isIncr = isIncr;
         this.zSetEntries = zSetEntries;
-        this.rawKey = rawKey;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -68,19 +60,19 @@ public class ZAddCommand implements Command {
         this.existType = existType;
     }
 
-    public Boolean getCh() {
+    public boolean isCh() {
         return isCh;
     }
 
-    public void setCh(Boolean ch) {
+    public void setCh(boolean ch) {
         isCh = ch;
     }
 
-    public Boolean getIncr() {
+    public boolean isIncr() {
         return isIncr;
     }
 
-    public void setIncr(Boolean incr) {
+    public void setIncr(boolean incr) {
         isIncr = incr;
     }
 
@@ -94,25 +86,6 @@ public class ZAddCommand implements Command {
 
     public void setzSetEntries(ZSetEntry[] zSetEntries) {
         this.zSetEntries = zSetEntries;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    @Override
-    public String toString() {
-        return "ZAddCommand{" +
-                "key='" + key + '\'' +
-                ", existType=" + existType +
-                ", isCh=" + isCh +
-                ", isIncr=" + isIncr +
-                ", zSetEntries=" + Arrays.toString(zSetEntries) +
-                '}';
     }
 
 }

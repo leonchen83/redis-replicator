@@ -18,9 +18,11 @@ package com.moilioncircle.examples.backup;
 
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
 
 import java.io.BufferedOutputStream;
@@ -52,23 +54,20 @@ public class RdbBackupExample {
         //save rdb from remote server
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-                replicator.addRawByteListener(rawByteListener);
-            }
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreFullSyncEvent) {
+                    replicator.addRawByteListener(rawByteListener);
+                }
 
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                replicator.removeRawByteListener(rawByteListener);
-                try {
-                    out.close();
-                    replicator.close();
-                } catch (IOException ignore) {
+                if (event instanceof PostFullSyncEvent) {
+                    replicator.removeRawByteListener(rawByteListener);
+                    try {
+                        out.close();
+                        replicator.close();
+                    } catch (IOException ignore) {
+                    }
                 }
             }
         });
@@ -76,10 +75,10 @@ public class RdbBackupExample {
 
         //check rdb file
         replicator = new RedisReplicator("redis:///path/to/dump.rdb");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
         replicator.open();

@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.IncrCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -29,9 +28,8 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 public class IncrParser implements CommandParser<IncrCommand> {
     @Override
     public IncrCommand parse(Object[] command) {
-        String key = toRune(command[1]);
-        byte[] rawKey = toBytes(command[1]);
-        return new IncrCommand(key, rawKey);
+        byte[] key = toBytes(command[1]);
+        return new IncrCommand(key);
     }
 
 }

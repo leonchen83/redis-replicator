@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.LPushCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -32,18 +31,15 @@ public class LPushParser implements CommandParser<LPushCommand> {
     @Override
     public LPushCommand parse(Object[] command) {
         int idx = 1, newIdx = 0;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String[] values = new String[command.length - 2];
-        byte[][] rawValues = new byte[command.length - 2][];
+        byte[][] values = new byte[command.length - 2][];
         while (idx < command.length) {
-            values[newIdx] = toRune(command[idx]);
-            rawValues[newIdx] = toBytes(command[idx]);
+            values[newIdx] = toBytes(command[idx]);
             newIdx++;
             idx++;
         }
-        return new LPushCommand(key, values, rawKey, rawValues);
+        return new LPushCommand(key, values);
     }
 
 }

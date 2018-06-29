@@ -21,10 +21,11 @@ import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.UncheckedIOException;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.CRCOutputStream;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
@@ -61,7 +62,7 @@ public class SplitRdbExample {
             headers[i] = new AtomicBoolean(false);
             outs[i] = new CRCOutputStream(new BufferedOutputStream(new FileOutputStream(new File("./src/test/resources/dump-split-" + i + ".rdb"))));
         }
-        final Tuple2<String, ByteBuilder> tuple = new Tuple2<>();
+        final Tuple2<byte[], ByteBuilder> tuple = new Tuple2<>();
         tuple.setT2(ByteBuilder.allocate(128));
 
         final RawByteListener rawByteListener = new RawByteListener() {
@@ -96,28 +97,27 @@ public class SplitRdbExample {
         };
 
         replicator.addRawByteListener(rawByteListener);
-        replicator.addAuxFieldListener(new AuxFieldListener() {
-            @Override
-            public void handle(Replicator replicator, AuxField auxField) {
-                // clear aux field
-                tuple.setT2(ByteBuilder.allocate(128));
-            }
-        });
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                tuple.setT1(kv.getKey());
-            }
 
-            public void postFullSync(Replicator replicator, long checksum) {
-                for (int i = 0; i < len; i++) {
-                    try {
-                        CRCOutputStream out = outs[i];
-                        out.write(RDB_OPCODE_EOF);
-                        out.write(out.getCRC64());
-                        out.close();
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof AuxField) {
+                    // clear aux field
+                    tuple.setT2(ByteBuilder.allocate(128));
+                }
+                if (event instanceof KeyValuePair<?, ?>) {
+                    tuple.setT1(((KeyValuePair<byte[], ?>) event).getKey());
+                }
+                if (event instanceof PostFullSyncEvent) {
+                    for (int i = 0; i < len; i++) {
+                        try {
+                            CRCOutputStream out = outs[i];
+                            out.write(RDB_OPCODE_EOF);
+                            out.write(out.getCRC64());
+                            out.close();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
                     }
                 }
             }

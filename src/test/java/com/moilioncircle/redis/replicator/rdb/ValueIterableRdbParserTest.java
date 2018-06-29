@@ -20,6 +20,8 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
@@ -67,31 +69,27 @@ public class ValueIterableRdbParserTest {
         Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new ValueIterableRdbVisitor(r));
         r.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
-        r.addRdbListener(new RdbListener() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueByteArrayIterator) {
-                    KeyStringValueByteArrayIterator kv1 = (KeyStringValueByteArrayIterator) kv;
-                    Iterator<byte[]> it = kv1.getValue();
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof KeyValuePair<?, ?>)) return;
+                if (event instanceof KeyStringValueZSetEntryIterator) {
+                    KeyStringValueZSetEntryIterator kv1 = (KeyStringValueZSetEntryIterator) event;
+                    Iterator<ZSetEntry> it = kv1.getValue();
                     while (it.hasNext()) {
                         it.next();
                         acc.incrementAndGet();
                     }
-                } else if (kv instanceof KeyStringValueMapEntryIterator) {
-                    KeyStringValueMapEntryIterator kv1 = (KeyStringValueMapEntryIterator) kv;
+                } else if (event instanceof KeyStringValueMapEntryIterator) {
+                    KeyStringValueMapEntryIterator kv1 = (KeyStringValueMapEntryIterator) event;
                     Iterator<Map.Entry<byte[], byte[]>> it = kv1.getValue();
                     while (it.hasNext()) {
                         it.next();
                         acc.incrementAndGet();
                     }
-                } else if (kv instanceof KeyStringValueZSetEntryIterator) {
-                    KeyStringValueZSetEntryIterator kv1 = (KeyStringValueZSetEntryIterator) kv;
-                    Iterator<ZSetEntry> it = kv1.getValue();
+                } else if (event instanceof KeyStringValueByteArrayIterator) {
+                    KeyStringValueByteArrayIterator kv1 = (KeyStringValueByteArrayIterator) event;
+                    Iterator<byte[]> it = kv1.getValue();
                     while (it.hasNext()) {
                         it.next();
                         acc.incrementAndGet();
@@ -99,11 +97,6 @@ public class ValueIterableRdbParserTest {
                 } else {
                     acc.incrementAndGet();
                 }
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
             }
         });
         try {
@@ -120,42 +113,33 @@ public class ValueIterableRdbParserTest {
         @SuppressWarnings("resource")
         Replicator r = new RedisReplicator(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName), FileType.RDB, Configuration.defaultSetting());
         r.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
-        r.addRdbListener(new RdbListener() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueList) {
-                    KeyStringValueList kv1 = (KeyStringValueList) kv;
-                    for (String s : kv1.getValue()) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof KeyValuePair<?, ?>)) return;
+                if (event instanceof KeyStringValueList) {
+                    KeyStringValueList kv1 = (KeyStringValueList) event;
+                    for (byte[] s : kv1.getValue()) {
                         acc.incrementAndGet();
                     }
-                } else if (kv instanceof KeyStringValueSet) {
-                    KeyStringValueSet kv1 = (KeyStringValueSet) kv;
-                    for (String s : kv1.getValue()) {
+                } else if (event instanceof KeyStringValueSet) {
+                    KeyStringValueSet kv1 = (KeyStringValueSet) event;
+                    for (byte[] s : kv1.getValue()) {
                         acc.incrementAndGet();
                     }
-                } else if (kv instanceof KeyStringValueHash) {
-                    KeyStringValueHash kv1 = (KeyStringValueHash) kv;
-                    for (Map.Entry<String, String> entry : kv1.getValue().entrySet()) {
+                } else if (event instanceof KeyStringValueHash) {
+                    KeyStringValueHash kv1 = (KeyStringValueHash) event;
+                    for (Map.Entry<byte[], byte[]> entry : kv1.getValue().entrySet()) {
                         acc.incrementAndGet();
                     }
-                } else if (kv instanceof KeyStringValueZSet) {
-                    KeyStringValueZSet kv1 = (KeyStringValueZSet) kv;
+                } else if (event instanceof KeyStringValueZSet) {
+                    KeyStringValueZSet kv1 = (KeyStringValueZSet) event;
                     for (ZSetEntry entry : kv1.getValue()) {
                         acc.incrementAndGet();
                     }
                 } else {
                     acc.incrementAndGet();
                 }
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
             }
         });
         try {

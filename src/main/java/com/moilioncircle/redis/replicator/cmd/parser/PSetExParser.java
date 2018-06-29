@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.PSetExCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -31,14 +30,12 @@ public class PSetExParser implements CommandParser<PSetExCommand> {
     @Override
     public PSetExCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         long ex = toLong(command[idx++]);
-        String value = toRune(command[idx]);
-        byte[] rawValue = toBytes(command[idx]);
+        byte[] value = toBytes(command[idx]);
         idx++;
-        return new PSetExCommand(key, ex, value, rawKey, rawValue);
+        return new PSetExCommand(key, ex, value);
     }
 
 }

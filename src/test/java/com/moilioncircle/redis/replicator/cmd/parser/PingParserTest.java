@@ -45,12 +45,12 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetNxCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SetRangeCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
+import junit.framework.TestCase;
 import org.junit.Test;
 
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LFU;
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LRU;
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.NONE;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen
@@ -228,9 +228,9 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(2, cmd.getNumkeys());
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
-            assertEquals(2, cmd.getWeights()[0], 0);
-            assertEquals(3, cmd.getWeights()[1], 0);
-            assertEquals(AggregateType.SUM, cmd.getAggregateType());
+            TestCase.assertEquals(2, cmd.getWeights()[0], 0);
+            TestCase.assertEquals(3, cmd.getWeights()[1], 0);
+            TestCase.assertEquals(AggregateType.SUM, cmd.getAggregateType());
         }
     
         {
@@ -240,9 +240,9 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(2, cmd.getNumkeys());
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
-            assertEquals(2, cmd.getWeights()[0], 0);
-            assertEquals(3, cmd.getWeights()[1], 0);
-            assertEquals(AggregateType.MIN, cmd.getAggregateType());
+            TestCase.assertEquals(2, cmd.getWeights()[0], 0);
+            TestCase.assertEquals(3, cmd.getWeights()[1], 0);
+            TestCase.assertEquals(AggregateType.MIN, cmd.getAggregateType());
         }
     
         {
@@ -278,10 +278,10 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd", cmd.getSerializedValue());
             assertEquals("mykey", cmd.getKey());
             assertEquals(0L, cmd.getTtl());
-            assertEquals(null, cmd.getReplace());
-            assertEquals(null, cmd.getAbsTtl());
-            assertEquals(NONE, cmd.getEvictType());
-            assertEquals(null, cmd.getEvictValue());
+            assertEquals(false, cmd.isReplace());
+            assertEquals(false, cmd.isAbsTtl());
+            TestCase.assertEquals(NONE, cmd.getEvictType());
+            TestCase.assertEquals(null, cmd.getEvictValue());
         }
     
         {
@@ -290,7 +290,7 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd", cmd.getSerializedValue());
             assertEquals("mykey", cmd.getKey());
             assertEquals(0L, cmd.getTtl());
-            assertEquals(true, cmd.getReplace());
+            assertEquals(true, cmd.isReplace());
         }
     
         {
@@ -299,9 +299,9 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd", cmd.getSerializedValue());
             assertEquals("mykey", cmd.getKey());
             assertEquals(0L, cmd.getTtl());
-            assertEquals(true, cmd.getReplace());
-            assertEquals(true, cmd.getAbsTtl());
-            assertEquals(LRU, cmd.getEvictType());
+            assertEquals(true, cmd.isReplace());
+            assertEquals(true, cmd.isAbsTtl());
+            TestCase.assertEquals(LRU, cmd.getEvictType());
             assertEquals(100000L, cmd.getEvictValue().longValue());
         }
     
@@ -311,9 +311,9 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("\\n\\x17\\x17\\x00\\x00\\x00\\x12\\x00\\x00\\x00\\x03\\x00\\x00\\xc0\\x01\\x00\\x04\\xc0\\x02\\x00\\x04\\xc0\\x03\\x00\\xff\\x04\\x00u#<\\xc0;.\\xe9\\xdd", cmd.getSerializedValue());
             assertEquals("mykey", cmd.getKey());
             assertEquals(0L, cmd.getTtl());
-            assertEquals(null, cmd.getReplace());
-            assertEquals(null, cmd.getAbsTtl());
-            assertEquals(LFU, cmd.getEvictType());
+            assertEquals(false, cmd.isReplace());
+            assertEquals(false, cmd.isAbsTtl());
+            TestCase.assertEquals(LFU, cmd.getEvictType());
             assertEquals(125L, cmd.getEvictValue().longValue());
         }
     }

@@ -18,7 +18,10 @@ package com.moilioncircle.examples.other;
 
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.io.IOException;
@@ -49,26 +52,24 @@ public class TimerTaskExample {
         public void run() {
             try {
                 Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-                replicator.addRdbListener(new RdbListener() {
+                replicator.addEventListener(new EventListener() {
                     @Override
-                    public void preFullSync(Replicator replicator) {
-                        System.out.println("data sync started");
-                    }
-
-                    @Override
-                    public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                        //shard kv.getKey to different thread so that speed up save process.
-                        save(kv);
-                    }
-
-                    @Override
-                    public void postFullSync(Replicator replicator, long checksum) {
-                        try {
-                            replicator.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    public void onEvent(Replicator replicator, Event event) {
+                        if (event instanceof PreFullSyncEvent) {
+                            System.out.println("data sync started");
                         }
-                        System.out.println("data sync done");
+                        if (event instanceof KeyValuePair<?, ?>) {
+                            //shard kv.getKey to different thread so that speed up save process.
+                            save((KeyValuePair<?, ?>) event);
+                        }
+                        if (event instanceof PostFullSyncEvent) {
+                            try {
+                                replicator.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            System.out.println("data sync done");
+                        }
                     }
                 });
 
@@ -79,7 +80,7 @@ public class TimerTaskExample {
         }
     }
 
-    private static void save(KeyValuePair<?> kv) {
+    private static void save(KeyValuePair<?, ?> kv) {
         System.out.println(kv);
         //save kv to mysql or to anywhere.
     }

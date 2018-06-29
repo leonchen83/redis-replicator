@@ -19,10 +19,10 @@ package com.moilioncircle.examples.backup;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -52,43 +52,34 @@ public class CommandBackupExample {
 
         //save 1000 records commands
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                replicator.addRawByteListener(rawByteListener);
-            }
-        });
-
         final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                if (acc.incrementAndGet() == 1000) {
-                    try {
-                        out.close();
-                        replicator.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PostFullSyncEvent) {
+                    replicator.addRawByteListener(rawByteListener);
+                }
+                if (event instanceof Command) {
+                    if (acc.incrementAndGet() == 1000) {
+                        try {
+                            out.close();
+                            replicator.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
         });
+
         replicator.open();
 
         //check aof file
         replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
         replicator.open();

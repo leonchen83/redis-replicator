@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,7 +29,7 @@ public class AppendParser implements CommandParser<AppendCommand> {
 
     @Override
     public AppendCommand parse(Object[] command) {
-        return new AppendCommand(toRune(command[1]), toRune(command[2]), toBytes(command[1]), toBytes(command[2]));
+        return new AppendCommand(toBytes(command[1]), toBytes(command[2]));
     }
 
 }

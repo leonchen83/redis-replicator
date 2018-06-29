@@ -23,7 +23,8 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.UncheckedIOException;
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
 
@@ -74,30 +75,23 @@ public class SplitAofExample {
 
         replicator.addRawByteListener(rawByteListener);
 
-        //if you are using socket replication, open following comment so that avoid very big ByteBuilder.
-
-//        replicator.addAuxFieldListener(new AuxFieldListener() {
-//            @Override
-//            public void handle(Replicator replicator, AuxField auxField) {
-//                // clear aux field
-//                tuple.setT2(ByteBuilder.allocate(128));
-//            }
-//        });
-//        replicator.addRdbListener(new RdbListener.Adaptor() {
-//            @Override
-//            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-//                tuple.setT2(ByteBuilder.allocate(128));
-//            }
-//
-//            @Override
-//            public void postFullSync(Replicator replicator, long checksum) {
-//                tuple.setT2(ByteBuilder.allocate(128));
-//            }
-//        });
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                tuple.setT1(true);
+            public void onEvent(Replicator replicator, Event event) {
+                //if you are using socket replication, open following comment so that avoid very big ByteBuilder.
+//                if (event instanceof AuxField) {
+//                    // clear aux field
+//                    tuple.setT2(ByteBuilder.allocate(128));
+//                }
+//                if (event instanceof KeyValuePair<?, ?>) {
+//                    tuple.setT2(ByteBuilder.allocate(128));
+//                }
+//                if (event instanceof PostFullSyncEvent) {
+//                    tuple.setT2(ByteBuilder.allocate(128));
+//                }
+                if (event instanceof Command) {
+                    tuple.setT1(true);
+                }
             }
         });
 

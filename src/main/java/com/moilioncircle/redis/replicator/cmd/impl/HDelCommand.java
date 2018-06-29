@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,62 +26,30 @@ public class HDelCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String fields[];
-    private byte[] rawKey;
-    private byte[][] rawFields;
+    private byte[] key;
+    private byte[][] fields;
 
     public HDelCommand() {
     }
 
-    public HDelCommand(String key, String[] fields) {
-        this(key, fields, null, null);
-    }
-
-    public HDelCommand(String key, String[] fields, byte[] rawKey, byte[][] rawFields) {
+    public HDelCommand(byte[] key, byte[][] fields) {
         this.key = key;
         this.fields = fields;
-        this.rawKey = rawKey;
-        this.rawFields = rawFields;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String[] getFields() {
+    public byte[][] getFields() {
         return fields;
     }
 
-    public void setFields(String[] fields) {
+    public void setFields(byte[][] fields) {
         this.fields = fields;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[][] getRawFields() {
-        return rawFields;
-    }
-
-    public void setRawFields(byte[][] rawFields) {
-        this.rawFields = rawFields;
-    }
-
-    @Override
-    public String toString() {
-        return "HDelCommand{" +
-                "key='" + key + '\'' +
-                ", fields=" + Arrays.toString(fields) +
-                '}';
     }
 }

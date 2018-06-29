@@ -16,7 +16,11 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
+import com.moilioncircle.redis.replicator.util.Strings;
+
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author Leon Chen
@@ -26,24 +30,18 @@ public class ZSetEntry implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String element;
+    private byte[] element;
     private double score;
-    private byte[] rawElement;
 
     public ZSetEntry() {
     }
 
-    public ZSetEntry(String element, double score) {
-        this(element, score, null);
-    }
-
-    public ZSetEntry(String element, double score, byte[] rawElement) {
+    public ZSetEntry(byte[] element, double score) {
         this.element = element;
         this.score = score;
-        this.rawElement = rawElement;
     }
 
-    public String getElement() {
+    public byte[] getElement() {
         return element;
     }
 
@@ -51,7 +49,7 @@ public class ZSetEntry implements Serializable {
         return score;
     }
 
-    public void setElement(String element) {
+    public void setElement(byte[] element) {
         this.element = element;
     }
 
@@ -59,37 +57,24 @@ public class ZSetEntry implements Serializable {
         this.score = score;
     }
 
-    public byte[] getRawElement() {
-        return rawElement;
-    }
-
-    public void setRawElement(byte[] rawElement) {
-        this.rawElement = rawElement;
-    }
-
     @Override
     public String toString() {
-        return "[" + element + ", " + score + "]";
+        return "[" + Strings.toString(element) + ", " + score + "]";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ZSetEntry zSetEntry = (ZSetEntry) o;
-
-        if (Double.compare(zSetEntry.score, score) != 0) return false;
-        return element.equals(zSetEntry.element);
+        return Double.compare(zSetEntry.score, score) == 0 &&
+                Arrays.equals(element, zSetEntry.element);
     }
 
     @Override
     public int hashCode() {
-        int result;
-        long temp;
-        result = element.hashCode();
-        temp = Double.doubleToLongBits(score);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        int result = Objects.hash(score);
+        result = 31 * result + Arrays.hashCode(element);
         return result;
     }
 }

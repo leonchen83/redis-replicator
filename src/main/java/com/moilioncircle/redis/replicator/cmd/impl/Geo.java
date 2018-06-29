@@ -26,30 +26,24 @@ public class Geo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String member;
+    private byte[] member;
     private double longitude;
     private double latitude;
-    private byte[] rawMember;
 
     public Geo() {
     }
 
-    public Geo(String member, double longitude, double latitude) {
-        this(member, longitude, latitude, null);
-    }
-
-    public Geo(String member, double longitude, double latitude, byte[] rawMember) {
+    public Geo(byte[] member, double longitude, double latitude) {
         this.member = member;
         this.longitude = longitude;
         this.latitude = latitude;
-        this.rawMember = rawMember;
     }
 
-    public String getMember() {
+    public byte[] getMember() {
         return member;
     }
 
-    public void setMember(String member) {
+    public void setMember(byte[] member) {
         this.member = member;
     }
 
@@ -67,22 +61,5 @@ public class Geo implements Serializable {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
-    }
-
-    public byte[] getRawMember() {
-        return rawMember;
-    }
-
-    public void setRawMember(byte[] rawMember) {
-        this.rawMember = rawMember;
-    }
-
-    @Override
-    public String toString() {
-        return "Geo{" +
-                "member='" + member + '\'' +
-                ", longitude=" + longitude +
-                ", latitude=" + latitude +
-                '}';
     }
 }

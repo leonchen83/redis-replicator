@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,28 +26,22 @@ public class GeoAddCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private Geo[] geos;
-    private byte[] rawKey;
 
     public GeoAddCommand() {
     }
 
-    public GeoAddCommand(String key, Geo[] geos) {
-        this(key, geos, null);
-    }
-
-    public GeoAddCommand(String key, Geo[] geos, byte[] rawKey) {
+    public GeoAddCommand(byte[] key, Geo[] geos) {
         this.key = key;
         this.geos = geos;
-        this.rawKey = rawKey;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -59,21 +51,5 @@ public class GeoAddCommand implements Command {
 
     public void setGeos(Geo[] geos) {
         this.geos = geos;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    @Override
-    public String toString() {
-        return "GeoAddCommand{" +
-                "key='" + key + '\'' +
-                ", geos=" + Arrays.toString(geos) +
-                '}';
     }
 }

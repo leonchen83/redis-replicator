@@ -20,8 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.FlushAllCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.FlushDBCommand;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -32,21 +30,21 @@ public class FlushAllParserTest extends AbstractParserTest {
         {
             FlushAllParser parser = new FlushAllParser();
             FlushAllCommand cmd = parser.parse(toObjectArray("flushall".split(" ")));
-            assertEquals(null, cmd.isAsync());
+            assertEquals(false, cmd.isAsync());
 
             parser = new FlushAllParser();
             cmd = parser.parse(toObjectArray("flushall async".split(" ")));
-            assertEquals(Boolean.TRUE, cmd.isAsync());
+            assertEquals(true, cmd.isAsync());
         }
 
         {
             FlushDBParser parser = new FlushDBParser();
             FlushDBCommand cmd = parser.parse(toObjectArray("flushdb".split(" ")));
-            assertEquals(null, cmd.isAsync());
+            assertEquals(false, cmd.isAsync());
 
             parser = new FlushDBParser();
             cmd = parser.parse(toObjectArray("flushdb async".split(" ")));
-            assertEquals(Boolean.TRUE, cmd.isAsync());
+            assertEquals(true, cmd.isAsync());
         }
     }
 

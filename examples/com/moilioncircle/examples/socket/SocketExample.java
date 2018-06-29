@@ -18,10 +18,8 @@ package com.moilioncircle.examples.socket;
 
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 
 /**
  * @author Leon Chen
@@ -31,18 +29,10 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 public class SocketExample {
     public static void main(String[] args) throws Exception {
         final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
 

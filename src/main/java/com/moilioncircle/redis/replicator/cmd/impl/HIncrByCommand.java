@@ -26,40 +26,32 @@ public class HIncrByCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String field;
+    private byte[] key;
+    private byte[] field;
     private long increment;
-    private byte[] rawKey;
-    private byte[] rawField;
 
     public HIncrByCommand() {
     }
 
-    public HIncrByCommand(String key, String field, long increment) {
-        this(key, field, increment, null, null);
-    }
-
-    public HIncrByCommand(String key, String field, long increment, byte[] rawKey, byte[] rawField) {
+    public HIncrByCommand(byte[] key, byte[] field, long increment) {
         this.key = key;
         this.field = field;
         this.increment = increment;
-        this.rawKey = rawKey;
-        this.rawField = rawField;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String getField() {
+    public byte[] getField() {
         return field;
     }
 
-    public void setField(String field) {
+    public void setField(byte[] field) {
         this.field = field;
     }
 
@@ -69,30 +61,5 @@ public class HIncrByCommand implements Command {
 
     public void setIncrement(long increment) {
         this.increment = increment;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawField() {
-        return rawField;
-    }
-
-    public void setRawField(byte[] rawField) {
-        this.rawField = rawField;
-    }
-
-    @Override
-    public String toString() {
-        return "HIncrByCommand{" +
-                "key='" + key + '\'' +
-                ", field='" + field + '\'' +
-                ", increment='" + increment + '\'' +
-                '}';
     }
 }

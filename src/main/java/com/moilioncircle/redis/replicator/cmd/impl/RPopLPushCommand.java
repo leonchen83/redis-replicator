@@ -26,62 +26,30 @@ public class RPopLPushCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String source;
-    private String destination;
-    private byte[] rawSource;
-    private byte[] rawDestination;
+    private byte[] source;
+    private byte[] destination;
 
     public RPopLPushCommand() {
     }
 
-    public RPopLPushCommand(String source, String destination) {
-        this(source, destination, null, null);
-    }
-
-    public RPopLPushCommand(String source, String destination, byte[] rawSource, byte[] rawDestination) {
+    public RPopLPushCommand(byte[] source, byte[] destination) {
         this.source = source;
         this.destination = destination;
-        this.rawSource = rawSource;
-        this.rawDestination = rawDestination;
     }
 
-    public String getSource() {
+    public byte[] getSource() {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(byte[] source) {
         this.source = source;
     }
 
-    public String getDestination() {
+    public byte[] getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(byte[] destination) {
         this.destination = destination;
-    }
-
-    public byte[] getRawSource() {
-        return rawSource;
-    }
-
-    public void setRawSource(byte[] rawSource) {
-        this.rawSource = rawSource;
-    }
-
-    public byte[] getRawDestination() {
-        return rawDestination;
-    }
-
-    public void setRawDestination(byte[] rawDestination) {
-        this.rawDestination = rawDestination;
-    }
-
-    @Override
-    public String toString() {
-        return "RPopLPushCommand{" +
-                "source='" + source + '\'' +
-                ", destination='" + destination + '\'' +
-                '}';
     }
 }

@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetRangeCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 
 /**
@@ -32,14 +31,12 @@ public class SetRangeParser implements CommandParser<SetRangeCommand> {
     @Override
     public SetRangeCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         long index = toLong(command[idx++]);
-        String value = toRune(command[idx]);
-        byte[] rawValue = toBytes(command[idx]);
+        byte[] value = toBytes(command[idx]);
         idx++;
-        return new SetRangeCommand(key, index, value, rawKey, rawValue);
+        return new SetRangeCommand(key, index, value);
     }
 
 }

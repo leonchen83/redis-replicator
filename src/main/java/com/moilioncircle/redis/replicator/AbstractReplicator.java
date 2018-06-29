@@ -103,13 +103,9 @@ import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByRankParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByScoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZUnionStoreParser;
 import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
-import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
-import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleKey;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
@@ -168,17 +164,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
 
     public void submitEvent(Event event) {
         try {
-            if (event instanceof KeyValuePair<?>) {
-                doRdbListener(this, (KeyValuePair<?>) event);
-            } else if (event instanceof Command) {
-                doCommandListener(this, (Command) event);
-            } else if (event instanceof PreFullSyncEvent) {
-                doPreFullSync(this);
-            } else if (event instanceof PostFullSyncEvent) {
-                doPostFullSync(this, ((PostFullSyncEvent) event).getChecksum());
-            } else if (event instanceof AuxField) {
-                doAuxFieldListener(this, (AuxField) event);
-            }
+            doEventListener(this, event);
         } catch (UncheckedIOException e) {
             throw e;
             //ignore UncheckedIOException so that to propagate to caller.

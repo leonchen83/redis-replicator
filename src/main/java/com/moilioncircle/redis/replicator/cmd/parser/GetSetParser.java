@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.GetSetCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,13 +29,11 @@ public class GetSetParser implements CommandParser<GetSetCommand> {
     @Override
     public GetSetCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String value = toRune(command[idx]);
-        byte[] rawValue = toBytes(command[idx]);
+        byte[] value = toBytes(command[idx]);
         idx++;
-        return new GetSetCommand(key, value, rawKey, rawValue);
+        return new GetSetCommand(key, value);
     }
 
 }

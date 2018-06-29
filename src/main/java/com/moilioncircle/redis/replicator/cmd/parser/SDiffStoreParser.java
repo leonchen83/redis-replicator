@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SDiffStoreCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,16 +29,13 @@ public class SDiffStoreParser implements CommandParser<SDiffStoreCommand> {
     @Override
     public SDiffStoreCommand parse(Object[] command) {
         int idx = 1;
-        String destination = toRune(command[idx]);
-        byte[] rawDestination = toBytes(command[idx]);
+        byte[] destination = toBytes(command[idx]);
         idx++;
-        String[] keys = new String[command.length - 2];
-        byte[][] rawKeys = new byte[command.length - 2][];
+        byte[][] keys = new byte[command.length - 2][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            keys[j] = toRune(command[i]);
-            rawKeys[j] = toBytes(command[i]);
+            keys[j] = toBytes(command[i]);
         }
-        return new SDiffStoreCommand(destination, keys, rawDestination, rawKeys);
+        return new SDiffStoreCommand(destination, keys);
     }
 
 }

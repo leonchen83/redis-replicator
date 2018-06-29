@@ -16,13 +16,9 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,41 +28,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @since 2.1.0
  */
 public class AbstractReplicatorListener implements ReplicatorListener {
-    protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
-    protected final List<CommandListener> commandListeners = new CopyOnWriteArrayList<>();
+    protected final List<EventListener> eventListeners = new CopyOnWriteArrayList<>();
     protected final List<RawByteListener> rawByteListeners = new CopyOnWriteArrayList<>();
-    protected final List<AuxFieldListener> auxFieldListeners = new CopyOnWriteArrayList<>();
     protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
 
     @Override
-    public boolean addCommandListener(CommandListener listener) {
-        return commandListeners.add(listener);
+    public boolean addEventListener(EventListener listener) {
+        return eventListeners.add(listener);
     }
 
     @Override
-    public boolean removeCommandListener(CommandListener listener) {
-        return commandListeners.remove(listener);
-    }
-
-    @Override
-    public boolean addRdbListener(RdbListener listener) {
-        return rdbListeners.add(listener);
-    }
-
-    @Override
-    public boolean removeRdbListener(RdbListener listener) {
-        return rdbListeners.remove(listener);
-    }
-
-    @Override
-    public boolean addAuxFieldListener(AuxFieldListener listener) {
-        return auxFieldListeners.add(listener);
-    }
-
-    @Override
-    public boolean removeAuxFieldListener(AuxFieldListener listener) {
-        return auxFieldListeners.remove(listener);
+    public boolean removeEventListener(EventListener listener) {
+        return eventListeners.remove(listener);
     }
 
     @Override
@@ -99,48 +73,10 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         return exceptionListeners.remove(listener);
     }
 
-    /**
-     * @param rawBytes input stream raw bytes
-     * @since 2.2.0
-     * @deprecated notice that this method will remove in version 3.0.0
-     */
-    @Deprecated
-    public void handle(byte... rawBytes) {
-        doRawByteListener(rawBytes);
-    }
-
-    protected void doCommandListener(Replicator replicator, Command command) {
-        if (commandListeners.isEmpty()) return;
-        for (CommandListener listener : commandListeners) {
-            listener.handle(replicator, command);
-        }
-    }
-
-    protected void doRdbListener(Replicator replicator, KeyValuePair<?> kv) {
-        if (rdbListeners.isEmpty()) return;
-        for (RdbListener listener : rdbListeners) {
-            listener.handle(replicator, kv);
-        }
-    }
-
-    protected void doAuxFieldListener(Replicator replicator, AuxField auxField) {
-        if (auxFieldListeners.isEmpty()) return;
-        for (AuxFieldListener listener : auxFieldListeners) {
-            listener.handle(replicator, auxField);
-        }
-    }
-
-    protected void doPreFullSync(Replicator replicator) {
-        if (rdbListeners.isEmpty()) return;
-        for (RdbListener listener : rdbListeners) {
-            listener.preFullSync(replicator);
-        }
-    }
-
-    protected void doPostFullSync(Replicator replicator, final long checksum) {
-        if (rdbListeners.isEmpty()) return;
-        for (RdbListener listener : rdbListeners) {
-            listener.postFullSync(replicator, checksum);
+    protected void doEventListener(Replicator replicator, Event event) {
+        if (eventListeners.isEmpty()) return;
+        for (EventListener listener : eventListeners) {
+            listener.onEvent(replicator, event);
         }
     }
 
@@ -151,17 +87,10 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         }
     }
 
-    protected void doExceptionListener(Replicator replicator, Throwable throwable, Object event) {
+    protected void doExceptionListener(Replicator replicator, Throwable throwable, Event event) {
         if (exceptionListeners.isEmpty()) return;
         for (ExceptionListener listener : exceptionListeners) {
             listener.handle(replicator, throwable, event);
-        }
-    }
-
-    protected void doRawByteListener(byte... bytes) {
-        if (rawByteListeners.isEmpty()) return;
-        for (RawByteListener listener : rawByteListeners) {
-            listener.handle(bytes);
         }
     }
 }

@@ -42,8 +42,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
     @Override
     public BitFieldCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         List<Statement> list = new ArrayList<>();
         if (idx < command.length) {
@@ -66,7 +65,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
             } while (isEquals(toRune(command[idx]), "OVERFLOW"));
         }
 
-        return new BitFieldCommand(key, list, overflows, rawKey);
+        return new BitFieldCommand(key, list, overflows);
     }
 
     private int parseOverFlow(int i, Object[] params, OverFlow overFlow) {
@@ -124,52 +123,40 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
     private int parseIncrBy(int i, Object[] params, IncrByTypeOffsetIncrement incrByTypeOffsetIncrement) {
         int idx = i;
         accept(toRune(params[idx++]), "INCRBY");
-        String type = toRune(params[idx]);
-        byte[] rawType = toBytes(params[idx]);
+        byte[] type = toBytes(params[idx]);
         idx++;
-        String offset = toRune(params[idx]);
-        byte[] rawOffset = toBytes(params[idx]);
+        byte[] offset = toBytes(params[idx]);
         idx++;
         long increment = toLong(params[idx++]);
         incrByTypeOffsetIncrement.setType(type);
         incrByTypeOffsetIncrement.setOffset(offset);
         incrByTypeOffsetIncrement.setIncrement(increment);
-        incrByTypeOffsetIncrement.setRawType(rawType);
-        incrByTypeOffsetIncrement.setRawOffset(rawOffset);
         return idx;
     }
 
     private int parseSet(int i, Object[] params, SetTypeOffsetValue setTypeOffsetValue) {
         int idx = i;
         accept(toRune(params[idx++]), "SET");
-        String type = toRune(params[idx]);
-        byte[] rawType = toBytes(params[idx]);
+        byte[] type = toBytes(params[idx]);
         idx++;
-        String offset = toRune(params[idx]);
-        byte[] rawOffset = toBytes(params[idx]);
+        byte[] offset = toBytes(params[idx]);
         idx++;
         long value = toLong(params[idx++]);
         setTypeOffsetValue.setType(type);
         setTypeOffsetValue.setOffset(offset);
         setTypeOffsetValue.setValue(value);
-        setTypeOffsetValue.setRawType(rawType);
-        setTypeOffsetValue.setRawOffset(rawOffset);
         return idx;
     }
 
     private int parseGet(int i, Object[] params, GetTypeOffset getTypeOffset) {
         int idx = i;
         accept(toRune(params[idx++]), "GET");
-        String type = toRune(params[idx]);
-        byte[] rawType = toBytes(params[idx]);
+        byte[] type = toBytes(params[idx]);
         idx++;
-        String offset = toRune(params[idx]);
-        byte[] rawOffset = toBytes(params[idx]);
+        byte[] offset = toBytes(params[idx]);
         idx++;
         getTypeOffset.setType(type);
         getTypeOffset.setOffset(offset);
-        getTypeOffset.setRawType(rawType);
-        getTypeOffset.setRawOffset(rawOffset);
         return idx;
     }
 

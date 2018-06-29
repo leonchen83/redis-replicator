@@ -26,62 +26,30 @@ public class GetSetCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String value;
-    private byte[] rawKey;
-    private byte[] rawValue;
+    private byte[] key;
+    private byte[] value;
 
     public GetSetCommand() {
     }
 
-    public GetSetCommand(String key, String value) {
-        this(key, value, null, null);
-    }
-
-    public GetSetCommand(String key, String value, byte[] rawKey, byte[] rawValue) {
+    public GetSetCommand(byte[] key, byte[] value) {
         this.key = key;
         this.value = value;
-        this.rawKey = rawKey;
-        this.rawValue = rawValue;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(byte[] value) {
         this.value = value;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawValue() {
-        return rawValue;
-    }
-
-    public void setRawValue(byte[] rawValue) {
-        this.rawValue = rawValue;
-    }
-
-    @Override
-    public String toString() {
-        return "GetSetCommand{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
     }
 }

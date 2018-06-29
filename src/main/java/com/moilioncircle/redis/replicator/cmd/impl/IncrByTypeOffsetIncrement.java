@@ -24,40 +24,32 @@ public class IncrByTypeOffsetIncrement implements Statement {
 
     private static final long serialVersionUID = 1L;
 
-    private String type;
-    private String offset;
+    private byte[] type;
+    private byte[] offset;
     private long increment;
-    private byte[] rawType;
-    private byte[] rawOffset;
 
     public IncrByTypeOffsetIncrement() {
     }
 
-    public IncrByTypeOffsetIncrement(String type, String offset, long increment) {
-        this(type, offset, increment, null, null);
-    }
-
-    public IncrByTypeOffsetIncrement(String type, String offset, long increment, byte[] rawType, byte[] rawOffset) {
+    public IncrByTypeOffsetIncrement(byte[] type, byte[] offset, long increment) {
         this.type = type;
         this.offset = offset;
         this.increment = increment;
-        this.rawType = rawType;
-        this.rawOffset = rawOffset;
     }
 
-    public String getType() {
+    public byte[] getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(byte[] type) {
         this.type = type;
     }
 
-    public String getOffset() {
+    public byte[] getOffset() {
         return offset;
     }
 
-    public void setOffset(String offset) {
+    public void setOffset(byte[] offset) {
         this.offset = offset;
     }
 
@@ -67,30 +59,5 @@ public class IncrByTypeOffsetIncrement implements Statement {
 
     public void setIncrement(long increment) {
         this.increment = increment;
-    }
-
-    public byte[] getRawType() {
-        return rawType;
-    }
-
-    public void setRawType(byte[] rawType) {
-        this.rawType = rawType;
-    }
-
-    public byte[] getRawOffset() {
-        return rawOffset;
-    }
-
-    public void setRawOffset(byte[] rawOffset) {
-        this.rawOffset = rawOffset;
-    }
-
-    @Override
-    public String toString() {
-        return "IncrByTypeOffsetIncrement{" +
-                "type='" + type + '\'' +
-                ", offset='" + offset + '\'' +
-                ", increment=" + increment +
-                '}';
     }
 }

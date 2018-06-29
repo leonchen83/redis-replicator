@@ -28,39 +28,25 @@ public class BitFieldCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private byte[] rawKey;
+    private byte[] key;
     private List<Statement> statements;
     private List<OverFlow> overFlows;
 
     public BitFieldCommand() {
     }
 
-    public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows) {
-        this(key, statements, overFlows, null);
-    }
-
-    public BitFieldCommand(String key, List<Statement> statements, List<OverFlow> overFlows, byte[] rawKey) {
+    public BitFieldCommand(byte[] key, List<Statement> statements, List<OverFlow> overFlows) {
         this.key = key;
-        this.rawKey = rawKey;
         this.statements = statements;
         this.overFlows = overFlows;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
     }
 
     public List<Statement> getStatements() {
@@ -77,14 +63,5 @@ public class BitFieldCommand implements Command {
 
     public void setOverFlows(List<OverFlow> overFlows) {
         this.overFlows = overFlows;
-    }
-
-    @Override
-    public String toString() {
-        return "BitFieldCommand{" +
-                "key='" + key + '\'' +
-                ", statements=" + statements +
-                ", overFlows=" + overFlows +
-                '}';
     }
 }

@@ -26,32 +26,24 @@ public class PSetExCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private long ex;
-    private String value;
-    private byte[] rawKey;
-    private byte[] rawValue;
+    private byte[] value;
 
     public PSetExCommand() {
     }
 
-    public PSetExCommand(String key, long ex, String value) {
-        this(key, ex, value, null, null);
-    }
-
-    public PSetExCommand(String key, long ex, String value, byte[] rawKey, byte[] rawValue) {
+    public PSetExCommand(byte[] key, long ex, byte[] value) {
         this.key = key;
         this.ex = ex;
         this.value = value;
-        this.rawKey = rawKey;
-        this.rawValue = rawValue;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -63,36 +55,11 @@ public class PSetExCommand implements Command {
         this.ex = ex;
     }
 
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(byte[] value) {
         this.value = value;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawValue() {
-        return rawValue;
-    }
-
-    public void setRawValue(byte[] rawValue) {
-        this.rawValue = rawValue;
-    }
-
-    @Override
-    public String toString() {
-        return "PSetExCommand{" +
-                "key='" + key + '\'' +
-                ", ex=" + ex +
-                ", value='" + value + '\'' +
-                '}';
     }
 }

@@ -35,10 +35,9 @@ public class ScriptParser implements CommandParser<ScriptCommand> {
         int idx = 1;
         String keyword = toRune(command[idx++]);
         if (isEquals(keyword, "LOAD")) {
-            String script = toRune(command[idx]);
-            byte[] rawScript = toBytes(command[idx]);
+            byte[] script = toBytes(command[idx]);
             idx++;
-            return new ScriptLoadCommand(script, rawScript);
+            return new ScriptLoadCommand(script);
         } else if (isEquals(keyword, "FLUSH")) {
             return new ScriptFlushCommand();
         }

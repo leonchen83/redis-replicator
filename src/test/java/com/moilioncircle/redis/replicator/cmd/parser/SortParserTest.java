@@ -17,11 +17,11 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.impl.SortCommand;
+import junit.framework.TestCase;
 import org.junit.Test;
 
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.DESC;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.NONE;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen
@@ -35,36 +35,36 @@ public class SortParserTest extends AbstractParserTest {
             SortParser parser = new SortParser();
             SortCommand cmd = parser.parse(toObjectArray("SORT mylist".split(" ")));
             assertEquals("mylist", cmd.getKey());
-            assertEquals(NONE, cmd.getOrder());
+            TestCase.assertEquals(NONE, cmd.getOrder());
             assertEquals(0, cmd.getGetPatterns().length);
-            assertEquals(null, cmd.getAlpha());
+            assertEquals(false, cmd.isAlpha());
         }
 
         {
             SortParser parser = new SortParser();
             SortCommand cmd = parser.parse(toObjectArray("SORT mylist DESC".split(" ")));
             assertEquals("mylist", cmd.getKey());
-            assertEquals(DESC, cmd.getOrder());
+            TestCase.assertEquals(DESC, cmd.getOrder());
             assertEquals(0, cmd.getGetPatterns().length);
-            assertEquals(null, cmd.getAlpha());
+            assertEquals(false, cmd.isAlpha());
         }
 
         {
             SortParser parser = new SortParser();
             SortCommand cmd = parser.parse(toObjectArray("SORT mylist ALPHA DESC".split(" ")));
             assertEquals("mylist", cmd.getKey());
-            assertEquals(DESC, cmd.getOrder());
+            TestCase.assertEquals(DESC, cmd.getOrder());
             assertEquals(0, cmd.getGetPatterns().length);
-            assertEquals(true, cmd.getAlpha());
+            assertEquals(true, cmd.isAlpha());
         }
 
         {
             SortParser parser = new SortParser();
             SortCommand cmd = parser.parse(toObjectArray("SORT mylist ALPHA DESC limit 0 10".split(" ")));
             assertEquals("mylist", cmd.getKey());
-            assertEquals(DESC, cmd.getOrder());
+            TestCase.assertEquals(DESC, cmd.getOrder());
             assertEquals(0, cmd.getGetPatterns().length);
-            assertEquals(true, cmd.getAlpha());
+            assertEquals(true, cmd.isAlpha());
             assertEquals(0L, cmd.getLimit().getOffset());
             assertEquals(10L, cmd.getLimit().getCount());
         }
@@ -73,9 +73,9 @@ public class SortParserTest extends AbstractParserTest {
             SortParser parser = new SortParser();
             SortCommand cmd = parser.parse(toObjectArray("sort mylist alpha desc limit 0 10 by weight_*".split(" ")));
             assertEquals("mylist", cmd.getKey());
-            assertEquals(DESC, cmd.getOrder());
+            TestCase.assertEquals(DESC, cmd.getOrder());
             assertEquals(0, cmd.getGetPatterns().length);
-            assertEquals(true, cmd.getAlpha());
+            assertEquals(true, cmd.isAlpha());
             assertEquals(0L, cmd.getLimit().getOffset());
             assertEquals(10L, cmd.getLimit().getCount());
             assertEquals("weight_*", cmd.getByPattern());
@@ -85,8 +85,8 @@ public class SortParserTest extends AbstractParserTest {
             SortParser parser = new SortParser();
             SortCommand cmd = parser.parse(toObjectArray("sort mylist alpha desc limit 0 10 by weight_* get object_* get #".split(" ")));
             assertEquals("mylist", cmd.getKey());
-            assertEquals(DESC, cmd.getOrder());
-            assertEquals(true, cmd.getAlpha());
+            TestCase.assertEquals(DESC, cmd.getOrder());
+            assertEquals(true, cmd.isAlpha());
             assertEquals(0L, cmd.getLimit().getOffset());
             assertEquals(10L, cmd.getLimit().getCount());
             assertEquals("weight_*", cmd.getByPattern());

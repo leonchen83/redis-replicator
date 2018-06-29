@@ -18,9 +18,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.impl.LInsertCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LInsertType;
+import junit.framework.TestCase;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen
@@ -32,13 +31,13 @@ public class LInsertParserTest extends AbstractParserTest {
         LInsertParser parser = new LInsertParser();
         LInsertCommand cmd = parser.parse(toObjectArray("LINSERT mylist BEFORE World There".split(" ")));
         assertEquals("mylist", cmd.getKey());
-        assertEquals(LInsertType.BEFORE, cmd.getlInsertType());
+        TestCase.assertEquals(LInsertType.BEFORE, cmd.getlInsertType());
         assertEquals("World", cmd.getPivot());
         assertEquals("There", cmd.getValue());
 
         cmd = parser.parse(toObjectArray("LINSERT mylist AFTER World There".split(" ")));
         assertEquals("mylist", cmd.getKey());
-        assertEquals(LInsertType.AFTER, cmd.getlInsertType());
+        TestCase.assertEquals(LInsertType.AFTER, cmd.getlInsertType());
         assertEquals("World", cmd.getPivot());
         assertEquals("There", cmd.getValue());
     }

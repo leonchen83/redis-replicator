@@ -26,83 +26,40 @@ public class HSetNxCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String field;
-    private String value;
-    private byte[] rawKey;
-    private byte[] rawField;
-    private byte[] rawValue;
+    private byte[] key;
+    private byte[] field;
+    private byte[] value;
 
     public HSetNxCommand() {
     }
 
-    public HSetNxCommand(String key, String field, String value) {
-        this(key, field, value, null, null, null);
-    }
-
-    public HSetNxCommand(String key, String field, String value, byte[] rawKey, byte[] rawField, byte[] rawValue) {
+    public HSetNxCommand(byte[] key, byte[] field, byte[] value) {
         this.key = key;
         this.field = field;
         this.value = value;
-        this.rawKey = rawKey;
-        this.rawField = rawField;
-        this.rawValue = rawValue;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String getField() {
+    public byte[] getField() {
         return field;
     }
 
-    public void setField(String field) {
+    public void setField(byte[] field) {
         this.field = field;
     }
 
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(byte[] value) {
         this.value = value;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawField() {
-        return rawField;
-    }
-
-    public void setRawField(byte[] rawField) {
-        this.rawField = rawField;
-    }
-
-    public byte[] getRawValue() {
-        return rawValue;
-    }
-
-    public void setRawValue(byte[] rawValue) {
-        this.rawValue = rawValue;
-    }
-
-    @Override
-    public String toString() {
-        return "HSetNxCommand{" +
-                "key='" + key + '\'' +
-                ", field='" + field + '\'' +
-                ", value='" + value + '\'' +
-                '}';
     }
 }

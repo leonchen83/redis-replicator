@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,36 +26,26 @@ public class EvalCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String script;
+    private byte[] script;
     private int numkeys;
-    private String[] keys;
-    private String[] args;
-    private byte[] rawScript;
-    private byte[][] rawKeys;
-    private byte[][] rawArgs;
+    private byte[][] keys;
+    private byte[][] args;
 
     public EvalCommand() {
     }
 
-    public EvalCommand(String script, int numkeys, String[] keys, String[] args) {
-        this(script, numkeys, keys, args, null, null, null);
-    }
-
-    public EvalCommand(String script, int numkeys, String[] keys, String[] args, byte[] rawScript, byte[][] rawKeys, byte[][] rawArgs) {
+    public EvalCommand(byte[] script, int numkeys, byte[][] keys, byte[][] args) {
         this.script = script;
         this.numkeys = numkeys;
         this.keys = keys;
         this.args = args;
-        this.rawScript = rawScript;
-        this.rawKeys = rawKeys;
-        this.rawArgs = rawArgs;
     }
 
-    public String getScript() {
+    public byte[] getScript() {
         return script;
     }
 
-    public void setScript(String script) {
+    public void setScript(byte[] script) {
         this.script = script;
     }
 
@@ -69,53 +57,19 @@ public class EvalCommand implements Command {
         this.numkeys = numkeys;
     }
 
-    public String[] getKeys() {
+    public byte[][] getKeys() {
         return keys;
     }
 
-    public void setKeys(String[] keys) {
+    public void setKeys(byte[][] keys) {
         this.keys = keys;
     }
 
-    public String[] getArgs() {
+    public byte[][] getArgs() {
         return args;
     }
 
-    public void setArgs(String[] args) {
+    public void setArgs(byte[][] args) {
         this.args = args;
-    }
-
-    public byte[] getRawScript() {
-        return rawScript;
-    }
-
-    public void setRawScript(byte[] rawScript) {
-        this.rawScript = rawScript;
-    }
-
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
-
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
-
-    public byte[][] getRawArgs() {
-        return rawArgs;
-    }
-
-    public void setRawArgs(byte[][] rawArgs) {
-        this.rawArgs = rawArgs;
-    }
-
-    @Override
-    public String toString() {
-        return "EvalCommand{" +
-                "script='" + script + '\'' +
-                ", numkeys=" + numkeys +
-                ", keys=" + Arrays.toString(keys) +
-                ", args=" + Arrays.toString(args) +
-                '}';
     }
 }

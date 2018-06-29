@@ -18,9 +18,9 @@ package com.moilioncircle.examples.stream;
 
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueStream;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 
 import java.util.NavigableMap;
@@ -33,27 +33,27 @@ import java.util.NavigableMap;
 public class StreamExample {
     public static void main(String[] args) throws Exception {
         Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
-        r.addRdbListener(new RdbListener.Adaptor() {
-            @SuppressWarnings("unused")
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueStream) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueStream) {
+                    KeyStringValueStream skv = (KeyStringValueStream) event;
                     // key
-                    String key = kv.getKey();
-                    
+                    byte[] key = skv.getKey();
+
                     // stream
-                    Stream stream = kv.getValueAsStream();
+                    Stream stream = skv.getValue();
                     // last stream id
                     stream.getLastId();
-                    
+
                     // entries
                     NavigableMap<Stream.ID, Stream.Entry> entries = stream.getEntries();
-                    
+
                     // optional : group
                     for (Stream.Group group : stream.getGroups()) {
                         // group PEL(pending entries list)
                         NavigableMap<Stream.ID, Stream.Nack> gpel = group.getPendingEntries();
-                        
+
                         // consumer
                         for (Stream.Consumer consumer : group.getConsumers()) {
                             // consumer PEL(pending entries list)

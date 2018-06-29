@@ -22,9 +22,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.HIncrByCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.IncrByCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.IncrCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZIncrByCommand;
+import junit.framework.TestCase;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen
@@ -62,7 +61,7 @@ public class DecrByParserTest extends AbstractParserTest {
             ZIncrByParser parser = new ZIncrByParser();
             ZIncrByCommand cmd = parser.parse(toObjectArray("zincrby key 5 mem".split(" ")));
             assertEquals("key", cmd.getKey());
-            assertEquals(5, cmd.getIncrement(), 0);
+            TestCase.assertEquals(5, cmd.getIncrement(), 0);
             assertEquals("mem", cmd.getMember());
         }
 

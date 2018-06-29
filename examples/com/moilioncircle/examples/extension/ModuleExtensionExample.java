@@ -19,13 +19,12 @@ package com.moilioncircle.examples.extension;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.DefaultRdbModuleParser;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
@@ -47,20 +46,15 @@ public class ModuleExtensionExample {
         RedisReplicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueModule) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueModule) {
+                    KeyStringValueModule kv = (KeyStringValueModule) event;
                     System.out.println(kv);
                 }
-            }
-        });
-
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if (command instanceof HelloTypeCommand) {
-                    System.out.println(command);
+                if (event instanceof HelloTypeCommand) {
+                    System.out.println(event);
                 }
             }
         });

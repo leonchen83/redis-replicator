@@ -53,12 +53,4 @@ public class SwapDBCommand implements Command {
     public void setTarget(int target) {
         this.target = target;
     }
-
-    @Override
-    public String toString() {
-        return "SwapDBCommand{" +
-                "source=" + source +
-                ", target=" + target +
-                '}';
-    }
 }

@@ -21,16 +21,14 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.RedisURI;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.DefaultCommandParser;
 import com.moilioncircle.redis.replicator.cmd.parser.PingParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ReplConfParser;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
@@ -78,42 +76,42 @@ public class MigrationExample {
         }
         final AtomicInteger dbnum = new AtomicInteger(-1);
         Replicator r = dress(new RedisReplicator(suri));
-        r.addRdbListener(new RdbListener.Adaptor() {
+
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (!(kv instanceof DumpKeyValuePair)) return;
-                // Step1: select db
-                DB db = kv.getDb();
-                int index;
-                if (db != null && (index = (int) db.getDbNumber()) != dbnum.get()) {
-                    target.send(SELECT, toByteArray(index));
-                    dbnum.set(index);
-                    System.out.println("SELECT:" + index);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof DumpKeyValuePair) {
+                    DumpKeyValuePair dkv = (DumpKeyValuePair) event;
+                    // Step1: select db
+                    DB db = dkv.getDb();
+                    int index;
+                    if (db != null && (index = (int) db.getDbNumber()) != dbnum.get()) {
+                        target.send(SELECT, toByteArray(index));
+                        dbnum.set(index);
+                        System.out.println("SELECT:" + index);
+                    }
+
+                    // Step2: restore dump data
+                    if (dkv.getExpiredMs() == null) {
+                        Object r = target.restore(dkv.getKey(), 0L, dkv.getValue(), true);
+                        System.out.println(r);
+                    } else {
+                        long ms = dkv.getExpiredMs() - System.currentTimeMillis();
+                        if (ms <= 0) return;
+                        Object r = target.restore(dkv.getKey(), ms, dkv.getValue(), true);
+                        System.out.println(r);
+                    }
                 }
 
-                // Step2: restore dump data
-                DumpKeyValuePair mkv = (DumpKeyValuePair) kv;
-                if (mkv.getExpiredMs() == null) {
-                    Object r = target.restore(mkv.getRawKey(), 0L, mkv.getValue(), true);
-                    System.out.println(r);
-                } else {
-                    long ms = mkv.getExpiredMs() - System.currentTimeMillis();
-                    if (ms <= 0) return;
-                    Object r = target.restore(mkv.getRawKey(), ms, mkv.getValue(), true);
+                if (event instanceof DefaultCommand) {
+                    // Step3: sync aof command
+                    DefaultCommand dc = (DefaultCommand) event;
+                    Object r = target.send(dc.getCommand(), dc.getArgs());
                     System.out.println(r);
                 }
             }
         });
-        r.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if (!(command instanceof DefaultCommand)) return;
-                // Step3: sync aof command
-                DefaultCommand dc = (DefaultCommand) command;
-                Object r = target.send(dc.getCommand(), dc.getArgs());
-                System.out.println(r);
-            }
-        });
+
         r.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {

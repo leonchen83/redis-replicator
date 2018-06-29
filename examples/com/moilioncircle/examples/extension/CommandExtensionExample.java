@@ -19,9 +19,10 @@ package com.moilioncircle.examples.extension;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
@@ -36,12 +37,11 @@ public class CommandExtensionExample {
         final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
 
         replicator.addCommandParser(CommandName.name("APPEND"), new YourAppendParser());
-
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                if (command instanceof YourAppendParser.YourAppendCommand) {
-                    YourAppendParser.YourAppendCommand yourAppendCommand = (YourAppendParser.YourAppendCommand) command;
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof YourAppendParser.YourAppendCommand) {
+                    YourAppendParser.YourAppendCommand yourAppendCommand = (YourAppendParser.YourAppendCommand) event;
                     System.out.println(yourAppendCommand.key);
                     System.out.println(yourAppendCommand.value);
                 }

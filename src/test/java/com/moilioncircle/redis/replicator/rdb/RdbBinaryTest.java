@@ -21,14 +21,13 @@ import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.impl.HMSetCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SAddCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -51,31 +50,24 @@ public class RdbBinaryTest {
     @org.junit.Test
     @SuppressWarnings("resource")
     public void testRdb() throws IOException {
-        final List<KeyValuePair<?>> list = new ArrayList<>();
+        final List<KeyValuePair<byte[], ?>> list = new ArrayList<>();
         Replicator r = new RedisReplicator(RdbBinaryTest.class.getClassLoader().getResourceAsStream("binarydump.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
-        r.addRdbListener(new RdbListener() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                list.add(kv);
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair) {
+                    KeyValuePair<byte[], ?> kv = (KeyValuePair<byte[], ?>) event;
+                    list.add(kv);
+                }
             }
         });
         r.open();
-        for (KeyValuePair<?> kv : list) {
-            if (kv.getKey().equals("seri1")) {
-                KeyStringValueString ksvs = (KeyStringValueString) kv;
+        for (KeyValuePair<byte[], ?> kv : list) {
+            if (Strings.toString(kv.getKey()).equals("seri1")) {
+                KeyValuePair<byte[], byte[]> ksvs = (KeyValuePair<byte[], byte[]>) kv;
                 try {
-                    Test obj = (Test) toObject(ksvs.getRawValue());
+                    Test obj = (Test) toObject(ksvs.getValue());
                     assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
                     assertEquals(1000301032, obj.getB());
                     assertEquals(440910321039102L, obj.getC());
@@ -83,10 +75,10 @@ public class RdbBinaryTest {
                     fail();
                 }
             }
-            if (kv.getKey().equals("seri2")) {
-                KeyStringValueHash ksvs = (KeyStringValueHash) kv;
+            if (Strings.toString(kv.getKey()).equals("seri2")) {
+                KeyValuePair<byte[], Map<byte[], byte[]>> ksvs = (KeyValuePair<byte[], Map<byte[], byte[]>>) kv;
                 try {
-                    Test obj = (Test) toObject(ksvs.getRawValue(), "field2".getBytes());
+                    Test obj = (Test) toObject(ksvs.getValue(), "field2".getBytes());
                     assertEquals("中文测试12131", obj.getA());
                     assertEquals(1000301032, obj.getB());
                     assertEquals(440910321039102L, obj.getC());
@@ -94,10 +86,10 @@ public class RdbBinaryTest {
                     fail();
                 }
             }
-            if (kv.getKey().equals("seri3")) {
-                KeyStringValueList ksvs = (KeyStringValueList) kv;
+            if (Strings.toString(kv.getKey()).equals("seri3")) {
+                KeyValuePair<byte[], List<byte[]>> ksvs = (KeyValuePair<byte[], List<byte[]>>) kv;
                 try {
-                    Test obj = (Test) toObject(ksvs.getRawValue());
+                    Test obj = (Test) toObject(ksvs.getValue());
                     assertEquals("中文测试jfskdfjslf", obj.getA());
                     assertEquals(1000301032, obj.getB());
                     assertEquals(440910321039102L, obj.getC());
@@ -114,10 +106,12 @@ public class RdbBinaryTest {
         final List<Command> list = new ArrayList<>();
         Replicator r = new RedisReplicator(RdbBinaryTest.class.getClassLoader().getResourceAsStream("appendonly7.aof"), FileType.AOF,
                 Configuration.defaultSetting());
-        r.addCommandListener(new CommandListener() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                list.add(command);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof Command) {
+                    list.add((Command) event);
+                }
             }
         });
         r.open();
@@ -125,7 +119,7 @@ public class RdbBinaryTest {
             if (cmd instanceof SetCommand) {
                 SetCommand s = (SetCommand) cmd;
                 try {
-                    Test obj = (Test) toObject(s.getRawValue());
+                    Test obj = (Test) toObject(s.getValue());
                     assertEquals("中文测试wuqioewqoi jdklsajf jslaj djsldfjlsjqweajdslfdl3019fjdsf9034930", obj.getA());
                     assertEquals(1000301032, obj.getB());
                     assertEquals(440910321039102L, obj.getC());
@@ -136,7 +130,7 @@ public class RdbBinaryTest {
             if (cmd instanceof HMSetCommand) {
                 HMSetCommand h = (HMSetCommand) cmd;
                 try {
-                    Test obj = (Test) toObject(h.getRawFields(), "field2".getBytes());
+                    Test obj = (Test) toObject(h.getFields(), "field2".getBytes());
                     assertEquals("中文测试12131", obj.getA());
                     assertEquals(1000301032, obj.getB());
                     assertEquals(440910321039102L, obj.getC());
@@ -147,7 +141,7 @@ public class RdbBinaryTest {
             if (cmd instanceof SAddCommand) {
                 SAddCommand s = (SAddCommand) cmd;
                 try {
-                    Test obj = (Test) toObject(s.getRawMembers()[0]);
+                    Test obj = (Test) toObject(s.getMembers()[0]);
                     assertEquals("中文测试jfskdfjslf", obj.getA());
                     assertEquals(1000301032, obj.getB());
                     assertEquals(440910321039102L, obj.getC());

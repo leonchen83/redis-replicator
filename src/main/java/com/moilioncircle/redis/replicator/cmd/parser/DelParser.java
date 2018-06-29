@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.DelCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,13 +29,11 @@ public class DelParser implements CommandParser<DelCommand> {
     @Override
     public DelCommand parse(Object[] command) {
         int idx = 1;
-        String[] keys = new String[command.length - 1];
-        byte[][] rawKeys = new byte[command.length - 1][];
+        byte[][] keys = new byte[command.length - 1][];
         for (int i = idx, j = 0; i < command.length; i++, j++) {
-            keys[j] = toRune(command[i]);
-            rawKeys[j] = toBytes(command[i]);
+            keys[j] = toBytes(command[i]);
         }
-        return new DelCommand(keys, rawKeys);
+        return new DelCommand(keys);
     }
 
 }

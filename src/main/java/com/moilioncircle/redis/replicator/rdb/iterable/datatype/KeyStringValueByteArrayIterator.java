@@ -24,6 +24,6 @@ import java.util.Iterator;
  * @author Leon Chen
  * @since 2.3.0
  */
-public class KeyStringValueByteArrayIterator extends KeyValuePair<Iterator<byte[]>> {
+public class KeyStringValueByteArrayIterator extends KeyValuePair<byte[], Iterator<byte[]>> {
     private static final long serialVersionUID = 1L;
 }

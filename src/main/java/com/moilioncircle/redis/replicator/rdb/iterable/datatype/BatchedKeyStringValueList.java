@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd;
+package com.moilioncircle.redis.replicator.rdb.iterable.datatype;
 
-import com.moilioncircle.redis.replicator.Replicator;
+import java.util.List;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public interface CommandListener {
-    void handle(Replicator replicator, Command command);
+public class BatchedKeyStringValueList extends BatchedKeyValuePair<byte[], List<byte[]>> {
+    private static final long serialVersionUID = 1L;
 }

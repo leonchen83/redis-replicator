@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,36 +26,28 @@ public class ZInterStoreCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String destination;
+    private byte[] destination;
     private int numkeys;
-    private String[] keys;
+    private byte[][] keys;
     private double[] weights;
     private AggregateType aggregateType;
-    private byte[] rawDestination;
-    private byte[][] rawKeys;
 
     public ZInterStoreCommand() {
     }
 
-    public ZInterStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType) {
-        this(destination, numkeys, keys, weights, aggregateType, null, null);
-    }
-
-    public ZInterStoreCommand(String destination, int numkeys, String[] keys, double[] weights, AggregateType aggregateType, byte[] rawDestination, byte[][] rawKeys) {
+    public ZInterStoreCommand(byte[] destination, int numkeys, byte[][] keys, double[] weights, AggregateType aggregateType) {
         this.destination = destination;
         this.numkeys = numkeys;
         this.keys = keys;
         this.weights = weights;
         this.aggregateType = aggregateType;
-        this.rawDestination = rawDestination;
-        this.rawKeys = rawKeys;
     }
 
-    public String getDestination() {
+    public byte[] getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(byte[] destination) {
         this.destination = destination;
     }
 
@@ -69,11 +59,11 @@ public class ZInterStoreCommand implements Command {
         this.numkeys = numkeys;
     }
 
-    public String[] getKeys() {
+    public byte[][] getKeys() {
         return keys;
     }
 
-    public void setKeys(String[] keys) {
+    public void setKeys(byte[][] keys) {
         this.keys = keys;
     }
 
@@ -92,32 +82,4 @@ public class ZInterStoreCommand implements Command {
     public void setAggregateType(AggregateType aggregateType) {
         this.aggregateType = aggregateType;
     }
-
-    public byte[] getRawDestination() {
-        return rawDestination;
-    }
-
-    public void setRawDestination(byte[] rawDestination) {
-        this.rawDestination = rawDestination;
-    }
-
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
-
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
-
-    @Override
-    public String toString() {
-        return "ZInterStoreCommand{" +
-                "destination='" + destination + '\'' +
-                ", numkeys=" + numkeys +
-                ", keys=" + Arrays.toString(keys) +
-                ", weights=" + Arrays.toString(weights) +
-                ", aggregateType=" + aggregateType +
-                '}';
-    }
-
 }

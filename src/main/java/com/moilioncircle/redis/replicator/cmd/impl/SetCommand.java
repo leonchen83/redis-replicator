@@ -26,44 +26,36 @@ public class SetCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String value;
+    private byte[] key;
+    private byte[] value;
     private Integer ex;
     private Long px;
     private ExistType existType;
-    private byte[] rawKey;
-    private byte[] rawValue;
 
     public SetCommand() {
     }
 
-    public SetCommand(String key, String value, Integer ex, Long px, ExistType existType) {
-        this(key, value, ex, px, existType, null, null);
-    }
-
-    public SetCommand(String key, String value, Integer ex, Long px, ExistType existType, byte[] rawKey, byte[] rawValue) {
+    public SetCommand(byte[] key, byte[] value, Integer ex, Long px, ExistType existType) {
         this.key = key;
         this.value = value;
         this.ex = ex;
         this.px = px;
         this.existType = existType;
-        this.rawKey = rawKey;
-        this.rawValue = rawValue;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(byte[] value) {
         this.value = value;
     }
 
@@ -89,32 +81,5 @@ public class SetCommand implements Command {
 
     public void setExistType(ExistType existType) {
         this.existType = existType;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawValue() {
-        return rawValue;
-    }
-
-    public void setRawValue(byte[] rawValue) {
-        this.rawValue = rawValue;
-    }
-
-    @Override
-    public String toString() {
-        return "SetCommand{" +
-                "name='" + key + '\'' +
-                ", value='" + value + '\'' +
-                ", ex=" + ex +
-                ", px=" + px +
-                ", existType=" + existType +
-                '}';
     }
 }

@@ -20,10 +20,8 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,16 +36,11 @@ public class MixReadExample {
     public static void readFile() throws IOException {
         final Replicator replicator = new RedisReplicator(new File("./src/test/resources/appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
 
@@ -58,19 +51,12 @@ public class MixReadExample {
     public static void readInputStream() throws IOException {
         final Replicator replicator = new RedisReplicator(MixReadExample.class.getResourceAsStream("/appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
-            }
-        });
-
         replicator.open();
     }
 }

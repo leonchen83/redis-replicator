@@ -26,30 +26,24 @@ public class LTrimCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private long start;
     private long stop;
-    private byte[] rawKey;
 
     public LTrimCommand() {
     }
 
-    public LTrimCommand(String key, long start, long stop) {
-        this(key, start, stop, null);
-    }
-
-    public LTrimCommand(String key, long start, long stop, byte[] rawKey) {
+    public LTrimCommand(byte[] key, long start, long stop) {
         this.key = key;
         this.start = start;
         this.stop = stop;
-        this.rawKey = rawKey;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -67,22 +61,5 @@ public class LTrimCommand implements Command {
 
     public void setStop(long stop) {
         this.stop = stop;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    @Override
-    public String toString() {
-        return "LTrimCommand{" +
-                "key='" + key + '\'' +
-                ", start=" + start +
-                ", stop=" + stop +
-                '}';
     }
 }

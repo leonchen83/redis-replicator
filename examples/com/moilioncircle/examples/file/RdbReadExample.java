@@ -20,8 +20,8 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,10 +37,11 @@ public class RdbReadExample {
         final Replicator replicator = new RedisReplicator(
                 new File("./src/test/resources/dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
 
@@ -52,10 +53,10 @@ public class RdbReadExample {
         final Replicator replicator = new RedisReplicator(
                 RdbReadExample.class.getResourceAsStream("/dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
 

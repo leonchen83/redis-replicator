@@ -37,46 +37,35 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
         int idx = 1;
         String next = toRune(command[idx++]);
         if (isEquals(next, "CREATE")) {
-            String key = toRune(command[idx]);
-            byte[] rawKey = toBytes(command[idx]);
+            byte[] key = toBytes(command[idx]);
             idx++;
-            String group = toRune(command[idx]);
-            byte[] rawGroup = toBytes(command[idx]);
+            byte[] group = toBytes(command[idx]);
             idx++;
-            String id = toRune(command[idx]);
-            byte[] rawId = toBytes(command[idx]);
+            byte[] id = toBytes(command[idx]);
             idx++;
-            return new XGroupCreateCommand(key, group, id, rawKey, rawGroup, rawId);
+            return new XGroupCreateCommand(key, group, id);
         } else if (isEquals(next, "SETID")) {
-            String key = toRune(command[idx]);
-            byte[] rawKey = toBytes(command[idx]);
+            byte[] key = toBytes(command[idx]);
             idx++;
-            String group = toRune(command[idx]);
-            byte[] rawGroup = toBytes(command[idx]);
+            byte[] group = toBytes(command[idx]);
             idx++;
-            String id = toRune(command[idx]);
-            byte[] rawId = toBytes(command[idx]);
+            byte[] id = toBytes(command[idx]);
             idx++;
-            return new XGroupSetIdCommand(key, group, id, rawKey, rawGroup, rawId);
+            return new XGroupSetIdCommand(key, group, id);
         } else if (isEquals(next, "DESTROY")) {
-            String key = toRune(command[idx]);
-            byte[] rawKey = toBytes(command[idx]);
+            byte[] key = toBytes(command[idx]);
             idx++;
-            String group = toRune(command[idx]);
-            byte[] rawGroup = toBytes(command[idx]);
+            byte[] group = toBytes(command[idx]);
             idx++;
-            return new XGroupDestroyCommand(key, group, rawKey, rawGroup);
+            return new XGroupDestroyCommand(key, group);
         } else if (isEquals(next, "DELCONSUMER")) {
-            String key = toRune(command[idx]);
-            byte[] rawKey = toBytes(command[idx]);
+            byte[] key = toBytes(command[idx]);
             idx++;
-            String group = toRune(command[idx]);
-            byte[] rawGroup = toBytes(command[idx]);
+            byte[] group = toBytes(command[idx]);
             idx++;
-            String consumer = toRune(command[idx]);
-            byte[] rawConsumer = toBytes(command[idx]);
+            byte[] consumer = toBytes(command[idx]);
             idx++;
-            return new XGroupDelConsumerCommand(key, group, consumer, rawKey, rawGroup, rawConsumer);
+            return new XGroupDelConsumerCommand(key, group, consumer);
         } else {
             throw new UnsupportedOperationException(next);
         }

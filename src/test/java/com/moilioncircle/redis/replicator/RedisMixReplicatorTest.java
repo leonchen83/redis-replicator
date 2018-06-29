@@ -17,9 +17,9 @@
 package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 
@@ -41,26 +41,15 @@ public class RedisMixReplicatorTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                acc1.incrementAndGet();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof Command) {
+                    acc1.incrementAndGet();
+                }
             }
         });
         replicator.open();
@@ -75,26 +64,15 @@ public class RedisMixReplicatorTest {
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-            
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-        
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-            
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                acc1.incrementAndGet();
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof Command) {
+                    acc1.incrementAndGet();
+                }
             }
         });
         replicator.open();

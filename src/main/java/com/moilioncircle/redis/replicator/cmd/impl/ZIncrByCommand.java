@@ -26,32 +26,24 @@ public class ZIncrByCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private double increment;
-    private String member;
-    private byte[] rawKey;
-    private byte[] rawMember;
+    private byte[] member;
 
     public ZIncrByCommand() {
     }
 
-    public ZIncrByCommand(String key, double increment, String member) {
-        this(key, increment, member, null, null);
-    }
-
-    public ZIncrByCommand(String key, double increment, String member, byte[] rawKey, byte[] rawMember) {
+    public ZIncrByCommand(byte[] key, double increment, byte[] member) {
         this.key = key;
         this.increment = increment;
         this.member = member;
-        this.rawKey = rawKey;
-        this.rawMember = rawMember;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -63,37 +55,11 @@ public class ZIncrByCommand implements Command {
         this.increment = increment;
     }
 
-    public String getMember() {
+    public byte[] getMember() {
         return member;
     }
 
-    public void setMember(String member) {
+    public void setMember(byte[] member) {
         this.member = member;
     }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawMember() {
-        return rawMember;
-    }
-
-    public void setRawMember(byte[] rawMember) {
-        this.rawMember = rawMember;
-    }
-
-    @Override
-    public String toString() {
-        return "ZIncrByCommand{" +
-                "key='" + key + '\'' +
-                ", increment='" + increment + '\'' +
-                ", member='" + member + '\'' +
-                '}';
-    }
-
 }

@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZPopMinCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -32,13 +31,12 @@ public class ZPopMinParser implements CommandParser<ZPopMinCommand> {
 	@Override
 	public ZPopMinCommand parse(Object[] command) {
 		int idx = 1;
-		String key = toRune(command[idx]);
-		byte[] rawKey = toBytes(command[idx]);
-		Integer count = null;
+        byte[] key = toBytes(command[idx]);
+        int count = 1;
 		idx++;
 		if (idx < command.length) {
 			count = toInt(command[idx++]);
 		}
-		return new ZPopMinCommand(key, count, rawKey);
+        return new ZPopMinCommand(key, count);
 	}
 }

@@ -25,8 +25,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.PSetExCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.PersistCommand;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -37,15 +35,15 @@ public class MSetNxParserTest extends AbstractParserTest {
         {
             MSetNxParser parser = new MSetNxParser();
             MSetNxCommand cmd = parser.parse(toObjectArray("msetnx k1 v1 k2 v2".split(" ")));
-            assertEquals("v1", cmd.getKv().get("k1"));
-            assertEquals("v2", cmd.getKv().get("k2"));
+            assertEquals("v1", cmd.getKv().get("k1".getBytes()));
+            assertEquals("v2", cmd.getKv().get("k2".getBytes()));
         }
 
         {
             MSetParser parser = new MSetParser();
             MSetCommand cmd = parser.parse(toObjectArray("mset k1 v1 k2 v2".split(" ")));
-            assertEquals("v1", cmd.getKv().get("k1"));
-            assertEquals("v2", cmd.getKv().get("k2"));
+            assertEquals("v1", cmd.getKv().get("k1".getBytes()));
+            assertEquals("v2", cmd.getKv().get("k2".getBytes()));
         }
 
         {

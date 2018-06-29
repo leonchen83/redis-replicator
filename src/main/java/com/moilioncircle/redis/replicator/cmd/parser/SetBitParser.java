@@ -22,7 +22,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetBitCommand;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -32,12 +31,11 @@ public class SetBitParser implements CommandParser<SetBitCommand> {
     @Override
     public SetBitCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         long offset = toLong(command[idx++]);
         int value = toInt(command[idx++]);
-        return new SetBitCommand(key, offset, value, rawKey);
+        return new SetBitCommand(key, offset, value);
     }
 
 }

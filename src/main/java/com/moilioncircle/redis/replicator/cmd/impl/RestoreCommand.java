@@ -27,24 +27,18 @@ public class RestoreCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private long ttl;
-    private String serializedValue;
-    private Boolean isReplace;
-    private Boolean absTtl;
+    private byte[] serializedValue;
+    private boolean isReplace;
+    private boolean absTtl;
     protected EvictType evictType = EvictType.NONE;
     protected Long evictValue;
-    private byte[] rawKey;
-    private byte[] rawSerializedValue;
 
     public RestoreCommand() {
     }
-    
-    public RestoreCommand(String key, long ttl, String serializedValue, Boolean isReplace, Boolean absTtl, EvictType evictType, Long evictValue) {
-        this(key, ttl, serializedValue, isReplace, absTtl, evictType, evictValue, null, null);
-    }
-    
-    public RestoreCommand(String key, long ttl, String serializedValue, Boolean isReplace, Boolean absTtl, EvictType evictType, Long evictValue, byte[] rawKey, byte[] rawSerializedValue) {
+
+    public RestoreCommand(byte[] key, long ttl, byte[] serializedValue, boolean isReplace, boolean absTtl, EvictType evictType, Long evictValue) {
         this.key = key;
         this.ttl = ttl;
         this.serializedValue = serializedValue;
@@ -52,15 +46,13 @@ public class RestoreCommand implements Command {
         this.absTtl = absTtl;
         this.evictType = evictType;
         this.evictValue = evictValue;
-        this.rawKey = rawKey;
-        this.rawSerializedValue = rawSerializedValue;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -72,27 +64,27 @@ public class RestoreCommand implements Command {
         this.ttl = ttl;
     }
 
-    public String getSerializedValue() {
+    public byte[] getSerializedValue() {
         return serializedValue;
     }
 
-    public void setSerializedValue(String serializedValue) {
+    public void setSerializedValue(byte[] serializedValue) {
         this.serializedValue = serializedValue;
     }
 
-    public Boolean getReplace() {
+    public boolean isReplace() {
         return isReplace;
     }
 
-    public void setReplace(Boolean replace) {
+    public void setReplace(boolean replace) {
         isReplace = replace;
     }
-    
-    public Boolean getAbsTtl() {
+
+    public boolean isAbsTtl() {
         return absTtl;
     }
-    
-    public void setAbsTtl(Boolean absTtl) {
+
+    public void setAbsTtl(boolean absTtl) {
         this.absTtl = absTtl;
     }
     
@@ -110,34 +102,5 @@ public class RestoreCommand implements Command {
     
     public void setEvictValue(Long evictValue) {
         this.evictValue = evictValue;
-    }
-    
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[] getRawSerializedValue() {
-        return rawSerializedValue;
-    }
-
-    public void setRawSerializedValue(byte[] rawSerializedValue) {
-        this.rawSerializedValue = rawSerializedValue;
-    }
-    
-    @Override
-    public String toString() {
-        return "RestoreCommand{" +
-                "key='" + key + '\'' +
-                ", ttl=" + ttl +
-                ", serializedValue='" + serializedValue + '\'' +
-                ", isReplace=" + isReplace +
-                ", absTtl=" + absTtl +
-                ", evictType=" + evictType +
-                ", evictValue=" + evictValue +
-                '}';
     }
 }

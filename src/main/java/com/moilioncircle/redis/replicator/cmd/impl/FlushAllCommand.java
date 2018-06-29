@@ -26,31 +26,20 @@ public class FlushAllCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private Boolean isAsync;
+    private boolean isAsync;
 
     public FlushAllCommand() {
     }
 
-    public FlushAllCommand(final Boolean isAsync) {
+    public FlushAllCommand(final boolean isAsync) {
         this.isAsync = isAsync;
     }
 
-    public Boolean isAsync() {
+    public boolean isAsync() {
         return isAsync;
     }
 
-    public Boolean getAsync() {
-        return isAsync;
-    }
-
-    public void setAsync(Boolean async) {
+    public void setAsync(boolean async) {
         isAsync = async;
-    }
-
-    @Override
-    public String toString() {
-        return "FlushAllCommand{" +
-                "isAsync=" + isAsync +
-                '}';
     }
 }

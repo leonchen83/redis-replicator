@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,41 +26,20 @@ public class UnLinkCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String[] keys;
-    private byte[][] rawKeys;
+    private byte[][] keys;
 
     public UnLinkCommand() {
     }
 
-    public UnLinkCommand(String[] keys) {
-        this(keys, null);
-    }
-
-    public UnLinkCommand(String[] keys, byte[][] rawKeys) {
+    public UnLinkCommand(byte[][] keys) {
         this.keys = keys;
-        this.rawKeys = rawKeys;
     }
 
-    public String[] getKeys() {
+    public byte[][] getKeys() {
         return keys;
     }
 
-    public void setKeys(String[] keys) {
+    public void setKeys(byte[][] keys) {
         this.keys = keys;
-    }
-
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
-
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
-
-    @Override
-    public String toString() {
-        return "UnLinkCommand{" +
-                "keys=" + Arrays.toString(keys) +
-                '}';
     }
 }

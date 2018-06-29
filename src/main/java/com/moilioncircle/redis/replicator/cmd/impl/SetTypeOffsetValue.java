@@ -24,40 +24,32 @@ public class SetTypeOffsetValue implements Statement {
 
     private static final long serialVersionUID = 1L;
 
-    private String type;
-    private String offset;
+    private byte[] type;
+    private byte[] offset;
     private long value;
-    private byte[] rawType;
-    private byte[] rawOffset;
 
     public SetTypeOffsetValue() {
     }
 
-    public SetTypeOffsetValue(String type, String offset, long value) {
-        this(type, offset, value, null, null);
-    }
-
-    public SetTypeOffsetValue(String type, String offset, long value, byte[] rawType, byte[] rawOffset) {
+    public SetTypeOffsetValue(byte[] type, byte[] offset, long value) {
         this.type = type;
         this.offset = offset;
         this.value = value;
-        this.rawType = rawType;
-        this.rawOffset = rawOffset;
     }
 
-    public String getType() {
+    public byte[] getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(byte[] type) {
         this.type = type;
     }
 
-    public String getOffset() {
+    public byte[] getOffset() {
         return offset;
     }
 
-    public void setOffset(String offset) {
+    public void setOffset(byte[] offset) {
         this.offset = offset;
     }
 
@@ -69,28 +61,4 @@ public class SetTypeOffsetValue implements Statement {
         this.value = value;
     }
 
-    public byte[] getRawType() {
-        return rawType;
-    }
-
-    public void setRawType(byte[] rawType) {
-        this.rawType = rawType;
-    }
-
-    public byte[] getRawOffset() {
-        return rawOffset;
-    }
-
-    public void setRawOffset(byte[] rawOffset) {
-        this.rawOffset = rawOffset;
-    }
-
-    @Override
-    public String toString() {
-        return "SetTypeOffsetValue{" +
-                "type='" + type + '\'' +
-                ", offset='" + offset + '\'' +
-                ", value=" + value +
-                '}';
-    }
 }

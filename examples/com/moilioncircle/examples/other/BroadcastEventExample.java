@@ -18,10 +18,8 @@ package com.moilioncircle.examples.other;
 
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
 
 /**
  * @author Leon Chen
@@ -33,29 +31,16 @@ public class BroadcastEventExample {
     public static void main(String[] args) throws Exception {
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         //broadcast rdb event
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println("broadcast rdb channel 1 " + kv);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println("broadcast event channel 1 " + event);
             }
         });
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println("broadcast rdb channel 2 " + kv);
-            }
-        });
-
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println("broadcast command channel 1 " + command);
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println("broadcast command channel 2 " + command);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println("broadcast event channel 2 " + event);
             }
         });
         replicator.open();

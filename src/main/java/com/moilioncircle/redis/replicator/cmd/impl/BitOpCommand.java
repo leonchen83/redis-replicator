@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -29,24 +27,16 @@ public class BitOpCommand implements Command {
     private static final long serialVersionUID = 1L;
 
     private Op op;
-    private String destkey;
-    private String[] keys;
-    private byte[] rawDestkey;
-    private byte[][] rawKeys;
+    private byte[] destkey;
+    private byte[][] keys;
 
     public BitOpCommand() {
     }
 
-    public BitOpCommand(Op op, String destkey, String[] keys) {
-        this(op, destkey, keys, null, null);
-    }
-
-    public BitOpCommand(Op op, String destkey, String[] keys, byte[] rawDestkey, byte[][] rawKeys) {
+    public BitOpCommand(Op op, byte[] destkey, byte[][] keys) {
         this.op = op;
         this.destkey = destkey;
         this.keys = keys;
-        this.rawDestkey = rawDestkey;
-        this.rawKeys = rawKeys;
     }
 
     public Op getOp() {
@@ -57,44 +47,19 @@ public class BitOpCommand implements Command {
         this.op = op;
     }
 
-    public String getDestkey() {
+    public byte[] getDestkey() {
         return destkey;
     }
 
-    public void setDestkey(String destkey) {
+    public void setDestkey(byte[] destkey) {
         this.destkey = destkey;
     }
 
-    public String[] getKeys() {
+    public byte[][] getKeys() {
         return keys;
     }
 
-    public void setKeys(String[] keys) {
+    public void setKeys(byte[][] keys) {
         this.keys = keys;
-    }
-
-    public byte[] getRawDestkey() {
-        return rawDestkey;
-    }
-
-    public void setRawDestkey(byte[] rawDestkey) {
-        this.rawDestkey = rawDestkey;
-    }
-
-    public byte[][] getRawKeys() {
-        return rawKeys;
-    }
-
-    public void setRawKeys(byte[][] rawKeys) {
-        this.rawKeys = rawKeys;
-    }
-
-    @Override
-    public String toString() {
-        return "BitOpCommand{" +
-                "op=" + op +
-                ", destkey='" + destkey + '\'' +
-                ", keys=" + Arrays.toString(keys) +
-                '}';
     }
 }

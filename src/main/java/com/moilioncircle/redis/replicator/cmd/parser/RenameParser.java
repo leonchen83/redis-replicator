@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.RenameCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -30,13 +29,11 @@ public class RenameParser implements CommandParser<RenameCommand> {
     @Override
     public RenameCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String newKey = toRune(command[idx]);
-        byte[] rawNewKey = toBytes(command[idx]);
+        byte[] newKey = toBytes(command[idx]);
         idx++;
-        return new RenameCommand(key, newKey, rawKey, rawNewKey);
+        return new RenameCommand(key, newKey);
     }
 
 }

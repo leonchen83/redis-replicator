@@ -26,28 +26,22 @@ public class ExpireCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private int ex;
-    private byte[] rawKey;
 
     public ExpireCommand() {
     }
 
-    public ExpireCommand(String key, int ex) {
-        this(key, ex, null);
-    }
-
-    public ExpireCommand(String key, int ex, byte[] rawKey) {
+    public ExpireCommand(byte[] key, int ex) {
         this.key = key;
         this.ex = ex;
-        this.rawKey = rawKey;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -57,21 +51,5 @@ public class ExpireCommand implements Command {
 
     public void setEx(int ex) {
         this.ex = ex;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    @Override
-    public String toString() {
-        return "ExpireCommand{" +
-                "key='" + key + '\'' +
-                ", ex=" + ex +
-                '}';
     }
 }

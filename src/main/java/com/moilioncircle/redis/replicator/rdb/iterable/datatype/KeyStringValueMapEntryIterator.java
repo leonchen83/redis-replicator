@@ -25,6 +25,6 @@ import java.util.Map;
  * @author Leon Chen
  * @since 2.3.0
  */
-public class KeyStringValueMapEntryIterator extends KeyValuePair<Iterator<Map.Entry<byte[], byte[]>>> {
+public class KeyStringValueMapEntryIterator extends KeyValuePair<byte[], Iterator<Map.Entry<byte[], byte[]>>> {
     private static final long serialVersionUID = 1L;
 }

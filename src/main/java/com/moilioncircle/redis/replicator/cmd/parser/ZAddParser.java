@@ -37,11 +37,10 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
     @Override
     public ZAddCommand parse(Object[] command) {
         int idx = 1;
-        Boolean isCh = null, isIncr = null;
+        boolean isCh = false, isIncr = false;
         ExistType existType = ExistType.NONE;
         List<ZSetEntry> list = new ArrayList<>();
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         boolean et = false;
         while (idx < command.length) {
@@ -57,22 +56,21 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
                 idx++;
                 continue;
             }
-            if (isCh == null && isEquals(param, "CH")) {
+            if (!isCh && isEquals(param, "CH")) {
                 isCh = true;
-            } else if (isIncr == null && isEquals(param, "INCR")) {
+            } else if (!isIncr && isEquals(param, "INCR")) {
                 isIncr = true;
             } else {
                 double score = Double.parseDouble(param);
                 idx++;
-                String member = toRune(command[idx]);
-                byte[] rawMember = toBytes(command[idx]);
-                list.add(new ZSetEntry(member, score, rawMember));
+                byte[] member = toBytes(command[idx]);
+                list.add(new ZSetEntry(member, score));
             }
             idx++;
         }
         ZSetEntry[] zSetEntries = new ZSetEntry[list.size()];
         list.toArray(zSetEntries);
-        return new ZAddCommand(key, existType, isCh, isIncr, zSetEntries, rawKey);
+        return new ZAddCommand(key, existType, isCh, isIncr, zSetEntries);
     }
 
 }

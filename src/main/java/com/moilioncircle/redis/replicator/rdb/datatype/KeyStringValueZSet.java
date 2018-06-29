@@ -22,6 +22,6 @@ import java.util.Set;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class KeyStringValueZSet extends KeyValuePair<Set<ZSetEntry>> {
+public class KeyStringValueZSet extends KeyValuePair<byte[], Set<ZSetEntry>> {
     private static final long serialVersionUID = 1L;
 }

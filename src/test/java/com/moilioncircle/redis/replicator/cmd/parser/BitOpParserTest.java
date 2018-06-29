@@ -18,9 +18,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.impl.BitOpCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.Op;
+import junit.framework.TestCase;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen
@@ -32,7 +31,7 @@ public class BitOpParserTest extends AbstractParserTest {
         BitOpParser parser = new BitOpParser();
         BitOpCommand cmd = parser.parse(toObjectArray("bitop and des key1 key2".split(" ")));
         assertEquals("des", cmd.getDestkey());
-        assertEquals(Op.AND, cmd.getOp());
+        TestCase.assertEquals(Op.AND, cmd.getOp());
         assertEquals("key1", cmd.getKeys()[0]);
         assertEquals("key2", cmd.getKeys()[1]);
     }

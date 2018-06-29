@@ -42,11 +42,4 @@ public class SelectCommand implements Command {
     public void setIndex(int index) {
         this.index = index;
     }
-
-    @Override
-    public String toString() {
-        return "SelectCommand{" +
-                "index='" + index + '\'' +
-                '}';
-    }
 }

@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.PingCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -29,9 +28,8 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 public class PingParser implements CommandParser<PingCommand> {
     @Override
     public PingCommand parse(Object[] command) {
-        String message = command.length == 1 ? null : toRune(command[1]);
-        byte[] rawMessage = command.length == 1 ? null : toBytes(command[1]);
-        return new PingCommand(message, rawMessage);
+        byte[] message = command.length == 1 ? null : toBytes(command[1]);
+        return new PingCommand(message);
     }
 
 }

@@ -26,83 +26,40 @@ public class SMoveCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String source;
-    private String destination;
-    private String member;
-    private byte[] rawSource;
-    private byte[] rawDestination;
-    private byte[] rawMember;
+    private byte[] source;
+    private byte[] destination;
+    private byte[] member;
 
     public SMoveCommand() {
     }
 
-    public SMoveCommand(String source, String destination, String member) {
-        this(source, destination, member, null, null, null);
-    }
-
-    public SMoveCommand(String source, String destination, String member, byte[] rawSource, byte[] rawDestination, byte[] rawMember) {
+    public SMoveCommand(byte[] source, byte[] destination, byte[] member) {
         this.source = source;
         this.destination = destination;
         this.member = member;
-        this.rawSource = rawSource;
-        this.rawDestination = rawDestination;
-        this.rawMember = rawMember;
     }
 
-    public String getSource() {
+    public byte[] getSource() {
         return source;
     }
 
-    public void setSource(String source) {
+    public void setSource(byte[] source) {
         this.source = source;
     }
 
-    public String getDestination() {
+    public byte[] getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(byte[] destination) {
         this.destination = destination;
     }
 
-    public String getMember() {
+    public byte[] getMember() {
         return member;
     }
 
-    public void setMember(String member) {
+    public void setMember(byte[] member) {
         this.member = member;
-    }
-
-    public byte[] getRawSource() {
-        return rawSource;
-    }
-
-    public void setRawSource(byte[] rawSource) {
-        this.rawSource = rawSource;
-    }
-
-    public byte[] getRawDestination() {
-        return rawDestination;
-    }
-
-    public void setRawDestination(byte[] rawDestination) {
-        this.rawDestination = rawDestination;
-    }
-
-    public byte[] getRawMember() {
-        return rawMember;
-    }
-
-    public void setRawMember(byte[] rawMember) {
-        this.rawMember = rawMember;
-    }
-
-    @Override
-    public String toString() {
-        return "SMoveCommand{" +
-                "source='" + source + '\'' +
-                ", destination='" + destination + '\'' +
-                ", member='" + member + '\'' +
-                '}';
     }
 }

@@ -25,6 +25,6 @@ import java.util.Iterator;
  * @author Leon Chen
  * @since 2.3.0
  */
-public class KeyStringValueZSetEntryIterator extends KeyValuePair<Iterator<ZSetEntry>> {
+public class KeyStringValueZSetEntryIterator extends KeyValuePair<byte[], Iterator<ZSetEntry>> {
     private static final long serialVersionUID = 1L;
 }

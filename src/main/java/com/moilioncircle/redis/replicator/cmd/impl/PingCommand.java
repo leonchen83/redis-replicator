@@ -26,35 +26,21 @@ public class PingCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String message;
-    private byte[] rawMessage;
+    private byte[] message;
 
     public PingCommand() {
     }
 
-    public PingCommand(String message) {
-        this(message, null);
-    }
-
-    public PingCommand(String message, byte[] rawMessage) {
+    public PingCommand(byte[] message) {
         this.message = message;
-        this.rawMessage = rawMessage;
     }
 
-    public String getMessage() {
+    public byte[] getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(byte[] message) {
         this.message = message;
-    }
-
-    public byte[] getRawMessage() {
-        return rawMessage;
-    }
-
-    public void setRawMessage(byte[] rawMessage) {
-        this.rawMessage = rawMessage;
     }
 
     @Override

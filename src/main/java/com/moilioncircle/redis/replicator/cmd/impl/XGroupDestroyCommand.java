@@ -23,67 +23,33 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 public class XGroupDestroyCommand extends XGroupCommand {
     
     private static final long serialVersionUID = 1L;
-    
-    private String key;
-    
-    private String group;
-    
-    private byte[] rawKey;
-    
-    private byte[] rawGroup;
+
+    private byte[] key;
+
+    private byte[] group;
     
     public XGroupDestroyCommand() {
     
     }
-    
-    public XGroupDestroyCommand(String key, String group) {
-        this(key, group, null, null);
-    }
-    
-    public XGroupDestroyCommand(String key, String group, byte[] rawKey, byte[] rawGroup) {
+
+    public XGroupDestroyCommand(byte[] key, byte[] group) {
         this.key = key;
         this.group = group;
-        this.rawKey = rawKey;
-        this.rawGroup = rawGroup;
     }
-    
-    public String getKey() {
+
+    public byte[] getKey() {
         return key;
     }
-    
-    public void setKey(String key) {
+
+    public void setKey(byte[] key) {
         this.key = key;
     }
-    
-    public String getGroup() {
+
+    public byte[] getGroup() {
         return group;
     }
-    
-    public void setGroup(String group) {
+
+    public void setGroup(byte[] group) {
         this.group = group;
-    }
-    
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-    
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-    
-    public byte[] getRawGroup() {
-        return rawGroup;
-    }
-    
-    public void setRawGroup(byte[] rawGroup) {
-        this.rawGroup = rawGroup;
-    }
-    
-    @Override
-    public String toString() {
-        return "XGroupDestroyCommand{" +
-                "key='" + key + '\'' +
-                ", group='" + group + '\'' +
-                '}';
     }
 }

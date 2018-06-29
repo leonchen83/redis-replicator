@@ -24,41 +24,20 @@ public class ScriptLoadCommand extends ScriptCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private String script;
-    private byte[] rawScript;
+    private byte[] script;
 
     public ScriptLoadCommand() {
     }
 
-    public ScriptLoadCommand(String script) {
-        this(script, null);
-    }
-
-    public ScriptLoadCommand(String script, byte[] rawScript) {
+    public ScriptLoadCommand(byte[] script) {
         this.script = script;
-        this.rawScript = rawScript;
     }
 
-    public String getScript() {
+    public byte[] getScript() {
         return script;
     }
 
-    public void setScript(String script) {
+    public void setScript(byte[] script) {
         this.script = script;
-    }
-
-    public byte[] getRawScript() {
-        return rawScript;
-    }
-
-    public void setRawScript(byte[] rawScript) {
-        this.rawScript = rawScript;
-    }
-
-    @Override
-    public String toString() {
-        return "ScriptLoadCommand{" +
-                "script='" + script + '\'' +
-                '}';
     }
 }

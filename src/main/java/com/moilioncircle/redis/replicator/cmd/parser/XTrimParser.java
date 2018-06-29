@@ -35,8 +35,7 @@ public class XTrimParser implements CommandParser<XTrimCommand> {
     @Override
     public XTrimCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         MaxLen maxLen = null;
         if (isEquals(toRune(command[idx]), "MAXLEN")) {
@@ -50,6 +49,6 @@ public class XTrimParser implements CommandParser<XTrimCommand> {
             idx++;
             maxLen = new MaxLen(approximation, count);
         }
-        return new XTrimCommand(key, maxLen, rawKey);
+        return new XTrimCommand(key, maxLen);
     }
 }

@@ -36,24 +36,18 @@ public class XClaimParser implements CommandParser<XClaimCommand> {
     @Override
     public XClaimCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
-        String group = toRune(command[idx]);
-        byte[] rawGroup = toBytes(command[idx]);
+        byte[] group = toBytes(command[idx]);
         idx++;
-        String consumer = toRune(command[idx]);
-        byte[] rawConsumer = toBytes(command[idx]);
+        byte[] consumer = toBytes(command[idx]);
         idx++;
         long minIdle = toLong(command[idx++]);
-        List<String> ids = new ArrayList<>();
-        List<byte[]> rawIds = new ArrayList<>();
+        List<byte[]> ids = new ArrayList<>();
         for (; idx < command.length; idx++) {
-            String id = toRune(command[idx]);
-            byte[] rawId = toBytes(command[idx]);
+            byte[] id = toBytes(command[idx]);
             if (!validId(id)) break;
             ids.add(id);
-            rawIds.add(rawId);
         }
         Long idle = null;
         Long time = null;
@@ -84,11 +78,12 @@ public class XClaimParser implements CommandParser<XClaimCommand> {
                 throw new UnsupportedOperationException(next);
             }
         }
-        return new XClaimCommand(key, group, consumer, minIdle, ids.toArray(new String[0]), idle, time, retryCount, force, justId, rawKey, rawGroup, rawConsumer, rawIds.toArray(new byte[0][]));
+        return new XClaimCommand(key, group, consumer, minIdle, ids.toArray(new byte[0][]), idle, time, retryCount, force, justId);
     }
 
-    private boolean validId(String id) {
-        if (id == null) return false;
+    private boolean validId(byte[] bid) {
+        if (bid == null) return false;
+        String id = toRune(bid);
         if (Objects.equals(id, "+") || Objects.equals(id, "-")) return true;
         int idx = id.indexOf('-');
         try {

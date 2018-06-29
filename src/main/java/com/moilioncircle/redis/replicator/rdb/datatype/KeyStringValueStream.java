@@ -20,6 +20,6 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  * @author Leon Chen
  * @since 2.6.0
  */
-public class KeyStringValueStream extends KeyValuePair<Stream> {
+public class KeyStringValueStream extends KeyValuePair<byte[], Stream> {
     private static final long serialVersionUID = 1L;
 }

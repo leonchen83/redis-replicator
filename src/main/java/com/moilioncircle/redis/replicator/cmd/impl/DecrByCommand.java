@@ -26,28 +26,22 @@ public class DecrByCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
+    private byte[] key;
     private long value;
-    private byte[] rawKey;
 
     public DecrByCommand() {
     }
 
-    public DecrByCommand(String key, long value) {
-        this(key, value, null);
-    }
-
-    public DecrByCommand(String key, long value, byte[] rawKey) {
+    public DecrByCommand(byte[] key, long value) {
         this.key = key;
         this.value = value;
-        this.rawKey = rawKey;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
@@ -57,21 +51,5 @@ public class DecrByCommand implements Command {
 
     public void setValue(long value) {
         this.value = value;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    @Override
-    public String toString() {
-        return "DecrByCommand{" +
-                "key='" + key + '\'' +
-                ", value=" + value +
-                '}';
     }
 }

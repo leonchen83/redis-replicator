@@ -20,11 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.MSetNxCommand;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -33,21 +29,17 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 public class MSetNxParser implements CommandParser<MSetNxCommand> {
     @Override
     public MSetNxCommand parse(Object[] command) {
-        if (command.length == 1) return new MSetNxCommand(null, null);
+        ByteArrayMap<byte[]> kv = new ByteArrayMap<>();
+        if (command.length == 1) return new MSetNxCommand(kv);
         int idx = 1;
-        Map<String, String> kv = new LinkedHashMap<>();
-        ByteArrayMap<byte[]> rawKv = new ByteArrayMap<>();
         while (idx < command.length) {
-            String key = toRune(command[idx]);
-            byte[] rawKey = toBytes(command[idx]);
+            byte[] key = toBytes(command[idx]);
             idx++;
-            String value = idx == command.length ? null : toRune(command[idx]);
-            byte[] rawValue = idx == command.length ? null : toBytes(command[idx]);
+            byte[] value = idx == command.length ? null : toBytes(command[idx]);
             idx++;
             kv.put(key, value);
-            rawKv.put(rawKey, rawValue);
         }
-        return new MSetNxCommand(kv, rawKv);
+        return new MSetNxCommand(kv);
     }
 
 }

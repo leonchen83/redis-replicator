@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
+import com.moilioncircle.redis.replicator.util.Strings;
+
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
@@ -89,22 +91,16 @@ public class Stream implements Serializable {
         private static final long serialVersionUID = 1L;
         private ID id;
         private boolean deleted;
-        private Map<String, String> fields;
-        private Map<byte[], byte[]> rawFields;
+        private Map<byte[], byte[]> fields;
 
         public Entry() {
 
         }
 
-        public Entry(ID id, boolean deleted, Map<String, String> fields) {
-            this(id, deleted, fields, null);
-        }
-
-        public Entry(ID id, boolean deleted, Map<String, String> fields, Map<byte[], byte[]> rawFields) {
+        public Entry(ID id, boolean deleted, Map<byte[], byte[]> fields) {
             this.id = id;
             this.deleted = deleted;
             this.fields = fields;
-            this.rawFields = rawFields;
         }
 
         public ID getId() {
@@ -123,20 +119,12 @@ public class Stream implements Serializable {
             this.deleted = deleted;
         }
 
-        public Map<String, String> getFields() {
+        public Map<byte[], byte[]> getFields() {
             return fields;
         }
 
-        public void setFields(Map<String, String> fields) {
+        public void setFields(Map<byte[], byte[]> fields) {
             this.fields = fields;
-        }
-
-        public Map<byte[], byte[]> getRawFields() {
-            return rawFields;
-        }
-
-        public void setRawFields(Map<byte[], byte[]> rawFields) {
-            this.rawFields = rawFields;
         }
 
         @Override
@@ -151,33 +139,27 @@ public class Stream implements Serializable {
 
     public static class Group implements Serializable {
         private static final long serialVersionUID = 1L;
-        private String name;
+        private byte[] name;
         private ID lastId;
         private NavigableMap<ID, Nack> pendingEntries;
         private List<Consumer> consumers;
-        private byte[] rawName;
 
         public Group() {
 
         }
 
-        public Group(String name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers) {
-            this(name, lastId, pendingEntries, consumers, null);
-        }
-
-        public Group(String name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers, byte[] rawName) {
+        public Group(byte[] name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers) {
             this.name = name;
             this.lastId = lastId;
             this.pendingEntries = pendingEntries;
             this.consumers = consumers;
-            this.rawName = rawName;
         }
 
-        public String getName() {
+        public byte[] getName() {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(byte[] name) {
             this.name = name;
         }
 
@@ -205,17 +187,9 @@ public class Stream implements Serializable {
             this.consumers = consumers;
         }
 
-        public byte[] getRawName() {
-            return rawName;
-        }
-
-        public void setRawName(byte[] rawName) {
-            this.rawName = rawName;
-        }
-
         @Override
         public String toString() {
-            String r = "Group{" + "name='" + name + '\'' + ", lastId=" + lastId;
+            String r = "Group{" + "name='" + Strings.toString(name) + '\'' + ", lastId=" + lastId;
             if (consumers != null && !consumers.isEmpty()) r += ", consumers=" + consumers;
             if (pendingEntries != null && !pendingEntries.isEmpty()) r += ", gpel=" + pendingEntries.size();
             return r + '}';
@@ -224,31 +198,25 @@ public class Stream implements Serializable {
 
     public static class Consumer implements Serializable {
         private static final long serialVersionUID = 1L;
-        private String name;
+        private byte[] name;
         private long seenTime;
         private NavigableMap<ID, Nack> pendingEntries;
-        private byte[] rawName;
 
         public Consumer() {
 
         }
 
-        public Consumer(String name, long seenTime, NavigableMap<ID, Nack> pendingEntries) {
-            this(name, seenTime, pendingEntries, null);
-        }
-
-        public Consumer(String name, long seenTime, NavigableMap<ID, Nack> pendingEntries, byte[] rawName) {
+        public Consumer(byte[] name, long seenTime, NavigableMap<ID, Nack> pendingEntries) {
             this.name = name;
             this.seenTime = seenTime;
             this.pendingEntries = pendingEntries;
-            this.rawName = rawName;
         }
 
-        public String getName() {
+        public byte[] getName() {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(byte[] name) {
             this.name = name;
         }
 
@@ -268,17 +236,9 @@ public class Stream implements Serializable {
             this.pendingEntries = pendingEntries;
         }
 
-        public byte[] getRawName() {
-            return rawName;
-        }
-
-        public void setRawName(byte[] rawName) {
-            this.rawName = rawName;
-        }
-
         @Override
         public String toString() {
-            String r = "Consumer{" + "name='" + name + '\'' + ", seenTime=" + seenTime;
+            String r = "Consumer{" + "name='" + Strings.toString(name) + '\'' + ", seenTime=" + seenTime;
             if (pendingEntries != null && !pendingEntries.isEmpty()) r += ", cpel=" + pendingEntries.size();
             return r + '}';
         }

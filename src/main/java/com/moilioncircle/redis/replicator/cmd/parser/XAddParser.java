@@ -21,8 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.MaxLen;
 import com.moilioncircle.redis.replicator.cmd.impl.XAddCommand;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
@@ -38,8 +36,7 @@ public class XAddParser implements CommandParser<XAddCommand> {
     @Override
     public XAddCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         MaxLen maxLen = null;
         if (isEquals(toRune(command[idx]), "MAXLEN")) {
@@ -53,21 +50,16 @@ public class XAddParser implements CommandParser<XAddCommand> {
             idx++;
             maxLen = new MaxLen(approximation, count);
         }
-        String id = toRune(command[idx]);
-        byte[] rawId = toBytes(command[idx]);
+        byte[] id = toBytes(command[idx]);
         idx++;
-        Map<String, String> fields = new LinkedHashMap<>();
-        ByteArrayMap<byte[]> rawFields = new ByteArrayMap<>();
+        ByteArrayMap<byte[]> fields = new ByteArrayMap<>();
         while (idx < command.length) {
-            String field = toRune(command[idx]);
-            byte[] rawField = toBytes(command[idx]);
+            byte[] field = toBytes(command[idx]);
             idx++;
-            String value = idx == command.length ? null : toRune(command[idx]);
-            byte[] rawValue = idx == command.length ? null : toBytes(command[idx]);
+            byte[] value = idx == command.length ? null : toBytes(command[idx]);
             idx++;
             fields.put(field, value);
-            rawFields.put(rawField, rawValue);
         }
-        return new XAddCommand(key, maxLen, id, fields, rawKey, rawId, rawFields);
+        return new XAddCommand(key, maxLen, id, fields);
     }
 }

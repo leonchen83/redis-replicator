@@ -16,14 +16,13 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
-import com.moilioncircle.redis.replicator.rdb.AuxFieldListener;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
@@ -62,40 +61,22 @@ public class PsyncTest {
         Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
         final AtomicBoolean flag = new AtomicBoolean(false);
         final Set<AuxField> set = new LinkedHashSet<>();
-        replicator.addAuxFieldListener(new AuxFieldListener() {
-            @Override
-            public void handle(Replicator replicator, AuxField auxField) {
-                set.add(auxField);
-            }
-        });
-        replicator.addRdbListener(new RdbListener() {
-            @Override
-            public void preFullSync(Replicator replicator) {
-        
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-        
-            }
-    
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                if (flag.compareAndSet(false, true)) {
-                    Thread thread = new Thread(new JRun());
-                    thread.setDaemon(true);
-                    thread.start();
-                    replicator.removeCommandParser(CommandName.name("PING"));
-                }
-            }
-        });
         final AtomicInteger acc = new AtomicInteger();
-        replicator.addCommandListener(new CommandListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, Command command) {
-                if (command instanceof SetCommand && ((SetCommand) command).getKey().startsWith("psync")) {
-                    SetCommand setCommand = (SetCommand) command;
-                    Integer.parseInt(setCommand.getKey().split(" ")[1]); // num
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof AuxField) {
+                    set.add((AuxField) event);
+                }
+                if (event instanceof PostFullSyncEvent) {
+                    if (flag.compareAndSet(false, true)) {
+                        Thread thread = new Thread(new JRun());
+                        thread.setDaemon(true);
+                        thread.start();
+                        replicator.removeCommandParser(CommandName.name("PING"));
+                    }
+                }
+                if (event instanceof SetCommand && Strings.toString(((SetCommand) event).getKey()).startsWith("psync")) {
                     acc.incrementAndGet();
                     if (acc.get() == 200) {
                         //close current process port;

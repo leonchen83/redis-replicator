@@ -21,7 +21,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.LRemCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 
 /**
@@ -32,14 +31,12 @@ public class LRemParser implements CommandParser<LRemCommand> {
     @Override
     public LRemCommand parse(Object[] command) {
         int idx = 1;
-        String key = toRune(command[idx]);
-        byte[] rawKey = toBytes(command[idx]);
+        byte[] key = toBytes(command[idx]);
         idx++;
         long index = toLong(command[idx++]);
-        String value = toRune(command[idx]);
-        byte[] rawValue = toBytes(command[idx]);
+        byte[] value = toBytes(command[idx]);
         idx++;
-        return new LRemCommand(key, index, value, rawKey, rawValue);
+        return new LRemCommand(key, index, value);
     }
 
 }

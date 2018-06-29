@@ -26,62 +26,30 @@ public class PublishCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String channel;
-    private String message;
-    private byte[] rawChannel;
-    private byte[] rawMessage;
+    private byte[] channel;
+    private byte[] message;
 
     public PublishCommand() {
     }
 
-    public PublishCommand(String channel, String message) {
-        this(channel, message, null, null);
-    }
-
-    public PublishCommand(String channel, String message, byte[] rawChannel, byte[] rawMessage) {
+    public PublishCommand(byte[] channel, byte[] message) {
         this.channel = channel;
         this.message = message;
-        this.rawChannel = rawChannel;
-        this.rawMessage = rawMessage;
     }
 
-    public String getChannel() {
+    public byte[] getChannel() {
         return channel;
     }
 
-    public void setChannel(String channel) {
+    public void setChannel(byte[] channel) {
         this.channel = channel;
     }
 
-    public String getMessage() {
+    public byte[] getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(byte[] message) {
         this.message = message;
-    }
-
-    public byte[] getRawChannel() {
-        return rawChannel;
-    }
-
-    public void setRawChannel(byte[] rawChannel) {
-        this.rawChannel = rawChannel;
-    }
-
-    public byte[] getRawMessage() {
-        return rawMessage;
-    }
-
-    public void setRawMessage(byte[] rawMessage) {
-        this.rawMessage = rawMessage;
-    }
-
-    @Override
-    public String toString() {
-        return "PublishCommand{" +
-                "channel='" + channel + '\'' +
-                ", message='" + message + '\'' +
-                '}';
     }
 }

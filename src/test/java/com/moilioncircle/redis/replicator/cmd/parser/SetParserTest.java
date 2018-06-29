@@ -18,9 +18,8 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import junit.framework.TestCase;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen
@@ -34,19 +33,19 @@ public class SetParserTest extends AbstractParserTest {
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
         assertEquals(15, cmd.getEx().intValue());
-        assertEquals(ExistType.NX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.NX, cmd.getExistType());
 
         cmd = parser.parse(toObjectArray("set a b px 123 xx".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
         assertEquals(123L, cmd.getPx().longValue());
-        assertEquals(ExistType.XX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
 
         cmd = parser.parse(toObjectArray("set a b xx px 123".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
         assertEquals(123L, cmd.getPx().longValue());
-        assertEquals(ExistType.XX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
 
     }
 

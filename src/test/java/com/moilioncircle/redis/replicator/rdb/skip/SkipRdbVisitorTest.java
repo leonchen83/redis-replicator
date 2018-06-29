@@ -20,9 +20,12 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.ModuleTest;
-import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.ValueIterableRdbParserTest;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
@@ -56,7 +59,7 @@ public class SkipRdbVisitorTest {
             testFile(file);
         }
     }
-    
+
     private void testFile(String fileName) {
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong count = new AtomicLong(0);
@@ -70,22 +73,20 @@ public class SkipRdbVisitorTest {
                 count.getAndAdd(rawBytes.length);
             }
         };
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-                acc.incrementAndGet();
-                replicator.addRawByteListener(rawByteListener);
-            }
-    
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-    
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                acc.incrementAndGet();
-                replicator.removeRawByteListener(rawByteListener);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreFullSyncEvent) {
+                    acc.incrementAndGet();
+                    replicator.addRawByteListener(rawByteListener);
+                }
+                if (event instanceof KeyValuePair<?, ?>) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostFullSyncEvent) {
+                    acc.incrementAndGet();
+                    replicator.removeRawByteListener(rawByteListener);
+                }
             }
         });
         try {
@@ -96,15 +97,15 @@ public class SkipRdbVisitorTest {
             fail();
         }
     }
-    
+
     private static class CountInputStream extends InputStream {
         private long count;
         private InputStream in;
-        
+
         private CountInputStream(InputStream in) {
             this.in = in;
         }
-        
+
         @Override
         public int read() throws IOException {
             int i = in.read();
@@ -113,7 +114,7 @@ public class SkipRdbVisitorTest {
             }
             return i;
         }
-        
+
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             int i = in.read(b, off, len);
@@ -122,7 +123,7 @@ public class SkipRdbVisitorTest {
             }
             return i;
         }
-        
+
         @Override
         public long skip(long n) throws IOException {
             long i = in.skip(n);
@@ -131,7 +132,7 @@ public class SkipRdbVisitorTest {
             }
             return i;
         }
-        
+
         @Override
         public void close() throws IOException {
             in.close();

@@ -18,8 +18,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 
-import java.util.Arrays;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -28,63 +26,31 @@ public class ZRemCommand implements Command {
 
     private static final long serialVersionUID = 1L;
 
-    private String key;
-    private String[] members;
-    private byte[] rawKey;
-    private byte[][] rawMembers;
+    private byte[] key;
+    private byte[][] members;
 
     public ZRemCommand() {
     }
 
-    public ZRemCommand(String key, String[] members) {
-        this(key, members, null, null);
-    }
-
-    public ZRemCommand(String key, String[] members, byte[] rawKey, byte[][] rawMembers) {
+    public ZRemCommand(byte[] key, byte[][] members) {
         this.key = key;
         this.members = members;
-        this.rawKey = rawKey;
-        this.rawMembers = rawMembers;
     }
 
-    public String getKey() {
+    public byte[] getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(byte[] key) {
         this.key = key;
     }
 
-    public String[] getMembers() {
+    public byte[][] getMembers() {
         return members;
     }
 
-    public void setMembers(String[] members) {
+    public void setMembers(byte[][] members) {
         this.members = members;
-    }
-
-    public byte[] getRawKey() {
-        return rawKey;
-    }
-
-    public void setRawKey(byte[] rawKey) {
-        this.rawKey = rawKey;
-    }
-
-    public byte[][] getRawMembers() {
-        return rawMembers;
-    }
-
-    public void setRawMembers(byte[][] rawMembers) {
-        this.rawMembers = rawMembers;
-    }
-
-    @Override
-    public String toString() {
-        return "ZRemCommand{" +
-                "key='" + key + '\'' +
-                ", members=" + Arrays.toString(members) +
-                '}';
     }
 
 }

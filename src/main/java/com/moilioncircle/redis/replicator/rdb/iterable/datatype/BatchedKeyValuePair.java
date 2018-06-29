@@ -27,20 +27,4 @@ public class BatchedKeyValuePair<K, V> extends KeyValuePair<K, V> {
     public void setLast(boolean last) {
         this.last = last;
     }
-
-    @Override
-    public String toString() {
-        return "BatchedKeyValuePair{" +
-                "batch=" + batch +
-                ", last=" + last +
-                ", db=" + db +
-                ", valueRdbType=" + valueRdbType +
-                ", expiredType=" + expiredType +
-                ", expiredValue=" + expiredValue +
-                ", evictType=" + evictType +
-                ", evictValue=" + evictValue +
-                ", key=" + key +
-                ", value=" + value +
-                '}';
-    }
 }

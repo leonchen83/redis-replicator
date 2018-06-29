@@ -113,18 +113,4 @@ public class KeyValuePair<K, V> implements Event {
     public Long getExpiredMs() {
         return expiredValue;
     }
-
-    @Override
-    public String toString() {
-        return "KeyValuePair{" +
-                "db=" + db +
-                ", valueRdbType=" + valueRdbType +
-                ", expiredType=" + expiredType +
-                ", expiredValue=" + expiredValue +
-                ", evictType=" + evictType +
-                ", evictValue=" + evictValue +
-                ", key='" + key + '\'' +
-                ", value=" + value +
-                '}';
-    }
 }

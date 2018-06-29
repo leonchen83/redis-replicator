@@ -47,7 +47,7 @@ public class ByteArrayMapTest {
         m.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
         m.put(null, new byte[]{4});
         m.put(new byte[]{4, 5, 6}, null);
-        ByteArrayMap<byte[]> bytes = new ByteArrayMap<>(m);
+        ByteArrayMap bytes = new ByteArrayMap(m);
         assertEquals(3, bytes.size());
         assertEquals(true, Arrays.equals(new byte[]{4, 5, 6}, bytes.get(new byte[]{1, 2, 3})));
         assertEquals(true, Arrays.equals(new byte[]{4}, bytes.get(null)));
@@ -56,7 +56,7 @@ public class ByteArrayMapTest {
         assertEquals(true, bytes.containsKey(new byte[]{1, 2, 3}));
         assertEquals(true, bytes.containsKey(null));
         assertEquals(false, bytes.containsKey(1));
-        assertEquals(false, bytes.containsValue(new byte[]{4, 5, 6}));
+        assertEquals(true, bytes.containsValue(new byte[]{4, 5, 6}));
         assertEquals(true, bytes.containsValue(null));
 
         Set<byte[]> s = bytes.keySet();
@@ -88,23 +88,23 @@ public class ByteArrayMapTest {
             assertEquals(true, ss.contains(entry));
             assertEquals(true, ss.contains(new TestEntry(entry.getKey(), entry.getValue())));
             if (entry.getValue() != null) {
-                assertEquals(false, ss.contains(new TestEntry(entry.getKey(), Arrays.copyOf(entry.getValue(), entry.getValue().length))));
+                assertEquals(true, ss.contains(new TestEntry(entry.getKey(), Arrays.copyOf(entry.getValue(), entry.getValue().length))));
             } else {
                 assertEquals(true, ss.contains(new TestEntry(entry.getKey(), null)));
             }
             assertEquals(true, bytes.containsKey(entry.getKey()));
             assertEquals(true, bytes.containsValue(entry.getValue()));
         }
-
-        bytes = new ByteArrayMap<>(null);
+    
+        bytes = new ByteArrayMap(null);
         assertEquals(0, bytes.size());
         assertEquals(true, bytes.isEmpty());
-
-        bytes = new ByteArrayMap<>(new HashMap<byte[], byte[]>());
+    
+        bytes = new ByteArrayMap(new HashMap<byte[], byte[]>());
         assertEquals(0, bytes.size());
         assertEquals(true, bytes.isEmpty());
-
-        bytes = new ByteArrayMap<>(m);
+    
+        bytes = new ByteArrayMap(m);
         bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
         bytes.put(null, new byte[]{4});
         bytes.put(new byte[]{4, 5, 6}, null);
@@ -114,8 +114,8 @@ public class ByteArrayMapTest {
         s.remove(new byte[]{4, 5, 6});
         assertEquals(0, s.size());
         assertEquals(0, bytes.size());
-
-        bytes = new ByteArrayMap<>(m);
+    
+        bytes = new ByteArrayMap(m);
         bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
         bytes.put(null, new byte[]{4});
         bytes.put(new byte[]{4, 5, 6}, null);
@@ -129,8 +129,8 @@ public class ByteArrayMapTest {
         }
         assertEquals(0, ss.size());
         assertEquals(0, bytes.size());
-
-        bytes = new ByteArrayMap<>(m);
+    
+        bytes = new ByteArrayMap(m);
         bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
         bytes.put(null, new byte[]{4});
         bytes.put(new byte[]{4, 5, 6}, null);
@@ -140,8 +140,8 @@ public class ByteArrayMapTest {
             a.remove();
         }
         assertEquals(0, bytes.size());
-
-        bytes = new ByteArrayMap<>(m);
+    
+        bytes = new ByteArrayMap(m);
         bytes.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
         bytes.put(null, new byte[]{4});
         bytes.put(new byte[]{4, 5, 6}, null);
@@ -154,20 +154,36 @@ public class ByteArrayMapTest {
     }
     
     @Test
+    public void test1() {
+        Map<byte[], byte[]> m = new LinkedHashMap<>();
+        m.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
+        m.put(null, new byte[]{4});
+        m.put(new byte[]{4, 5, 6}, null);
+        ByteArrayMap bytes = new ByteArrayMap(m);
+        assertEquals(3, bytes.size());
+        Iterator<byte[]> it = bytes.values().iterator();
+        while (it.hasNext()) {
+            it.next();
+            it.remove();
+        }
+        assertEquals(0, bytes.size());
+    }
+    
+    @Test
     public void testSerialize() throws IOException, ClassNotFoundException {
         Map<byte[], byte[]> m = new LinkedHashMap<>();
         m.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
         m.put(null, new byte[]{4});
         m.put(new byte[]{4, 5, 6}, null);
         File file = new File("./test.txt");
-        ByteArrayMap<byte[]> bytes = new ByteArrayMap<>(m);
+        ByteArrayMap bytes = new ByteArrayMap(m);
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
         out.writeObject(bytes);
         out.close();
 
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
         @SuppressWarnings("unchecked")
-        ByteArrayMap<byte[]> deseri = (ByteArrayMap<byte[]>) in.readObject();
+        ByteArrayMap deseri = (ByteArrayMap) in.readObject();
         in.close();
         assertEquals(3, deseri.size());
         assertEquals(true, Arrays.equals(new byte[]{4, 5, 6}, deseri.get(new byte[]{1, 2, 3})));
@@ -177,7 +193,7 @@ public class ByteArrayMapTest {
         assertEquals(true, deseri.containsKey(new byte[]{1, 2, 3}));
         assertEquals(true, deseri.containsKey(null));
         assertEquals(false, deseri.containsKey(1));
-        assertEquals(false, deseri.containsValue(new byte[]{4, 5, 6}));
+        assertEquals(true, deseri.containsValue(new byte[]{4, 5, 6}));
         assertEquals(true, deseri.containsValue(null));
     }
 

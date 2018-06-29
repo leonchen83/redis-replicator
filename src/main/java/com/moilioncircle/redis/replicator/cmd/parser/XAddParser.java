@@ -52,7 +52,7 @@ public class XAddParser implements CommandParser<XAddCommand> {
         }
         byte[] id = toBytes(command[idx]);
         idx++;
-        ByteArrayMap<byte[]> fields = new ByteArrayMap<>();
+        ByteArrayMap fields = new ByteArrayMap();
         while (idx < command.length) {
             byte[] field = toBytes(command[idx]);
             idx++;

@@ -81,7 +81,7 @@ public class SkipRdbParser {
     public void rdbGenericLoadStringObject() throws IOException {
         BaseRdbParser.Len lenObj = rdbLoadLen();
         long len = (int) lenObj.len;
-        boolean isencoded = lenObj.isencoded;
+        boolean isencoded = lenObj.encoded;
         if (isencoded) {
             switch ((int) len) {
                 case RDB_ENC_INT8:

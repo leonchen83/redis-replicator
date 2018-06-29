@@ -29,7 +29,7 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 public class MSetNxParser implements CommandParser<MSetNxCommand> {
     @Override
     public MSetNxCommand parse(Object[] command) {
-        ByteArrayMap<byte[]> kv = new ByteArrayMap<>();
+        ByteArrayMap kv = new ByteArrayMap();
         if (command.length == 1) return new MSetNxCommand(kv);
         int idx = 1;
         while (idx < command.length) {

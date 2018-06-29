@@ -30,19 +30,19 @@ public class RestoreCommand implements Command {
     private byte[] key;
     private long ttl;
     private byte[] serializedValue;
-    private boolean isReplace;
+    private boolean replace;
     private boolean absTtl;
     protected EvictType evictType = EvictType.NONE;
     protected Long evictValue;
 
     public RestoreCommand() {
     }
-
-    public RestoreCommand(byte[] key, long ttl, byte[] serializedValue, boolean isReplace, boolean absTtl, EvictType evictType, Long evictValue) {
+    
+    public RestoreCommand(byte[] key, long ttl, byte[] serializedValue, boolean replace, boolean absTtl, EvictType evictType, Long evictValue) {
         this.key = key;
         this.ttl = ttl;
         this.serializedValue = serializedValue;
-        this.isReplace = isReplace;
+        this.replace = replace;
         this.absTtl = absTtl;
         this.evictType = evictType;
         this.evictValue = evictValue;
@@ -73,11 +73,11 @@ public class RestoreCommand implements Command {
     }
 
     public boolean isReplace() {
-        return isReplace;
+        return replace;
     }
 
     public void setReplace(boolean replace) {
-        isReplace = replace;
+        this.replace = replace;
     }
 
     public boolean isAbsTtl() {

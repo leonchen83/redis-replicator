@@ -33,7 +33,7 @@ public class HMSetParser implements CommandParser<HMSetCommand> {
         int idx = 1;
         byte[] key = toBytes(command[idx]);
         idx++;
-        ByteArrayMap<byte[]> fields = new ByteArrayMap<>();
+        ByteArrayMap fields = new ByteArrayMap();
         while (idx < command.length) {
             byte[] field = toBytes(command[idx]);
             idx++;

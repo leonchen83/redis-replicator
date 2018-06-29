@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.util;
 
 import java.io.Serializable;
+import java.util.AbstractCollection;
 import java.util.AbstractSet;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,282 +32,332 @@ import java.util.Set;
  * @since 2.2.0
  */
 //@NonThreadSafe
-public class ByteArrayMap<V> implements Map<byte[], V>, Serializable {
+public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
     private static final long serialVersionUID = 1L;
-
-    protected final Map<Key, V> map;
-
-    public ByteArrayMap(Map<? extends byte[], ? extends V> m) {
+    
+    protected final Map<Element, Element> map;
+    
+    public ByteArrayMap(Map<? extends byte[], ? extends byte[]> m) {
         this(true, m);
     }
-
-    public ByteArrayMap(boolean ordered, Map<? extends byte[], ? extends V> m) {
+    
+    public ByteArrayMap(boolean ordered, Map<? extends byte[], ? extends byte[]> m) {
         this(ordered, m == null ? 0 : m.size(), 0.75f);
         putAll(m);
     }
-
+    
     public ByteArrayMap() {
         this(true);
     }
-
+    
     public ByteArrayMap(boolean ordered) {
         this(ordered, 16);
     }
-
+    
     public ByteArrayMap(boolean ordered, int initialCapacity) {
         this(ordered, initialCapacity, 0.75f);
     }
-
+    
     public ByteArrayMap(boolean ordered, int initialCapacity, float loadFactor) {
         if (ordered) map = new LinkedHashMap<>(initialCapacity, loadFactor);
         else map = new HashMap<>(initialCapacity, loadFactor);
     }
-
+    
     @Override
     public int size() {
         return map.size();
     }
-
+    
     @Override
     public boolean isEmpty() {
         return map.isEmpty();
     }
-
+    
     @Override
     public boolean containsKey(Object key) {
         if (key != null && !(key instanceof byte[])) return false;
-        return map.containsKey(new Key((byte[]) key));
+        return map.containsKey(new Element((byte[]) key));
     }
-
+    
     @Override
     public boolean containsValue(Object value) {
-        return map.containsValue(value);
+        if (value != null && !(value instanceof byte[])) return false;
+        return map.containsValue(new Element((byte[]) value));
     }
-
+    
     @Override
-    public V get(Object key) {
+    public byte[] get(Object key) {
         if (key != null && !(key instanceof byte[])) return null;
-        return map.get(new Key((byte[]) key));
+        return map.get(new Element((byte[]) key)).bytes;
     }
-
+    
     @Override
-    public V put(byte[] key, V value) {
-        return map.put(new Key(key), value);
+    public byte[] put(byte[] key, byte[] value) {
+        Element element = map.put(new Element(key), new Element(value));
+        return element != null ? element.bytes : null;
     }
-
+    
     @Override
-    public void putAll(Map<? extends byte[], ? extends V> m) {
+    public void putAll(Map<? extends byte[], ? extends byte[]> m) {
         if (m == null) return;
-        for (Map.Entry<? extends byte[], ? extends V> entry : m.entrySet()) {
+        for (Map.Entry<? extends byte[], ? extends byte[]> entry : m.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
-
+    
     @Override
-    public V remove(Object key) {
+    public byte[] remove(Object key) {
         if (key != null && !(key instanceof byte[])) return null;
-        return map.remove(new Key((byte[]) key));
+        return map.remove(new Element((byte[]) key)).bytes;
     }
-
+    
     @Override
     public void clear() {
         map.clear();
     }
-
+    
     @Override
     public Set<byte[]> keySet() {
         return new KeySet();
     }
-
+    
     @Override
-    public Collection<V> values() {
-        return map.values();
+    public Collection<byte[]> values() {
+        return new Values();
     }
-
+    
     @Override
-    public Set<Entry<byte[], V>> entrySet() {
+    public Set<Entry<byte[], byte[]>> entrySet() {
         return new EntrySet();
     }
-
-    private static final class Key implements Serializable {
+    
+    public static final class Element implements Serializable {
         private static final long serialVersionUID = 1L;
-
+        
         private final byte[] bytes;
-
-        private Key(byte[] bytes) {
+        
+        private Element(byte[] bytes) {
             this.bytes = bytes;
         }
-
+        
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Key key = (Key) o;
+            Element key = (Element) o;
             return Arrays.equals(bytes, key.bytes);
         }
-
+        
         @Override
         public int hashCode() {
             return Arrays.hashCode(bytes);
         }
     }
-
-    private final class EntrySet extends AbstractSet<Entry<byte[], V>> {
-
+    
+    private final class EntrySet extends AbstractSet<Entry<byte[], byte[]>> {
+        
         @Override
         public final int size() {
             return ByteArrayMap.this.size();
         }
-
+        
         @Override
         public final void clear() {
             ByteArrayMap.this.clear();
         }
-
+        
         @Override
-        public final Iterator<Entry<byte[], V>> iterator() {
+        public final Iterator<Entry<byte[], byte[]>> iterator() {
             return new EntryIterator();
         }
-
+        
         @Override
         public final boolean contains(Object o) {
             if (!(o instanceof Map.Entry)) return false;
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            Object obj = e.getKey();
-            if (obj != null && !(obj instanceof byte[])) return false;
-            byte[] key = (byte[]) obj;
+            Object k = e.getKey();
+            Object v = e.getValue();
+            if (k != null && !(k instanceof byte[])) return false;
+            if (v != null && !(v instanceof byte[])) return false;
+            byte[] key = (byte[]) k;
+            byte[] value = (byte[]) v;
             if (!ByteArrayMap.this.containsKey(key)) return false;
-            V v = ByteArrayMap.this.get(key);
-            return v != null ? v.equals(e.getValue()) : e.getValue() == v;
+            byte[] val = ByteArrayMap.this.get(key);
+            return Arrays.equals(val, value);
         }
-
+        
         @Override
         public final boolean remove(Object o) {
             if (!(o instanceof Map.Entry)) return false;
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            Object obj = e.getKey();
-            Object value = e.getValue();
-            if (obj != null && !(obj instanceof byte[])) return false;
-            byte[] key = (byte[]) obj;
+            Object k = e.getKey();
+            Object v = e.getValue();
+            if (k != null && !(k instanceof byte[])) return false;
+            if (v != null && !(v instanceof byte[])) return false;
+            byte[] key = (byte[]) k;
+            byte[] value = (byte[]) v;
             if (!ByteArrayMap.this.containsKey(key)) return false;
-            V v = ByteArrayMap.this.get(key);
-            if ((value == null && value == v) || (value != null && value.equals(v)))
+            byte[] val = ByteArrayMap.this.get(key);
+            if (Arrays.equals(val, value))
                 return ByteArrayMap.this.remove(key) != null;
             return false;
         }
     }
-
+    
     private final class KeySet extends AbstractSet<byte[]> {
-
+        
         @Override
         public final int size() {
             return ByteArrayMap.this.size();
         }
-
+        
         @Override
         public final void clear() {
             ByteArrayMap.this.clear();
         }
-
+        
         @Override
         public final Iterator<byte[]> iterator() {
             return new KeyIterator();
         }
-
+        
         @Override
         public final boolean contains(Object o) {
             return ByteArrayMap.this.containsKey(o);
         }
-
+        
         @Override
         public final boolean remove(Object key) {
             return ByteArrayMap.this.remove(key) != null;
         }
     }
-
+    
+    private final class Values extends AbstractCollection<byte[]> {
+        
+        @Override
+        public final int size() {
+            return ByteArrayMap.this.size();
+        }
+        
+        @Override
+        public final void clear() {
+            ByteArrayMap.this.clear();
+        }
+        
+        @Override
+        public final Iterator<byte[]> iterator() {
+            return new ValueIterator();
+        }
+        
+        @Override
+        public final boolean contains(Object o) {
+            return containsValue(o);
+        }
+        
+    }
+    
     private final class KeyIterator implements Iterator<byte[]> {
-
-        private final Iterator<Key> iterator = map.keySet().iterator();
-
+    
+        private final Iterator<Element> iterator = map.keySet().iterator();
+        
         @Override
         public boolean hasNext() {
             return iterator.hasNext();
         }
-
+    
         @Override
         public byte[] next() {
             return iterator.next().bytes;
         }
-
+    
         @Override
         public void remove() {
             iterator.remove();
         }
     }
-
-    private final class EntryIterator implements Iterator<Map.Entry<byte[], V>> {
-
-        private final Iterator<Map.Entry<Key, V>> iterator = map.entrySet().iterator();
-
+    
+    private final class ValueIterator implements Iterator<byte[]> {
+        
+        private final Iterator<Element> iterator = map.values().iterator();
+        
         @Override
         public boolean hasNext() {
             return iterator.hasNext();
         }
-
+        
         @Override
-        public Entry<byte[], V> next() {
-            Map.Entry<Key, V> v = iterator.next();
-            return new Node<>(v.getKey().bytes, v.getValue());
+        public byte[] next() {
+            return iterator.next().bytes;
         }
-
+        
         @Override
         public void remove() {
             iterator.remove();
         }
     }
-
-    public static final class Node<V> implements Map.Entry<byte[], V>, Serializable {
+    
+    private final class EntryIterator implements Iterator<Map.Entry<byte[], byte[]>> {
+        
+        private final Iterator<Map.Entry<Element, Element>> iterator = map.entrySet().iterator();
+        
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+        
+        @Override
+        public Entry<byte[], byte[]> next() {
+            Map.Entry<Element, Element> v = iterator.next();
+            return new Node(v.getKey().bytes, v.getValue().bytes);
+        }
+        
+        @Override
+        public void remove() {
+            iterator.remove();
+        }
+    }
+    
+    public static final class Node implements Map.Entry<byte[], byte[]>, Serializable {
         private static final long serialVersionUID = 1L;
-
-        private V value;
-        private final byte[] bytes;
-
-        private Node(byte[] bytes, V value) {
-            this.bytes = bytes;
+        
+        private byte[] value;
+        private final byte[] key;
+        
+        private Node(byte[] key, byte[] value) {
+            this.key = key;
             this.value = value;
         }
-
+        
         @Override
         public byte[] getKey() {
-            return bytes;
+            return key;
         }
-
+        
         @Override
-        public V getValue() {
+        public byte[] getValue() {
             return this.value;
         }
-
+        
         @Override
-        public V setValue(V value) {
-            V oldValue = this.value;
+        public byte[] setValue(byte[] value) {
+            byte[] oldValue = this.value;
             this.value = value;
             return oldValue;
         }
-
+        
         @Override
-        @SuppressWarnings("unchecked")
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Node<V> node = (Node<V>) o;
-            if (value != null ? !value.equals(node.value) : node.value != null) return false;
-            return Arrays.equals(bytes, node.bytes);
+            Node node = (Node) o;
+            return Arrays.equals(value, node.value) &&
+                    Arrays.equals(key, node.key);
         }
-
+        
         @Override
         public int hashCode() {
-            int result = value != null ? value.hashCode() : 0;
-            result = 31 * result + Arrays.hashCode(bytes);
+            int result = Arrays.hashCode(value);
+            result = 31 * result + Arrays.hashCode(key);
             return result;
         }
     }

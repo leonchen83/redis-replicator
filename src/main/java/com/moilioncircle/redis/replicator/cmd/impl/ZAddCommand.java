@@ -29,18 +29,18 @@ public class ZAddCommand implements Command {
 
     private byte[] key;
     private ExistType existType;
-    private boolean isCh;
-    private boolean isIncr;
+    private boolean ch;
+    private boolean incr;
     private ZSetEntry[] zSetEntries;
 
     public ZAddCommand() {
     }
-
-    public ZAddCommand(byte[] key, ExistType existType, boolean isCh, boolean isIncr, ZSetEntry[] zSetEntries) {
+    
+    public ZAddCommand(byte[] key, ExistType existType, boolean ch, boolean incr, ZSetEntry[] zSetEntries) {
         this.key = key;
         this.existType = existType;
-        this.isCh = isCh;
-        this.isIncr = isIncr;
+        this.ch = ch;
+        this.incr = incr;
         this.zSetEntries = zSetEntries;
     }
 
@@ -61,19 +61,19 @@ public class ZAddCommand implements Command {
     }
 
     public boolean isCh() {
-        return isCh;
+        return ch;
     }
 
     public void setCh(boolean ch) {
-        isCh = ch;
+        this.ch = ch;
     }
 
     public boolean isIncr() {
-        return isIncr;
+        return incr;
     }
 
     public void setIncr(boolean incr) {
-        isIncr = incr;
+        this.incr = incr;
     }
 
     public ZSetEntry[] getZSetEntries() {

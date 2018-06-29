@@ -373,7 +373,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], Map<byte[], byte[]>> o4 = new KeyStringValueHash();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
-        ByteArrayMap<byte[]> map = new ByteArrayMap<>();
+        ByteArrayMap map = new ByteArrayMap();
         while (len > 0) {
             byte[] field = parser.rdbLoadEncodedStringObject().first();
             byte[] value = parser.rdbLoadEncodedStringObject().first();
@@ -397,7 +397,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], Map<byte[], byte[]>> o9 = new KeyStringValueHash();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
-        ByteArrayMap<byte[]> map = new ByteArrayMap<>();
+        ByteArrayMap map = new ByteArrayMap();
         BaseRdbParser.LenHelper.zmlen(stream); // zmlen
         while (true) {
             int zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
@@ -538,8 +538,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], Map<byte[], byte[]>> o13 = new KeyStringValueHash();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
-
-        ByteArrayMap<byte[]> map = new ByteArrayMap<>();
+    
+        ByteArrayMap map = new ByteArrayMap();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
         int zllen = BaseRdbParser.LenHelper.zllen(stream);
@@ -686,7 +686,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 
             long total = count + deleted;
             while (total-- > 0) {
-                Map<byte[], byte[]> fields = new ByteArrayMap<>();
+                Map<byte[], byte[]> fields = new ByteArrayMap();
                 /*
                  * FLAG
                  * +-----+--------+

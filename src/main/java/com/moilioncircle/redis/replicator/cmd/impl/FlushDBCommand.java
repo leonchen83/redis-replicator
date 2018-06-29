@@ -25,21 +25,21 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 public class FlushDBCommand implements Command {
 
     private static final long serialVersionUID = 1L;
-
-    private boolean isAsync;
+    
+    private boolean async;
 
     public FlushDBCommand() {
     }
-
-    public FlushDBCommand(final boolean isAsync) {
-        this.isAsync = isAsync;
+    
+    public FlushDBCommand(final boolean async) {
+        this.async = async;
     }
 
     public boolean isAsync() {
-        return isAsync;
+        return async;
     }
 
     public void setAsync(boolean async) {
-        isAsync = async;
+        this.async = async;
     }
 }

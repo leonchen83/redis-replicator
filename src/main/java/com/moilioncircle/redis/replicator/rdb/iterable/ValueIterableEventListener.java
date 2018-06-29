@@ -130,7 +130,7 @@ public class ValueIterableEventListener implements EventListener {
         } else if (kv instanceof KeyStringValueMapEntryIterator) {
             KeyStringValueMapEntryIterator mkv = (KeyStringValueMapEntryIterator) kv;
             Iterator<Map.Entry<byte[], byte[]>> it = mkv.getValue();
-            Map<byte[], byte[]> prev = null, next = new ByteArrayMap<>(order, batchSize);
+            Map<byte[], byte[]> prev = null, next = new ByteArrayMap(order, batchSize);
             while (it.hasNext()) {
                 Map.Entry<byte[], byte[]> entry = it.next();
                 next.put(entry.getKey(), entry.getValue());
@@ -138,7 +138,7 @@ public class ValueIterableEventListener implements EventListener {
                     if (prev != null)
                         listener.onEvent(replicator, hash(mkv, prev, batch++, false));
                     prev = next;
-                    next = new ByteArrayMap<>(order, batchSize);
+                    next = new ByteArrayMap(order, batchSize);
                 }
             }
             final boolean last = next.isEmpty();

@@ -38,13 +38,13 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
         long ttl = toLong(command[idx++]);
         byte[] serializedValue = toBytes(command[idx]);
         idx++;
-        boolean isReplace = false;
+        boolean replace = false;
         boolean absTtl = false;
         EvictType evictType = EvictType.NONE;
         Long evictValue = null;
         for (; idx < command.length; idx++) {
             if (isEquals(toRune(command[idx]), "REPLACE")) {
-                isReplace = true;
+                replace = true;
             } else if (isEquals(toRune(command[idx]), "ABSTTL")) {
                 absTtl = true;
             } else if (isEquals(toRune(command[idx]), "IDLETIME")) {
@@ -59,7 +59,7 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
                 throw new UnsupportedOperationException(toRune(command[idx]));
             }
         }
-        return new RestoreCommand(key, ttl, serializedValue, isReplace, absTtl, evictType, evictValue);
+        return new RestoreCommand(key, ttl, serializedValue, replace, absTtl, evictType, evictValue);
     }
     
 }

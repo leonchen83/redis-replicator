@@ -81,10 +81,10 @@ public class BaseRdbParser {
      * <p>
      * 3. |10xxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| the remaining 6 bits are discarded.Additional 4 bytes represent the length(big endian in version6)
      * <p>
-     * 4. |11xxxxxx| the remaining 6 bits are read.and then the next object is encoded in a special format.so we set isencoded = true
+     * 4. |11xxxxxx| the remaining 6 bits are read.and then the next object is encoded in a special format.so we set encoded = true
      * <p>
      *
-     * @return tuple(len, isencoded)
+     * @return tuple(len, encoded)
      * @throws IOException when read timeout
      * @see #rdbLoadIntegerObject
      * @see #rdbLoadLzfStringObject
@@ -201,7 +201,7 @@ public class BaseRdbParser {
         boolean encode = (flags & RDB_LOAD_ENC) != 0;
         Len lenObj = rdbLoadLen();
         long len = (int) lenObj.len;
-        boolean isencoded = lenObj.isencoded;
+        boolean isencoded = lenObj.encoded;
         if (isencoded) {
             switch ((int) len) {
                 case RDB_ENC_INT8:
@@ -274,11 +274,11 @@ public class BaseRdbParser {
      */
     public static class Len {
         public final long len;
-        public final boolean isencoded;
+        public final boolean encoded;
     
-        private Len(long len, boolean isencoded) {
+        private Len(long len, boolean encoded) {
             this.len = len;
-            this.isencoded = isencoded;
+            this.encoded = encoded;
         }
     }
     

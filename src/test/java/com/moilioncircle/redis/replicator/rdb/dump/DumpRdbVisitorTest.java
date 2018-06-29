@@ -7,6 +7,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -34,15 +35,15 @@ public class DumpRdbVisitorTest {
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof DumpKeyValuePair) {
                     DumpKeyValuePair dkv = (DumpKeyValuePair) event;
-                    if (dkv.getKey().equals("k10")) {
+                    if (Strings.toString(dkv.getKey()).equals("k10")) {
                         amap.set(dkv.getValue());
-                    } else if (dkv.getKey().equals("list10")) {
+                    } else if (Strings.toString(dkv.getKey()).equals("list10")) {
                         alist.set(dkv.getValue());
-                    } else if (dkv.getKey().equals("zset")) {
+                    } else if (Strings.toString(dkv.getKey()).equals("zset")) {
                         azset.set(dkv.getValue());
-                    } else if (dkv.getKey().equals("set")) {
+                    } else if (Strings.toString(dkv.getKey()).equals("set")) {
                         aset.set(dkv.getValue());
-                    } else if (dkv.getKey().equals("s")) {
+                    } else if (Strings.toString(dkv.getKey()).equals("s")) {
                         astring.set(dkv.getValue());
                     }
                 }

@@ -185,6 +185,8 @@ public abstract class ValueIterableRdbListener extends RdbListener.Adaptor {
         kv.setDb(raw.getDb());
         kv.setExpiredType(raw.getExpiredType());
         kv.setExpiredValue(raw.getExpiredValue());
+        kv.setEvictType(raw.getEvictType());
+        kv.setEvictValue(raw.getEvictValue());
         kv.setValueRdbType(raw.getValueRdbType());
         kv.setKey(raw.getKey());
         kv.setRawKey(raw.getRawKey());

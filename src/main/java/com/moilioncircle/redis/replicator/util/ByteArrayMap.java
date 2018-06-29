@@ -133,10 +133,10 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
     
     public static final class Element implements Serializable {
         private static final long serialVersionUID = 1L;
-        
-        private final byte[] bytes;
-        
-        private Element(byte[] bytes) {
+    
+        final byte[] bytes;
+    
+        Element(byte[] bytes) {
             this.bytes = bytes;
         }
         

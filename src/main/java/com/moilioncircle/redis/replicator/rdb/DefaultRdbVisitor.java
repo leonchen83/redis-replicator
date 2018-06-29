@@ -36,7 +36,9 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
+import com.moilioncircle.redis.replicator.util.ByteArrayList;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
+import com.moilioncircle.redis.replicator.util.ByteArraySet;
 import com.moilioncircle.redis.replicator.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -278,7 +280,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], List<byte[]>> o1 = new KeyStringValueList();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
-        List<byte[]> list = new ArrayList<>();
+        List<byte[]> list = new ByteArrayList();
         while (len > 0) {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
             list.add(element);
@@ -301,7 +303,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], Set<byte[]>> o2 = new KeyStringValueSet();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
-        Set<byte[]> set = new LinkedHashSet<>();
+        Set<byte[]> set = new ByteArraySet();
         while (len > 0) {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
             set.add(element);
@@ -436,8 +438,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], List<byte[]>> o10 = new KeyStringValueList();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
-
-        List<byte[]> list = new ArrayList<>();
+    
+        List<byte[]> list = new ByteArrayList();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
         int zllen = BaseRdbParser.LenHelper.zllen(stream);
@@ -466,8 +468,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], Set<byte[]>> o11 = new KeyStringValueSet();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
-
-        Set<byte[]> set = new LinkedHashSet<>();
+    
+        Set<byte[]> set = new ByteArraySet();
         int encoding = BaseRdbParser.LenHelper.encoding(stream);
         long lenOfContent = BaseRdbParser.LenHelper.lenOfContent(stream);
         for (long i = 0; i < lenOfContent; i++) {
@@ -567,7 +569,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], List<byte[]>> o14 = new KeyStringValueList();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
-        List<byte[]> list = new ArrayList<>();
+        List<byte[]> list = new ByteArrayList();
         for (int i = 0; i < len; i++) {
             RedisInputStream stream = new RedisInputStream(parser.rdbGenericLoadStringObject(RDB_LOAD_NONE));
 

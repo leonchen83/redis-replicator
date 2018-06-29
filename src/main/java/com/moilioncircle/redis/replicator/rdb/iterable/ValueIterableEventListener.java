@@ -36,9 +36,10 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyString
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
+import com.moilioncircle.redis.replicator.util.ByteArrayList;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
+import com.moilioncircle.redis.replicator.util.ByteArraySet;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -54,26 +55,26 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
  * @since 2.5.0
  */
 public class ValueIterableEventListener implements EventListener {
-
+    
     private final int batchSize;
     private final boolean order;
     private final EventListener listener;
-
+    
     public ValueIterableEventListener(EventListener listener) {
         this(64, listener);
     }
-
+    
     public ValueIterableEventListener(int batchSize, EventListener listener) {
         this(true, batchSize, listener);
     }
-
+    
     public ValueIterableEventListener(boolean order, int batchSize, EventListener listener) {
         if (batchSize <= 0) throw new IllegalArgumentException(String.valueOf(batchSize));
         this.order = order;
         this.batchSize = batchSize;
         this.listener = listener;
     }
-
+    
     @Override
     public void onEvent(Replicator replicator, Event event) {
         if (!(event instanceof KeyValuePair<?, ?>)) {
@@ -93,7 +94,7 @@ public class ValueIterableEventListener implements EventListener {
             if (type == RDB_TYPE_SET || type == RDB_TYPE_SET_INTSET) {
                 KeyStringValueByteArrayIterator skv = (KeyStringValueByteArrayIterator) kv;
                 Iterator<byte[]> it = skv.getValue();
-                Set<byte[]> prev = null, next = create(order, batchSize);
+                Set<byte[]> prev = null, next = new ByteArraySet(order, batchSize);
                 while (it.hasNext()) {
                     next.add(it.next());
                     if (next.size() == batchSize) {
@@ -109,7 +110,7 @@ public class ValueIterableEventListener implements EventListener {
             } else {
                 KeyStringValueByteArrayIterator lkv = (KeyStringValueByteArrayIterator) kv;
                 Iterator<byte[]> it = lkv.getValue();
-                List<byte[]> prev = null, next = new ArrayList<>(batchSize);
+                List<byte[]> prev = null, next = new ByteArrayList(batchSize);
                 while (it.hasNext()) {
                     try {
                         next.add(it.next());
@@ -117,7 +118,7 @@ public class ValueIterableEventListener implements EventListener {
                             if (prev != null)
                                 listener.onEvent(replicator, list(lkv, prev, batch++, false));
                             prev = next;
-                            next = new ArrayList<>(batchSize);
+                            next = new ByteArrayList(batchSize);
                         }
                     } catch (IllegalStateException ignore) {
                         // see ValueIterableRdbVisitor.QuickListIter.next().
@@ -166,11 +167,11 @@ public class ValueIterableEventListener implements EventListener {
             listener.onEvent(replicator, stream((KeyStringValueStream) kv, (Stream) kv.getValue(), batch, true));
         }
     }
-
+    
     private <T> Set<T> create(boolean order, int batchSize) {
         return order ? new LinkedHashSet<T>(batchSize) : new HashSet<T>(batchSize);
     }
-
+    
     private BatchedKeyStringValueString string(KeyValuePair<byte[], ?> raw, byte[] value, int batch, boolean last) {
         BatchedKeyStringValueString kv = new BatchedKeyStringValueString();
         kv.setDb(raw.getDb());
@@ -185,7 +186,7 @@ public class ValueIterableEventListener implements EventListener {
         kv.setLast(last);
         return kv;
     }
-
+    
     private BatchedKeyStringValueModule module(KeyValuePair<byte[], ?> raw, Module value, int batch, boolean last) {
         BatchedKeyStringValueModule kv = new BatchedKeyStringValueModule();
         kv.setDb(raw.getDb());
@@ -200,7 +201,7 @@ public class ValueIterableEventListener implements EventListener {
         kv.setLast(last);
         return kv;
     }
-
+    
     private BatchedKeyStringValueHash hash(KeyValuePair<byte[], ?> raw, Map<byte[], byte[]> value, int batch, boolean last) {
         BatchedKeyStringValueHash kv = new BatchedKeyStringValueHash();
         kv.setDb(raw.getDb());
@@ -215,7 +216,7 @@ public class ValueIterableEventListener implements EventListener {
         kv.setLast(last);
         return kv;
     }
-
+    
     private BatchedKeyStringValueList list(KeyValuePair<byte[], ?> raw, List<byte[]> value, int batch, boolean last) {
         BatchedKeyStringValueList kv = new BatchedKeyStringValueList();
         kv.setDb(raw.getDb());
@@ -230,7 +231,7 @@ public class ValueIterableEventListener implements EventListener {
         kv.setLast(last);
         return kv;
     }
-
+    
     private BatchedKeyStringValueSet set(KeyValuePair<byte[], ?> raw, Set<byte[]> value, int batch, boolean last) {
         BatchedKeyStringValueSet kv = new BatchedKeyStringValueSet();
         kv.setDb(raw.getDb());
@@ -245,7 +246,7 @@ public class ValueIterableEventListener implements EventListener {
         kv.setLast(last);
         return kv;
     }
-
+    
     private BatchedKeyStringValueZSet zset(KeyValuePair<byte[], ?> raw, Set<ZSetEntry> value, int batch, boolean last) {
         BatchedKeyStringValueZSet kv = new BatchedKeyStringValueZSet();
         kv.setDb(raw.getDb());
@@ -260,7 +261,7 @@ public class ValueIterableEventListener implements EventListener {
         kv.setLast(last);
         return kv;
     }
-
+    
     private BatchedKeyStringValueStream stream(KeyValuePair<byte[], ?> raw, Stream value, int batch, boolean last) {
         BatchedKeyStringValueStream kv = new BatchedKeyStringValueStream();
         kv.setDb(raw.getDb());
@@ -275,5 +276,5 @@ public class ValueIterableEventListener implements EventListener {
         kv.setLast(last);
         return kv;
     }
-
+    
 }

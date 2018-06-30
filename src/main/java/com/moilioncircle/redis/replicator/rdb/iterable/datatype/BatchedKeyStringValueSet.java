@@ -20,7 +20,7 @@ import java.util.Set;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.0.0
  */
 public class BatchedKeyStringValueSet extends BatchedKeyValuePair<byte[], Set<byte[]>> {
     private static final long serialVersionUID = 1L;

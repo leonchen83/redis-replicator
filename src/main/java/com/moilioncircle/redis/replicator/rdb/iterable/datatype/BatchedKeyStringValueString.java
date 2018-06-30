@@ -18,7 +18,7 @@ package com.moilioncircle.redis.replicator.rdb.iterable.datatype;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.0.0
  */
 public class BatchedKeyStringValueString extends BatchedKeyValuePair<byte[], byte[]> {
     private static final long serialVersionUID = 1L;

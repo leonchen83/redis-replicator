@@ -20,7 +20,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 
 /**
  * @author Leon Chen
- * @since 2.6.0
+ * @since 3.0.0
  */
 public class BatchedKeyStringValueStream extends BatchedKeyValuePair<byte[], Stream> {
     private static final long serialVersionUID = 1L;

@@ -27,6 +27,7 @@ import static com.moilioncircle.redis.replicator.util.ByteArrayMap.Element;
 
 /**
  * @author Leon Chen
+ * @since 3.0.0
  */
 //@NonThreadSafe
 public class ByteArraySet extends AbstractCollection<byte[]> implements Set<byte[]>, Serializable {

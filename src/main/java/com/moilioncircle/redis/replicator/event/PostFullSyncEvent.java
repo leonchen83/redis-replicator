@@ -40,11 +40,4 @@ public class PostFullSyncEvent implements Event {
     public void setChecksum(long checksum) {
         this.checksum = checksum;
     }
-
-    @Override
-    public String toString() {
-        return "PostFullSyncEvent{" +
-                "checksum=" + checksum +
-                '}';
-    }
 }

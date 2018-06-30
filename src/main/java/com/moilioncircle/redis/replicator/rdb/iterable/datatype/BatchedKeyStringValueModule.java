@@ -20,7 +20,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.0.0
  */
 public class BatchedKeyStringValueModule extends BatchedKeyValuePair<byte[], Module> {
     private static final long serialVersionUID = 1L;

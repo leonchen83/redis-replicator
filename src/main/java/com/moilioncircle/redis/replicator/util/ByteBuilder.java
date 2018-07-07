@@ -26,10 +26,10 @@ import java.util.List;
  */
 //@NonThreadSafe
 public class ByteBuilder {
-
+    
+    private int total = 0;
     private final ByteBuffer buffer;
     private final List<byte[]> list = new ArrayList<>();
-    private int total = 0;
 
     private ByteBuilder(int cap) {
         this.buffer = ByteBuffer.allocate(cap);
@@ -70,6 +70,12 @@ public class ByteBuilder {
         }
         if (len > 0) System.arraycopy(buffer.array(), 0, ary, offset, len);
         return ary;
+    }
+    
+    public void clear() {
+        total = 0;
+        list.clear();
+        buffer.clear();
     }
 
     @Override

@@ -50,11 +50,11 @@ public class RedisMixReplicator extends AbstractReplicator {
     protected static final Logger logger = LoggerFactory.getLogger(RedisMixReplicator.class);
     protected final ReplyParser replyParser;
     protected final PeekableInputStream peekable;
-
+    
     public RedisMixReplicator(File file, Configuration configuration) throws FileNotFoundException {
         this(new FileInputStream(file), configuration);
     }
-
+    
     public RedisMixReplicator(InputStream in, Configuration configuration) {
         Objects.requireNonNull(in);
         Objects.requireNonNull(configuration);
@@ -71,7 +71,7 @@ public class RedisMixReplicator extends AbstractReplicator {
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
     }
-
+    
     @Override
     public void open() throws IOException {
         if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
@@ -85,12 +85,13 @@ public class RedisMixReplicator extends AbstractReplicator {
             doCloseListener(this);
         }
     }
-
+    
     protected void doOpen() throws IOException {
         if (peekable.peek() == 'R') {
             RdbParser parser = new RdbParser(inputStream, this);
             parser.parse();
         }
+        if (getStatus() != CONNECTED) return;
         submitEvent(new PreCommandSyncEvent());
         while (getStatus() == CONNECTED) {
             Object obj = replyParser.parse();

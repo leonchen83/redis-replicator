@@ -33,18 +33,24 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
  * @since 2.1.0
  */
 public class ReplyParser {
+    private final RedisCodec codec;
     private final RedisInputStream in;
 
     public ReplyParser(RedisInputStream in) {
+        this(in, null);
+    }
+
+    public ReplyParser(RedisInputStream in, RedisCodec codec) {
         this.in = in;
+        this.codec = codec;
     }
 
     public Object parse() throws IOException {
-        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(), null);
+        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(codec), null);
     }
 
     public Object parse(OffsetHandler offsetHandler) throws IOException {
-        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(), offsetHandler);
+        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(codec), offsetHandler);
     }
 
     public Object parse(BulkReplyHandler handler, OffsetHandler offsetHandler) throws IOException {
@@ -125,7 +131,7 @@ public class ReplyParser {
                     if (len == -1) return null;
                     Object[] ary = new Object[(int) len];
                     for (int i = 0; i < len; i++) {
-                        Object obj = parse(new BulkReplyHandler.SimpleBulkReplyHandler());
+                        Object obj = parse(new BulkReplyHandler.SimpleBulkReplyHandler(codec));
                         ary[i] = obj;
                     }
                     return ary;
@@ -137,7 +143,7 @@ public class ReplyParser {
                             builder.put((byte) c);
                         }
                         if ((c = in.read()) == '\n') {
-                            return builder.array();
+                            return codec == null ? builder.array() : codec.decode(builder.array());
                         } else {
                             builder.put((byte) c);
                         }
@@ -150,7 +156,7 @@ public class ReplyParser {
                             builder.put((byte) c);
                         }
                         if ((c = in.read()) == '\n') {
-                            return builder.array();
+                            return codec == null ? builder.array() : codec.decode(builder.array());
                         } else {
                             builder.put((byte) c);
                         }

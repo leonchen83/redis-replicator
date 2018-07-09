@@ -21,6 +21,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.OffsetHandler;
+import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
@@ -283,7 +284,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
             this.inputStream = new RedisInputStream(inputStream, configuration.getBufferSize());
             this.inputStream.setRawByteListeners(this.rawByteListeners);
-            replyParser = new ReplyParser(this.inputStream);
+            replyParser = new ReplyParser(this.inputStream, new RedisCodec());
             logger.info("Connected to redis-server[{}:{}]", host, port);
         } finally {
             connected.set(CONNECTED);

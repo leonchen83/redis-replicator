@@ -28,13 +28,24 @@ public interface BulkReplyHandler {
     byte[] handle(long len, RedisInputStream in) throws IOException;
 
     class SimpleBulkReplyHandler implements BulkReplyHandler {
+
+        private final RedisCodec codec;
+
+        public SimpleBulkReplyHandler() {
+            this.codec = null;
+        }
+
+        public SimpleBulkReplyHandler(RedisCodec codec) {
+            this.codec = codec;
+        }
+
         @Override
         public byte[] handle(long len, RedisInputStream in) throws IOException {
             byte[] reply = len == 0 ? new byte[]{} : in.readBytes(len).first();
             int c;
             if ((c = in.read()) != '\r') throw new AssertionError("expect '\\r' but :" + (char) c);
             if ((c = in.read()) != '\n') throw new AssertionError("expect '\\n' but :" + (char) c);
-            return reply;
+            return codec == null ? reply : codec.decode(reply);
         }
     }
 }

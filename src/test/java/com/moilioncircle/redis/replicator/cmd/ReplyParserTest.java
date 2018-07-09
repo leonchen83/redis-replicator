@@ -33,7 +33,7 @@ public class ReplyParserTest {
     public void testParse() throws Exception {
         {
             RedisInputStream in = new RedisInputStream(new ByteArrayInputStream(":56789\r\n".getBytes()));
-            ReplyParser replyParser = new ReplyParser(in);
+            ReplyParser replyParser = new ReplyParser(in, new RedisCodec());
             Long r = (Long) replyParser.parse(new BulkReplyHandler.SimpleBulkReplyHandler());
             assertEquals(56789L, r.longValue());
         }

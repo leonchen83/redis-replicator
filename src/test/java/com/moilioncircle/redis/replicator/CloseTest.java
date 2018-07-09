@@ -265,4 +265,29 @@ public class CloseTest {
         assertEquals(2, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
+    
+    @Test
+    public void testMixClose7() throws IOException {
+        final Replicator replicator = new RedisReplicator(
+                CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreCommandSyncEvent) {
+                    try {
+                        replicator.close();
+                    } catch (IOException e) {
+                    }
+                }
+                if (event instanceof PostCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+            }
+        });
+        replicator.open();
+        assertEquals(1, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
+    }
 }

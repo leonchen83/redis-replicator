@@ -19,6 +19,9 @@ package com.moilioncircle.redis.replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
@@ -38,7 +41,7 @@ public class CloseTest {
     @SuppressWarnings("resource")
     public void testRdbClose() throws IOException {
         Replicator r = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")), FileType.RDB,
+                new RateLimitInputStream(CloseTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         r.addEventListener(new EventListener() {
@@ -59,12 +62,12 @@ public class CloseTest {
         r.open();
         assertEquals(10, acc.get());
     }
-
+    
     @Test
     @SuppressWarnings("resource")
     public void testAofClose() throws IOException {
         Replicator r = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), FileType.AOF,
+                CloseTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         r.addEventListener(new EventListener() {
@@ -85,12 +88,12 @@ public class CloseTest {
         r.open();
         assertEquals(30, acc.get());
     }
-
+    
     @Test
     @SuppressWarnings("resource")
     public void testMixClose1() throws IOException {
         Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
@@ -116,12 +119,12 @@ public class CloseTest {
         assertEquals(100, acc.get());
         assertEquals(0, acc1.get());
     }
-
+    
     @Test
     @SuppressWarnings("resource")
     public void testMixClose2() throws IOException {
         Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
@@ -143,16 +146,16 @@ public class CloseTest {
                 }
             }
         });
-
+        
         replicator.open();
         assertEquals(244653, acc.get());
         assertEquals(100, acc1.get());
     }
-
+    
     @Test
     public void testMixClose3() throws IOException, InterruptedException {
         final Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         new Thread() {
@@ -171,18 +174,18 @@ public class CloseTest {
                 }
             }
         }.start();
-
+        
         Thread.sleep(100);
         replicator.close();
         Thread.sleep(100);
         assertEquals(1, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
-
+    
     @Test
     public void testMixClose4() throws IOException, InterruptedException {
         final Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         new Thread() {
@@ -205,11 +208,61 @@ public class CloseTest {
                 }
             }
         }.start();
-
+        
         Thread.sleep(100);
         replicator.close();
         Thread.sleep(100);
         assertEquals(0, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
+    }
+    
+    @Test
+    public void testMixClose5() throws IOException {
+        final Replicator replicator = new RedisReplicator(
+                CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostRdbSyncEvent) {
+                    try {
+                        replicator.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        });
+        replicator.open();
+        assertEquals(0, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
+    }
+    
+    @Test
+    public void testMixClose6() throws IOException {
+        final Replicator replicator = new RedisReplicator(
+                CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                Configuration.defaultSetting());
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+            }
+        });
+        replicator.open();
+        assertEquals(2, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
 }

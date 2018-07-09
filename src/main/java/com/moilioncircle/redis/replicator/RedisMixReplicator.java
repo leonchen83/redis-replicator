@@ -93,23 +93,26 @@ public class RedisMixReplicator extends AbstractReplicator {
         }
         if (getStatus() != CONNECTED) return;
         submitEvent(new PreCommandSyncEvent());
-        while (getStatus() == CONNECTED) {
-            Object obj = replyParser.parse();
-            if (obj instanceof Object[]) {
-                if (verbose() && logger.isDebugEnabled())
-                    logger.debug(format((Object[]) obj));
-                Object[] raw = (Object[]) obj;
-                CommandName name = CommandName.name(Strings.toString(raw[0]));
-                final CommandParser<? extends Command> parser;
-                if ((parser = commands.get(name)) == null) {
-                    logger.warn("command [{}] not register. raw command:{}", name, format(raw));
-                    continue;
+        try {
+            while (getStatus() == CONNECTED) {
+                Object obj = replyParser.parse();
+                if (obj instanceof Object[]) {
+                    if (verbose() && logger.isDebugEnabled())
+                        logger.debug(format((Object[]) obj));
+                    Object[] raw = (Object[]) obj;
+                    CommandName name = CommandName.name(Strings.toString(raw[0]));
+                    final CommandParser<? extends Command> parser;
+                    if ((parser = commands.get(name)) == null) {
+                        logger.warn("command [{}] not register. raw command:{}", name, format(raw));
+                        continue;
+                    }
+                    submitEvent(parser.parse(raw));
+                } else {
+                    logger.info("unexpected redis reply:{}", obj);
                 }
-                submitEvent(parser.parse(raw));
-            } else {
-                logger.info("unexpected redis reply:{}", obj);
             }
+        } finally {
+            submitEvent(new PostCommandSyncEvent());
         }
-        submitEvent(new PostCommandSyncEvent());
     }
 }

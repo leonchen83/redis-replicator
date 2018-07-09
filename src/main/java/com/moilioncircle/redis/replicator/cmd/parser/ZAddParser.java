@@ -24,9 +24,9 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -46,20 +46,20 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
         boolean et = false;
         while (idx < command.length) {
             String param = toRune(command[idx]);
-            if (!et && eq(param, "NX")) {
+            if (!et && isEquals(param, "NX")) {
                 existType = ExistType.NX;
                 et = true;
                 idx++;
                 continue;
-            } else if (!et && eq(param, "XX")) {
+            } else if (!et && isEquals(param, "XX")) {
                 existType = ExistType.XX;
                 et = true;
                 idx++;
                 continue;
             }
-            if (isCh == null && eq(param, "CH")) {
+            if (isCh == null && isEquals(param, "CH")) {
                 isCh = true;
-            } else if (isIncr == null && eq(param, "INCR")) {
+            } else if (isIncr == null && isEquals(param, "INCR")) {
                 isIncr = true;
             } else {
                 double score = Double.parseDouble(param);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples.util;
+package com.moilioncircle.redis.replicator.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,7 +24,7 @@ import static com.moilioncircle.redis.replicator.util.CRC64.longToByteArray;
 
 /**
  * @author Leon Chen
- * @since 2.4.4
+ * @since 2.6.0
  */
 public class CRCOutputStream extends OutputStream {
 

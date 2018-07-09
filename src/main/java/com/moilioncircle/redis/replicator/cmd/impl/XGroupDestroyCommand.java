@@ -20,7 +20,7 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @author Leon Chen
  * @since 2.6.0
  */
-public class XGroupDelGroupCommand extends XGroupCommand {
+public class XGroupDestroyCommand extends XGroupCommand {
     
     private static final long serialVersionUID = 1L;
     
@@ -32,15 +32,15 @@ public class XGroupDelGroupCommand extends XGroupCommand {
     
     private byte[] rawGroup;
     
-    public XGroupDelGroupCommand() {
+    public XGroupDestroyCommand() {
     
     }
     
-    public XGroupDelGroupCommand(String key, String group) {
+    public XGroupDestroyCommand(String key, String group) {
         this(key, group, null, null);
     }
     
-    public XGroupDelGroupCommand(String key, String group, byte[] rawKey, byte[] rawGroup) {
+    public XGroupDestroyCommand(String key, String group, byte[] rawKey, byte[] rawGroup) {
         this.key = key;
         this.group = group;
         this.rawKey = rawKey;
@@ -81,7 +81,7 @@ public class XGroupDelGroupCommand extends XGroupCommand {
     
     @Override
     public String toString() {
-        return "XGroupDelGroupCommand{" +
+        return "XGroupDestroyCommand{" +
                 "key='" + key + '\'' +
                 ", group='" + group + '\'' +
                 '}';

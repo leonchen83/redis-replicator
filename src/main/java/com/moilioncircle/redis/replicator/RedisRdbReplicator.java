@@ -65,7 +65,6 @@ public class RedisRdbReplicator extends AbstractReplicator {
     }
 
     protected void doOpen() throws IOException {
-        RdbParser parser = new RdbParser(inputStream, this);
-        parser.parse();
+        new RdbParser(inputStream, this).parse();
     }
 }

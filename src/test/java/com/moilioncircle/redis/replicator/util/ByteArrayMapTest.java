@@ -42,7 +42,6 @@ import static org.junit.Assert.assertEquals;
 public class ByteArrayMapTest {
     
     @Test
-    @SuppressWarnings("unlikely-arg-type")
     public void test() {
         Map<byte[], byte[]> m = new LinkedHashMap<>();
         m.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
@@ -155,7 +154,6 @@ public class ByteArrayMapTest {
     }
     
     @Test
-    @SuppressWarnings("unlikely-arg-type")
     public void testSerialize() throws IOException, ClassNotFoundException {
         Map<byte[], byte[]> m = new LinkedHashMap<>();
         m.put(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});

@@ -23,13 +23,13 @@ import com.moilioncircle.redis.replicator.cmd.impl.SortCommand;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.ASC;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.DESC;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.NONE;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -50,31 +50,31 @@ public class SortParser implements CommandParser<SortCommand> {
         List<byte[]> rawGetPatterns = new ArrayList<>();
         while (idx < command.length) {
             String param = toRune(command[idx]);
-            if (eq(param, "ASC")) {
+            if (isEquals(param, "ASC")) {
                 sort.setOrder(ASC);
-            } else if (eq(param, "DESC")) {
+            } else if (isEquals(param, "DESC")) {
                 sort.setOrder(DESC);
-            } else if (eq(param, "ALPHA")) {
+            } else if (isEquals(param, "ALPHA")) {
                 sort.setAlpha(true);
-            } else if (eq(param, "LIMIT") && idx + 2 < command.length) {
+            } else if (isEquals(param, "LIMIT") && idx + 2 < command.length) {
                 idx++;
                 long offset = toLong(command[idx]);
                 idx++;
                 long count = toLong(command[idx]);
                 sort.setLimit(new Limit(offset, count));
-            } else if (eq(param, "STORE") && idx + 1 < command.length) {
+            } else if (isEquals(param, "STORE") && idx + 1 < command.length) {
                 idx++;
                 String destination = toRune(command[idx]);
                 byte[] rawDestination = toBytes(command[idx]);
                 sort.setDestination(destination);
                 sort.setRawDestination(rawDestination);
-            } else if (eq(param, "BY") && idx + 1 < command.length) {
+            } else if (isEquals(param, "BY") && idx + 1 < command.length) {
                 idx++;
                 String byPattern = toRune(command[idx]);
                 byte[] rawByPattern = toBytes(command[idx]);
                 sort.setByPattern(byPattern);
                 sort.setRawByPattern(rawByPattern);
-            } else if (eq(param, "GET") && idx + 1 < command.length) {
+            } else if (isEquals(param, "GET") && idx + 1 < command.length) {
                 idx++;
                 String getPattern = toRune(command[idx]);
                 byte[] rawGetPattern = toBytes(command[idx]);

@@ -28,10 +28,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -53,7 +53,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 if (idx >= command.length) break;
                 token = toRune(command[idx]);
             }
-            while (token != null && (eq(token, "GET") || eq(token, "SET") || eq(token, "INCRBY")));
+            while (token != null && (isEquals(token, "GET") || isEquals(token, "SET") || isEquals(token, "INCRBY")));
         }
         List<OverFlow> overflows = null;
         if (idx < command.length) {
@@ -63,7 +63,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 idx = parseOverFlow(idx, command, overFlow);
                 overflows.add(overFlow);
                 if (idx >= command.length) break;
-            } while (eq(toRune(command[idx]), "OVERFLOW"));
+            } while (isEquals(toRune(command[idx]), "OVERFLOW"));
         }
 
         return new BitFieldCommand(key, list, overflows, rawKey);
@@ -74,11 +74,11 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
         accept(toRune(params[idx++]), "OVERFLOW");
         OverFlowType overflow;
         String keyword = toRune(params[idx++]);
-        if (eq(keyword, "WRAP")) {
+        if (isEquals(keyword, "WRAP")) {
             overflow = OverFlowType.WRAP;
-        } else if (eq(keyword, "SAT")) {
+        } else if (isEquals(keyword, "SAT")) {
             overflow = OverFlowType.SAT;
-        } else if (eq(keyword, "FAIL")) {
+        } else if (isEquals(keyword, "FAIL")) {
             overflow = OverFlowType.FAIL;
         } else {
             throw new AssertionError("parse [BITFIELD] command error." + keyword);
@@ -91,7 +91,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
                 if (idx >= params.length) break;
                 token = toRune(params[idx]);
             }
-            while (token != null && (eq(token, "GET") || eq(token, "SET") || eq(token, "INCRBY")));
+            while (token != null && (isEquals(token, "GET") || isEquals(token, "SET") || isEquals(token, "INCRBY")));
         }
         overFlow.setOverFlowType(overflow);
         overFlow.setStatements(list);
@@ -102,15 +102,15 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
         int idx = i;
         String keyword = toRune(params[idx++]);
         Statement statement;
-        if (eq(keyword, "GET")) {
+        if (isEquals(keyword, "GET")) {
             GetTypeOffset getTypeOffset = new GetTypeOffset();
             idx = parseGet(idx - 1, params, getTypeOffset);
             statement = getTypeOffset;
-        } else if (eq(keyword, "SET")) {
+        } else if (isEquals(keyword, "SET")) {
             SetTypeOffsetValue setTypeOffsetValue = new SetTypeOffsetValue();
             idx = parseSet(idx - 1, params, setTypeOffsetValue);
             statement = setTypeOffsetValue;
-        } else if (eq(keyword, "INCRBY")) {
+        } else if (isEquals(keyword, "INCRBY")) {
             IncrByTypeOffsetIncrement incrByTypeOffsetIncrement = new IncrByTypeOffsetIncrement();
             idx = parseIncrBy(idx - 1, params, incrByTypeOffsetIncrement);
             statement = incrByTypeOffsetIncrement;
@@ -174,7 +174,7 @@ public class BitFieldParser implements CommandParser<BitFieldCommand> {
     }
 
     private void accept(String actual, String expect) {
-        if (eq(actual, expect)) return;
+        if (isEquals(actual, expect)) return;
         throw new AssertionError("expect " + expect + " but actual " + actual);
     }
 

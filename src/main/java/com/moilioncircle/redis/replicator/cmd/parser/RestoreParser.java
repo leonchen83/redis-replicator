@@ -18,11 +18,12 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.RestoreCommand;
+import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -32,7 +33,6 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
     @Override
     public RestoreCommand parse(Object[] command) {
         int idx = 1;
-        Boolean isReplace = null;
         String key = toRune(command[idx]);
         byte[] rawKey = toBytes(command[idx]);
         idx++;
@@ -40,10 +40,28 @@ public class RestoreParser implements CommandParser<RestoreCommand> {
         String serializedValue = toRune(command[idx]);
         byte[] rawSerializedValue = toBytes(command[idx]);
         idx++;
-        if (idx < command.length && eq(toRune(command[idx++]), "REPLACE")) {
-            isReplace = true;
+        Boolean isReplace = null;
+        Boolean absTtl = null;
+        EvictType evictType = EvictType.NONE;
+        Long evictValue = null;
+        for (; idx < command.length; idx++) {
+            if (isEquals(toRune(command[idx]), "REPLACE")) {
+                isReplace = true;
+            } else if (isEquals(toRune(command[idx]), "ABSTTL")) {
+                absTtl = true;
+            } else if (isEquals(toRune(command[idx]), "IDLETIME")) {
+                evictType = EvictType.LRU;
+                idx++;
+                evictValue = toLong(command[idx]);
+            } else if (isEquals(toRune(command[idx]), "FREQ")) {
+                evictType = EvictType.LFU;
+                idx++;
+                evictValue = toLong(command[idx]);
+            } else {
+                throw new UnsupportedOperationException(toRune(command[idx]));
+            }
         }
-        return new RestoreCommand(key, ttl, serializedValue, isReplace, rawKey, rawSerializedValue);
+        return new RestoreCommand(key, ttl, serializedValue, isReplace, absTtl, evictType, evictValue, rawKey, rawSerializedValue);
     }
-
+    
 }

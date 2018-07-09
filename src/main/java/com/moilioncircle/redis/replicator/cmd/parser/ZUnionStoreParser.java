@@ -20,11 +20,11 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toDouble;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toInt;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toDouble;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -49,20 +49,20 @@ public class ZUnionStoreParser implements CommandParser<ZUnionStoreCommand> {
         double[] weights = null;
         while (idx < command.length) {
             String param = toRune(command[idx]);
-            if (eq(param, "WEIGHTS")) {
+            if (isEquals(param, "WEIGHTS")) {
                 idx++;
                 weights = new double[numkeys];
                 for (int i = 0; i < numkeys; i++) {
                     weights[i] = toDouble(command[idx++]);
                 }
-            } else if (eq(param, "AGGREGATE")) {
+            } else if (isEquals(param, "AGGREGATE")) {
                 idx++;
                 String next = toRune(command[idx++]);
-                if (eq(next, "SUM")) {
+                if (isEquals(next, "SUM")) {
                     aggregateType = AggregateType.SUM;
-                } else if (eq(next, "MIN")) {
+                } else if (isEquals(next, "MIN")) {
                     aggregateType = AggregateType.MIN;
-                } else if (eq(next, "MAX")) {
+                } else if (isEquals(next, "MAX")) {
                     aggregateType = AggregateType.MAX;
                 }
             }

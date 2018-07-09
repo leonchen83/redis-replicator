@@ -23,7 +23,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandListener;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -54,7 +54,7 @@ public class CommandExtensionExample {
 
         @Override
         public YourAppendCommand parse(Object[] command) {
-            return new YourAppendCommand(new String((byte[]) command[1], UTF_8), new String((byte[]) command[2], UTF_8));
+            return new YourAppendCommand(toRune(command[1]), toRune(command[2]));
         }
 
         public static class YourAppendCommand implements Command {

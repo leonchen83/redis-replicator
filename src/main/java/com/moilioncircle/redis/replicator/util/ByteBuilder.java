@@ -20,8 +20,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -82,6 +80,6 @@ public class ByteBuilder {
     
     @Override
     public String toString() {
-        return new String(array(), UTF_8);
+        return Strings.toString(array());
     }
 }

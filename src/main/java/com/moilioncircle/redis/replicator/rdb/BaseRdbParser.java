@@ -92,13 +92,13 @@ public class BaseRdbParser {
     public Len rdbLoadLen() throws IOException {
         boolean isencoded = false;
         int rawByte = in.read();
-        int type = (rawByte & 0xc0) >> 6;
+        int type = (rawByte & 0xC0) >> 6;
         long value;
         if (type == RDB_ENCVAL) {
             isencoded = true;
-            value = rawByte & 0x3f;
+            value = rawByte & 0x3F;
         } else if (type == RDB_6BITLEN) {
-            value = rawByte & 0x3f;
+            value = rawByte & 0x3F;
         } else if (type == RDB_14BITLEN) {
             value = ((rawByte & 0x3F) << 8) | in.read();
         } else if (rawByte == RDB_32BITLEN) {
@@ -299,11 +299,13 @@ public class BaseRdbParser {
         }
         
         /*
-         * length-prev-entry special-flag raw-bytes-of-entry
-         * length-prev-entry format
+         * <length-prev-entry> <special-flag> <raw-bytes-of-entry>
+         *
+         * <length-prev-entry> :
          * |xxxxxxxx| if first byte value &lt 254. then 1 byte as prev len.
          * |xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| if first byte &gt=254 then next 4 byte as prev len.
-         * special-flag
+         *
+         * <special-flag> :
          * |00xxxxxx| remaining 6 bit as string len.
          * |01xxxxxx|xxxxxxxx| combined 14 bit as string len.
          * |10xxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 byte as string len.
@@ -322,10 +324,10 @@ public class BaseRdbParser {
             int special = in.read();
             switch (special >> 6) {
                 case 0:
-                    int len = special & 0x3f;
+                    int len = special & 0x3F;
                     return bytes(in, len);
                 case 1:
-                    len = ((special & 0x3f) << 8) | in.read();
+                    len = ((special & 0x3F) << 8) | in.read();
                     return bytes(in, len);
                 case 2:
                     //bigEndian
@@ -347,48 +349,69 @@ public class BaseRdbParser {
                     return String.valueOf(in.readLong(8)).getBytes();
                 default:
                     //6BIT
-                    return String.valueOf(special - 0xf1).getBytes();
+                    return String.valueOf(special - 0xF1).getBytes();
             }
         }
-        
+    
+        /*
+         * <encoding-type> <element-data> <element-tot-len>
+         *
+         * <encoding-type> :
+         * |0xxxxxxx| 7 bit unsigned integer
+         * |10xxxxxx| 6 bit unsigned integer as string length. then read the `length` bytes as string.
+         * |110xxxxx|xxxxxxxx| 13 bit signed integer
+         * |1110xxxx|xxxxxxxx| string with length up to 4095
+         * |11110001|xxxxxxxx|xxxxxxxx| next 2 bytes as 16bit int
+         * |11110010|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 3 bytes as 24bit int
+         * |11110011|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 bytes as 32bit int
+         * |11110100|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 8 bytes as 64bit long
+         * |11110000|xxxxxxxx|xxxxxxxx|xxxxxxxx|xxxxxxxx| next 4 bytes as string length. then read the `length` bytes as string.
+         *
+         * <element-data> :
+         * TBD
+         *
+         * <element-tot-len> :
+         * TBD
+         */
         public static byte[] listPackEntry(RedisInputStream in) throws IOException {
             int special = in.read();
             byte[] value;
             long skip;
             if ((special & 0x80) == 0) {
                 skip = 1;
-                value = String.valueOf(special & 0x7f).getBytes();
-            } else if ((special & 0xc0) == 0x80) {
-                int len = special & 0x3f;
+                value = String.valueOf(special & 0x7F).getBytes();
+            } else if ((special & 0xC0) == 0x80) {
+                int len = special & 0x3F;
                 skip = 1 + len;
                 value = bytes(in, len);
-            } else if ((special & 0xe0) == 0xc0) {
+            } else if ((special & 0xE0) == 0xC0) {
                 skip = 2;
                 int next = in.read();
-                value = String.valueOf((((special & 0x1f) << 8) | next) << 19 >> 19).getBytes();
-            } else if ((special & 0xff) == 0xf1) {
+                value = String.valueOf((((special & 0x1F) << 8) | next) << 19 >> 19).getBytes();
+            } else if ((special & 0xFF) == 0xF1) {
                 skip = 3;
                 value = String.valueOf(in.readInt(2)).getBytes();
-            } else if ((special & 0xff) == 0xf2) {
+            } else if ((special & 0xFF) == 0xF2) {
                 skip = 4;
                 value = String.valueOf(in.readInt(3)).getBytes();
-            } else if ((special & 0xff) == 0xf3) {
+            } else if ((special & 0xFF) == 0xF3) {
                 skip = 5;
                 value = String.valueOf(in.readInt(4)).getBytes();
-            } else if ((special & 0xff) == 0xf4) {
+            } else if ((special & 0xFF) == 0xF4) {
                 skip = 9;
                 value = String.valueOf(in.readLong(8)).getBytes();
-            } else if ((special & 0xf0) == 0xe0) {
-                int len = ((special & 0x0f) << 8) | in.read();
+            } else if ((special & 0xF0) == 0xE0) {
+                int len = ((special & 0x0F) << 8) | in.read();
                 skip = 2 + len;
                 value = bytes(in, len);
-            } else if ((special & 0xff) == 0xf0) {
+            } else if ((special & 0xFF) == 0xf0) {
                 int len = in.readInt(4, false);
                 skip = 5 + len;
                 value = bytes(in, len);
             } else {
                 throw new UnsupportedOperationException(String.valueOf(special));
             }
+            // <element-tot-len>
             if (skip <= 127) {
                 in.skip(1);
             } else if (skip < 16383) {

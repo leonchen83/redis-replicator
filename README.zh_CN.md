@@ -21,7 +21,9 @@
          * [3.4.3. 应用Replicator读取混合格式文件](#343-应用replicator读取混合格式文件)
       * [3.5. 备份远程redis的rdb文件](#35-备份远程redis的rdb文件)
       * [3.6. 备份远程redis的实时命令](#36-备份远程redis的实时命令)
-      * [3.7. 其他示例](#37-其他示例)
+      * [3.7. 将rdb转换成dump格式](#37-将rdb转换成dump格式)
+      * [3.8. 检查Rdb的正确性](#38-检查rdb的正确性)
+      * [3.9. 其他示例](#39-其他示例)
    * [4. 高级主题](#4-高级主题)
       * [4.1. 命令扩展](#41-命令扩展)
          * [4.1.1. 首先写一个command类](#411-首先写一个command类)
@@ -66,7 +68,7 @@
 [![Javadocs](http://www.javadoc.io/badge/com.moilioncircle/redis-replicator.svg)](http://www.javadoc.io/doc/com.moilioncircle/redis-replicator)
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)  
   
-Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实现了Redis Replication协议. 支持SYNC, PSYNC, PSYNC2等三种同步命令. 还支持远程RDB文件备份以及数据同步等功能. 此文中提到的 `命令` 特指Redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`), 支持的redis版本范围从2.6到5.0-rc1  
+Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实现了Redis Replication协议. 支持SYNC, PSYNC, PSYNC2等三种同步命令. 还支持远程RDB文件备份以及数据同步等功能. 此文中提到的 `命令` 特指Redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`), 支持的redis版本范围从2.6到5.0  
 
 ## 1.2. QQ讨论组  
   
@@ -85,7 +87,7 @@ Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实�
 ## 2.1. 安装前置条件  
 jdk 1.7+  
 maven-3.3.1+(支持 [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
-redis 2.6 - 5.0-rc1  
+redis 2.6 - 5.0  
 
 ## 2.2. Maven依赖  
 ```xml  
@@ -201,7 +203,40 @@ redis 2.6 - 5.0-rc1
 
 参阅 [CommandBackupExample.java](./examples/com/moilioncircle/examples/backup/CommandBackupExample.java)  
 
-## 3.7. 其他示例  
+## 3.7. 将rdb转换成dump格式
+
+我们可以用 `DumpRdbVisitor` 来将 rdb 转换成 redis [DUMP](https://redis.io/commands/dump) 格式。  
+  
+```java  
+
+        Replicator r = new RedisReplicator("redis:///path/to/dump.rdb");
+        r.setRdbVisitor(new DumpRdbVisitor(r));
+        r.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                if (!(kv instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair dkv = (DumpKeyValuePair) kv;
+                byte[] serialized = dkv.getValue();
+                // 在这里我们可以用 redis RESTORE 命令来把序列化的数据迁移到另一台 redis.
+            }
+        });
+        r.open();
+
+```
+
+## 3.8. 检查Rdb的正确性
+
+我们可以用 `SkipRdbVisitor` 来检查 rdb 的正确性.  
+
+```java  
+
+        Replicator r = new RedisReplicator("redis:///path/to/dump.rdb");
+        r.setRdbVisitor(new SkipRdbVisitor(r));
+        r.open();
+
+```
+
+## 3.9. 其他示例  
 
 参阅 [examples](./examples/com/moilioncircle/examples/README.md)  
 

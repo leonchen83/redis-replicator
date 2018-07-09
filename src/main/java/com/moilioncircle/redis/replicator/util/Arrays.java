@@ -19,44 +19,46 @@ package com.moilioncircle.redis.replicator.util;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * @author Leon Chen
  * @since 2.2.0
  */
 public class Arrays {
-
-    public static String deepToString(Object[] a) {
-        if (a == null) return "null";
-        int bufLen = 20 * a.length;
-        if (a.length != 0 && bufLen <= 0)
+    
+    public static String deepToString(Object[] obj) {
+        return deepToString(obj, "[", "]", ", ");
+    }
+    
+    public static String deepToString(Object[] obj, String st, String ed, String sep) {
+        if (obj == null) return "null";
+        int bufLen = 20 * obj.length;
+        if (obj.length != 0 && bufLen <= 0)
             bufLen = Integer.MAX_VALUE;
         StringBuilder buf = new StringBuilder(bufLen);
-        deepToString(a, buf, new HashSet<Object[]>());
+        deepToString(obj, buf, new HashSet<Object[]>(), st, ed, sep);
         return buf.toString();
     }
-
-    private static void deepToString(Object[] a, StringBuilder buf, Set<Object[]> dejaVu) {
-        if (a == null) {
+    
+    private static void deepToString(Object[] obj, StringBuilder buf, Set<Object[]> set, String st, String ed, String sep) {
+        if (obj == null) {
             buf.append("null");
             return;
         }
-        int iMax = a.length - 1;
+        int iMax = obj.length - 1;
         if (iMax == -1) {
-            buf.append("[]");
+            buf.append(st).append(ed);
             return;
         }
-
-        dejaVu.add(a);
-        buf.append('[');
+        
+        set.add(obj);
+        buf.append(st);
         for (int i = 0; ; i++) {
-            Object element = a[i];
+            Object element = obj[i];
             if (element == null) {
                 buf.append("null");
             } else {
                 Class<?> eClass = element.getClass();
-
+    
                 if (eClass.isArray()) {
                     if (eClass == byte[].class)
                         buf.append(toString((byte[]) element));
@@ -75,34 +77,34 @@ public class Arrays {
                     else if (eClass == boolean[].class)
                         buf.append(java.util.Arrays.toString((boolean[]) element));
                     else { // element is an array of object references
-                        if (dejaVu.contains(element))
-                            buf.append("[...]");
+                        if (set.contains(element))
+                            buf.append(st).append("...").append(ed);
                         else
-                            deepToString((Object[]) element, buf, dejaVu);
+                            deepToString((Object[]) element, buf, set, st, ed, sep);
                     }
                 } else {  // element is non-null and not an array
                     buf.append(element.toString());
                 }
             }
             if (i == iMax) break;
-            buf.append(", ");
+            buf.append(sep);
         }
-        buf.append(']');
-        dejaVu.remove(a);
+        buf.append(ed);
+        set.remove(obj);
     }
-
+    
     public static String toString(char[] a) {
         if (a == null) return "null";
         int iMax = a.length - 1;
         if (iMax == -1) return "";
         return new String(a);
     }
-
+    
     private static String toString(byte[] a) {
         if (a == null) return "null";
         int iMax = a.length - 1;
         if (iMax == -1) return "";
-        return new String(a, UTF_8);
+        return Strings.toString(a);
     }
-
+    
 }

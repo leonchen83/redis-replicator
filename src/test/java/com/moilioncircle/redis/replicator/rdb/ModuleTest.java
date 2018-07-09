@@ -34,6 +34,7 @@ import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.module.DefaultRdbModuleParser;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
+import com.moilioncircle.redis.replicator.util.Strings;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -42,7 +43,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -122,7 +122,6 @@ public class ModuleTest {
     
     @Test
     public void testSkipModule1() {
-        @SuppressWarnings("resource")
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
@@ -173,7 +172,6 @@ public class ModuleTest {
     
     @Test
     public void testDumpModule1() {
-        @SuppressWarnings("resource")
         Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("module.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
@@ -272,8 +270,8 @@ public class ModuleTest {
     public static class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
-            String key = new String((byte[]) command[1], UTF_8);
-            long value = Long.parseLong(new String((byte[]) command[2], UTF_8));
+            String key = Strings.toString(command[1]);
+            long value = Long.parseLong(Strings.toString(command[2]));
             return new HelloTypeCommand(key, value);
         }
     }

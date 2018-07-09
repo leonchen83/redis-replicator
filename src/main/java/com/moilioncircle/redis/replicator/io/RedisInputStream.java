@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.io;
 
 import com.moilioncircle.redis.replicator.util.ByteArray;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -24,8 +25,6 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -168,7 +167,7 @@ public class RedisInputStream extends InputStream {
         int r = 0;
         int length = bytes.length;
         for (int i = 0; i < length; ++i) {
-            final int v = bytes[i] & 0xff;
+            final int v = bytes[i] & 0xFF;
             if (littleEndian) {
                 r |= (v << (i << 3));
             } else {
@@ -193,12 +192,11 @@ public class RedisInputStream extends InputStream {
     }
 
     public String readString(int len) throws IOException {
-        return readString(len, UTF_8);
+        return Strings.toString(readBytes(len).first());
     }
 
     public String readString(int len, Charset charset) throws IOException {
-        byte[] original = readBytes(len).first();
-        return new String(original, charset);
+        return Strings.toString(readBytes(len).first(), charset);
     }
 
     @Override

@@ -105,17 +105,17 @@ public class Constants {
     /**
      * zip entry
      */
-    public static final int ZIP_INT_8B = 0xfe; /*11111110*/
-    public static final int ZIP_INT_16B = 0xc0 | 0 << 4; /* 11000000*/
-    public static final int ZIP_INT_24B = 0xc0 | 3 << 4; /* 11110000*/
-    public static final int ZIP_INT_32B = 0xc0 | 1 << 4; /* 11010000*/
-    public static final int ZIP_INT_64B = 0xc0 | 2 << 4; /* 11100000*/
+    public static final int ZIP_INT_8B = 0xFE; /*11111110*/
+    public static final int ZIP_INT_16B = 0xC0 | 0 << 4; /* 11000000*/
+    public static final int ZIP_INT_24B = 0xC0 | 3 << 4; /* 11110000*/
+    public static final int ZIP_INT_32B = 0xC0 | 1 << 4; /* 11010000*/
+    public static final int ZIP_INT_64B = 0xC0 | 2 << 4; /* 11100000*/
     
     /**
      * list pack
      */
     public static final int STREAM_ITEM_FLAG_NONE = 0; /* No special flags. */
-    public static final int STREAM_ITEM_FLAG_DELETED = (1 << 0); /* Entry is delted. Skip it. */
+    public static final int STREAM_ITEM_FLAG_DELETED = (1 << 0); /* Entry was deleted. Skip it. */
     public static final int STREAM_ITEM_FLAG_SAMEFIELDS = (1 << 1); /* Same fields as master entry. */
 
     /**

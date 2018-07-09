@@ -20,7 +20,9 @@ Table of Contents([中文说明](./README.zh_CN.md))
          * [3.4.3. Using replicator read mixed file](#343-using-replicator-read-mixed-file)
       * [3.5. Backup remote rdb snapshot](#35-backup-remote-rdb-snapshot)
       * [3.6. Backup remote commands](#36-backup-remote-commands)
-      * [3.7. Other examples](#37-other-examples)
+      * [3.7. Convert rdb to dump format](#37-convert-rdb-to-dump-format)
+      * [3.8. Rdb check](#38-rdb-check)
+      * [3.9. Other examples](#39-other-examples)
    * [4. Advanced topics](#4-advanced-topics)
       * [4.1. Command extension](#41-command-extension)
          * [4.1.1. Write a command](#411-write-a-command)
@@ -79,7 +81,7 @@ Redis Replicator implement Redis Replication protocol written in java. It can pa
 ## 2.1. Requirements  
 jdk 1.7+  
 maven-3.3.1+(support [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
-redis 2.6 - 5.0-rc1  
+redis 2.6 - 5.0  
 
 ## 2.2. Maven dependency  
 ```xml  
@@ -195,7 +197,40 @@ See [RdbBackupExample.java](./examples/com/moilioncircle/examples/backup/RdbBack
 
 See [CommandBackupExample.java](./examples/com/moilioncircle/examples/backup/CommandBackupExample.java)  
 
-## 3.7. Other examples  
+## 3.7. Convert rdb to dump format
+
+We can use `DumpRdbVisitor` to convert rdb to redis [DUMP](https://redis.io/commands/dump) format.  
+  
+```java  
+
+        Replicator r = new RedisReplicator("redis:///path/to/dump.rdb");
+        r.setRdbVisitor(new DumpRdbVisitor(r));
+        r.addRdbListener(new RdbListener.Adaptor() {
+            @Override
+            public void handle(Replicator replicator, KeyValuePair<?> kv) {
+                if (!(kv instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair dkv = (DumpKeyValuePair) kv;
+                byte[] serialized = dkv.getValue();
+                // we can use redis RESTORE command to migrate this serialized value to another redis.
+            }
+        });
+        r.open();
+
+```
+
+## 3.8. Rdb check
+
+We can use `SkipRdbVisitor` to check rdb's correctness.  
+
+```java  
+
+        Replicator r = new RedisReplicator("redis:///path/to/dump.rdb");
+        r.setRdbVisitor(new SkipRdbVisitor(r));
+        r.open();
+
+```
+
+## 3.9. Other examples  
 
 See [examples](./examples/com/moilioncircle/examples/README.md)  
 

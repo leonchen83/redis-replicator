@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
+import com.moilioncircle.redis.replicator.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +31,6 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_DOU
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_FLOAT;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_UINT;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -176,7 +176,7 @@ public class DefaultRdbModuleParser {
                 throw new UnsupportedOperationException("Error loading string from RDB.");
         }
         ByteArray bytes = parser.rdbGenericLoadStringObject(Constants.RDB_LOAD_NONE);
-        return new String(bytes.first(), UTF_8);
+        return Strings.toString(bytes.first());
     }
 
     /**

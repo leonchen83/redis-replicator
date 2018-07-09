@@ -35,8 +35,3 @@ PSYNC2 故障转移示例.
 ### stream
 
 Redis-5.0 stream 示例.  
-
-### util
-
-实用工具.  
-

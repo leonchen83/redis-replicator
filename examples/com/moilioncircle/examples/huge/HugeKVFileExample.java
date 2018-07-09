@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbListener;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
@@ -65,6 +66,11 @@ public class HugeKVFileExample {
 
             @Override
             public void handleModule(KeyValuePair<Module> kv, int batch, boolean last) {
+                // your business code goes here.
+            }
+    
+            @Override
+            public void handleStream(KeyValuePair<Stream> kv, int batch, boolean last) {
                 // your business code goes here.
             }
         });

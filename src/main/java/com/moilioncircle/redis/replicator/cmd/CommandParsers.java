@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd.parser;
+package com.moilioncircle.redis.replicator.cmd;
+
+import com.moilioncircle.redis.replicator.util.Strings;
 
 import java.math.BigDecimal;
-import java.util.Objects;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Leon Chen
@@ -32,8 +31,7 @@ public class CommandParsers {
     }
 
     public static String toRune(Object object) {
-        if (object == null) return null;
-        return new String(toBytes(object), UTF_8);
+        return Strings.toString(object);
     }
 
     public static double toDouble(Object object) {
@@ -46,12 +44,6 @@ public class CommandParsers {
 
     public static long toLong(Object object) {
         return new BigDecimal(toRune(object)).longValueExact();
-    }
-
-    public static boolean eq(String o1, String o2) {
-        Objects.requireNonNull(o1);
-        Objects.requireNonNull(o2);
-        return o1.equalsIgnoreCase(o2);
     }
 
 }

@@ -22,10 +22,10 @@ import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
 
 import java.util.Objects;
 
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.eq;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.parser.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -39,7 +39,7 @@ public class XTrimParser implements CommandParser<XTrimCommand> {
         byte[] rawKey = toBytes(command[idx]);
         idx++;
         MaxLen maxLen = null;
-        if (eq(toRune(command[idx]), "MAXLEN")) {
+        if (isEquals(toRune(command[idx]), "MAXLEN")) {
             idx++;
             boolean approximation = false;
             if (Objects.equals(toRune(command[idx]), "~")) {

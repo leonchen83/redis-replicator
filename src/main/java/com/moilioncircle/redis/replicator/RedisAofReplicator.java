@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.util.Arrays;
@@ -56,7 +57,7 @@ public class RedisAofReplicator extends AbstractReplicator {
         this.configuration = configuration;
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
         this.inputStream.setRawByteListeners(this.rawByteListeners);
-        this.replyParser = new ReplyParser(inputStream);
+        this.replyParser = new ReplyParser(inputStream, new RedisCodec());
         builtInCommandParserRegister();
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());

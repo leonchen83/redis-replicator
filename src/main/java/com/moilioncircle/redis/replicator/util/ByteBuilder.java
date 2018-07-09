@@ -28,19 +28,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 //@NonThreadSafe
 public class ByteBuilder {
-
+    
+    private int total = 0;
     private final ByteBuffer buffer;
     private final List<byte[]> list = new ArrayList<>();
-    private int total = 0;
-
+    
     private ByteBuilder(int cap) {
         this.buffer = ByteBuffer.allocate(cap);
     }
-
+    
     public static ByteBuilder allocate(int cap) {
         return new ByteBuilder(cap);
     }
-
+    
     public void put(byte b) {
         total++;
         if (buffer.hasRemaining()) {
@@ -53,11 +53,11 @@ public class ByteBuilder {
             buffer.put(b);
         }
     }
-
+    
     public int length() {
         return total;
     }
-
+    
     public byte[] array() {
         int len = total, offset = 0;
         byte[] ary = new byte[len];
@@ -73,7 +73,13 @@ public class ByteBuilder {
         if (len > 0) System.arraycopy(buffer.array(), 0, ary, offset, len);
         return ary;
     }
-
+    
+    public void clear() {
+        total = 0;
+        list.clear();
+        buffer.clear();
+    }
+    
     @Override
     public String toString() {
         return new String(array(), UTF_8);

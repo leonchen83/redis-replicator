@@ -33,20 +33,26 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
  * @since 2.1.0
  */
 public class ReplyParser {
+    private final RedisCodec codec;
     private final RedisInputStream in;
-
+    
     public ReplyParser(RedisInputStream in) {
+        this(in, null);
+    }
+    
+    public ReplyParser(RedisInputStream in, RedisCodec codec) {
         this.in = in;
+        this.codec = codec;
     }
-
+    
     public Object parse() throws IOException {
-        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(), null);
+        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(codec), null);
     }
-
+    
     public Object parse(OffsetHandler offsetHandler) throws IOException {
-        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(), offsetHandler);
+        return parse(new BulkReplyHandler.SimpleBulkReplyHandler(codec), offsetHandler);
     }
-
+    
     public Object parse(BulkReplyHandler handler, OffsetHandler offsetHandler) throws IOException {
         in.mark();
         Object rs = parse(handler);
@@ -54,7 +60,7 @@ public class ReplyParser {
         if (offsetHandler != null) offsetHandler.handle(len);
         return rs;
     }
-
+    
     /**
      * @param handler bulk reply handler
      * @return Object[] or byte[] or Long
@@ -65,7 +71,7 @@ public class ReplyParser {
             int c = in.read();
             switch (c) {
                 case DOLLAR:
-                    //RESP Bulk Strings
+                    // RESP Bulk Strings
                     ByteBuilder builder = ByteBuilder.allocate(128);
                     while (true) {
                         while ((c = in.read()) != '\r') {
@@ -106,7 +112,7 @@ public class ReplyParser {
                             builder.put((byte) c);
                         }
                     }
-                    //as integer
+                    // As integer
                     return Long.parseLong(builder.toString());
                 case STAR:
                     // RESP Arrays
@@ -125,7 +131,7 @@ public class ReplyParser {
                     if (len == -1) return null;
                     Object[] ary = new Object[(int) len];
                     for (int i = 0; i < len; i++) {
-                        Object obj = parse(new BulkReplyHandler.SimpleBulkReplyHandler());
+                        Object obj = parse(new BulkReplyHandler.SimpleBulkReplyHandler(codec));
                         ary[i] = obj;
                     }
                     return ary;
@@ -137,7 +143,7 @@ public class ReplyParser {
                             builder.put((byte) c);
                         }
                         if ((c = in.read()) == '\n') {
-                            return builder.array();
+                            return codec == null ? builder.array() : codec.decode(builder.array());
                         } else {
                             builder.put((byte) c);
                         }
@@ -150,20 +156,20 @@ public class ReplyParser {
                             builder.put((byte) c);
                         }
                         if ((c = in.read()) == '\n') {
-                            return builder.array();
+                            return codec == null ? builder.array() : codec.decode(builder.array());
                         } else {
                             builder.put((byte) c);
                         }
                     }
                 case '\n':
-                    //skip +CONTINUE\r\n[\n]
-                    //skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
-                    //At this stage just a newline works as a PING in order to take the connection live
-                    //bug fix
+                    // skip +CONTINUE\r\n[\n]
+                    // skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
+                    // At this stage just a newline works as a PING in order to take the connection live
+                    // bug fix
                     break;
                 default:
                     throw new AssertionError("expect [$,:,*,+,-] but: " + (char) c);
-
+    
             }
         }
     }

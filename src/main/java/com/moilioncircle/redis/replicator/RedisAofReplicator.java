@@ -21,6 +21,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
+import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.util.Strings;
 import org.slf4j.Logger;
@@ -43,14 +45,14 @@ import static com.moilioncircle.redis.replicator.util.Strings.format;
  * @since 2.1.0
  */
 public class RedisAofReplicator extends AbstractReplicator {
-
+    
     protected static final Logger logger = LoggerFactory.getLogger(RedisAofReplicator.class);
     protected final ReplyParser replyParser;
-
+    
     public RedisAofReplicator(File file, Configuration configuration) throws FileNotFoundException {
         this(new FileInputStream(file), configuration);
     }
-
+    
     public RedisAofReplicator(InputStream in, Configuration configuration) {
         Objects.requireNonNull(in);
         Objects.requireNonNull(configuration);
@@ -62,7 +64,7 @@ public class RedisAofReplicator extends AbstractReplicator {
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
     }
-
+    
     @Override
     public void open() throws IOException {
         if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
@@ -76,11 +78,12 @@ public class RedisAofReplicator extends AbstractReplicator {
             doCloseListener(this);
         }
     }
-
+    
     protected void doOpen() throws IOException {
+        submitEvent(new PreCommandSyncEvent());
         while (getStatus() == CONNECTED) {
             Object obj = replyParser.parse();
-
+    
             if (obj instanceof Object[]) {
                 if (verbose() && logger.isDebugEnabled())
                     logger.debug(format((Object[]) obj));
@@ -96,5 +99,6 @@ public class RedisAofReplicator extends AbstractReplicator {
                 logger.info("unexpected redis reply:{}", obj);
             }
         }
+        submitEvent(new PostCommandSyncEvent());
     }
 }

@@ -20,7 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
@@ -59,8 +59,8 @@ public class RedisURITest {
                 if (event instanceof KeyValuePair<?, ?>) {
                     acc.incrementAndGet();
                 }
-                if (event instanceof PostFullSyncEvent) {
-                    atomicChecksum.compareAndSet(0, ((PostFullSyncEvent) event).getChecksum());
+                if (event instanceof PostRdbSyncEvent) {
+                    atomicChecksum.compareAndSet(0, ((PostRdbSyncEvent) event).getChecksum());
                 }
             }
         });
@@ -77,7 +77,7 @@ public class RedisURITest {
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     Jedis jedis = new Jedis("localhost", 6379);
                     jedis.del("abca");
                     jedis.set("abca", "bcd");

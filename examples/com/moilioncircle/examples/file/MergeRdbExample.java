@@ -23,7 +23,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.UncheckedIOException;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.CRCOutputStream;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
@@ -96,7 +96,7 @@ public class MergeRdbExample {
                         if (event instanceof KeyValuePair<?, ?>) {
                             tuple.setT1(((KeyValuePair<byte[], ?>) event).getKey());
                         }
-                        if (event instanceof PostFullSyncEvent) {
+                        if (event instanceof PostRdbSyncEvent) {
                             tuple.setT2(ByteBuilder.allocate(128));
                         }
                     }

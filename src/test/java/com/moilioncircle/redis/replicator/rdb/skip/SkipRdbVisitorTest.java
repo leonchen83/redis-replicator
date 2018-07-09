@@ -22,8 +22,8 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
-import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.ModuleTest;
 import com.moilioncircle.redis.replicator.rdb.ValueIterableRdbParserTest;
@@ -76,14 +76,14 @@ public class SkipRdbVisitorTest {
         r.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PreFullSyncEvent) {
+                if (event instanceof PreRdbSyncEvent) {
                     acc.incrementAndGet();
                     replicator.addRawByteListener(rawByteListener);
                 }
                 if (event instanceof KeyValuePair<?, ?>) {
                     acc.incrementAndGet();
                 }
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     acc.incrementAndGet();
                     replicator.removeRawByteListener(rawByteListener);
                 }

@@ -21,7 +21,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 
 import java.io.BufferedOutputStream;
@@ -56,7 +56,7 @@ public class CommandBackupExample {
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     replicator.addRawByteListener(rawByteListener);
                 }
                 if (event instanceof Command) {

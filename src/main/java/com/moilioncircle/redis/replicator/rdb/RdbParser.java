@@ -18,8 +18,8 @@ package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.AbstractReplicator;
 import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
-import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import org.slf4j.Logger;
@@ -139,7 +139,7 @@ public class RdbParser {
          * 30 30 30 33                 # RDB Version Number in big endian. In this case, version = 0003 = 3
          * ----------------------------
          */
-        this.replicator.submitEvent(new PreFullSyncEvent());
+        this.replicator.submitEvent(new PreRdbSyncEvent());
         rdbVisitor.applyMagic(in);
         int version = rdbVisitor.applyVersion(in);
         DB db = null;
@@ -177,7 +177,7 @@ public class RdbParser {
                     break;
                 case RDB_OPCODE_EOF:
                     long checksum = rdbVisitor.applyEof(in, version);
-                    this.replicator.submitEvent(new PostFullSyncEvent(checksum));
+                    this.replicator.submitEvent(new PostRdbSyncEvent(checksum));
                     break loop;
                 case RDB_TYPE_STRING:
                     event = rdbVisitor.applyString(in, db, version);

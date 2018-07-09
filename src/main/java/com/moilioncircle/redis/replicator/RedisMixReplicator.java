@@ -21,6 +21,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
+import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
 import com.moilioncircle.redis.replicator.io.PeekableInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
@@ -89,6 +91,7 @@ public class RedisMixReplicator extends AbstractReplicator {
             RdbParser parser = new RdbParser(inputStream, this);
             parser.parse();
         }
+        submitEvent(new PreCommandSyncEvent());
         while (getStatus() == CONNECTED) {
             Object obj = replyParser.parse();
             if (obj instanceof Object[]) {
@@ -106,5 +109,6 @@ public class RedisMixReplicator extends AbstractReplicator {
                 logger.info("unexpected redis reply:{}", obj);
             }
         }
+        submitEvent(new PostCommandSyncEvent());
     }
 }

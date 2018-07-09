@@ -20,7 +20,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class PsyncTest {
                 if (event instanceof AuxField) {
                     set.add((AuxField) event);
                 }
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     if (flag.compareAndSet(false, true)) {
                         Thread thread = new Thread(new JRun());
                         thread.setDaemon(true);

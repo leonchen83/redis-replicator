@@ -23,6 +23,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.OffsetHandler;
 import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
+import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
@@ -358,6 +360,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 return false;
             }
             final long[] offset = new long[1];
+            submitEvent(new PreCommandSyncEvent());
             while (getStatus() == CONNECTED) {
                 Object obj = replyParser.parse(new OffsetHandler() {
                     @Override
@@ -393,6 +396,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 configuration.addOffset(offset[0]);
                 offset[0] = 0L;
             }
+            submitEvent(new PostCommandSyncEvent());
             return true;
         }
     }

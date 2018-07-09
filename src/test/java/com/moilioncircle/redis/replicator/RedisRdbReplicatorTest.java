@@ -18,7 +18,7 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
@@ -52,8 +52,8 @@ public class RedisRdbReplicatorTest {
                 if (event instanceof KeyValuePair<?, ?>) {
                     acc.incrementAndGet();
                 }
-                if (event instanceof PostFullSyncEvent) {
-                    atomicChecksum.compareAndSet(0, ((PostFullSyncEvent) event).getChecksum());
+                if (event instanceof PostRdbSyncEvent) {
+                    atomicChecksum.compareAndSet(0, ((PostRdbSyncEvent) event).getChecksum());
                 }
             }
         });
@@ -75,8 +75,8 @@ public class RedisRdbReplicatorTest {
                 if (event instanceof KeyValuePair<?, ?>) {
                     acc.incrementAndGet();
                 }
-                if (event instanceof PostFullSyncEvent) {
-                    atomicChecksum.compareAndSet(0, ((PostFullSyncEvent) event).getChecksum());
+                if (event instanceof PostRdbSyncEvent) {
+                    atomicChecksum.compareAndSet(0, ((PostRdbSyncEvent) event).getChecksum());
                 }
             }
         });

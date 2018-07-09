@@ -20,8 +20,8 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
-import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
 
@@ -57,11 +57,11 @@ public class RdbBackupExample {
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PreFullSyncEvent) {
+                if (event instanceof PreRdbSyncEvent) {
                     replicator.addRawByteListener(rawByteListener);
                 }
-
-                if (event instanceof PostFullSyncEvent) {
+    
+                if (event instanceof PostRdbSyncEvent) {
                     replicator.removeRawByteListener(rawByteListener);
                     try {
                         out.close();

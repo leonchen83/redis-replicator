@@ -20,8 +20,8 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
-import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 import java.io.IOException;
@@ -55,14 +55,14 @@ public class TimerTaskExample {
                 replicator.addEventListener(new EventListener() {
                     @Override
                     public void onEvent(Replicator replicator, Event event) {
-                        if (event instanceof PreFullSyncEvent) {
+                        if (event instanceof PreRdbSyncEvent) {
                             System.out.println("data sync started");
                         }
                         if (event instanceof KeyValuePair<?, ?>) {
                             //shard kv.getKey to different thread so that speed up save process.
                             save((KeyValuePair<?, ?>) event);
                         }
-                        if (event instanceof PostFullSyncEvent) {
+                        if (event instanceof PostRdbSyncEvent) {
                             try {
                                 replicator.close();
                             } catch (IOException e) {

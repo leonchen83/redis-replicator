@@ -23,8 +23,8 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.UncheckedIOException;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
-import com.moilioncircle.redis.replicator.event.PreFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.CRCOutputStream;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
@@ -99,7 +99,7 @@ public class RdbFilterExample {
                         // clear aux field
                         tuple.setT2(ByteBuilder.allocate(128));
                     }
-                    if (event instanceof PreFullSyncEvent) {
+                    if (event instanceof PreRdbSyncEvent) {
                         try {
                             out.write(REDIS_MAGIC.getBytes());
                             out.write(REDIS_VERSION.getBytes());
@@ -110,7 +110,7 @@ public class RdbFilterExample {
                     if (event instanceof KeyValuePair<?, ?>) {
                         tuple.setT1(((KeyValuePair<byte[], ?>) event).getKey());
                     }
-                    if (event instanceof PostFullSyncEvent) {
+                    if (event instanceof PostRdbSyncEvent) {
                         try {
                             out.write(RDB_OPCODE_EOF);
                             out.write(out.getCRC64());

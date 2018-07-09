@@ -18,18 +18,18 @@ package com.moilioncircle.redis.replicator.event;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.0.0
  */
-public class PostFullSyncEvent implements Event {
+public class PostRdbSyncEvent implements Event {
 
     private static final long serialVersionUID = 1L;
 
     private long checksum;
-
-    public PostFullSyncEvent() {
+    
+    public PostRdbSyncEvent() {
     }
-
-    public PostFullSyncEvent(long checksum) {
+    
+    public PostRdbSyncEvent(long checksum) {
         this.checksum = checksum;
     }
 

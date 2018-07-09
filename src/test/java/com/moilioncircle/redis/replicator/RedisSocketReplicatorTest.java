@@ -24,7 +24,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostFullSyncEvent;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class RedisSocketReplicatorTest {
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     Jedis jedis = new Jedis("localhost", 6379);
                     jedis.del("abc");
                     jedis.set("abc", "bcd");
@@ -85,7 +85,7 @@ public class RedisSocketReplicatorTest {
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     Jedis jedis = new Jedis("localhost", 6379);
                     jedis.del("zset1");
                     jedis.del("zset2");
@@ -130,7 +130,7 @@ public class RedisSocketReplicatorTest {
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     Jedis jedis = new Jedis("localhost", 6379);
                     jedis.del("zset3");
                     jedis.del("zset4");
@@ -194,7 +194,7 @@ public class RedisSocketReplicatorTest {
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     Jedis jedis = new Jedis("localhost", 6379);
                     jedis.del("abc");
                     jedis.zrem("zzlist", "member");
@@ -233,7 +233,7 @@ public class RedisSocketReplicatorTest {
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     Jedis jedis = new Jedis("localhost", 6380);
                     jedis.auth("test");
                     jedis.del("abc");
@@ -275,7 +275,7 @@ public class RedisSocketReplicatorTest {
                 if (event instanceof KeyValuePair) {
                     list.add((KeyValuePair<?, ?>) event);
                 }
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     try {
                         replicator.close();
                     } catch (IOException e) {
@@ -317,7 +317,7 @@ public class RedisSocketReplicatorTest {
                         acc.incrementAndGet();
                     }
                 }
-                if (event instanceof PostFullSyncEvent) {
+                if (event instanceof PostRdbSyncEvent) {
                     try {
                         replicator.close();
                     } catch (IOException e) {

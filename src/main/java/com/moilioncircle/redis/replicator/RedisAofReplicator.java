@@ -70,7 +70,6 @@ public class RedisAofReplicator extends AbstractReplicator {
         if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
         try {
             doOpen();
-        } catch (EOFException ignore) {
         } catch (UncheckedIOException e) {
             if (!(e.getCause() instanceof EOFException)) throw e.getCause();
         } finally {
@@ -81,24 +80,27 @@ public class RedisAofReplicator extends AbstractReplicator {
     
     protected void doOpen() throws IOException {
         submitEvent(new PreCommandSyncEvent());
-        while (getStatus() == CONNECTED) {
-            Object obj = replyParser.parse();
-    
-            if (obj instanceof Object[]) {
-                if (verbose() && logger.isDebugEnabled())
-                    logger.debug(format((Object[]) obj));
-                Object[] raw = (Object[]) obj;
-                CommandName name = CommandName.name(Strings.toString(raw[0]));
-                final CommandParser<? extends Command> parser;
-                if ((parser = commands.get(name)) == null) {
-                    logger.warn("command [{}] not register. raw command:{}", name, format(raw));
-                    continue;
+        try {
+            while (getStatus() == CONNECTED) {
+                Object obj = replyParser.parse();
+            
+                if (obj instanceof Object[]) {
+                    if (verbose() && logger.isDebugEnabled())
+                        logger.debug(format((Object[]) obj));
+                    Object[] raw = (Object[]) obj;
+                    CommandName name = CommandName.name(Strings.toString(raw[0]));
+                    final CommandParser<? extends Command> parser;
+                    if ((parser = commands.get(name)) == null) {
+                        logger.warn("command [{}] not register. raw command:{}", name, format(raw));
+                        continue;
+                    }
+                    submitEvent(parser.parse(raw));
+                } else {
+                    logger.info("unexpected redis reply:{}", obj);
                 }
-                submitEvent(parser.parse(raw));
-            } else {
-                logger.info("unexpected redis reply:{}", obj);
             }
+        } catch (EOFException ignore) {
+            submitEvent(new PostCommandSyncEvent());
         }
-        submitEvent(new PostCommandSyncEvent());
     }
 }

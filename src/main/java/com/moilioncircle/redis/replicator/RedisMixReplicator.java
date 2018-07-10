@@ -77,7 +77,6 @@ public class RedisMixReplicator extends AbstractReplicator {
         if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
         try {
             doOpen();
-        } catch (EOFException ignore) {
         } catch (UncheckedIOException e) {
             if (!(e.getCause() instanceof EOFException)) throw e.getCause();
         } finally {
@@ -111,7 +110,7 @@ public class RedisMixReplicator extends AbstractReplicator {
                     logger.info("unexpected redis reply:{}", obj);
                 }
             }
-        } finally {
+        } catch (EOFException ignore) {
             submitEvent(new PostCommandSyncEvent());
         }
     }

@@ -359,47 +359,46 @@ public class RedisSocketReplicator extends AbstractReplicator {
             } else if (mode == SYNC_LATER && getStatus() == CONNECTED) {
                 return false;
             }
+            if (getStatus() != CONNECTED) return true;
             final long[] offset = new long[1];
             submitEvent(new PreCommandSyncEvent());
-            try {
-                while (getStatus() == CONNECTED) {
-                    Object obj = replyParser.parse(new OffsetHandler() {
-                        @Override
-                        public void handle(long len) {
-                            offset[0] = len;
-                        }
-                    });
-                    if (obj instanceof Object[]) {
-                        if (verbose() && logger.isDebugEnabled())
-                            logger.debug(format((Object[]) obj));
-                        Object[] raw = (Object[]) obj;
-                        CommandName name = CommandName.name(Strings.toString(raw[0]));
-                        final CommandParser<? extends Command> parser;
-                        if ((parser = commands.get(name)) == null) {
-                            logger.warn("command [{}] not register. raw command:{}", name, format(raw));
-                            continue;
-                        }
-                        if (isEquals(Strings.toString(raw[0]), "PING")) {
-                            // NOP
-                        } else if (isEquals(Strings.toString(raw[0]), "REPLCONF") && isEquals(Strings.toString(raw[1]), "GETACK")) {
-                            if (mode == PSYNC) executor.execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    sendQuietly("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
-                                }
-                            });
-                        } else {
-                            submitEvent(parser.parse(raw));
-                        }
-                    } else {
-                        logger.info("unexpected redis reply:{}", obj);
+            while (getStatus() == CONNECTED) {
+                Object obj = replyParser.parse(new OffsetHandler() {
+                    @Override
+                    public void handle(long len) {
+                        offset[0] = len;
                     }
-                    configuration.addOffset(offset[0]);
-                    offset[0] = 0L;
+                });
+                if (obj instanceof Object[]) {
+                    if (verbose() && logger.isDebugEnabled())
+                        logger.debug(format((Object[]) obj));
+                    Object[] raw = (Object[]) obj;
+                    CommandName name = CommandName.name(Strings.toString(raw[0]));
+                    final CommandParser<? extends Command> parser;
+                    if ((parser = commands.get(name)) == null) {
+                        logger.warn("command [{}] not register. raw command:{}", name, format(raw));
+                        continue;
+                    }
+                    if (isEquals(Strings.toString(raw[0]), "PING")) {
+                        // NOP
+                    } else if (isEquals(Strings.toString(raw[0]), "REPLCONF") && isEquals(Strings.toString(raw[1]), "GETACK")) {
+                        if (mode == PSYNC) executor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                sendQuietly("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
+                            }
+                        });
+                    } else {
+                        submitEvent(parser.parse(raw));
+                    }
+                } else {
+                    logger.info("unexpected redis reply:{}", obj);
                 }
-            } finally {
-                submitEvent(new PostCommandSyncEvent());
+                configuration.addOffset(offset[0]);
+                offset[0] = 0L;
             }
+            if (getStatus() == CONNECTED)
+                submitEvent(new PostCommandSyncEvent());
             return true;
         }
     }

@@ -35,11 +35,11 @@ import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
  * @since 2.1.0
  */
 public class RedisRdbReplicator extends AbstractReplicator {
-
+    
     public RedisRdbReplicator(File file, Configuration configuration) throws FileNotFoundException {
         this(new FileInputStream(file), configuration);
     }
-
+    
     public RedisRdbReplicator(InputStream in, Configuration configuration) {
         Objects.requireNonNull(in);
         Objects.requireNonNull(configuration);
@@ -49,13 +49,12 @@ public class RedisRdbReplicator extends AbstractReplicator {
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
     }
-
+    
     @Override
     public void open() throws IOException {
         if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
         try {
             doOpen();
-        } catch (EOFException ignore) {
         } catch (UncheckedIOException e) {
             if (!(e.getCause() instanceof EOFException)) throw e.getCause();
         } finally {
@@ -63,8 +62,11 @@ public class RedisRdbReplicator extends AbstractReplicator {
             doCloseListener(this);
         }
     }
-
+    
     protected void doOpen() throws IOException {
-        new RdbParser(inputStream, this).parse();
+        try {
+            new RdbParser(inputStream, this).parse();
+        } catch (EOFException ignore) {
+        }
     }
 }

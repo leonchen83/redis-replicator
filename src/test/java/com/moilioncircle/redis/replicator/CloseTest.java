@@ -27,6 +27,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
@@ -288,6 +289,75 @@ public class CloseTest {
         });
         replicator.open();
         assertEquals(1, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
+    }
+    
+    @Test
+    public void testMixClose8() throws IOException, URISyntaxException {
+        final Replicator replicator = new RedisReplicator("127.0.0.1:6379");
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreCommandSyncEvent) {
+                    try {
+                        replicator.close();
+                    } catch (IOException e) {
+                    }
+                }
+                if (event instanceof PostCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+            }
+        });
+        replicator.open();
+        assertEquals(1, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
+    }
+    
+    @Test
+    public void testMixClose9() throws IOException, URISyntaxException {
+        final Replicator replicator = new RedisReplicator("127.0.0.1:6379");
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostRdbSyncEvent) {
+                    try {
+                        replicator.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        });
+        replicator.open();
+        assertEquals(0, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
+    }
+    
+    @Test
+    public void testMixClose10() throws IOException, URISyntaxException {
+        final Replicator replicator = new RedisReplicator("127.0.0.1:6379");
+        final AtomicInteger acc = new AtomicInteger(0);
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+            }
+        });
+        replicator.open();
+        assertEquals(2, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
 }

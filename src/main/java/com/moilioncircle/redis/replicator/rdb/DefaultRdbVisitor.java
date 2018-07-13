@@ -608,7 +608,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         long len = parser.rdbLoadLen().len;
         List<String> list = new ArrayList<>();
         List<byte[]> rawList = new ArrayList<>();
-        for (int i = 0; i < len; i++) {
+        for (long i = 0; i < len; i++) {
             RedisInputStream stream = new RedisInputStream(parser.rdbGenericLoadStringObject(RDB_LOAD_NONE));
 
             BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes

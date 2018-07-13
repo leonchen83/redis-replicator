@@ -25,9 +25,9 @@ import static java.lang.Integer.parseInt;
  * @since 2.6.0
  */
 public class RedisCodec {
-    
-    private static final char[] NUMERALS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-    
+
+    private static final byte[] NUMERALS = new byte[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
     public byte[] encode(byte[] bytes) {
         ByteBuilder s = ByteBuilder.allocate(bytes.length);
         for (int i = 0; i < bytes.length; i++) {
@@ -53,15 +53,15 @@ public class RedisCodec {
                 // encode
                 s.put((byte) '\\');
                 s.put((byte) 'x');
-                int ma = b / 16;
-                int mi = b % 16;
-                s.put((byte) NUMERALS[ma]);
-                s.put((byte) NUMERALS[mi]);
+                int ma = b >>> 4;
+                int mi = b & 0xF;
+                s.put(NUMERALS[ma]);
+                s.put(NUMERALS[mi]);
             }
         }
         return s.array();
     }
-    
+
     public byte[] decode(byte[] bytes) {
         ByteBuilder s = ByteBuilder.allocate(bytes.length);
         for (int i = 0; i < bytes.length; i++) {

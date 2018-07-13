@@ -233,7 +233,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         long len = parser.rdbLoadLen().len;
-        for (int i = 0; i < len; i++) {
+        for (long i = 0; i < len; i++) {
             parser.rdbGenericLoadStringObject();
         }
         return null;

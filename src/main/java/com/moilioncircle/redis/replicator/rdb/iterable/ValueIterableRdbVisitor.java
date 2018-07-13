@@ -22,7 +22,7 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
-import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
@@ -59,7 +59,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
     }
 
     @Override
-    public Event applyList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |
          * | 1 or 5 bytes |    string contents    |
@@ -86,13 +86,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o1.setValueRdbType(RDB_TYPE_LIST);
-        o1.setDb(db);
         o1.setKey(key);
-        return o1;
+        return context.valueOf(o1);
     }
 
     @Override
-    public Event applySet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |
          * | 1 or 5 bytes |    string contents    |
@@ -119,13 +118,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o2.setValueRdbType(RDB_TYPE_SET);
-        o2.setDb(db);
         o2.setKey(key);
-        return o2;
+        return context.valueOf(o2);
     }
 
     @Override
-    public Event applyZSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |        <score>       |
          * | 1 or 5 bytes |    string contents    |    double content    |
@@ -153,13 +151,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o3.setValueRdbType(RDB_TYPE_ZSET);
-        o3.setDb(db);
         o3.setKey(key);
-        return o3;
+        return context.valueOf(o3);
     }
 
     @Override
-    public Event applyZSet2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |        <score>       |
          * | 1 or 5 bytes |    string contents    |    binary double     |
@@ -188,13 +185,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o5.setValueRdbType(RDB_TYPE_ZSET_2);
-        o5.setDb(db);
         o5.setKey(key);
-        return o5;
+        return context.valueOf(o5);
     }
 
     @Override
-    public Event applyHash(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHash(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |
          * | 1 or 5 bytes |    string contents    |
@@ -222,13 +218,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o4.setValueRdbType(RDB_TYPE_HASH);
-        o4.setDb(db);
         o4.setKey(key);
-        return o4;
+        return context.valueOf(o4);
     }
 
     @Override
-    public Event applyHashZipMap(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipMap(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<zmlen> |   <len>     |"foo"    |    <len>   | <free> |   "bar" |<zmend> |
          * | 1 byte | 1 or 5 byte | content |1 or 5 byte | 1 byte | content | 1 byte |
@@ -240,13 +235,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser.LenHelper.zmlen(stream); // zmlen
         o9.setValue(new HashZipMapIter(stream));
         o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
-        o9.setDb(db);
         o9.setKey(key);
-        return o9;
+        return context.valueOf(o9);
     }
 
     @Override
-    public Event applyListZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -286,13 +280,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
-        o10.setDb(db);
         o10.setKey(key);
-        return o10;
+        return context.valueOf(o10);
     }
 
     @Override
-    public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySetIntSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<encoding>| <length-of-contents>|              <contents>                            |
          * | 4 bytes  |            4 bytes  | 2 bytes element| 4 bytes element | 8 bytes element |
@@ -335,13 +328,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o11.setValueRdbType(RDB_TYPE_SET_INTSET);
-        o11.setDb(db);
         o11.setKey(key);
-        return o11;
+        return context.valueOf(o11);
     }
 
     @Override
-    public Event applyZSetZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSetZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -383,13 +375,12 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
-        o12.setDb(db);
         o12.setKey(key);
-        return o12;
+        return context.valueOf(o12);
     }
 
     @Override
-    public Event applyHashZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -431,22 +422,20 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
             }
         });
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
-        o13.setDb(db);
         o13.setKey(key);
-        return o13;
+        return context.valueOf(o13);
     }
 
     @Override
-    public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListQuickList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], Iterator<byte[]>> o14 = new KeyStringValueByteArrayIterator();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         o14.setValue(new QuickListIter(len, parser));
         o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
-        o14.setDb(db);
         o14.setKey(key);
-        return o14;
+        return context.valueOf(o14);
     }
 
     private static abstract class Iter<T> implements Iterator<T> {

@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
@@ -37,73 +38,77 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
  * @since 2.4.6
  */
 public class SkipRdbVisitor extends DefaultRdbVisitor {
-    
+
     public SkipRdbVisitor(Replicator replicator) {
         super(replicator);
     }
-    
+
     @Override
     public DB applySelectDB(RedisInputStream in, int version) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadLen();
         return null;
     }
-    
+
     @Override
-    public DB applyResizeDB(RedisInputStream in, DB db, int version) throws IOException {
+    public DB applyResizeDB(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadLen();
         parser.rdbLoadLen();
         return null;
     }
-    
+
     @Override
-    public Event applyExpireTime(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyExpireTime(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadTime();
         int type = applyType(in);
+        context.setValueRdbType(type);
         if (type == RDB_OPCODE_FREQ) {
-            applyFreq(in, db, version);
+            applyFreq(in, version, context);
         } else if (type == RDB_OPCODE_IDLE) {
-            applyIdle(in, db, version);
+            applyIdle(in, version, context);
         } else {
-            rdbLoadObject(in, db, type, version);
+            rdbLoadObject(in, version, context);
         }
         return null;
     }
-    
+
     @Override
-    public Event applyExpireTimeMs(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyExpireTimeMs(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadMillisecondTime();
         int type = applyType(in);
+        context.setValueRdbType(type);
         if (type == RDB_OPCODE_FREQ) {
-            applyFreq(in, db, version);
+            applyFreq(in, version, context);
         } else if (type == RDB_OPCODE_IDLE) {
-            applyIdle(in, db, version);
+            applyIdle(in, version, context);
         } else {
-            rdbLoadObject(in, db, type, version);
+            rdbLoadObject(in, version, context);
         }
         return null;
     }
-    
+
     @Override
-    public Event applyFreq(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyFreq(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         in.read();
         int valueType = applyType(in);
-        rdbLoadObject(in, db, valueType, version);
+        context.setValueRdbType(valueType);
+        rdbLoadObject(in, version, context);
         return null;
     }
-    
+
     @Override
-    public Event applyIdle(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyIdle(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadLen();
         int valueType = applyType(in);
-        rdbLoadObject(in, db, valueType, version);
+        context.setValueRdbType(valueType);
+        rdbLoadObject(in, version, context);
         return null;
     }
-    
+
     @Override
     public Event applyAux(RedisInputStream in, int version) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
@@ -111,34 +116,22 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         parser.rdbLoadEncodedStringObject();
         return null;
     }
-    
+
     @Override
     public Event applyModuleAux(RedisInputStream in, int version) throws IOException {
         return super.applyModuleAux(in, version);
     }
-    
+
     @Override
-    public Event applyString(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyString(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         parser.rdbLoadEncodedStringObject();
         return null;
     }
-    
+
     @Override
-    public Event applyList(RedisInputStream in, DB db, int version) throws IOException {
-        SkipRdbParser parser = new SkipRdbParser(in);
-        parser.rdbLoadEncodedStringObject();
-        long len = parser.rdbLoadLen().len;
-        while (len > 0) {
-            parser.rdbLoadEncodedStringObject();
-            len--;
-        }
-        return null;
-    }
-    
-    @Override
-    public Event applySet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         long len = parser.rdbLoadLen().len;
@@ -148,9 +141,21 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         }
         return null;
     }
-    
+
     @Override
-    public Event applyZSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        long len = parser.rdbLoadLen().len;
+        while (len > 0) {
+            parser.rdbLoadEncodedStringObject();
+            len--;
+        }
+        return null;
+    }
+
+    @Override
+    public Event applyZSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         long len = parser.rdbLoadLen().len;
@@ -161,9 +166,9 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         }
         return null;
     }
-    
+
     @Override
-    public Event applyZSet2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         long len = parser.rdbLoadLen().len;
@@ -174,9 +179,9 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         }
         return null;
     }
-    
+
     @Override
-    public Event applyHash(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHash(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         long len = parser.rdbLoadLen().len;
@@ -187,60 +192,60 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         }
         return null;
     }
-    
+
     @Override
-    public Event applyHashZipMap(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipMap(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         parser.rdbLoadPlainStringObject();
         return null;
     }
-    
+
     @Override
-    public Event applyListZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         parser.rdbLoadPlainStringObject();
         return null;
     }
-    
+
     @Override
-    public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySetIntSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         parser.rdbLoadPlainStringObject();
         return null;
     }
-    
+
     @Override
-    public Event applyZSetZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSetZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         parser.rdbLoadPlainStringObject();
         return null;
     }
-    
+
     @Override
-    public Event applyHashZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         parser.rdbLoadPlainStringObject();
         return null;
     }
-    
+
     @Override
-    public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListQuickList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         long len = parser.rdbLoadLen().len;
-        for (int i = 0; i < len; i++) {
+        for (long i = 0; i < len; i++) {
             parser.rdbGenericLoadStringObject();
         }
         return null;
     }
-    
+
     @Override
-    public Event applyModule(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         char[] c = new char[9];
@@ -257,9 +262,9 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         moduleParser.parse(in, 1);
         return null;
     }
-    
+
     @Override
-    public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyModule2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         char[] c = new char[9];
@@ -282,9 +287,9 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         }
         return null;
     }
-    
+
     @Override
-    public Event applyStreamListPacks(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyStreamListPacks(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         long listPacks = parser.rdbLoadLen().len;

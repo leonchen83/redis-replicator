@@ -22,7 +22,7 @@ import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
-import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
@@ -110,7 +110,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
     }
     
     @Override
-    public Event applyString(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyString(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o0 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -120,13 +120,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o0.setValueRdbType(RDB_TYPE_STRING);
         o0.setValue(listener.getBytes());
-        o0.setDb(db);
         o0.setKey(key);
-        return o0;
+        return context.valueOf(o0);
     }
     
     @Override
-    public Event applyList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o1 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -141,13 +140,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o1.setValueRdbType(RDB_TYPE_LIST);
         o1.setValue(listener.getBytes());
-        o1.setDb(db);
         o1.setKey(key);
-        return o1;
+        return context.valueOf(o1);
     }
     
     @Override
-    public Event applySet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o2 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -162,13 +160,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o2.setValueRdbType(RDB_TYPE_SET);
         o2.setValue(listener.getBytes());
-        o2.setDb(db);
         o2.setKey(key);
-        return o2;
+        return context.valueOf(o2);
     }
     
     @Override
-    public Event applyZSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o3 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -184,13 +181,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o3.setValueRdbType(RDB_TYPE_ZSET);
         o3.setValue(listener.getBytes());
-        o3.setDb(db);
         o3.setKey(key);
-        return o3;
+        return context.valueOf(o3);
     }
     
     @Override
-    public Event applyZSet2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o5 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -206,13 +202,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o5.setValueRdbType(RDB_TYPE_ZSET_2);
         o5.setValue(listener.getBytes());
-        o5.setDb(db);
         o5.setKey(key);
-        return o5;
+        return context.valueOf(o5);
     }
     
     @Override
-    public Event applyHash(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHash(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o4 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -228,13 +223,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o4.setValueRdbType(RDB_TYPE_HASH);
         o4.setValue(listener.getBytes());
-        o4.setDb(db);
         o4.setKey(key);
-        return o4;
+        return context.valueOf(o4);
     }
     
     @Override
-    public Event applyHashZipMap(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipMap(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o9 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -244,13 +238,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
         o9.setValue(listener.getBytes());
-        o9.setDb(db);
         o9.setKey(key);
-        return o9;
+        return context.valueOf(o9);
     }
     
     @Override
-    public Event applyListZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o10 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -260,13 +253,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
         o10.setValue(listener.getBytes());
-        o10.setDb(db);
         o10.setKey(key);
-        return o10;
+        return context.valueOf(o10);
     }
     
     @Override
-    public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySetIntSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o11 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -276,13 +268,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o11.setValueRdbType(RDB_TYPE_SET_INTSET);
         o11.setValue(listener.getBytes());
-        o11.setDb(db);
         o11.setKey(key);
-        return o11;
+        return context.valueOf(o11);
     }
     
     @Override
-    public Event applyZSetZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSetZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o12 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -292,13 +283,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
         o12.setValue(listener.getBytes());
-        o12.setDb(db);
         o12.setKey(key);
-        return o12;
+        return context.valueOf(o12);
     }
     
     @Override
-    public Event applyHashZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o13 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -308,13 +298,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
         o13.setValue(listener.getBytes());
-        o13.setDb(db);
         o13.setKey(key);
-        return o13;
+        return context.valueOf(o13);
     }
     
     @Override
-    public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListQuickList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o14 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -322,19 +311,18 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.addRawByteListener(listener);
         SkipRdbParser skipParser = new SkipRdbParser(in);
         long len = skipParser.rdbLoadLen().len;
-        for (int i = 0; i < len; i++) {
+        for (long i = 0; i < len; i++) {
             skipParser.rdbGenericLoadStringObject();
         }
         replicator.removeRawByteListener(listener);
         o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
         o14.setValue(listener.getBytes());
-        o14.setDb(db);
         o14.setKey(key);
-        return o14;
+        return context.valueOf(o14);
     }
     
     @Override
-    public Event applyModule(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o6 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -356,13 +344,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o6.setValueRdbType(RDB_TYPE_MODULE);
         o6.setValue(listener.getBytes());
-        o6.setDb(db);
         o6.setKey(key);
-        return o6;
+        return context.valueOf(o6);
     }
     
     @Override
-    public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyModule2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o7 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -390,13 +377,12 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o7.setValueRdbType(RDB_TYPE_MODULE_2);
         o7.setValue(listener.getBytes());
-        o7.setDb(db);
         o7.setKey(key);
-        return o7;
+        return context.valueOf(o7);
     }
     
     @Override
-    public Event applyStreamListPacks(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyStreamListPacks(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o15 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -435,8 +421,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         replicator.removeRawByteListener(listener);
         o15.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
         o15.setValue(listener.getBytes());
-        o15.setDb(db);
         o15.setKey(key);
-        return o15;
+        return context.valueOf(o15);
     }
 }

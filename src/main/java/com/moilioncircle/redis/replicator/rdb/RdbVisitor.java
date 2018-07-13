@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator.rdb;
 
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public abstract class RdbVisitor {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public DB applyResizeDB(RedisInputStream in, DB db, int version) throws IOException {
+    public DB applyResizeDB(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
@@ -68,13 +69,6 @@ public abstract class RdbVisitor {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    /**
-     * @param in      input stream
-     * @param version rdb version
-     * @return null for now
-     * @throws IOException IOException
-     * @since 2.6.0
-     */
     public Event applyModuleAux(RedisInputStream in, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
@@ -82,111 +76,79 @@ public abstract class RdbVisitor {
     /*
      * entity
      */
-    public Event applyExpireTime(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyExpireTime(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyExpireTimeMs(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyExpireTimeMs(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    /**
-     * @param in      input stream
-     * @param db      redis db
-     * @param version rdb version
-     * @return kv object
-     * @throws IOException IOException
-     * @since 2.6.0
-     */
-    public Event applyFreq(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyFreq(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    /**
-     * @param in      input stream
-     * @param db      redis db
-     * @param version rdb version
-     * @return kv object
-     * @throws IOException IOException
-     * @since 2.6.0
-     */
-    public Event applyIdle(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyIdle(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyString(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyString(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applySet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyZSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyZSet2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyHash(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHash(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyHashZipMap(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipMap(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyListZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySetIntSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyZSetZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSetZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyHashZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListQuickList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    public Event applyModule(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    /**
-     * @param in      input stream
-     * @param db      redis db
-     * @param version rdb version
-     * @return module object
-     * @throws IOException IOException
-     * @since 2.3.0
-     */
-    public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyModule2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
-    /**
-     * @param in      input stream
-     * @param db      redis db
-     * @param version rdb version
-     * @return module object
-     * @throws IOException IOException
-     * @since 2.6.0
-     */
-    public Event applyStreamListPacks(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyStreamListPacks(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 }

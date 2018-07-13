@@ -20,6 +20,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
+import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
@@ -129,10 +130,11 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
 
     @Override
-    public DB applyResizeDB(RedisInputStream in, DB db, int version) throws IOException {
+    public DB applyResizeDB(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         long dbsize = parser.rdbLoadLen().len;
         long expiresSize = parser.rdbLoadLen().len;
+        DB db = context.getDb();
         if (db != null) db.setDbsize(dbsize);
         if (db != null) db.setExpires(expiresSize);
         return db;
@@ -181,7 +183,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
 
     @Override
-    public Event applyExpireTime(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyExpireTime(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * ----------------------------
          * FD $unsigned int            # FD indicates "expiry time in seconds". After that, expiry time is read as a 4 byte unsigned int
@@ -191,23 +193,24 @@ public class DefaultRdbVisitor extends RdbVisitor {
          * ----------------------------
          */
         BaseRdbParser parser = new BaseRdbParser(in);
-        int expiredSec = parser.rdbLoadTime();
+        long expiredSec = parser.rdbLoadTime();
         int type = applyType(in);
+        context.setExpiredType(ExpiredType.SECOND);
+        context.setExpiredValue(expiredSec);
+        context.setValueRdbType(type);
         KeyValuePair<?, ?> kv;
         if (type == RDB_OPCODE_FREQ) {
-            kv = (KeyValuePair<?, ?>) applyFreq(in, db, version);
+            kv = (KeyValuePair<?, ?>) applyFreq(in, version, context);
         } else if (type == RDB_OPCODE_IDLE) {
-            kv = (KeyValuePair<?, ?>) applyIdle(in, db, version);
+            kv = (KeyValuePair<?, ?>) applyIdle(in, version, context);
         } else {
-            kv = rdbLoadObject(in, db, type, version);
+            kv = rdbLoadObject(in, version, context);
         }
-        kv.setExpiredType(ExpiredType.SECOND);
-        kv.setExpiredValue((long) expiredSec);
         return kv;
     }
 
     @Override
-    public Event applyExpireTimeMs(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyExpireTimeMs(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * ----------------------------
          * FC $unsigned long           # FC indicates "expiry time in ms". After that, expiry time is read as a 8 byte unsigned long
@@ -219,42 +222,45 @@ public class DefaultRdbVisitor extends RdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         long expiredMs = parser.rdbLoadMillisecondTime();
         int type = applyType(in);
+        context.setExpiredType(ExpiredType.MS);
+        context.setExpiredValue(expiredMs);
+        context.setValueRdbType(type);
         KeyValuePair<?, ?> kv;
         if (type == RDB_OPCODE_FREQ) {
-            kv = (KeyValuePair<?, ?>) applyFreq(in, db, version);
+            kv = (KeyValuePair<?, ?>) applyFreq(in, version, context);
         } else if (type == RDB_OPCODE_IDLE) {
-            kv = (KeyValuePair<?, ?>) applyIdle(in, db, version);
+            kv = (KeyValuePair<?, ?>) applyIdle(in, version, context);
         } else {
-            kv = rdbLoadObject(in, db, type, version);
+            kv = rdbLoadObject(in, version, context);
         }
-        kv.setExpiredType(ExpiredType.MS);
-        kv.setExpiredValue(expiredMs);
         return kv;
     }
 
     @Override
-    public Event applyFreq(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyFreq(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         long lfuFreq = in.read();
         int valueType = applyType(in);
-        KeyValuePair<?, ?> kv = rdbLoadObject(in, db, valueType, version);
-        kv.setEvictType(EvictType.LFU);
-        kv.setEvictValue(lfuFreq);
+        context.setValueRdbType(valueType);
+        context.setEvictType(EvictType.LFU);
+        context.setEvictValue(lfuFreq);
+        KeyValuePair<?, ?> kv = rdbLoadObject(in, version, context);
         return kv;
     }
 
     @Override
-    public Event applyIdle(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyIdle(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         long lruIdle = parser.rdbLoadLen().len;
         int valueType = applyType(in);
-        KeyValuePair<?, ?> kv = rdbLoadObject(in, db, valueType, version);
-        kv.setEvictType(EvictType.LRU);
-        kv.setEvictValue(lruIdle);
+        context.setValueRdbType(valueType);
+        context.setEvictType(EvictType.LRU);
+        context.setEvictValue(lruIdle);
+        KeyValuePair<?, ?> kv = rdbLoadObject(in, version, context);
         return kv;
     }
 
     @Override
-    public Event applyString(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyString(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |       <content>       |
          * |    string contents    |
@@ -265,13 +271,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         byte[] val = parser.rdbLoadEncodedStringObject().first();
         o0.setValueRdbType(RDB_TYPE_STRING);
         o0.setValue(val);
-        o0.setDb(db);
         o0.setKey(key);
-        return o0;
+        return context.valueOf(o0);
     }
 
     @Override
-    public Event applyList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |
          * | 1 or 5 bytes |    string contents    |
@@ -288,13 +293,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o1.setValueRdbType(RDB_TYPE_LIST);
         o1.setValue(list);
-        o1.setDb(db);
         o1.setKey(key);
-        return o1;
+        return context.valueOf(o1);
     }
 
     @Override
-    public Event applySet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |
          * | 1 or 5 bytes |    string contents    |
@@ -311,13 +315,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o2.setValueRdbType(RDB_TYPE_SET);
         o2.setValue(set);
-        o2.setDb(db);
         o2.setKey(key);
-        return o2;
+        return context.valueOf(o2);
     }
 
     @Override
-    public Event applyZSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |        <score>       |
          * | 1 or 5 bytes |    string contents    |    double content    |
@@ -335,13 +338,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o3.setValueRdbType(RDB_TYPE_ZSET);
         o3.setValue(zset);
-        o3.setDb(db);
         o3.setKey(key);
-        return o3;
+        return context.valueOf(o3);
     }
 
     @Override
-    public Event applyZSet2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSet2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |        <score>       |
          * | 1 or 5 bytes |    string contents    |    binary double     |
@@ -360,13 +362,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o5.setValueRdbType(RDB_TYPE_ZSET_2);
         o5.setValue(zset);
-        o5.setDb(db);
         o5.setKey(key);
-        return o5;
+        return context.valueOf(o5);
     }
 
     @Override
-    public Event applyHash(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHash(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |    <len>     |       <content>       |
          * | 1 or 5 bytes |    string contents    |
@@ -384,13 +385,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o4.setValueRdbType(RDB_TYPE_HASH);
         o4.setValue(map);
-        o4.setDb(db);
         o4.setKey(key);
-        return o4;
+        return context.valueOf(o4);
     }
 
     @Override
-    public Event applyHashZipMap(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipMap(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<zmlen> |   <len>     |"foo"    |    <len>   | <free> |   "bar" |<zmend> |
          * | 1 byte | 1 or 5 byte | content |1 or 5 byte | 1 byte | content | 1 byte |
@@ -406,9 +406,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
             if (zmEleLen == 255) {
                 o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
                 o9.setValue(map);
-                o9.setDb(db);
                 o9.setKey(key);
-                return o9;
+                return context.valueOf(o9);
             }
             byte[] field = BaseRdbParser.StringHelper.bytes(stream, zmEleLen);
             zmEleLen = BaseRdbParser.LenHelper.zmElementLen(stream);
@@ -417,9 +416,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 map.put(field, null);
                 o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
                 o9.setValue(map);
-                o9.setDb(db);
                 o9.setKey(key);
-                return o9;
+                return context.valueOf(o9);
             }
             int free = BaseRdbParser.LenHelper.free(stream);
             byte[] value = BaseRdbParser.StringHelper.bytes(stream, zmEleLen);
@@ -429,7 +427,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
 
     @Override
-    public Event applyListZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -438,7 +436,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], List<byte[]>> o10 = new KeyStringValueList();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
-    
+
         List<byte[]> list = new ByteArrayList();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
@@ -453,13 +451,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
         o10.setValue(list);
-        o10.setDb(db);
         o10.setKey(key);
-        return o10;
+        return context.valueOf(o10);
     }
 
     @Override
-    public Event applySetIntSet(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applySetIntSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<encoding>| <length-of-contents>|              <contents>                            |
          * | 4 bytes  |            4 bytes  | 2 bytes element| 4 bytes element | 8 bytes element |
@@ -468,7 +465,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], Set<byte[]>> o11 = new KeyStringValueSet();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
-    
+
         Set<byte[]> set = new ByteArraySet();
         int encoding = BaseRdbParser.LenHelper.encoding(stream);
         long lenOfContent = BaseRdbParser.LenHelper.lenOfContent(stream);
@@ -492,13 +489,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o11.setValueRdbType(RDB_TYPE_SET_INTSET);
         o11.setValue(set);
-        o11.setDb(db);
         o11.setKey(key);
-        return o11;
+        return context.valueOf(o11);
     }
 
     @Override
-    public Event applyZSetZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyZSetZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -525,13 +521,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
         o12.setValue(zset);
-        o12.setDb(db);
         o12.setKey(key);
-        return o12;
+        return context.valueOf(o12);
     }
 
     @Override
-    public Event applyHashZipList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
          * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -540,7 +535,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
         KeyValuePair<byte[], Map<byte[], byte[]>> o13 = new KeyStringValueHash();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         RedisInputStream stream = new RedisInputStream(parser.rdbLoadPlainStringObject());
-    
+
         ByteArrayMap map = new ByteArrayMap();
         BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
         BaseRdbParser.LenHelper.zltail(stream); // zltail
@@ -558,19 +553,18 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
         o13.setValue(map);
-        o13.setDb(db);
         o13.setKey(key);
-        return o13;
+        return context.valueOf(o13);
     }
 
     @Override
-    public Event applyListQuickList(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyListQuickList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], List<byte[]>> o14 = new KeyStringValueList();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
         long len = parser.rdbLoadLen().len;
         List<byte[]> list = new ByteArrayList();
-        for (int i = 0; i < len; i++) {
+        for (long i = 0; i < len; i++) {
             RedisInputStream stream = new RedisInputStream(parser.rdbGenericLoadStringObject(RDB_LOAD_NONE));
 
             BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
@@ -587,13 +581,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
         o14.setValue(list);
-        o14.setDb(db);
         o14.setKey(key);
-        return o14;
+        return context.valueOf(o14);
     }
 
     @Override
-    public Event applyModule(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         //|6|6|6|6|6|6|6|6|6|10|
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], Module> o6 = new KeyStringValueModule();
@@ -611,13 +604,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o6.setValueRdbType(RDB_TYPE_MODULE);
         o6.setValue(moduleParser.parse(in, 1));
-        o6.setDb(db);
         o6.setKey(key);
-        return o6;
+        return context.valueOf(o6);
     }
 
     @Override
-    public Event applyModule2(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyModule2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         //|6|6|6|6|6|6|6|6|6|10|
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], Module> o7 = new KeyStringValueModule();
@@ -644,9 +636,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
         }
         o7.setValueRdbType(RDB_TYPE_MODULE_2);
         o7.setValue(module);
-        o7.setDb(db);
         o7.setKey(rawKey);
-        return o7;
+        return context.valueOf(o7);
     }
 
     protected ModuleParser<? extends Module> lookupModuleParser(String moduleName, int moduleVersion) {
@@ -655,7 +646,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 
     @Override
     @SuppressWarnings("resource")
-    public Event applyStreamListPacks(RedisInputStream in, DB db, int version) throws IOException {
+    public Event applyStreamListPacks(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], Stream> o15 = new KeyStringValueStream();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
@@ -794,13 +785,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
         stream.setGroups(groups);
 
         o15.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
-        o15.setDb(db);
         o15.setValue(stream);
         o15.setKey(key);
-        return o15;
+        return context.valueOf(o15);
     }
 
-    protected KeyValuePair<?, ?> rdbLoadObject(RedisInputStream in, DB db, int valueType, int version) throws IOException {
+    protected KeyValuePair<?, ?> rdbLoadObject(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         /*
          * ----------------------------
          * $value-type                 # This name value pair doesn't have an expiry. $value_type guaranteed != to FD, FC, FE and FF
@@ -808,37 +798,38 @@ public class DefaultRdbVisitor extends RdbVisitor {
          * $encoded-value
          * ----------------------------
          */
+        int valueType = context.getValueRdbType();
         switch (valueType) {
             case RDB_TYPE_STRING:
-                return (KeyValuePair<?, ?>) applyString(in, db, version);
+                return (KeyValuePair<?, ?>) applyString(in, version, context);
             case RDB_TYPE_LIST:
-                return (KeyValuePair<?, ?>) applyList(in, db, version);
+                return (KeyValuePair<?, ?>) applyList(in, version, context);
             case RDB_TYPE_SET:
-                return (KeyValuePair<?, ?>) applySet(in, db, version);
+                return (KeyValuePair<?, ?>) applySet(in, version, context);
             case RDB_TYPE_ZSET:
-                return (KeyValuePair<?, ?>) applyZSet(in, db, version);
+                return (KeyValuePair<?, ?>) applyZSet(in, version, context);
             case RDB_TYPE_ZSET_2:
-                return (KeyValuePair<?, ?>) applyZSet2(in, db, version);
+                return (KeyValuePair<?, ?>) applyZSet2(in, version, context);
             case RDB_TYPE_HASH:
-                return (KeyValuePair<?, ?>) applyHash(in, db, version);
+                return (KeyValuePair<?, ?>) applyHash(in, version, context);
             case RDB_TYPE_HASH_ZIPMAP:
-                return (KeyValuePair<?, ?>) applyHashZipMap(in, db, version);
+                return (KeyValuePair<?, ?>) applyHashZipMap(in, version, context);
             case RDB_TYPE_LIST_ZIPLIST:
-                return (KeyValuePair<?, ?>) applyListZipList(in, db, version);
+                return (KeyValuePair<?, ?>) applyListZipList(in, version, context);
             case RDB_TYPE_SET_INTSET:
-                return (KeyValuePair<?, ?>) applySetIntSet(in, db, version);
+                return (KeyValuePair<?, ?>) applySetIntSet(in, version, context);
             case RDB_TYPE_ZSET_ZIPLIST:
-                return (KeyValuePair<?, ?>) applyZSetZipList(in, db, version);
+                return (KeyValuePair<?, ?>) applyZSetZipList(in, version, context);
             case RDB_TYPE_HASH_ZIPLIST:
-                return (KeyValuePair<?, ?>) applyHashZipList(in, db, version);
+                return (KeyValuePair<?, ?>) applyHashZipList(in, version, context);
             case RDB_TYPE_LIST_QUICKLIST:
-                return (KeyValuePair<?, ?>) applyListQuickList(in, db, version);
+                return (KeyValuePair<?, ?>) applyListQuickList(in, version, context);
             case RDB_TYPE_MODULE:
-                return (KeyValuePair<?, ?>) applyModule(in, db, version);
+                return (KeyValuePair<?, ?>) applyModule(in, version, context);
             case RDB_TYPE_MODULE_2:
-                return (KeyValuePair<?, ?>) applyModule2(in, db, version);
+                return (KeyValuePair<?, ?>) applyModule2(in, version, context);
             case RDB_TYPE_STREAM_LISTPACKS:
-                return (KeyValuePair<?, ?>) applyStreamListPacks(in, db, version);
+                return (KeyValuePair<?, ?>) applyStreamListPacks(in, version, context);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
         }

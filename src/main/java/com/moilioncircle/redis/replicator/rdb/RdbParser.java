@@ -21,7 +21,7 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +142,7 @@ public class RdbParser {
         this.replicator.submitEvent(new PreRdbSyncEvent());
         rdbVisitor.applyMagic(in);
         int version = rdbVisitor.applyVersion(in);
-        DB db = null;
+        ContextKeyValuePair kv = new ContextKeyValuePair();
         /*
          * rdb
          */
@@ -150,18 +150,19 @@ public class RdbParser {
         while (this.replicator.getStatus() == CONNECTED) {
             int type = rdbVisitor.applyType(in);
             Event event = null;
+
             switch (type) {
                 case RDB_OPCODE_EXPIRETIME:
-                    event = rdbVisitor.applyExpireTime(in, db, version);
+                    event = rdbVisitor.applyExpireTime(in, version, kv);
                     break;
                 case RDB_OPCODE_EXPIRETIME_MS:
-                    event = rdbVisitor.applyExpireTimeMs(in, db, version);
+                    event = rdbVisitor.applyExpireTimeMs(in, version, kv);
                     break;
                 case RDB_OPCODE_FREQ:
-                    event = rdbVisitor.applyFreq(in, db, version);
+                    event = rdbVisitor.applyFreq(in, version, kv);
                     break;
                 case RDB_OPCODE_IDLE:
-                    event = rdbVisitor.applyIdle(in, db, version);
+                    event = rdbVisitor.applyIdle(in, version, kv);
                     break;
                 case RDB_OPCODE_AUX:
                     event = rdbVisitor.applyAux(in, version);
@@ -170,59 +171,59 @@ public class RdbParser {
                     event = rdbVisitor.applyModuleAux(in, version);
                     break;
                 case RDB_OPCODE_RESIZEDB:
-                    rdbVisitor.applyResizeDB(in, db, version);
+                    rdbVisitor.applyResizeDB(in, version, kv);
                     break;
                 case RDB_OPCODE_SELECTDB:
-                    db = rdbVisitor.applySelectDB(in, version);
+                    kv.setDb(rdbVisitor.applySelectDB(in, version));
                     break;
                 case RDB_OPCODE_EOF:
                     long checksum = rdbVisitor.applyEof(in, version);
                     this.replicator.submitEvent(new PostRdbSyncEvent(checksum));
                     break loop;
                 case RDB_TYPE_STRING:
-                    event = rdbVisitor.applyString(in, db, version);
+                    event = rdbVisitor.applyString(in, version, kv);
                     break;
                 case RDB_TYPE_LIST:
-                    event = rdbVisitor.applyList(in, db, version);
+                    event = rdbVisitor.applyList(in, version, kv);
                     break;
                 case RDB_TYPE_SET:
-                    event = rdbVisitor.applySet(in, db, version);
+                    event = rdbVisitor.applySet(in, version, kv);
                     break;
                 case RDB_TYPE_ZSET:
-                    event = rdbVisitor.applyZSet(in, db, version);
+                    event = rdbVisitor.applyZSet(in, version, kv);
                     break;
                 case RDB_TYPE_ZSET_2:
-                    event = rdbVisitor.applyZSet2(in, db, version);
+                    event = rdbVisitor.applyZSet2(in, version, kv);
                     break;
                 case RDB_TYPE_HASH:
-                    event = rdbVisitor.applyHash(in, db, version);
+                    event = rdbVisitor.applyHash(in, version, kv);
                     break;
                 case RDB_TYPE_HASH_ZIPMAP:
-                    event = rdbVisitor.applyHashZipMap(in, db, version);
+                    event = rdbVisitor.applyHashZipMap(in, version, kv);
                     break;
                 case RDB_TYPE_LIST_ZIPLIST:
-                    event = rdbVisitor.applyListZipList(in, db, version);
+                    event = rdbVisitor.applyListZipList(in, version, kv);
                     break;
                 case RDB_TYPE_SET_INTSET:
-                    event = rdbVisitor.applySetIntSet(in, db, version);
+                    event = rdbVisitor.applySetIntSet(in, version, kv);
                     break;
                 case RDB_TYPE_ZSET_ZIPLIST:
-                    event = rdbVisitor.applyZSetZipList(in, db, version);
+                    event = rdbVisitor.applyZSetZipList(in, version, kv);
                     break;
                 case RDB_TYPE_HASH_ZIPLIST:
-                    event = rdbVisitor.applyHashZipList(in, db, version);
+                    event = rdbVisitor.applyHashZipList(in, version, kv);
                     break;
                 case RDB_TYPE_LIST_QUICKLIST:
-                    event = rdbVisitor.applyListQuickList(in, db, version);
+                    event = rdbVisitor.applyListQuickList(in, version, kv);
                     break;
                 case RDB_TYPE_MODULE:
-                    event = rdbVisitor.applyModule(in, db, version);
+                    event = rdbVisitor.applyModule(in, version, kv);
                     break;
                 case RDB_TYPE_MODULE_2:
-                    event = rdbVisitor.applyModule2(in, db, version);
+                    event = rdbVisitor.applyModule2(in, version, kv);
                     break;
                 case RDB_TYPE_STREAM_LISTPACKS:
-                    event = rdbVisitor.applyStreamListPacks(in, db, version);
+                    event = rdbVisitor.applyStreamListPacks(in, version, kv);
                     break;
                 default:
                     throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");

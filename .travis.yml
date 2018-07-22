@@ -4,7 +4,6 @@ jdk:
     - oraclejdk8
     - oraclejdk9
     - oraclejdk10
-    - oraclejdk-ea
 branches:
   only:
     - 3.x

@@ -144,6 +144,7 @@ public class ModuleTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof KeyValuePair) {
+                    @SuppressWarnings("unchecked")
                     KeyValuePair<byte[], byte[]> dkv = (KeyValuePair<byte[], byte[]>) event;
                     map.put(Strings.toString(dkv.getKey()), dkv.getValue());
                 }

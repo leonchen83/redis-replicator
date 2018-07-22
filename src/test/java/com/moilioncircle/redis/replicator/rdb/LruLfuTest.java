@@ -50,6 +50,7 @@ public class LruLfuTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof KeyValuePair<?, ?>) {
+                    @SuppressWarnings("unchecked")
                     KeyValuePair<byte[], ?> kv = (KeyValuePair<byte[], ?>) event;
                     map.put(Strings.toString(kv.getKey()), kv);
                 }
@@ -76,6 +77,7 @@ public class LruLfuTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof KeyValuePair<?, ?>) {
+                    @SuppressWarnings("unchecked")
                     KeyValuePair<byte[], ?> kv = (KeyValuePair<byte[], ?>) event;
                     map.put(Strings.toString(kv.getKey()), kv);
                 }

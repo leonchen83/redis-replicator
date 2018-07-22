@@ -22,7 +22,6 @@ import com.moilioncircle.redis.replicator.event.Event;
  * @author Leon Chen
  * @since 2.1.0
  */
-@SuppressWarnings("unchecked")
 public class KeyValuePair<K, V> implements Event {
 
     private static final long serialVersionUID = 1L;

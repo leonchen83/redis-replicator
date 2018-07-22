@@ -21,7 +21,9 @@ package com.moilioncircle.redis.replicator.rdb.datatype;
  * @since 3.0.0
  */
 public class ContextKeyValuePair extends KeyValuePair<Void, Void> {
-
+    
+    private static final long serialVersionUID = 1L;
+    
     public <K, V> KeyValuePair<K, V> valueOf(KeyValuePair<K, V> kv) {
         kv.setDb(this.getDb());
         kv.setEvictType(this.getEvictType());

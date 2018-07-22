@@ -42,8 +42,8 @@ public class CloseTest {
     @SuppressWarnings("resource")
     public void testRdbClose() throws IOException {
         Replicator r = new RedisReplicator(
-                new RateLimitInputStream(CloseTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")), FileType.RDB,
-                Configuration.defaultSetting());
+                new RateLimitInputStream(CloseTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")),
+                FileType.RDB, Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         r.addEventListener(new EventListener() {
             @Override
@@ -67,9 +67,8 @@ public class CloseTest {
     @Test
     @SuppressWarnings("resource")
     public void testAofClose() throws IOException {
-        Replicator r = new RedisReplicator(
-                CloseTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), FileType.AOF,
-                Configuration.defaultSetting());
+        Replicator r = new RedisReplicator(CloseTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"),
+                FileType.AOF, Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         r.addEventListener(new EventListener() {
             @Override
@@ -219,7 +218,7 @@ public class CloseTest {
     
     @Test
     public void testMixClose5() throws IOException {
-        final Replicator replicator = new RedisReplicator(
+        @SuppressWarnings("resource") final Replicator replicator = new RedisReplicator(
                 CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
@@ -245,6 +244,7 @@ public class CloseTest {
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
     
+    @SuppressWarnings("resource")
     @Test
     public void testMixClose6() throws IOException {
         final Replicator replicator = new RedisReplicator(
@@ -267,6 +267,7 @@ public class CloseTest {
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
     
+    @SuppressWarnings("resource")
     @Test
     public void testMixClose7() throws IOException {
         final Replicator replicator = new RedisReplicator(
@@ -292,6 +293,7 @@ public class CloseTest {
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
     
+    @SuppressWarnings("resource")
     @Test
     public void testMixClose8() throws IOException, URISyntaxException {
         final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
@@ -315,6 +317,7 @@ public class CloseTest {
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
     
+    @SuppressWarnings("resource")
     @Test
     public void testMixClose9() throws IOException, URISyntaxException {
         final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
@@ -371,6 +374,7 @@ public class CloseTest {
         assertEquals(1, acc.get());
     }
     
+    @SuppressWarnings("resource")
     @Test
     public void testMixClose11() throws IOException {
         final Replicator replicator = new RedisReplicator(
@@ -395,7 +399,7 @@ public class CloseTest {
     
     @Test
     public void testMixClose12() throws IOException {
-        final Replicator replicator = new RedisReplicator(
+        @SuppressWarnings("resource") final Replicator replicator = new RedisReplicator(
                 CloseTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);

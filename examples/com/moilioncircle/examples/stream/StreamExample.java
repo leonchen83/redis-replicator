@@ -34,6 +34,7 @@ public class StreamExample {
     public static void main(String[] args) throws Exception {
         Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
         r.addEventListener(new EventListener() {
+            @SuppressWarnings("unused")
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof KeyStringValueStream) {

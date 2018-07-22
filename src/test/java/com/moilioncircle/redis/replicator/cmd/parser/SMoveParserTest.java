@@ -20,8 +20,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.SMoveCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SwapDBCommand;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author Leon Chen
  * @since 2.1.0

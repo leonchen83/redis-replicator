@@ -93,6 +93,7 @@ public class RdbFilterExample {
             replicator.addRawByteListener(rawByteListener);
 
             replicator.addEventListener(new EventListener() {
+                @SuppressWarnings("unchecked")
                 @Override
                 public void onEvent(Replicator replicator, Event event) {
                     if (event instanceof AuxField) {

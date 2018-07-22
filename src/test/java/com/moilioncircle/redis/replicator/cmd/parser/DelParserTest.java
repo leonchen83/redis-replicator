@@ -24,8 +24,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.UnLinkCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemCommand;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * @author Leon Chen
  * @since 2.1.0

@@ -222,6 +222,7 @@ public class StreamTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof KeyValuePair) {
+                    @SuppressWarnings("unchecked")
                     KeyValuePair<byte[], byte[]> dkv = (KeyValuePair<byte[], byte[]>) event;
                     map.put(dkv.getKey(), dkv.getValue());
                 }

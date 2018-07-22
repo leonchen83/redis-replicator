@@ -27,7 +27,6 @@ public class PFCountCommand implements Command {
     private static final long serialVersionUID = 1L;
 
     private byte[][] keys;
-    private byte[][] rawKeys;
 
     public PFCountCommand() {
     }

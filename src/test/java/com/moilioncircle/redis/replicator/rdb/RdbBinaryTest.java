@@ -48,7 +48,7 @@ import static org.junit.Assert.fail;
 public class RdbBinaryTest {
 
     @org.junit.Test
-    @SuppressWarnings("resource")
+    @SuppressWarnings({"resource", "unchecked"})
     public void testRdb() throws IOException {
         final List<KeyValuePair<byte[], ?>> list = new ArrayList<>();
         Replicator r = new RedisReplicator(RdbBinaryTest.class.getClassLoader().getResourceAsStream("binarydump.rdb"), FileType.RDB,

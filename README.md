@@ -11,18 +11,12 @@ Table of Contents([中文说明](./README.zh_CN.md))
       * [2.3. Install from source code](#23-install-from-source-code)
       * [2.4. Select a version](#24-select-a-version)
    * [3. Simple usage](#3-simple-usage)
-      * [3.1. Replication via socket](#31-replication-via-socket)
-      * [3.2. Read rdb file](#32-read-rdb-file)
-      * [3.3. Read aof file](#33-read-aof-file)
-      * [3.4. Read mixed file](#34-read-mixed-file)
-         * [3.4.1. Mixed file format](#341-mixed-file-format)
-         * [3.4.2. Mixed file redis configuration](#342-mixed-file-redis-configuration)
-         * [3.4.3. Using replicator read mixed file](#343-using-replicator-read-mixed-file)
-      * [3.5. Backup remote rdb snapshot](#35-backup-remote-rdb-snapshot)
-      * [3.6. Backup remote commands](#36-backup-remote-commands)
-      * [3.7. Convert rdb to dump format](#37-convert-rdb-to-dump-format)
-      * [3.8. Rdb check](#38-rdb-check)
-      * [3.9. Other examples](#39-other-examples)
+      * [3.1. Usage](#31-usage)
+      * [3.2. Backup remote rdb snapshot](#32-backup-remote-rdb-snapshot)
+      * [3.3. Backup remote commands](#33-backup-remote-commands)
+      * [3.4. Convert rdb to dump format](#34-convert-rdb-to-dump-format)
+      * [3.5. Rdb check](#35-rdb-check)
+      * [3.6. Other examples](#36-other-examples)
    * [4. Advanced topics](#4-advanced-topics)
       * [4.1. Command extension](#41-command-extension)
          * [4.1.1. Write a command](#411-write-a-command)
@@ -39,8 +33,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
          * [4.2.6. Put them together](#426-put-them-together)
       * [4.3. Stream](#43-stream)
       * [4.4. Write your own rdb parser](#44-write-your-own-rdb-parser)
-      * [4.5. Event timeline](#45-event-timeline)
-      * [4.6. Redis URI](#46-redis-uri)
+      * [4.5. Redis URI](#45-redis-uri)
    * [5. Other topics](#5-other-topics)
       * [5.1. Built-in command parser](#51-built-in-command-parser)
       * [5.2. EOFException](#52-eofexception)
@@ -48,9 +41,8 @@ Table of Contents([中文说明](./README.zh_CN.md))
       * [5.4. SSL connection](#54-ssl-connection)
       * [5.5. Auth](#55-auth)
       * [5.6. Avoid full sync](#56-avoid-full-sync)
-      * [5.7. FullSyncEvent](#57-fullsyncevent)
-      * [5.8. Handle raw bytes](#58-handle-raw-bytes)
-      * [5.9. Handle huge key value pair](#59-handle-huge-key-value-pair)
+      * [5.7. Lifecycle event](#57-lifecycle-event)
+      * [5.8. Handle huge key value pair](#58-handle-huge-key-value-pair)
    * [6. Contributors](#6-contributors)
    * [7. References](#7-references)
    * [8. Supported by](#8-supported-by)
@@ -88,7 +80,7 @@ redis 2.6 - 5.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.6.0-RC1</version>
+        <version>3.0.0-RC1</version>
     </dependency>
 ```
 
@@ -114,90 +106,29 @@ redis 2.6 - 5.0
 
 
 # 3. Simple usage  
-  
-## 3.1. Replication via socket  
+
+## 3.1. Usage  
   
 ```java  
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
         replicator.open();
 ```
 
-## 3.2. Read rdb file  
-
-```java  
-        Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-
-        replicator.open();
-```  
-
-## 3.3. Read aof file  
-
-```java  
-        Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
-            }
-        });
-        replicator.open();
-```  
-
-## 3.4. Read mixed file  
-### 3.4.1. Mixed file format  
-```java  
-    [RDB file][AOF tail]
-```
-### 3.4.2. Mixed file redis configuration  
-```java  
-    aof-use-rdb-preamble yes
-```
-### 3.4.3. Using replicator read mixed file 
-```java  
-        final Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
-            }
-        });
-
-        replicator.open();
-```
-
-## 3.5. Backup remote rdb snapshot  
+## 3.2. Backup remote rdb snapshot  
 
 See [RdbBackupExample.java](./examples/com/moilioncircle/examples/backup/RdbBackupExample.java)  
 
-## 3.6. Backup remote commands  
+## 3.3. Backup remote commands  
 
 See [CommandBackupExample.java](./examples/com/moilioncircle/examples/backup/CommandBackupExample.java)  
 
-## 3.7. Convert rdb to dump format
+## 3.4. Convert rdb to dump format
 
 We can use `DumpRdbVisitor` to convert rdb to redis [DUMP](https://redis.io/commands/dump) format.  
   
@@ -205,11 +136,11 @@ We can use `DumpRdbVisitor` to convert rdb to redis [DUMP](https://redis.io/comm
 
         Replicator r = new RedisReplicator("redis:///path/to/dump.rdb");
         r.setRdbVisitor(new DumpRdbVisitor(r));
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (!(kv instanceof DumpKeyValuePair)) return;
-                DumpKeyValuePair dkv = (DumpKeyValuePair) kv;
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair dkv = (DumpKeyValuePair) event;
                 byte[] serialized = dkv.getValue();
                 // we can use redis RESTORE command to migrate this serialized value to another redis.
             }
@@ -218,7 +149,7 @@ We can use `DumpRdbVisitor` to convert rdb to redis [DUMP](https://redis.io/comm
 
 ```
 
-## 3.8. Rdb check
+## 3.5. Rdb check
 
 We can use `SkipRdbVisitor` to check rdb's correctness.  
 
@@ -230,7 +161,7 @@ We can use `SkipRdbVisitor` to check rdb's correctness.
 
 ```
 
-## 3.9. Other examples  
+## 3.6. Other examples  
 
 See [examples](./examples/com/moilioncircle/examples/README.md)  
 
@@ -289,11 +220,11 @@ See [examples](./examples/com/moilioncircle/examples/README.md)
   
 ### 4.1.4. Handle command event  
 ```java  
-    replicator.addCommandListener(new CommandListener() {
+    replicator.addEventListener(new EventListener() {
         @Override
-        public void handle(Replicator replicator, Command command) {
-            if(command instanceof YourAppendCommand){
-                YourAppendCommand appendCommand = (YourAppendCommand)command;
+        public void onEvent(Replicator replicator, Event event) {
+            if(event instanceof YourAppendCommand){
+                YourAppendCommand appendCommand = (YourAppendCommand)event;
                 // your code goes here
             }
         }
@@ -396,24 +327,18 @@ See [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extensi
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueModule) {
-                    System.out.println(kv);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueModule) {
+                    System.out.println(event);
                 }
-            }
-        });
-
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if (command instanceof HelloTypeCommand) {
+                
+                if (event instanceof HelloTypeCommand) {
                     System.out.println(command);
                 }
             }
         });
-
         replicator.open();
     }
 ```
@@ -429,10 +354,11 @@ Since Redis 5.0+, Redis add a new data structure `STREAM`. Redis-replicator pars
 ```java  
 
         Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueStream) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueStream) {
+                    KeyStringValueStream kv = (KeyStringValueStream)event;
                     // key
                     String key = kv.getKey();
                     
@@ -467,18 +393,7 @@ Since Redis 5.0+, Redis add a new data structure `STREAM`. Redis-replicator pars
 * Write `YourRdbVisitor` extends `RdbVisitor`  
 * Register your `RdbVisitor` to `Replicator` using `setRdbVisitor` method.  
 
-## 4.5. Event timeline  
-
-```java  
-        |                     full resynchronization              |  partial resynchronization  |
-        +-----------<--------------<-------------<----------<-----+--------------<-------<------+
-        |                       RDB                               |            AOF              | <-reconnect    
- connect+-->----->-------------->------------->---------->-------------------->------->---------x <-disconnect
-        |      |              |          |            |           |             |               |
-          prefullsync    auxfields...  rdbs...   postfullsync                  cmds...       
-```
-
-## 4.6. Redis URI
+## 4.5. Redis URI
 
 Before redis-replicator-2.4.0, We construct `RedisReplicator` like the following:  
 
@@ -580,79 +495,30 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 ```
 `repl-ping-slave-period` **MUST** less than `Configuration.getReadTimeout()`, default `Configuration.getReadTimeout()` is 30 seconds
   
-## 5.7. FullSyncEvent  
+## 5.7. Lifecycle event  
   
 ```java  
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         final long start = System.currentTimeMillis();
         final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-                System.out.println("pre full sync");
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                long end = System.currentTimeMillis();
-                System.out.println("time elapsed:" + (end - start));
-                System.out.println("rdb event count:" + acc.get());
-            }
-        });
-        replicator.open();
-```  
-  
-## 5.8. Handle raw bytes  
-  
-* For any `KeyValuePair` type except `KeyStringValueModule`, we can get the raw bytes. In some cases, this is very useful.  
-
-  
-```java  
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueString) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    byte[] rawValue = ksvs.getRawValue();
-                    // handle raw bytes value
-                } else if (kv instanceof KeyStringValueHash) {
-                    KeyStringValueHash ksvh = (KeyStringValueHash) kv;
-                    Map<byte[], byte[]> rawValue = ksvh.getRawValue();
-                    // handle raw bytes value
+            public void onEvent(Replicator replicator, Event event) {
+                if(event instanceof PreRdbSyncEvent) {
+                    System.out.println("pre rdb sync");
+                } else if(event instanceof PostRdbSyncEvent) {
+                    long end = System.currentTimeMillis();
+                    System.out.println("time elapsed:" + (end - start));
+                    System.out.println("rdb event count:" + acc.get());
                 } else {
-                    ...
+                    acc.incrementAndGet();
                 }
             }
         });
         replicator.open();
 ```  
-  
-The `KeyStringValueHash.getRawValue` will return `Map<byte[], byte[]>`, the `key` of this `map` is [value type](http://www.tutorialsteacher.com/csharp/csharp-value-type-and-reference-type) like the following  
 
-```java  
-KeyStringValueHash ksvh = (KeyStringValueHash) kv;
-Map<byte[], byte[]> rawValue = ksvh.getRawValue();
-byte[] value = new byte[]{2};
-rawValue.put(new byte[]{1}, value);
-System.out.println(rawValue.get(new byte[]{1}) == value) //will print true 
-```
-
-Commands also support raw bytes.  
-
-```java  
-SetCommand set = (SetCommand) command;
-byte[] rawKey = set.getRawKey();
-byte[] rawValue = set.getRawValue();
-
-```
-
-## 5.9. Handle huge key value pair  
+## 5.8. Handle huge key value pair  
 
 According to [4.3. Write your own rdb parser](#43-write-your-own-rdb-parser), This tool built in an [Iterable Rdb Parser](./src/main/java/com/moilioncircle/redis/replicator/rdb/iterable/ValueIterableRdbVisitor.java) so that handle huge key value pair.  
 More details please refer to:  

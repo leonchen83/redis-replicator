@@ -12,18 +12,12 @@
       * [2.3. 安装源码到本地maven仓库](#23-安装源码到本地maven仓库)
       * [2.4. 选择一个版本](#24-选择一个版本)
    * [3. 简要用法](#3-简要用法)
-      * [3.1. 通过socket同步](#31-通过socket同步)
-      * [3.2. 读取并解析rdb文件](#32-读取并解析rdb文件)
-      * [3.3. 读取并解析aof文件](#33-读取并解析aof文件)
-      * [3.4. 读取混合格式文件](#34-读取混合格式文件)
-         * [3.4.1. redis混合文件格式](#341-redis混合文件格式)
-         * [3.4.2. redis混合文件格式配置](#342-redis混合文件格式配置)
-         * [3.4.3. 应用Replicator读取混合格式文件](#343-应用replicator读取混合格式文件)
-      * [3.5. 备份远程redis的rdb文件](#35-备份远程redis的rdb文件)
-      * [3.6. 备份远程redis的实时命令](#36-备份远程redis的实时命令)
-      * [3.7. 将rdb转换成dump格式](#37-将rdb转换成dump格式)
-      * [3.8. 检查Rdb的正确性](#38-检查rdb的正确性)
-      * [3.9. 其他示例](#39-其他示例)
+      * [3.1. 用法](#31-用法)
+      * [3.2. 备份远程redis的rdb文件](#32-备份远程redis的rdb文件)
+      * [3.3. 备份远程redis的实时命令](#33-备份远程redis的实时命令)
+      * [3.4. 将rdb转换成dump格式](#34-将rdb转换成dump格式)
+      * [3.5. 检查Rdb的正确性](#35-检查rdb的正确性)
+      * [3.6. 其他示例](#36-其他示例)
    * [4. 高级主题](#4-高级主题)
       * [4.1. 命令扩展](#41-命令扩展)
          * [4.1.1. 首先写一个command类](#411-首先写一个command类)
@@ -40,8 +34,7 @@
          * [4.2.6. 结合到一起](#426-结合到一起)
       * [4.3. Stream](#43-stream)
       * [4.4. 编写你自己的rdb解析器](#44-编写你自己的rdb解析器)
-      * [4.5. 事件时间线](#45-事件时间线)
-      * [4.6. Redis URI](#46-redis-uri)
+      * [4.5. Redis URI](#45-redis-uri)
    * [5. 其他主题](#5-其他主题)
       * [5.1. 内置的Command Parser](#51-内置的command-parser)
       * [5.2. 当出现EOFException](#52-当出现eofexception)
@@ -49,9 +42,8 @@
       * [5.4. SSL安全链接](#54-ssl安全链接)
       * [5.5. redis认证](#55-redis认证)
       * [5.6. 避免全量同步](#56-避免全量同步)
-      * [5.7. FullSyncEvent事件](#57-fullsyncevent事件)
-      * [5.8. 处理原始字节数组](#58-处理原始字节数组)
-      * [5.9. 处理巨大的KV](#59-处理巨大的kv)
+      * [5.7. 生命周期事件](#57-生命周期事件)
+      * [5.8. 处理巨大的KV](#58-处理巨大的kv)
    * [6. 贡献者](#6-贡献者)
    * [7. 相关引用](#7-相关引用)
    * [8. 致谢](#8-致谢)
@@ -94,7 +86,7 @@ redis 2.6 - 5.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>2.6.0-RC1</version>
+        <version>3.0.0-RC1</version>
     </dependency>
 ```
 
@@ -121,89 +113,28 @@ redis 2.6 - 5.0
 
 # 3. 简要用法  
   
-## 3.1. 通过socket同步  
+## 3.1. 用法  
   
 ```java  
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
             }
         });
         replicator.open();
 ```
 
-## 3.2. 读取并解析rdb文件  
-
-```java  
-        Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-
-        replicator.open();
-```  
-
-## 3.3. 读取并解析aof文件  
-
-```java  
-        Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
-            }
-        });
-        replicator.open();
-```  
-
-## 3.4. 读取混合格式文件  
-### 3.4.1. redis混合文件格式  
-```java  
-    [RDB file][AOF tail]
-```
-### 3.4.2. redis混合文件格式配置  
-```java  
-    aof-use-rdb-preamble yes
-```
-### 3.4.3. 应用Replicator读取混合格式文件 
-```java  
-        final Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                System.out.println(kv);
-            }
-        });
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                System.out.println(command);
-            }
-        });
-
-        replicator.open();
-```
-
-## 3.5. 备份远程redis的rdb文件  
+## 3.2. 备份远程redis的rdb文件  
 
 参阅 [RdbBackupExample.java](./examples/com/moilioncircle/examples/backup/RdbBackupExample.java)  
 
-## 3.6. 备份远程redis的实时命令  
+## 3.3. 备份远程redis的实时命令  
 
 参阅 [CommandBackupExample.java](./examples/com/moilioncircle/examples/backup/CommandBackupExample.java)  
 
-## 3.7. 将rdb转换成dump格式
+## 3.4. 将rdb转换成dump格式
 
 我们可以用 `DumpRdbVisitor` 来将 rdb 转换成 redis [DUMP](https://redis.io/commands/dump) 格式。  
   
@@ -211,20 +142,20 @@ redis 2.6 - 5.0
 
         Replicator r = new RedisReplicator("redis:///path/to/dump.rdb");
         r.setRdbVisitor(new DumpRdbVisitor(r));
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (!(kv instanceof DumpKeyValuePair)) return;
-                DumpKeyValuePair dkv = (DumpKeyValuePair) kv;
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair dkv = (DumpKeyValuePair) event;
                 byte[] serialized = dkv.getValue();
-                // 在这里我们可以用 redis RESTORE 命令来把序列化的数据迁移到另一台 redis.
+                // we can use redis RESTORE command to migrate this serialized value to another redis.
             }
         });
         r.open();
 
 ```
 
-## 3.8. 检查Rdb的正确性
+## 3.5. 检查Rdb的正确性
 
 我们可以用 `SkipRdbVisitor` 来检查 rdb 的正确性.  
 
@@ -236,7 +167,7 @@ redis 2.6 - 5.0
 
 ```
 
-## 3.9. 其他示例  
+## 3.6. 其他示例  
 
 参阅 [examples](./examples/com/moilioncircle/examples/README.md)  
 
@@ -295,12 +226,12 @@ redis 2.6 - 5.0
   
 ### 4.1.4. 处理这个注册的command事件  
 ```java  
-    replicator.addCommandListener(new CommandListener() {
+    replicator.addEventListener(new EventListener() {
         @Override
-        public void handle(Replicator replicator, Command command) {
-            if(command instanceof YourAppendCommand){
-                YourAppendCommand appendCommand = (YourAppendCommand)command;
-                //你的业务代码写在这
+        public void onEvent(Replicator replicator, Event event) {
+            if(event instanceof YourAppendCommand){
+                YourAppendCommand appendCommand = (YourAppendCommand)event;
+                // your code goes here
             }
         }
     });
@@ -402,24 +333,18 @@ redis 2.6 - 5.0
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         replicator.addCommandParser(CommandName.name("hellotype.insert"), new HelloTypeParser());
         replicator.addModuleParser("hellotype", 0, new HelloTypeModuleParser());
-        replicator.addRdbListener(new RdbListener.Adaptor() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueModule) {
-                    System.out.println(kv);
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueModule) {
+                    System.out.println(event);
                 }
-            }
-        });
-
-        replicator.addCommandListener(new CommandListener() {
-            @Override
-            public void handle(Replicator replicator, Command command) {
-                if (command instanceof HelloTypeCommand) {
+                
+                if (event instanceof HelloTypeCommand) {
                     System.out.println(command);
                 }
             }
         });
-
         replicator.open();
     }
 ```
@@ -432,13 +357,15 @@ redis 2.6 - 5.0
   
 Redis-5.0+ 增加了一个新的数据结构 `STREAM`. Redis-replicator 用下述代码解析 `STREAM`  
   
+  
 ```java  
 
         Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
-        r.addRdbListener(new RdbListener.Adaptor() {
+        r.addEventListener(new EventListener() {
             @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueStream) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueStream) {
+                    KeyStringValueStream kv = (KeyStringValueStream)event;
                     // key
                     String key = kv.getKey();
                     
@@ -472,19 +399,8 @@ Redis-5.0+ 增加了一个新的数据结构 `STREAM`. Redis-replicator 用下�
 
 * 写一个类继承 `RdbVisitor` 抽象类  
 * 通过 `Replicator` 的 `setRdbVisitor` 方法注册你自己的 `RdbVisitor`.  
-
-## 4.5. 事件时间线  
-
-```java  
-        |                     全量同步                             |  增量同步                    |
-        +-----------<--------------<-------------<----------<-----+--------------<--------------+
-        |                       RDB                               |            AOF              | <-重连   
- 初始连接+-->----->-------------->------------->---------->-------------------->-----------------x <-断线
-        |      |              |          |            |           |             |               |
-          prefullsync    auxfields...  rdbs...   postfullsync                  cmds...       
-```
-
-## 4.6. Redis URI
+  
+## 4.5. Redis URI
 
 在 redis-replicator-2.4.0 版之前, 我们按如下方式构造 `RedisReplicator` :  
 
@@ -587,78 +503,30 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 ```
 `repl-ping-slave-period` **必须** 小于 `Configuration.getReadTimeout()`, 默认的 `Configuration.getReadTimeout()` 是30秒.
   
-## 5.7. FullSyncEvent事件  
+## 5.7. 生命周期事件  
   
 ```java  
         Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         final long start = System.currentTimeMillis();
         final AtomicInteger acc = new AtomicInteger(0);
-        replicator.addRdbListener(new RdbListener() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void preFullSync(Replicator replicator) {
-                System.out.println("pre full sync");
-            }
-
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                acc.incrementAndGet();
-            }
-
-            @Override
-            public void postFullSync(Replicator replicator, long checksum) {
-                long end = System.currentTimeMillis();
-                System.out.println("time elapsed:" + (end - start));
-                System.out.println("rdb event count:" + acc.get());
-            }
-        });
-        replicator.open();
-```  
-  
-## 5.8. 处理原始字节数组  
-  
-* 除`KeyStringValueModule`以外的kv类型, 都可以得到原始的字节数组. 在某些情况下会很有用.  
-  
-```java  
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addRdbListener(new RdbListener.Adaptor() {
-            @Override
-            public void handle(Replicator replicator, KeyValuePair<?> kv) {
-                if (kv instanceof KeyStringValueString) {
-                    KeyStringValueString ksvs = (KeyStringValueString) kv;
-                    byte[] rawValue = ksvs.getRawValue();
-                    // handle raw bytes value
-                } else if (kv instanceof KeyStringValueHash) {
-                    KeyStringValueHash ksvh = (KeyStringValueHash) kv;
-                    Map<byte[], byte[]> rawValue = ksvh.getRawValue();
-                    // handle raw bytes value
+            public void onEvent(Replicator replicator, Event event) {
+                if(event instanceof PreRdbSyncEvent) {
+                    System.out.println("pre rdb sync");
+                } else if(event instanceof PostRdbSyncEvent) {
+                    long end = System.currentTimeMillis();
+                    System.out.println("time elapsed:" + (end - start));
+                    System.out.println("rdb event count:" + acc.get());
                 } else {
-                    ...
+                    acc.incrementAndGet();
                 }
             }
         });
         replicator.open();
 ```  
   
-调用`KeyStringValueHash.getRawValue`返回的`Map<byte[], byte[]>`中的key可以当做[值类型](http://www.tutorialsteacher.com/csharp/csharp-value-type-and-reference-type)存取  
-
-```java  
-KeyStringValueHash ksvh = (KeyStringValueHash) kv;
-Map<byte[], byte[]> rawValue = ksvh.getRawValue();
-byte[] value = new byte[]{2};
-rawValue.put(new byte[]{1}, value);
-System.out.println(rawValue.get(new byte[]{1}) == value) // 会打印true
-```
-
-命令解析同样支持原始字节数组.    
-
-```java  
-SetCommand set = (SetCommand) command;
-byte[] rawKey = set.getRawKey();
-byte[] rawValue = set.getRawValue();
-
-```
-
-## 5.9. 处理巨大的KV  
+## 5.8. 处理巨大的KV  
 
 根据 [4.3. 编写你自己的rdb解析器](#43-编写你自己的rdb解析器), 这个工具内嵌了一个[迭代方式的rdb解析器](./src/main/java/com/moilioncircle/redis/replicator/rdb/iterable/ValueIterableRdbVisitor.java), 以便处理巨大的KV.  
 详细的例子参阅:  

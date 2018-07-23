@@ -52,7 +52,7 @@ public class PsyncTest {
                 setReadTimeout(3000).
                 setBufferSize(64).
                 setAsyncCachedBytes(0).
-                setHeartBeatPeriod(200).
+                setHeartbeatPeriod(200).
                 setReceiveBufferSize(0).
                 setSendBufferSize(0).
                 setRetryTimeInterval(1000).

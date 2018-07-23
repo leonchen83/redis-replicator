@@ -105,7 +105,7 @@ public class Configuration {
     /**
      * used in psync heartbeat
      */
-    private int heartBeatPeriod = 1000;
+    private int heartbeatPeriod = 1000;
 
     /**
      * use default exception handler
@@ -280,12 +280,12 @@ public class Configuration {
         return this;
     }
 
-    public int getHeartBeatPeriod() {
-        return heartBeatPeriod;
+    public int getHeartbeatPeriod() {
+        return heartbeatPeriod;
     }
 
-    public Configuration setHeartBeatPeriod(int heartBeatPeriod) {
-        this.heartBeatPeriod = heartBeatPeriod;
+    public Configuration setHeartbeatPeriod(int heartbeatPeriod) {
+        this.heartbeatPeriod = heartbeatPeriod;
         return this;
     }
 
@@ -382,8 +382,8 @@ public class Configuration {
         if (parameters.containsKey("verbose")) {
             configuration.setVerbose(getBool(parameters.get("verbose"), false));
         }
-        if (parameters.containsKey("heartBeatPeriod")) {
-            configuration.setHeartBeatPeriod(getInt(parameters.get("heartBeatPeriod"), 1000));
+        if (parameters.containsKey("heartbeatPeriod")) {
+            configuration.setHeartbeatPeriod(getInt(parameters.get("heartbeatPeriod"), 1000));
         }
         if (parameters.containsKey("useDefaultExceptionListener")) {
             configuration.setUseDefaultExceptionListener(getBool(parameters.get("useDefaultExceptionListener"), false));
@@ -448,7 +448,7 @@ public class Configuration {
                 ", asyncCachedBytes=" + asyncCachedBytes +
                 ", rateLimit=" + rateLimit +
                 ", verbose=" + verbose +
-                ", heartBeatPeriod=" + heartBeatPeriod +
+                ", heartbeatPeriod=" + heartbeatPeriod +
                 ", useDefaultExceptionListener=" + useDefaultExceptionListener +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +

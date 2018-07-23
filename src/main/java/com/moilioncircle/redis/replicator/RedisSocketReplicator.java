@@ -227,7 +227,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             public void run() {
                 sendQuietly("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
             }
-        }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod(), MILLISECONDS);
+        }, configuration.getHeartbeatPeriod(), configuration.getHeartbeatPeriod(), MILLISECONDS);
         logger.info("heartbeat started.");
     }
     
@@ -360,8 +360,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 return false;
             }
             if (getStatus() != CONNECTED) return true;
-            final long[] offset = new long[1];
             submitEvent(new PreCommandSyncEvent());
+            final long[] offset = new long[1];
             while (getStatus() == CONNECTED) {
                 Object obj = replyParser.parse(new OffsetHandler() {
                     @Override

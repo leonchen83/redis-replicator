@@ -142,15 +142,14 @@ public class RdbParser {
         this.replicator.submitEvent(new PreRdbSyncEvent());
         rdbVisitor.applyMagic(in);
         int version = rdbVisitor.applyVersion(in);
-        ContextKeyValuePair kv = new ContextKeyValuePair();
         /*
          * rdb
          */
         loop:
         while (this.replicator.getStatus() == CONNECTED) {
-            int type = rdbVisitor.applyType(in);
             Event event = null;
-
+            int type = rdbVisitor.applyType(in);
+            ContextKeyValuePair kv = new ContextKeyValuePair();
             switch (type) {
                 case RDB_OPCODE_EXPIRETIME:
                     event = rdbVisitor.applyExpireTime(in, version, kv);

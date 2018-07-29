@@ -6,6 +6,8 @@ jdk:
     - oraclejdk10
 branches:
   only:
+    - master
+    - dev
     - 3.x
 services:
   - redis-server

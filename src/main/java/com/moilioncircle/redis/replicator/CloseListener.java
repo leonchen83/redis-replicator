@@ -20,6 +20,7 @@ package com.moilioncircle.redis.replicator;
  * @author Leon Chen
  * @since 2.1.0
  */
+@FunctionalInterface
 public interface CloseListener {
     void handle(Replicator replicator);
 }

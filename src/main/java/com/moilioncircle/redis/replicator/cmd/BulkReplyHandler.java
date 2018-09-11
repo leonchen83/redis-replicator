@@ -24,6 +24,7 @@ import java.io.IOException;
  * @author Leon Chen
  * @since 2.1.0
  */
+@FunctionalInterface
 public interface BulkReplyHandler {
     byte[] handle(long len, RedisInputStream in) throws IOException;
 

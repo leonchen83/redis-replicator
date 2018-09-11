@@ -20,6 +20,7 @@ package com.moilioncircle.redis.replicator.io;
  * @author Leon Chen
  * @since 2.1.0
  */
+@FunctionalInterface
 public interface RawByteListener {
     void handle(byte... rawBytes);
 }

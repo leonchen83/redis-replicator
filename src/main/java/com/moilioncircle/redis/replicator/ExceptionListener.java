@@ -22,6 +22,7 @@ import com.moilioncircle.redis.replicator.event.Event;
  * @author Leon Chen
  * @since 2.1.0
  */
+@FunctionalInterface
 public interface ExceptionListener {
     void handle(Replicator replicator, Throwable throwable, Event event);
 }

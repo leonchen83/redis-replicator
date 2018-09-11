@@ -22,6 +22,7 @@ import com.moilioncircle.redis.replicator.Replicator;
  * @author Leon Chen
  * @since 3.0.0
  */
+@FunctionalInterface
 public interface EventListener {
     void onEvent(Replicator replicator, Event event);
 }

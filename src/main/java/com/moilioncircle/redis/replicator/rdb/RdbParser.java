@@ -22,6 +22,7 @@ import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,15 +143,16 @@ public class RdbParser {
         this.replicator.submitEvent(new PreRdbSyncEvent());
         rdbVisitor.applyMagic(in);
         int version = rdbVisitor.applyVersion(in);
-        ContextKeyValuePair kv = new ContextKeyValuePair();
+        DB db = null;
         /*
          * rdb
          */
         loop:
         while (this.replicator.getStatus() == CONNECTED) {
-            int type = rdbVisitor.applyType(in);
             Event event = null;
-
+            int type = rdbVisitor.applyType(in);
+            ContextKeyValuePair kv = new ContextKeyValuePair();
+            kv.setDb(db);
             switch (type) {
                 case RDB_OPCODE_EXPIRETIME:
                     event = rdbVisitor.applyExpireTime(in, version, kv);
@@ -174,7 +176,7 @@ public class RdbParser {
                     rdbVisitor.applyResizeDB(in, version, kv);
                     break;
                 case RDB_OPCODE_SELECTDB:
-                    kv.setDb(rdbVisitor.applySelectDB(in, version));
+                    db = rdbVisitor.applySelectDB(in, version);
                     break;
                 case RDB_OPCODE_EOF:
                     long checksum = rdbVisitor.applyEof(in, version);

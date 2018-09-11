@@ -86,7 +86,7 @@ redis 2.6 - 5.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.0.0-RC1</version>
+        <version>3.0.0-RC3</version>
     </dependency>
 ```
 
@@ -193,15 +193,6 @@ redis 2.6 - 5.0
         public String getValue() {
             return value;
         }
-    
-        @Override
-        public String toString() {
-            return "YourAppendCommand{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
-            }
-        }
     }
 ```
 
@@ -279,13 +270,6 @@ redis 2.6 - 5.0
         public long[] getValue() {
             return value;
         }
-
-        @Override
-        public String toString() {
-            return "HelloTypeModule{" +
-                    "value=" + Arrays.toString(value) +
-                    '}';
-        }
     }
 ```
 ### 4.2.4. 再写一个command parser  
@@ -315,15 +299,6 @@ redis 2.6 - 5.0
             this.key = key;
             this.value = value;
         }
-
-        @Override
-        public String toString() {
-            return "HelloTypeCommand{" +
-                    "key='" + key + '\'' +
-                    ", value=" + value +
-                    '}';
-        }
-
     }
 ```
 ### 4.2.5. 注册module parser和command parser并处理相关事件  
@@ -341,7 +316,7 @@ redis 2.6 - 5.0
                 }
                 
                 if (event instanceof HelloTypeCommand) {
-                    System.out.println(command);
+                    System.out.println(event);
                 }
             }
         });

@@ -80,7 +80,7 @@ redis 2.6 - 5.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.0.0-RC1</version>
+        <version>3.0.0-RC3</version>
     </dependency>
 ```
 
@@ -187,15 +187,6 @@ See [examples](./examples/com/moilioncircle/examples/README.md)
         public String getValue() {
             return value;
         }
-    
-        @Override
-        public String toString() {
-            return "YourAppendCommand{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
-            }
-        }
     }
 ```
 
@@ -273,13 +264,6 @@ See [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extensi
         public long[] getValue() {
             return value;
         }
-
-        @Override
-        public String toString() {
-            return "HelloTypeModule{" +
-                    "value=" + Arrays.toString(value) +
-                    '}';
-        }
     }
 ```
 ### 4.2.4. Write a command parser  
@@ -309,15 +293,6 @@ See [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extensi
             this.key = key;
             this.value = value;
         }
-
-        @Override
-        public String toString() {
-            return "HelloTypeCommand{" +
-                    "key='" + key + '\'' +
-                    ", value=" + value +
-                    '}';
-        }
-
     }
 ```
 ### 4.2.5. Register this module parser and command parser and handle event  
@@ -335,7 +310,7 @@ See [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extensi
                 }
                 
                 if (event instanceof HelloTypeCommand) {
-                    System.out.println(command);
+                    System.out.println(event);
                 }
             }
         });

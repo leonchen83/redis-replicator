@@ -174,10 +174,10 @@ public class CloseTest {
                 }
             }
         }.start();
-        
-        Thread.sleep(100);
+    
+        Thread.sleep(2000);
         replicator.close();
-        Thread.sleep(100);
+        Thread.sleep(2000);
         assertEquals(1, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
@@ -208,10 +208,10 @@ public class CloseTest {
                 }
             }
         }.start();
-        
-        Thread.sleep(100);
+    
+        Thread.sleep(2000);
         replicator.close();
-        Thread.sleep(100);
+        Thread.sleep(2000);
         assertEquals(0, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
@@ -368,9 +368,9 @@ public class CloseTest {
                 }
             }
         }.start();
-        Thread.sleep(600);
+        Thread.sleep(2000);
         replicator.close();
-        Thread.sleep(600);
+        Thread.sleep(2000);
         assertEquals(1, acc.get());
     }
     

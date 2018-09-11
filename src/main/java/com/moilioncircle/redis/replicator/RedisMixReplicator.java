@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;

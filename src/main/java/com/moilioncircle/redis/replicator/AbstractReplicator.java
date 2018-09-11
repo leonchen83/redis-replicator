@@ -111,6 +111,7 @@ import com.moilioncircle.redis.replicator.rdb.module.ModuleKey;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;

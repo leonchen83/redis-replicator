@@ -17,7 +17,6 @@
 package com.moilioncircle.redis.replicator.rdb.iterable;
 
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.UncheckedIOException;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
@@ -31,6 +30,7 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZS
 import com.moilioncircle.redis.replicator.util.Strings;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;

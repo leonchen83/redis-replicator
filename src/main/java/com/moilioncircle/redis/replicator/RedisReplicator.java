@@ -124,6 +124,11 @@ public class RedisReplicator implements Replicator {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends Replicator> T getReplicator() {
+        return (T) this.replicator;
+    }
+
     @Override
     public boolean addRawByteListener(RawByteListener listener) {
         return replicator.addRawByteListener(listener);

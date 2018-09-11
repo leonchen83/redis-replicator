@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 

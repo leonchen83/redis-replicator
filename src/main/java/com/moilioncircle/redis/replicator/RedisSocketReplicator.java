@@ -86,6 +86,14 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
     }
+
+    public String getHost() {
+        return this.host;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
     
     /**
      * PSYNC

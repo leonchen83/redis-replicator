@@ -20,7 +20,6 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.UncheckedIOException;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
@@ -35,6 +34,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 

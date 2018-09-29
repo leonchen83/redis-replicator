@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.util.Strings;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -64,6 +65,27 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
     public RedisURI(String uri) throws URISyntaxException {
         parse(uri);
         this.string = this.uri.toString();
+    }
+
+    /**
+     * @param uri uri
+     * @throws URISyntaxException illegal uri
+     * @since 3.0.0
+     */
+    public RedisURI(URI uri) throws URISyntaxException {
+        this(Objects.requireNonNull(uri).toString());
+    }
+
+    /**
+     * @param file file
+     * @throws URISyntaxException illegal file
+     * @since 3.0.0
+     */
+    public RedisURI(File file) throws MalformedURLException, URISyntaxException {
+        this(fromFile(file));
+        if (getFileType() == null) {
+            throw new MalformedURLException(this.string);
+        }
     }
 
     public int getPort() {
@@ -117,6 +139,11 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
         return this.uri.compareTo(that.uri);
     }
 
+    @Override
+    public String toString() {
+        return this.uri.toString();
+    }
+
     public URL toURL() throws MalformedURLException {
         Objects.requireNonNull(getFileType());
         try {
@@ -124,11 +151,6 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
         } catch (URISyntaxException e) {
             throw new MalformedURLException(e.getMessage());
         }
-    }
-
-    @Override
-    public String toString() {
-        return this.uri.toString();
     }
 
     public String toASCIIString() {
@@ -288,5 +310,10 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
         sb.append('%');
         sb.append(HEX_DIGITS[(b >> 4) & 0x0F]);
         sb.append(HEX_DIGITS[(b >> 0) & 0x0F]);
+    }
+
+    private static URI fromFile(File file) throws URISyntaxException {
+        URI u = Objects.requireNonNull(file).toURI();
+        return new URI("redis", u.getRawAuthority(), u.getRawPath(), u.getRawQuery(), u.getRawFragment());
     }
 }

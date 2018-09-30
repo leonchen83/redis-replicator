@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 import junit.framework.TestCase;
 import org.junit.Test;
 
@@ -32,19 +33,22 @@ public class SetParserTest extends AbstractParserTest {
         SetCommand cmd = parser.parse(toObjectArray("set a b ex 15 nx".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        assertEquals(15, cmd.getEx().intValue());
+        TestCase.assertEquals(ExpiredType.SECOND, cmd.getExpiredType());
+        assertEquals(15L, cmd.getExpiredValue());
         TestCase.assertEquals(ExistType.NX, cmd.getExistType());
 
         cmd = parser.parse(toObjectArray("set a b px 123 xx".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        assertEquals(123L, cmd.getPx().longValue());
+        TestCase.assertEquals(ExpiredType.MS, cmd.getExpiredType());
+        assertEquals(123L, cmd.getExpiredValue());
         TestCase.assertEquals(ExistType.XX, cmd.getExistType());
 
         cmd = parser.parse(toObjectArray("set a b xx px 123".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        assertEquals(123L, cmd.getPx().longValue());
+        TestCase.assertEquals(ExpiredType.MS, cmd.getExpiredType());
+        assertEquals(123L, cmd.getExpiredValue());
         TestCase.assertEquals(ExistType.XX, cmd.getExistType());
 
     }

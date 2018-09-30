@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
@@ -36,9 +37,9 @@ public class SetParser implements CommandParser<SetCommand> {
         byte[] value = toBytes(command[2]);
         int idx = 3;
         ExistType existType = ExistType.NONE;
-        Integer ex = null;
-        Long px = null;
+        Long expiredValue = null;
         boolean et = false, st = false;
+        ExpiredType expiredType = ExpiredType.NONE;
         while (idx < command.length) {
             String param = toRune(command[idx++]);
             if (!et && isEquals(param, "NX")) {
@@ -50,14 +51,16 @@ public class SetParser implements CommandParser<SetCommand> {
             }
 
             if (!st && isEquals(param, "EX")) {
-                ex = Integer.valueOf(toRune(command[idx++]));
+                expiredType = ExpiredType.SECOND;
+                expiredValue = Long.valueOf(toRune(command[idx++]));
                 st = true;
             } else if (!st && isEquals(param, "PX")) {
-                px = Long.valueOf(toRune(command[idx++]));
+                expiredType = ExpiredType.MS;
+                expiredValue = Long.valueOf(toRune(command[idx++]));
                 st = true;
             }
         }
-        return new SetCommand(key, value, ex, px, existType);
+        return new SetCommand(key, value, expiredType, expiredValue, existType);
     }
 
 }

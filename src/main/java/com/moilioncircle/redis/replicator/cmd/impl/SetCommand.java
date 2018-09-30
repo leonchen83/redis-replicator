@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 
 /**
  * @author Leon Chen
@@ -28,18 +29,18 @@ public class SetCommand implements Command {
 
     private byte[] key;
     private byte[] value;
-    private Integer ex;
-    private Long px;
+    private ExpiredType expiredType;
+    private Long expiredValue;
     private ExistType existType;
 
     public SetCommand() {
     }
 
-    public SetCommand(byte[] key, byte[] value, Integer ex, Long px, ExistType existType) {
+    public SetCommand(byte[] key, byte[] value, ExpiredType expiredType, Long expiredValue, ExistType existType) {
         this.key = key;
         this.value = value;
-        this.ex = ex;
-        this.px = px;
+        this.expiredType = expiredType;
+        this.expiredValue = expiredValue;
         this.existType = existType;
     }
 
@@ -59,20 +60,20 @@ public class SetCommand implements Command {
         this.value = value;
     }
 
-    public Integer getEx() {
-        return ex;
+    public ExpiredType getExpiredType() {
+        return expiredType;
     }
 
-    public void setEx(Integer ex) {
-        this.ex = ex;
+    public void setExpiredType(ExpiredType expiredType) {
+        this.expiredType = expiredType;
     }
 
-    public Long getPx() {
-        return px;
+    public Long getExpiredValue() {
+        return expiredValue;
     }
 
-    public void setPx(Long px) {
-        this.px = px;
+    public void setExpiredValue(Long expiredValue) {
+        this.expiredValue = expiredValue;
     }
 
     public ExistType getExistType() {

@@ -3,7 +3,7 @@ jdk:
     - openjdk7
     - oraclejdk8
     - oraclejdk9
-    - oraclejdk10
+    - openjdk10
 branches:
   only:
     - 2.x

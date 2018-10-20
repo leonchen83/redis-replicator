@@ -111,13 +111,14 @@ public class XGroupCreateCommand extends XGroupCommand {
     public void setRawId(byte[] rawId) {
         this.rawId = rawId;
     }
-
+    
     @Override
     public String toString() {
         return "XGroupCreateCommand{" +
                 "key='" + key + '\'' +
                 ", group='" + group + '\'' +
                 ", id='" + id + '\'' +
+                ", mkStream=" + mkStream +
                 '}';
     }
 }

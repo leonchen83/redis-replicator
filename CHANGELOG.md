@@ -1,3 +1,7 @@
+### 2.6.1
+Support redis-5.0-GA.  
+Add new command : `XSETID`.  
+
 ### 2.6.0
 Support jdk9, jdk10.  
 **Breaking change**: migrate `commons-longging-1.2` to `slf4j-api-1.8.0-beta2`.  

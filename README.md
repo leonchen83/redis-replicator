@@ -99,7 +99,7 @@ redis 2.6 - 5.0
 
 |     **redis version**        |**redis-replicator version**  |  
 | ---------------------------- | ---------------------------- |  
-|  \[2.6, 5.0.x\]              |       \[2.6.0, \]            |  
+|  \[2.6, 5.0.x\]              |       \[2.6.1, \]            |  
 |  \[2.6, 4.0.x\]              |       \[2.3.0, 2.5.0\]       |  
 |  \[2.6, 4.0-RC3\]            |       \[2.1.0, 2.2.0\]       |  
 |  \[2.6, 3.2.x\]              |  \[1.0.18\](not supported)   |  
@@ -410,7 +410,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 |**PUBLISH** |  **BITOP**   |**SETBIT**      | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
 |**RENAME**  |  **MULTI**   |  **EXEC**      | **LTRIM**  |**RPOPLPUSH** |     **SORT**       |  
 |**EVALSHA** | **ZPOPMAX**  | **ZPOPMIN**    | **XACK**   | **XADD**     |  **XCLAIM**        |  
-|**XDEL**    | **XGROUP**   | **XTRIM**      |            |              |                    |  
+|**XDEL**    | **XGROUP**   | **XTRIM**      | **XSETID** |              |                    |  
   
 ## 5.2. EOFException
   

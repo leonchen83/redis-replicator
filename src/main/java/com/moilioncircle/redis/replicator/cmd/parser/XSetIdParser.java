@@ -7,7 +7,7 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 
 /**
  * @author Leon Chen
- * @Since 2.6.1
+ * @since 2.6.1
  */
 public class XSetIdParser implements CommandParser<XSetIdCommand> {
     

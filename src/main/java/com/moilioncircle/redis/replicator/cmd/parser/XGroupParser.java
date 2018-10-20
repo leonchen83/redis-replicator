@@ -46,7 +46,16 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             String id = toRune(command[idx]);
             byte[] rawId = toBytes(command[idx]);
             idx++;
-            return new XGroupCreateCommand(key, group, id, rawKey, rawGroup, rawId);
+            if (idx >= command.length) {
+                return new XGroupCreateCommand(key, group, id, false, rawKey, rawGroup, rawId);
+            } else {
+                next = toRune(command[idx++]);
+                if (isEquals(next, "MKSTREAM")) {
+                    return new XGroupCreateCommand(key, group, id, true, rawKey, rawGroup, rawId);
+                } else {
+                    throw new UnsupportedOperationException(next);
+                }
+            }
         } else if (isEquals(next, "SETID")) {
             String key = toRune(command[idx]);
             byte[] rawKey = toBytes(command[idx]);

@@ -91,6 +91,7 @@ import com.moilioncircle.redis.replicator.cmd.parser.XAddParser;
 import com.moilioncircle.redis.replicator.cmd.parser.XClaimParser;
 import com.moilioncircle.redis.replicator.cmd.parser.XDelParser;
 import com.moilioncircle.redis.replicator.cmd.parser.XGroupParser;
+import com.moilioncircle.redis.replicator.cmd.parser.XSetIdParser;
 import com.moilioncircle.redis.replicator.cmd.parser.XTrimParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZAddParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZIncrByParser;
@@ -297,6 +298,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("XDEL"), new XDelParser());
         addCommandParser(CommandName.name("XGROUP"), new XGroupParser());
         addCommandParser(CommandName.name("XTRIM"), new XTrimParser());
+        addCommandParser(CommandName.name("XSETID"), new XSetIdParser());
     }
 
     @Override

@@ -45,6 +45,8 @@ public class XTrimParser implements CommandParser<XTrimCommand> {
             if (Objects.equals(toRune(command[idx]), "~")) {
                 approximation = true;
                 idx++;
+            } else if (Objects.equals(toRune(command[idx]), "=")) {
+                idx++;
             }
             long count = toLong(command[idx]);
             idx++;

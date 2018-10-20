@@ -47,6 +47,8 @@ public class XClaimCommand implements Command {
     private boolean force;
 
     private boolean justId;
+    
+    private String lastId;
 
     private byte[] rawKey;
 
@@ -55,16 +57,18 @@ public class XClaimCommand implements Command {
     private byte[] rawConsumer;
 
     private byte[][] rawIds;
+    
+    private byte[] rawLastId;
 
     public XClaimCommand() {
 
     }
     
-    public XClaimCommand(String key, String group, String consumer, long minIdle, String[] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId) {
-        this(key, group, consumer, minIdle, ids, idle, time, retryCount, force, justId, null, null, null, null);
+    public XClaimCommand(String key, String group, String consumer, long minIdle, String[] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId, String lastId) {
+        this(key, group, consumer, minIdle, ids, idle, time, retryCount, force, justId, lastId, null, null, null, null, null);
     }
     
-    public XClaimCommand(String key, String group, String consumer, long minIdle, String[] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId, byte[] rawKey, byte[] rawGroup, byte[] rawConsumer, byte[][] rawIds) {
+    public XClaimCommand(String key, String group, String consumer, long minIdle, String[] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId, String lastId, byte[] rawKey, byte[] rawGroup, byte[] rawConsumer, byte[][] rawIds, byte[] rawLastId) {
         this.key = key;
         this.group = group;
         this.consumer = consumer;
@@ -75,10 +79,12 @@ public class XClaimCommand implements Command {
         this.retryCount = retryCount;
         this.force = force;
         this.justId = justId;
+        this.lastId = lastId;
         this.rawKey = rawKey;
         this.rawGroup = rawGroup;
         this.rawConsumer = rawConsumer;
         this.rawIds = rawIds;
+        this.rawLastId = rawLastId;
     }
 
     public String getKey() {
@@ -160,7 +166,15 @@ public class XClaimCommand implements Command {
     public void setJustId(boolean justId) {
         this.justId = justId;
     }
-
+    
+    public String getLastId() {
+        return lastId;
+    }
+    
+    public void setLastId(String lastId) {
+        this.lastId = lastId;
+    }
+    
     public byte[] getRawKey() {
         return rawKey;
     }
@@ -192,7 +206,15 @@ public class XClaimCommand implements Command {
     public void setRawIds(byte[][] rawIds) {
         this.rawIds = rawIds;
     }
-
+    
+    public byte[] getRawLastId() {
+        return rawLastId;
+    }
+    
+    public void setRawLastId(byte[] rawLastId) {
+        this.rawLastId = rawLastId;
+    }
+    
     @Override
     public String toString() {
         return "XClaimCommand{" +
@@ -206,6 +228,7 @@ public class XClaimCommand implements Command {
                 ", retryCount=" + retryCount +
                 ", force=" + force +
                 ", justId=" + justId +
+                ", lastId='" + lastId + '\'' +
                 '}';
     }
 }

@@ -60,6 +60,8 @@ public class XClaimParser implements CommandParser<XClaimCommand> {
         Long retryCount = null;
         boolean force = false;
         boolean justId = false;
+        String lastId = null;
+        byte[] rawLastId = null;
         while (idx < command.length) {
             String next = toRune(command[idx]);
             if (isEquals(next, "IDLE")) {
@@ -80,11 +82,16 @@ public class XClaimParser implements CommandParser<XClaimCommand> {
             } else if (isEquals(next, "JUSTID")) {
                 idx++;
                 justId = true;
+            } else if (isEquals(next, "LASTID")) {
+                idx++;
+                lastId = toRune(command[idx]);
+                rawLastId = toBytes(command[idx]);
+                idx++;
             } else {
                 throw new UnsupportedOperationException(next);
             }
         }
-        return new XClaimCommand(key, group, consumer, minIdle, ids.toArray(new String[0]), idle, time, retryCount, force, justId, rawKey, rawGroup, rawConsumer, rawIds.toArray(new byte[0][]));
+        return new XClaimCommand(key, group, consumer, minIdle, ids.toArray(new String[0]), idle, time, retryCount, force, justId, lastId, rawKey, rawGroup, rawConsumer, rawIds.toArray(new byte[0][]), rawLastId);
     }
 
     private boolean validId(String id) {

@@ -29,6 +29,8 @@ public class XGroupCreateCommand extends XGroupCommand {
     private String group;
 
     private String id;
+    
+    private boolean mkStream;
 
     private byte[] rawKey;
 
@@ -39,15 +41,16 @@ public class XGroupCreateCommand extends XGroupCommand {
     public XGroupCreateCommand() {
 
     }
-
-    public XGroupCreateCommand(String key, String group, String id) {
-        this(key, group, id, null, null, null);
+    
+    public XGroupCreateCommand(String key, String group, String id, boolean mkStream) {
+        this(key, group, id, mkStream, null, null, null);
     }
-
-    public XGroupCreateCommand(String key, String group, String id, byte[] rawKey, byte[] rawGroup, byte[] rawId) {
+    
+    public XGroupCreateCommand(String key, String group, String id, boolean mkStream, byte[] rawKey, byte[] rawGroup, byte[] rawId) {
         this.key = key;
         this.group = group;
         this.id = id;
+        this.mkStream = mkStream;
         this.rawKey = rawKey;
         this.rawGroup = rawGroup;
         this.rawId = rawId;
@@ -76,7 +79,15 @@ public class XGroupCreateCommand extends XGroupCommand {
     public void setId(String id) {
         this.id = id;
     }
-
+    
+    public boolean isMkStream() {
+        return mkStream;
+    }
+    
+    public void setMkStream(boolean mkStream) {
+        this.mkStream = mkStream;
+    }
+    
     public byte[] getRawKey() {
         return rawKey;
     }

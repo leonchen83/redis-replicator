@@ -43,7 +43,16 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             idx++;
             byte[] id = toBytes(command[idx]);
             idx++;
-            return new XGroupCreateCommand(key, group, id);
+            if (idx >= command.length) {
+                return new XGroupCreateCommand(key, group, id, false);
+            } else {
+                next = toRune(command[idx++]);
+                if (isEquals(next, "MKSTREAM")) {
+                    return new XGroupCreateCommand(key, group, id, true);
+                } else {
+                    throw new UnsupportedOperationException(next);
+                }
+            }
         } else if (isEquals(next, "SETID")) {
             byte[] key = toBytes(command[idx]);
             idx++;

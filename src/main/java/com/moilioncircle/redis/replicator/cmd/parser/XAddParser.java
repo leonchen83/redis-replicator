@@ -45,6 +45,8 @@ public class XAddParser implements CommandParser<XAddCommand> {
             if (Objects.equals(toRune(command[idx]), "~")) {
                 approximation = true;
                 idx++;
+            } else if (Objects.equals(toRune(command[idx]), "=")) {
+                idx++;
             }
             long count = toLong(command[idx]);
             idx++;

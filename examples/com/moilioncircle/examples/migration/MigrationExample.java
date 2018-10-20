@@ -208,6 +208,7 @@ public class MigrationExample {
         r.addCommandParser(CommandName.name("XDEL"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("XGROUP"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("XTRIM"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("XSETID"), new DefaultCommandParser());
         return r;
     }
 

@@ -45,12 +45,14 @@ public class XClaimCommand implements Command {
     private boolean force;
 
     private boolean justId;
+    
+    private byte[] lastId;
 
     public XClaimCommand() {
 
     }
-
-    public XClaimCommand(byte[] key, byte[] group, byte[] consumer, long minIdle, byte[][] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId) {
+    
+    public XClaimCommand(byte[] key, byte[] group, byte[] consumer, long minIdle, byte[][] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId, byte[] lastId) {
         this.key = key;
         this.group = group;
         this.consumer = consumer;
@@ -61,6 +63,7 @@ public class XClaimCommand implements Command {
         this.retryCount = retryCount;
         this.force = force;
         this.justId = justId;
+        this.lastId = lastId;
     }
 
     public byte[] getKey() {
@@ -141,5 +144,13 @@ public class XClaimCommand implements Command {
 
     public void setJustId(boolean justId) {
         this.justId = justId;
+    }
+    
+    public byte[] getLastId() {
+        return lastId;
+    }
+    
+    public void setLastId(byte[] lastId) {
+        this.lastId = lastId;
     }
 }

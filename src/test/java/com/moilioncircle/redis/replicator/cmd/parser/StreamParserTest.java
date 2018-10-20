@@ -25,6 +25,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelConsumerCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupDestroyCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
 import org.junit.Test;
 
@@ -88,6 +89,17 @@ public class StreamParserTest extends AbstractParserTest {
             assertTrue(cmd.getFields().containsKey("field".getBytes()));
             assertTrue(cmd.getFields().containsKey("field1".getBytes()));
         }
+    
+        {
+            XAddParser parser = new XAddParser();
+            XAddCommand cmd = parser.parse(toObjectArray("XADD key maxlen = 100 * field value field1 value1".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("*", cmd.getId());
+            assertEquals(100L, cmd.getMaxLen().getCount());
+            assertFalse(cmd.getMaxLen().isApproximation());
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
+            assertTrue(cmd.getFields().containsKey("field1".getBytes()));
+        }
         
         {
             XClaimParser parser = new XClaimParser();
@@ -147,6 +159,22 @@ public class StreamParserTest extends AbstractParserTest {
             assertNull(cmd.getRetryCount());
             assertTrue(cmd.isForce());
             assertTrue(cmd.isJustId());
+        }
+    
+        {
+            XClaimParser parser = new XClaimParser();
+            XClaimCommand cmd = parser.parse(toObjectArray("XCLAIM key group consumer 10000 1528524799760-0 1528524789760-0 FORCE JUSTID LASTID $".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("group", cmd.getGroup());
+            assertEquals("consumer", cmd.getConsumer());
+            assertEquals(10000L, cmd.getMinIdle());
+            assertEquals(2, cmd.getIds().length);
+            assertNull(cmd.getIdle());
+            assertNull(cmd.getTime());
+            assertNull(cmd.getRetryCount());
+            assertTrue(cmd.isForce());
+            assertTrue(cmd.isJustId());
+            assertEquals("$", cmd.getLastId());
         }
         
         {
@@ -281,6 +309,21 @@ public class StreamParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(100L, cmd.getMaxLen().getCount());
             assertTrue(cmd.getMaxLen().isApproximation());
+        }
+    
+        {
+            XTrimParser parser = new XTrimParser();
+            XTrimCommand cmd = parser.parse(toObjectArray("XTRIM key maxlen = 100".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(100L, cmd.getMaxLen().getCount());
+            assertFalse(cmd.getMaxLen().isApproximation());
+        }
+    
+        {
+            XSetIdParser parser = new XSetIdParser();
+            XSetIdCommand cmd = parser.parse(toObjectArray("XSETID key $".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("$", cmd.getId());
         }
         
     }

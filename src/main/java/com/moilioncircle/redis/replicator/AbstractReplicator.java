@@ -91,6 +91,7 @@ import com.moilioncircle.redis.replicator.cmd.parser.XAddParser;
 import com.moilioncircle.redis.replicator.cmd.parser.XClaimParser;
 import com.moilioncircle.redis.replicator.cmd.parser.XDelParser;
 import com.moilioncircle.redis.replicator.cmd.parser.XGroupParser;
+import com.moilioncircle.redis.replicator.cmd.parser.XSetIdParser;
 import com.moilioncircle.redis.replicator.cmd.parser.XTrimParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZAddParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZIncrByParser;
@@ -132,37 +133,37 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
-
+    
     @Override
     public CommandParser<? extends Command> getCommandParser(CommandName command) {
         return commands.get(command);
     }
-
+    
     @Override
     public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
         commands.put(command, parser);
     }
-
+    
     @Override
     public CommandParser<? extends Command> removeCommandParser(CommandName command) {
         return commands.remove(command);
     }
-
+    
     @Override
     public ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion) {
         return modules.get(ModuleKey.key(moduleName, moduleVersion));
     }
-
+    
     @Override
     public <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser) {
         modules.put(ModuleKey.key(moduleName, moduleVersion), parser);
     }
-
+    
     @Override
     public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
         return modules.remove(ModuleKey.key(moduleName, moduleVersion));
     }
-
+    
     public void submitEvent(Event event) {
         try {
             doEventListener(this, event);
@@ -173,32 +174,32 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
             doExceptionListener(this, e, event);
         }
     }
-
+    
     @Override
     public boolean verbose() {
         return configuration != null && configuration.isVerbose();
     }
-
+    
     @Override
     public Status getStatus() {
         return connected.get();
     }
-
+    
     @Override
     public Configuration getConfiguration() {
         return configuration;
     }
-
+    
     @Override
     public void setRdbVisitor(RdbVisitor rdbVisitor) {
         this.rdbVisitor = rdbVisitor;
     }
-
+    
     @Override
     public RdbVisitor getRdbVisitor() {
         return this.rdbVisitor;
     }
-
+    
     @Override
     public void builtInCommandParserRegister() {
         addCommandParser(CommandName.name("PING"), new PingParser());
@@ -284,13 +285,14 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("XDEL"), new XDelParser());
         addCommandParser(CommandName.name("XGROUP"), new XGroupParser());
         addCommandParser(CommandName.name("XTRIM"), new XTrimParser());
+        addCommandParser(CommandName.name("XSETID"), new XSetIdParser());
     }
-
+    
     @Override
     public void close() throws IOException {
         this.connected.compareAndSet(CONNECTED, DISCONNECTING);
     }
-
+    
     protected void doClose() throws IOException {
         this.connected.compareAndSet(CONNECTED, DISCONNECTING);
         try {

@@ -29,15 +29,18 @@ public class XGroupCreateCommand extends XGroupCommand {
     private byte[] group;
 
     private byte[] id;
+    
+    private boolean mkStream;
 
     public XGroupCreateCommand() {
 
     }
-
-    public XGroupCreateCommand(byte[] key, byte[] group, byte[] id) {
+    
+    public XGroupCreateCommand(byte[] key, byte[] group, byte[] id, boolean mkStream) {
         this.key = key;
         this.group = group;
         this.id = id;
+        this.mkStream = mkStream;
     }
 
     public byte[] getKey() {
@@ -62,5 +65,13 @@ public class XGroupCreateCommand extends XGroupCommand {
 
     public void setId(byte[] id) {
         this.id = id;
+    }
+    
+    public boolean isMkStream() {
+        return mkStream;
+    }
+    
+    public void setMkStream(boolean mkStream) {
+        this.mkStream = mkStream;
     }
 }

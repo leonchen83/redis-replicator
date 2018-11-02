@@ -79,6 +79,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
     /**
      * @param file file
      * @throws URISyntaxException illegal file
+     * @throws MalformedURLException illegal file
      * @since 3.0.0
      */
     public RedisURI(File file) throws MalformedURLException, URISyntaxException {

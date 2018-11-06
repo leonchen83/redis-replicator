@@ -56,7 +56,7 @@ public class Replicators {
 
     public static void closeQuietly(Replicator replicator) {
         try {
-            open(replicator);
+            close(replicator);
         } catch (Throwable e) {
         }
     }

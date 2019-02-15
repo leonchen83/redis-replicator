@@ -26,13 +26,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueHash;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueList;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueModule;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueSet;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueStream;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueString;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueZSet;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
@@ -49,6 +42,13 @@ import java.util.Set;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.hash;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.list;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.module;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.set;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.stream;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.string;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.zset;
 
 /**
  * @author Leon Chen
@@ -171,110 +171,4 @@ public class ValueIterableEventListener implements EventListener {
     private <T> Set<T> create(boolean order, int batchSize) {
         return order ? new LinkedHashSet<T>(batchSize) : new HashSet<T>(batchSize);
     }
-    
-    private BatchedKeyStringValueString string(KeyValuePair<byte[], ?> raw, byte[] value, int batch, boolean last) {
-        BatchedKeyStringValueString kv = new BatchedKeyStringValueString();
-        kv.setDb(raw.getDb());
-        kv.setExpiredType(raw.getExpiredType());
-        kv.setExpiredValue(raw.getExpiredValue());
-        kv.setEvictType(raw.getEvictType());
-        kv.setEvictValue(raw.getEvictValue());
-        kv.setValueRdbType(raw.getValueRdbType());
-        kv.setKey(raw.getKey());
-        kv.setValue(value);
-        kv.setBatch(batch);
-        kv.setLast(last);
-        return kv;
-    }
-    
-    private BatchedKeyStringValueModule module(KeyValuePair<byte[], ?> raw, Module value, int batch, boolean last) {
-        BatchedKeyStringValueModule kv = new BatchedKeyStringValueModule();
-        kv.setDb(raw.getDb());
-        kv.setExpiredType(raw.getExpiredType());
-        kv.setExpiredValue(raw.getExpiredValue());
-        kv.setEvictType(raw.getEvictType());
-        kv.setEvictValue(raw.getEvictValue());
-        kv.setValueRdbType(raw.getValueRdbType());
-        kv.setKey(raw.getKey());
-        kv.setValue(value);
-        kv.setBatch(batch);
-        kv.setLast(last);
-        return kv;
-    }
-    
-    private BatchedKeyStringValueHash hash(KeyValuePair<byte[], ?> raw, Map<byte[], byte[]> value, int batch, boolean last) {
-        BatchedKeyStringValueHash kv = new BatchedKeyStringValueHash();
-        kv.setDb(raw.getDb());
-        kv.setExpiredType(raw.getExpiredType());
-        kv.setExpiredValue(raw.getExpiredValue());
-        kv.setEvictType(raw.getEvictType());
-        kv.setEvictValue(raw.getEvictValue());
-        kv.setValueRdbType(raw.getValueRdbType());
-        kv.setKey(raw.getKey());
-        kv.setValue(value);
-        kv.setBatch(batch);
-        kv.setLast(last);
-        return kv;
-    }
-    
-    private BatchedKeyStringValueList list(KeyValuePair<byte[], ?> raw, List<byte[]> value, int batch, boolean last) {
-        BatchedKeyStringValueList kv = new BatchedKeyStringValueList();
-        kv.setDb(raw.getDb());
-        kv.setExpiredType(raw.getExpiredType());
-        kv.setExpiredValue(raw.getExpiredValue());
-        kv.setEvictType(raw.getEvictType());
-        kv.setEvictValue(raw.getEvictValue());
-        kv.setValueRdbType(raw.getValueRdbType());
-        kv.setKey(raw.getKey());
-        kv.setValue(value);
-        kv.setBatch(batch);
-        kv.setLast(last);
-        return kv;
-    }
-    
-    private BatchedKeyStringValueSet set(KeyValuePair<byte[], ?> raw, Set<byte[]> value, int batch, boolean last) {
-        BatchedKeyStringValueSet kv = new BatchedKeyStringValueSet();
-        kv.setDb(raw.getDb());
-        kv.setExpiredType(raw.getExpiredType());
-        kv.setExpiredValue(raw.getExpiredValue());
-        kv.setEvictType(raw.getEvictType());
-        kv.setEvictValue(raw.getEvictValue());
-        kv.setValueRdbType(raw.getValueRdbType());
-        kv.setKey(raw.getKey());
-        kv.setValue(value);
-        kv.setBatch(batch);
-        kv.setLast(last);
-        return kv;
-    }
-    
-    private BatchedKeyStringValueZSet zset(KeyValuePair<byte[], ?> raw, Set<ZSetEntry> value, int batch, boolean last) {
-        BatchedKeyStringValueZSet kv = new BatchedKeyStringValueZSet();
-        kv.setDb(raw.getDb());
-        kv.setExpiredType(raw.getExpiredType());
-        kv.setExpiredValue(raw.getExpiredValue());
-        kv.setEvictType(raw.getEvictType());
-        kv.setEvictValue(raw.getEvictValue());
-        kv.setValueRdbType(raw.getValueRdbType());
-        kv.setKey(raw.getKey());
-        kv.setValue(value);
-        kv.setBatch(batch);
-        kv.setLast(last);
-        return kv;
-    }
-    
-    private BatchedKeyStringValueStream stream(KeyValuePair<byte[], ?> raw, Stream value, int batch, boolean last) {
-        BatchedKeyStringValueStream kv = new BatchedKeyStringValueStream();
-        kv.setDb(raw.getDb());
-        kv.setExpiredType(raw.getExpiredType());
-        kv.setExpiredValue(raw.getExpiredValue());
-        kv.setEvictType(raw.getEvictType());
-        kv.setEvictValue(raw.getEvictValue());
-        kv.setValueRdbType(raw.getValueRdbType());
-        kv.setKey(raw.getKey());
-        kv.setValue(value);
-        kv.setBatch(batch);
-        kv.setLast(last);
-        return kv;
-    }
-    
 }

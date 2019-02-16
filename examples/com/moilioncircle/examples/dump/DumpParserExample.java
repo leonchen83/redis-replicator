@@ -35,12 +35,12 @@ public class DumpParserExample {
 	public static void main(String[] args) throws Exception {
 		Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
 		replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+		DumpValueParser parser = new DefaultDumpValueParser(replicator);
 		replicator.addEventListener(new EventListener() {
 			@Override
 			public void onEvent(Replicator replicator, Event event) {
 				if (event instanceof DumpKeyValuePair) {
 					DumpKeyValuePair dkv = (DumpKeyValuePair) event;
-					DumpValueParser parser = new DefaultDumpValueParser(replicator);
 					KeyValuePair<?, ?> parsedKV = parser.parse(dkv);
 					System.out.println(parsedKV);
 				}

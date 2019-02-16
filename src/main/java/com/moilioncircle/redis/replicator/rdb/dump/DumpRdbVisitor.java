@@ -206,7 +206,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
 
 		o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
 		o14.setKey(key);
-		o14.setValue(valueVisitor.applyHashZipList(in, version));
+		o14.setValue(valueVisitor.applyListQuickList(in, version));
 		return context.valueOf(o14);
 	}
 

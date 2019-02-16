@@ -28,6 +28,7 @@ import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbValueVisi
 import com.moilioncircle.redis.replicator.util.ByteArray;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
@@ -73,12 +74,12 @@ public class IterableDumpValueParser implements DumpValueParser {
 		this.valueVisitor = new ValueIterableRdbValueVisitor(replicator);
 	}
 
-	public void parse(DumpKeyValuePair kv, EventListener listener) throws IOException {
+	public void parse(DumpKeyValuePair kv, EventListener listener) {
 		Objects.requireNonNull(listener);
 		new ValueIterableEventListener(order, batchSize, listener).onEvent(replicator, parse(kv));
 	}
 
-	public KeyValuePair<?, ?> parse(DumpKeyValuePair kv) throws IOException {
+	public KeyValuePair<?, ?> parse(DumpKeyValuePair kv) {
 		Objects.requireNonNull(kv);
 		try (RedisInputStream in = new RedisInputStream(new ByteArray(kv.getValue()))) {
 			int valueType = in.read();
@@ -116,6 +117,8 @@ public class IterableDumpValueParser implements DumpValueParser {
 				default:
 					throw new AssertionError("unexpected value type:" + valueType);
 			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
 		}
 	}
 }

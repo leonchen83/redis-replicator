@@ -27,6 +27,7 @@ import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
@@ -46,7 +47,8 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
 
 /**
- * @author Baoyi Chen
+ * @author Leon Chen
+ * @since 3.1.0
  */
 public class DefaultDumpValueParser implements DumpValueParser {
 
@@ -59,11 +61,11 @@ public class DefaultDumpValueParser implements DumpValueParser {
 		this.valueVisitor = new DefaultRdbValueVisitor(replicator);
 	}
 
-	public void parse(DumpKeyValuePair kv, EventListener listener) throws IOException {
+	public void parse(DumpKeyValuePair kv, EventListener listener) {
 		Objects.requireNonNull(listener).onEvent(replicator, parse(kv));
 	}
 
-	public KeyValuePair<?, ?> parse(DumpKeyValuePair kv) throws IOException {
+	public KeyValuePair<?, ?> parse(DumpKeyValuePair kv) {
 		Objects.requireNonNull(kv);
 		try (RedisInputStream in = new RedisInputStream(new ByteArray(kv.getValue()))) {
 			int valueType = in.read();
@@ -101,6 +103,8 @@ public class DefaultDumpValueParser implements DumpValueParser {
 				default:
 					throw new AssertionError("unexpected value type:" + valueType);
 			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
 		}
 	}
 }

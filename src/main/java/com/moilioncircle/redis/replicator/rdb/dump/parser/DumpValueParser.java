@@ -20,15 +20,13 @@ import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 
-import java.io.IOException;
-
 /**
  * @author Leon Chen
  * @since 3.1.0
  */
 public interface DumpValueParser {
 
-	KeyValuePair<?, ?> parse(DumpKeyValuePair kv) throws IOException;
+	KeyValuePair<?, ?> parse(DumpKeyValuePair kv);
 
-	void parse(DumpKeyValuePair kv, EventListener listener) throws IOException;
+	void parse(DumpKeyValuePair kv, EventListener listener);
 }

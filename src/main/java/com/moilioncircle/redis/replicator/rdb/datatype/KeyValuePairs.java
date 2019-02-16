@@ -38,7 +38,10 @@ import java.util.Set;
  * @since 3.1.0
  */
 public class KeyValuePairs {
-	// raw
+
+	/*
+	 * Base
+	 */
 	public static KeyValuePair<byte[], byte[]> string(KeyValuePair<byte[], ?> raw, byte[] value) {
 		KeyStringValueString kv = new KeyStringValueString();
 		copy(raw, kv);
@@ -88,7 +91,9 @@ public class KeyValuePairs {
 		return kv;
 	}
 
-	// iterator
+	/*
+	 * Iterator
+	 */
 	public static KeyStringValueMapEntryIterator iterHash(KeyValuePair<byte[], ?> raw, Iterator<Map.Entry<byte[], byte[]>> value) {
 		KeyStringValueMapEntryIterator kv = new KeyStringValueMapEntryIterator();
 		copy(raw, kv);
@@ -117,7 +122,9 @@ public class KeyValuePairs {
 		return kv;
 	}
 
-	// batched
+	/*
+	 * Batched
+	 */
 	public static BatchedKeyStringValueString string(KeyValuePair<byte[], ?> raw, byte[] value, int batch, boolean last) {
 		BatchedKeyStringValueString kv = new BatchedKeyStringValueString();
 		copy(raw, kv, batch, last);
@@ -167,6 +174,9 @@ public class KeyValuePairs {
 		return kv;
 	}
 
+	/*
+	 * Helper
+	 */
 	private static void copy(KeyValuePair<byte[], ?> source, KeyValuePair<byte[], ?> target) {
 		target.setDb(source.getDb());
 		target.setExpiredType(source.getExpiredType());

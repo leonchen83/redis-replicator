@@ -37,18 +37,18 @@ import static com.moilioncircle.redis.replicator.rdb.BaseRdbParser.StringHelper.
  * @since 3.1.0
  */
 @SuppressWarnings("unchecked")
-public class DefaultValueParser extends ValueParser {
+public class DefaultRdbValueVisitor extends RdbValueVisitor {
 
-	protected static final Logger logger = LoggerFactory.getLogger(DefaultValueParser.class);
+	protected static final Logger logger = LoggerFactory.getLogger(DefaultRdbValueVisitor.class);
 
 	protected final Replicator replicator;
 
-	public DefaultValueParser(final Replicator replicator) {
+	public DefaultRdbValueVisitor(final Replicator replicator) {
 		this.replicator = replicator;
 	}
 
 	@Override
-	public <T> T parseString(RedisInputStream in, int version) throws IOException {
+	public <T> T applyString(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |       <content>       |
 		 * |    string contents    |
@@ -60,7 +60,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyList(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |
 		 * | 1 or 5 bytes |    string contents    |
@@ -78,7 +78,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applySet(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |
 		 * | 1 or 5 bytes |    string contents    |
@@ -96,7 +96,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseZSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSet(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |        <score>       |
 		 * | 1 or 5 bytes |    string contents    |    double content    |
@@ -115,7 +115,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseZSet2(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSet2(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |        <score>       |
 		 * | 1 or 5 bytes |    string contents    |    binary double     |
@@ -135,7 +135,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseHash(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHash(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |
 		 * | 1 or 5 bytes |    string contents    |
@@ -154,7 +154,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseHashZipMap(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHashZipMap(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<zmlen> |   <len>     |"foo"    |    <len>   | <free> |   "bar" |<zmend> |
 		 * | 1 byte | 1 or 5 byte | content |1 or 5 byte | 1 byte | content | 1 byte |
@@ -184,7 +184,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseListZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyListZipList(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
 		 * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -208,7 +208,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseSetIntSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applySetIntSet(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<encoding>| <length-of-contents>|              <contents>                            |
 		 * | 4 bytes  |            4 bytes  | 2 bytes element| 4 bytes element | 8 bytes element |
@@ -241,7 +241,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseZSetZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSetZipList(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
 		 * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -268,7 +268,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseHashZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHashZipList(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
 		 * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -295,7 +295,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseListQuickList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyListQuickList(RedisInputStream in, int version) throws IOException {
 		BaseRdbParser parser = new BaseRdbParser(in);
 
 		long len = parser.rdbLoadLen().len;
@@ -319,7 +319,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseModule(RedisInputStream in, int version) throws IOException {
+	public <T> T applyModule(RedisInputStream in, int version) throws IOException {
 		//|6|6|6|6|6|6|6|6|6|10|
 		BaseRdbParser parser = new BaseRdbParser(in);
 
@@ -339,7 +339,7 @@ public class DefaultValueParser extends ValueParser {
 	}
 
 	@Override
-	public <T> T parseModule2(RedisInputStream in, int version) throws IOException {
+	public <T> T applyModule2(RedisInputStream in, int version) throws IOException {
 		//|6|6|6|6|6|6|6|6|6|10|
 		BaseRdbParser parser = new BaseRdbParser(in);
 
@@ -372,7 +372,7 @@ public class DefaultValueParser extends ValueParser {
 
 	@Override
 	@SuppressWarnings("resource")
-	public <T> T parseStreamListPacks(RedisInputStream in, int version) throws IOException {
+	public <T> T applyStreamListPacks(RedisInputStream in, int version) throws IOException {
 		BaseRdbParser parser = new BaseRdbParser(in);
 
 		Stream stream = new Stream();

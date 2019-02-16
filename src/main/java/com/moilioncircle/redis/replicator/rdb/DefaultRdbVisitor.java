@@ -76,15 +76,15 @@ public class DefaultRdbVisitor extends RdbVisitor {
 	protected static final Logger logger = LoggerFactory.getLogger(DefaultRdbVisitor.class);
 
 	protected final Replicator replicator;
-	protected final ValueParser valueParser;
+	protected final RdbValueVisitor valueVisitor;
 
 	public DefaultRdbVisitor(Replicator replicator) {
-		this(replicator, new DefaultValueParser(replicator));
+		this(replicator, new DefaultRdbValueVisitor(replicator));
 	}
 
-	public DefaultRdbVisitor(Replicator replicator, ValueParser valueParser) {
+	public DefaultRdbVisitor(Replicator replicator, RdbValueVisitor valueVisitor) {
 		this.replicator = replicator;
-		this.valueParser = valueParser;
+		this.valueVisitor = valueVisitor;
 	}
 
 	@Override
@@ -258,7 +258,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], byte[]> o0 = new KeyStringValueString();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		byte[] val = valueParser.parseString(in, version);
+		byte[] val = valueVisitor.applyString(in, version);
 		o0.setValueRdbType(RDB_TYPE_STRING);
 		o0.setValue(val);
 		o0.setKey(key);
@@ -271,7 +271,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], List<byte[]>> o1 = new KeyStringValueList();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		List<byte[]> list = valueParser.parseList(in, version);
+		List<byte[]> list = valueVisitor.applyList(in, version);
 		o1.setValueRdbType(RDB_TYPE_LIST);
 		o1.setValue(list);
 		o1.setKey(key);
@@ -284,7 +284,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Set<byte[]>> o2 = new KeyStringValueSet();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		Set<byte[]> set = valueParser.parseSet(in, version);
+		Set<byte[]> set = valueVisitor.applySet(in, version);
 		o2.setValueRdbType(RDB_TYPE_SET);
 		o2.setValue(set);
 		o2.setKey(key);
@@ -297,7 +297,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Set<ZSetEntry>> o3 = new KeyStringValueZSet();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		Set<ZSetEntry> zset = valueParser.parseZSet(in, version);
+		Set<ZSetEntry> zset = valueVisitor.applyZSet(in, version);
 		o3.setValueRdbType(RDB_TYPE_ZSET);
 		o3.setValue(zset);
 		o3.setKey(key);
@@ -310,7 +310,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Set<ZSetEntry>> o5 = new KeyStringValueZSet();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		Set<ZSetEntry> zset = valueParser.parseZSet2(in, version);
+		Set<ZSetEntry> zset = valueVisitor.applyZSet2(in, version);
 		o5.setValueRdbType(RDB_TYPE_ZSET_2);
 		o5.setValue(zset);
 		o5.setKey(key);
@@ -323,7 +323,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Map<byte[], byte[]>> o4 = new KeyStringValueHash();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		ByteArrayMap map = valueParser.parseHash(in, version);
+		ByteArrayMap map = valueVisitor.applyHash(in, version);
 		o4.setValueRdbType(RDB_TYPE_HASH);
 		o4.setValue(map);
 		o4.setKey(key);
@@ -336,7 +336,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Map<byte[], byte[]>> o9 = new KeyStringValueHash();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		ByteArrayMap map = valueParser.parseHashZipMap(in, version);
+		ByteArrayMap map = valueVisitor.applyHashZipMap(in, version);
 		o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
 		o9.setValue(map);
 		o9.setKey(key);
@@ -349,7 +349,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], List<byte[]>> o10 = new KeyStringValueList();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		List<byte[]> list = valueParser.parseListZipList(in, version);
+		List<byte[]> list = valueVisitor.applyListZipList(in, version);
 		o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
 		o10.setValue(list);
 		o10.setKey(key);
@@ -362,7 +362,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Set<byte[]>> o11 = new KeyStringValueSet();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		Set<byte[]> set = valueParser.parseSetIntSet(in, version);
+		Set<byte[]> set = valueVisitor.applySetIntSet(in, version);
 		o11.setValueRdbType(RDB_TYPE_SET_INTSET);
 		o11.setValue(set);
 		o11.setKey(key);
@@ -375,7 +375,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Set<ZSetEntry>> o12 = new KeyStringValueZSet();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		Set<ZSetEntry> zset = valueParser.parseZSetZipList(in, version);
+		Set<ZSetEntry> zset = valueVisitor.applyZSetZipList(in, version);
 		o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
 		o12.setValue(zset);
 		o12.setKey(key);
@@ -388,7 +388,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Map<byte[], byte[]>> o13 = new KeyStringValueHash();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		ByteArrayMap map = valueParser.parseHashZipList(in, version);
+		ByteArrayMap map = valueVisitor.applyHashZipList(in, version);
 		o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
 		o13.setValue(map);
 		o13.setKey(key);
@@ -401,7 +401,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], List<byte[]>> o14 = new KeyStringValueList();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		List<byte[]> list = valueParser.parseListQuickList(in, version);
+		List<byte[]> list = valueVisitor.applyListQuickList(in, version);
 		o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
 		o14.setValue(list);
 		o14.setKey(key);
@@ -414,7 +414,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Module> o6 = new KeyStringValueModule();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		Module module = valueParser.parseModule(in, version);
+		Module module = valueVisitor.applyModule(in, version);
 		o6.setValueRdbType(RDB_TYPE_MODULE);
 		o6.setValue(module);
 		o6.setKey(key);
@@ -427,7 +427,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Module> o7 = new KeyStringValueModule();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		Module module = valueParser.parseModule2(in, version);
+		Module module = valueVisitor.applyModule2(in, version);
 		o7.setValueRdbType(RDB_TYPE_MODULE_2);
 		o7.setValue(module);
 		o7.setKey(key);
@@ -441,7 +441,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 		KeyValuePair<byte[], Stream> o15 = new KeyStringValueStream();
 		byte[] key = parser.rdbLoadEncodedStringObject().first();
 
-		Stream stream = valueParser.parseStreamListPacks(in, version);
+		Stream stream = valueVisitor.applyStreamListPacks(in, version);
 		o15.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
 		o15.setValue(stream);
 		o15.setKey(key);

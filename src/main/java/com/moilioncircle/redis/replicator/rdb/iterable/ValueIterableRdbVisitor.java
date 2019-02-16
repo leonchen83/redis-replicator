@@ -21,7 +21,7 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
-import com.moilioncircle.redis.replicator.rdb.ValueParser;
+import com.moilioncircle.redis.replicator.rdb.RdbValueVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
@@ -52,10 +52,10 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST
 public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 	public ValueIterableRdbVisitor(Replicator replicator) {
-		this(replicator, new IterableValueParser(replicator));
+		this(replicator, new ValueIterableRdbValueVisitor(replicator));
 	}
 
-	public ValueIterableRdbVisitor(Replicator replicator, ValueParser valueParser) {
+	public ValueIterableRdbVisitor(Replicator replicator, RdbValueVisitor valueParser) {
 		super(replicator, valueParser);
 	}
 
@@ -67,7 +67,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o1.setValueRdbType(RDB_TYPE_LIST);
 		o1.setKey(key);
-		o1.setValue(valueParser.parseList(in, version));
+		o1.setValue(valueVisitor.applyList(in, version));
 		return context.valueOf(o1);
 	}
 
@@ -79,7 +79,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o2.setValueRdbType(RDB_TYPE_SET);
 		o2.setKey(key);
-		o2.setValue(valueParser.parseSet(in, version));
+		o2.setValue(valueVisitor.applySet(in, version));
 		return context.valueOf(o2);
 	}
 
@@ -91,7 +91,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o3.setValueRdbType(RDB_TYPE_ZSET);
 		o3.setKey(key);
-		o3.setValue(valueParser.parseZSet(in, version));
+		o3.setValue(valueVisitor.applyZSet(in, version));
 		return context.valueOf(o3);
 	}
 
@@ -103,7 +103,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o5.setValueRdbType(RDB_TYPE_ZSET_2);
 		o5.setKey(key);
-		o5.setValue(valueParser.parseZSet2(in, version));
+		o5.setValue(valueVisitor.applyZSet2(in, version));
 		return context.valueOf(o5);
 	}
 
@@ -115,7 +115,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o4.setValueRdbType(RDB_TYPE_HASH);
 		o4.setKey(key);
-		o4.setValue(valueParser.parseHash(in, version));
+		o4.setValue(valueVisitor.applyHash(in, version));
 		return context.valueOf(o4);
 	}
 
@@ -127,7 +127,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o9.setValueRdbType(RDB_TYPE_HASH_ZIPMAP);
 		o9.setKey(key);
-		o9.setValue(valueParser.parseHashZipMap(in, version));
+		o9.setValue(valueVisitor.applyHashZipMap(in, version));
 		return context.valueOf(o9);
 	}
 
@@ -139,7 +139,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o10.setValueRdbType(RDB_TYPE_LIST_ZIPLIST);
 		o10.setKey(key);
-		o10.setValue(valueParser.parseListZipList(in, version));
+		o10.setValue(valueVisitor.applyListZipList(in, version));
 		return context.valueOf(o10);
 	}
 
@@ -151,7 +151,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o11.setValueRdbType(RDB_TYPE_SET_INTSET);
 		o11.setKey(key);
-		o11.setValue(valueParser.parseSetIntSet(in, version));
+		o11.setValue(valueVisitor.applySetIntSet(in, version));
 		return context.valueOf(o11);
 	}
 
@@ -163,7 +163,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o12.setValueRdbType(RDB_TYPE_ZSET_ZIPLIST);
 		o12.setKey(key);
-		o12.setValue(valueParser.parseZSetZipList(in, version));
+		o12.setValue(valueVisitor.applyZSetZipList(in, version));
 		return context.valueOf(o12);
 	}
 
@@ -175,7 +175,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o13.setValueRdbType(RDB_TYPE_HASH_ZIPLIST);
 		o13.setKey(key);
-		o13.setValue(valueParser.parseHashZipList(in, version));
+		o13.setValue(valueVisitor.applyHashZipList(in, version));
 		return context.valueOf(o13);
 	}
 
@@ -187,7 +187,7 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
 
 		o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
 		o14.setKey(key);
-		o14.setValue(valueParser.parseListQuickList(in, version));
+		o14.setValue(valueVisitor.applyListQuickList(in, version));
 		return context.valueOf(o14);
 	}
 }

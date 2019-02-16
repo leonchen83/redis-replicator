@@ -14,6 +14,7 @@ module com.moilioncircle.redis.replicator {
     exports com.moilioncircle.redis.replicator.rdb.datatype;
     exports com.moilioncircle.redis.replicator.rdb.dump;
     exports com.moilioncircle.redis.replicator.rdb.dump.datatype;
+    exports com.moilioncircle.redis.replicator.rdb.dump.parser;
     exports com.moilioncircle.redis.replicator.rdb.iterable;
     exports com.moilioncircle.redis.replicator.rdb.iterable.datatype;
     exports com.moilioncircle.redis.replicator.rdb.module;

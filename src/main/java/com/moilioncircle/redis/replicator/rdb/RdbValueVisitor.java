@@ -24,65 +24,65 @@ import java.io.IOException;
  * @author Leon Chen
  * @since 3.1.0
  */
-public abstract class ValueParser {
+public abstract class RdbValueVisitor {
 
-	public <T> T parseString(RedisInputStream in, int version) throws IOException {
+	public <T> T applyString(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyList(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applySet(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseZSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSet(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseZSet2(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSet2(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseHash(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHash(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseHashZipMap(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHashZipMap(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseListZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyListZipList(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseSetIntSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applySetIntSet(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseZSetZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSetZipList(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseHashZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHashZipList(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseListQuickList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyListQuickList(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseModule(RedisInputStream in, int version) throws IOException {
+	public <T> T applyModule(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseModule2(RedisInputStream in, int version) throws IOException {
+	public <T> T applyModule2(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 
-	public <T> T parseStreamListPacks(RedisInputStream in, int version) throws IOException {
+	public <T> T applyStreamListPacks(RedisInputStream in, int version) throws IOException {
 		throw new UnsupportedOperationException("must implement this method.");
 	}
 }

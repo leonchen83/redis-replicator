@@ -19,7 +19,7 @@ package com.moilioncircle.redis.replicator.rdb.iterable;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
-import com.moilioncircle.redis.replicator.rdb.DefaultValueParser;
+import com.moilioncircle.redis.replicator.rdb.DefaultRdbValueVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.util.Strings;
 
@@ -36,14 +36,14 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
  * @since 3.1.0
  */
 @SuppressWarnings("unchecked")
-public class IterableValueParser extends DefaultValueParser {
+public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
 
-	public IterableValueParser(Replicator replicator) {
+	public ValueIterableRdbValueVisitor(Replicator replicator) {
 		super(replicator);
 	}
 
 	@Override
-	public <T> T parseList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyList(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |
 		 * | 1 or 5 bytes |    string contents    |
@@ -72,7 +72,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applySet(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |
 		 * | 1 or 5 bytes |    string contents    |
@@ -101,7 +101,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseZSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSet(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |        <score>       |
 		 * | 1 or 5 bytes |    string contents    |    double content    |
@@ -131,7 +131,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseZSet2(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSet2(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |        <score>       |
 		 * | 1 or 5 bytes |    string contents    |    binary double     |
@@ -162,7 +162,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseHash(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHash(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |    <len>     |       <content>       |
 		 * | 1 or 5 bytes |    string contents    |
@@ -192,7 +192,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseHashZipMap(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHashZipMap(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<zmlen> |   <len>     |"foo"    |    <len>   | <free> |   "bar" |<zmend> |
 		 * | 1 byte | 1 or 5 byte | content |1 or 5 byte | 1 byte | content | 1 byte |
@@ -206,7 +206,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseListZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyListZipList(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
 		 * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -247,7 +247,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseSetIntSet(RedisInputStream in, int version) throws IOException {
+	public <T> T applySetIntSet(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<encoding>| <length-of-contents>|              <contents>                            |
 		 * | 4 bytes  |            4 bytes  | 2 bytes element| 4 bytes element | 8 bytes element |
@@ -291,7 +291,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseZSetZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyZSetZipList(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
 		 * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -334,7 +334,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseHashZipList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyHashZipList(RedisInputStream in, int version) throws IOException {
 		/*
 		 * |<zlbytes>| <zltail>| <zllen>| <entry> ...<entry> | <zlend>|
 		 * | 4 bytes | 4 bytes | 2bytes | zipListEntry ...   | 1byte  |
@@ -377,7 +377,7 @@ public class IterableValueParser extends DefaultValueParser {
 	}
 
 	@Override
-	public <T> T parseListQuickList(RedisInputStream in, int version) throws IOException {
+	public <T> T applyListQuickList(RedisInputStream in, int version) throws IOException {
 		BaseRdbParser parser = new BaseRdbParser(in);
 
 		long len = parser.rdbLoadLen().len;

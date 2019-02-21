@@ -97,15 +97,21 @@ public class PsyncTest {
                     SetCommand setCommand = (SetCommand) command;
                     Integer.parseInt(setCommand.getKey().split(" ")[1]); // num
                     acc.incrementAndGet();
-                    if (acc.get() == 200) {
+                    if (acc.get() == 500) {
                         //close current process port;
                         //that will auto trigger psync command
                         close(replicator);
                     }
-                    if (acc.get() == 980) {
+
+                    if (acc.get() == 1010) {
+                        //close current process port;
+                        //that will auto trigger psync command
+                        close(replicator);
+                    }
+                    if (acc.get() == 1480) {
                         configuration.setVerbose(true);
                     }
-                    if (acc.get() == 1000) {
+                    if (acc.get() == 1500) {
                         try {
                             replicator.close();
                         } catch (IOException e) {
@@ -115,7 +121,7 @@ public class PsyncTest {
             }
         });
         replicator.open();
-        assertEquals(1000, acc.get());
+        assertEquals(1500, acc.get());
     }
 
     private static void close(Replicator replicator) {
@@ -139,7 +145,7 @@ public class PsyncTest {
         public void run() {
             Jedis jedis = new Jedis("127.0.0.1", 6380);
             jedis.auth("test");
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 1500; i++) {
                 jedis.set("psync " + i, "psync" + i);
                 try {
                     Thread.sleep(20);

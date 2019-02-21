@@ -391,6 +391,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     }
                     if (isEquals(Strings.toString(raw[0]), "PING")) {
                         // NOP
+                        System.out.println("ping");
                     } else if (isEquals(Strings.toString(raw[0]), "REPLCONF") && isEquals(Strings.toString(raw[1]), "GETACK")) {
                         if (mode == PSYNC) executor.execute(new Runnable() {
                             @Override

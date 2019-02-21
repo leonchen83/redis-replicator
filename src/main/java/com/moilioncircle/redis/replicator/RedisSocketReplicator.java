@@ -347,8 +347,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
         @Override
         protected boolean open() throws IOException {
-            logger.info("PSYNC {} {}", configuration.getReplId(), String.valueOf(configuration.getReplOffset()));
-            send("PSYNC".getBytes(), configuration.getReplId().getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
+            String replId = configuration.getReplId();
+            long replOffset = configuration.getReplOffset();
+            logger.info("PSYNC {} {}", replId, String.valueOf(replOffset >= 0 ? replOffset + 1 : replOffset));
+            send("PSYNC".getBytes(), replId.getBytes(), String.valueOf(replOffset >= 0 ? replOffset + 1 : replOffset).getBytes());
             final String reply = Strings.toString(reply());
 
             SyncMode mode = trySync(reply);

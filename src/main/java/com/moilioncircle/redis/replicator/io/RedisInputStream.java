@@ -80,7 +80,7 @@ public class RedisInputStream extends InputStream {
         return buf.length;
     }
 
-    public boolean isMark() {
+    public boolean isMarked() {
         return mark;
     }
 

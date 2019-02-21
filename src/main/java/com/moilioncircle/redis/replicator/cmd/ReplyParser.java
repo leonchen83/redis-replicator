@@ -27,12 +27,18 @@ import static com.moilioncircle.redis.replicator.Constants.MINUS;
 import static com.moilioncircle.redis.replicator.Constants.PLUS;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Leon Chen
  * @see <a href="http://redis.io/topics/protocol">protocol</a>
  * @since 2.1.0
  */
 public class ReplyParser {
+
+    protected static final Logger logger = LoggerFactory.getLogger(ReplyParser.class);
+    
     private final RedisCodec codec;
     private final RedisInputStream in;
 
@@ -166,7 +172,7 @@ public class ReplyParser {
                     // skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
                     // At this stage just a newline works as a PING in order to take the connection live
                     // bug fix
-                    System.out.println("print \\n");
+                    logger.info("print \\n");
                     if (in.isMarked()) {
                         in.mark(Math.max(in.unmark() - 1, 0)); // skip [\n]
                     }

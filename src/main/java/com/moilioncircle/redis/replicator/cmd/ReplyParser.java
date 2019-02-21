@@ -166,9 +166,9 @@ public class ReplyParser {
                     // skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
                     // At this stage just a newline works as a PING in order to take the connection live
                     // bug fix
-                    if (in.isMarked()) {
-                        in.mark(Math.max(in.unmark() - 1, 0)); // skip [\n]
-                    }
+//                    if (in.isMarked()) {
+//                        in.mark(Math.max(in.unmark() - 1, 0)); // skip [\n]
+//                    }
                     break;
                 default:
                     throw new AssertionError("expect [$,:,*,+,-] but: " + (char) c);

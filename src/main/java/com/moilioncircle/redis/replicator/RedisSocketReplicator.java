@@ -373,6 +373,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     final CommandParser<? extends Command> parser;
                     if ((parser = commands.get(name)) == null) {
                         logger.warn("command [{}] not register. raw command:{}", name, format(raw));
+                        configuration.addOffset(offset[0]);
+                        offset[0] = 0L;
                         continue;
                     }
                     if (isEquals(Strings.toString(raw[0]), "PING")) {

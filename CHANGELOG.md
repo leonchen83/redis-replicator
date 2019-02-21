@@ -2,6 +2,9 @@
 Support parse dump value.  
 
 ### 2.6.1
+Fix offset bug.  
+
+### 2.6.1
 Support redis-5.0-GA.  
 Add new command : `XSETID`.  
 

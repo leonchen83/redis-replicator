@@ -191,7 +191,6 @@ public class RedisSentinelReplicator extends AbstractReplicator {
 			return replicator.removeModuleParser(moduleName, moduleVersion);
 		}
 	}
-	
 
 	@Override
 	public Status getStatus() {

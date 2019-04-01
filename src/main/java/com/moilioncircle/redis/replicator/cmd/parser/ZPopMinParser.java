@@ -27,16 +27,16 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
  * @since 2.6.0
  */
 public class ZPopMinParser implements CommandParser<ZPopMinCommand> {
-	
+
 	@Override
 	public ZPopMinCommand parse(Object[] command) {
 		int idx = 1;
-        byte[] key = toBytes(command[idx]);
-        int count = 1;
+		byte[] key = toBytes(command[idx]);
+		int count = 1;
 		idx++;
 		if (idx < command.length) {
 			count = toInt(command[idx++]);
 		}
-        return new ZPopMinCommand(key, count);
+		return new ZPopMinCommand(key, count);
 	}
 }

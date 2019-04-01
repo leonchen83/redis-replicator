@@ -14,43 +14,17 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd.impl;
+package com.moilioncircle.redis.replicator.sentienl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.util.HostAndPort;
 
 /**
  * @author Leon Chen
- * @since 2.6.0
+ * @since 3.2.0
  */
-public class ZPopMinCommand implements Command {
-
-	private static final long serialVersionUID = 1L;
-
-	private byte[] key;
-	private int count = 1;
-
-	public ZPopMinCommand() {
-	}
-
-	public ZPopMinCommand(byte[] key, int count) {
-		this.key = key;
-		this.count = count;
-	}
-
-	public byte[] getKey() {
-		return key;
-	}
-
-	public void setKey(byte[] key) {
-		this.key = key;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
-	}
+public interface SentinelListener {
+	
+	void onClose(Sentinel sentinel);
+	
+	void onSwitch(Sentinel sentinel, HostAndPort host);
 }
-

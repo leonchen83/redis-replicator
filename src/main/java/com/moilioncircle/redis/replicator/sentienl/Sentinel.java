@@ -14,43 +14,22 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd.impl;
+package com.moilioncircle.redis.replicator.sentienl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * @author Leon Chen
- * @since 2.6.0
+ * @since 3.2.0
  */
-public class ZPopMinCommand implements Command {
+public interface Sentinel extends Closeable {
 
-	private static final long serialVersionUID = 1L;
+	void open() throws IOException;
 
-	private byte[] key;
-	private int count = 1;
+	void close() throws IOException;
 
-	public ZPopMinCommand() {
-	}
+	boolean addSentinelListener(SentinelListener listener);
 
-	public ZPopMinCommand(byte[] key, int count) {
-		this.key = key;
-		this.count = count;
-	}
-
-	public byte[] getKey() {
-		return key;
-	}
-
-	public void setKey(byte[] key) {
-		this.key = key;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
-	}
+	boolean removeSentinelListener(SentinelListener listener);
 }
-

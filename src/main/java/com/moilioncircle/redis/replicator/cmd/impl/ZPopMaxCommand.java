@@ -23,33 +23,33 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.6.0
  */
 public class ZPopMaxCommand implements Command {
-	
+
 	private static final long serialVersionUID = 1L;
 
-    private byte[] key;
-    private int count = 1;
+	private byte[] key;
+	private int count = 1;
 
 	public ZPopMaxCommand() {
 	}
 
-    public ZPopMaxCommand(byte[] key, int count) {
+	public ZPopMaxCommand(byte[] key, int count) {
 		this.key = key;
 		this.count = count;
 	}
 
-    public byte[] getKey() {
+	public byte[] getKey() {
 		return key;
 	}
 
-    public void setKey(byte[] key) {
+	public void setKey(byte[] key) {
 		this.key = key;
 	}
 
-    public int getCount() {
+	public int getCount() {
 		return count;
 	}
 
-    public void setCount(int count) {
+	public void setCount(int count) {
 		this.count = count;
 	}
 }

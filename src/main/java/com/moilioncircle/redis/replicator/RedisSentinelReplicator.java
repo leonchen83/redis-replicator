@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
@@ -39,6 +42,8 @@ import com.moilioncircle.redis.replicator.util.HostAndPort;
  * @since 3.2.0
  */
 public class RedisSentinelReplicator extends AbstractReplicator {
+
+	protected static final Logger logger = LoggerFactory.getLogger(RedisSentinelReplicator.class);
 
 	private final Sentinel sentinel;
 	private volatile Replicator replicator;
@@ -206,6 +211,7 @@ public class RedisSentinelReplicator extends AbstractReplicator {
 
 		@Override
 		public void onSwitch(Sentinel sentinel, HostAndPort host) {
+			logger.info("Sentinel switch master to [{}]", host);
 			if (replicator != null) Replicators.close(replicator);
 			Replicator next = new RedisSocketReplicator(host.getHost(), host.getPort(), getConfiguration());
 			if (replicator == null) {

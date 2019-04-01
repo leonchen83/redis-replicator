@@ -161,6 +161,34 @@ public class RedisSentinelReplicator extends AbstractReplicator {
 	}
 
 	@Override
+	public ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion) {
+		if (replicator == null) {
+			return super.getModuleParser(moduleName, moduleVersion);
+		} else {
+			return replicator.getModuleParser(moduleName, moduleVersion);
+		}
+	}
+
+	@Override
+	public <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser) {
+		if (replicator == null) {
+			super.addModuleParser(moduleName, moduleVersion, parser);
+		} else {
+			replicator.addModuleParser(moduleName, moduleVersion, parser);
+		}
+	}
+
+	@Override
+	public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
+		if (replicator == null) {
+			return super.removeModuleParser(moduleName, moduleVersion);
+		} else {
+			return replicator.removeModuleParser(moduleName, moduleVersion);
+		}
+	}
+	
+
+	@Override
 	public Status getStatus() {
 		if (replicator == null) {
 			return Status.DISCONNECTED;
@@ -196,7 +224,8 @@ public class RedisSentinelReplicator extends AbstractReplicator {
 					next.addCommandParser(entry.getKey(), entry.getValue());
 				}
 				// restore rdb visitor
-				next.setRdbVisitor(rdbVisitor); //TODO how replace replicator in rdbVisitor??
+				// no need to replace `replicator` in RdbVisitor
+				next.setRdbVisitor(rdbVisitor);
 			}
 			replicator = next;
 			Replicators.open(replicator);

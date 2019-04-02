@@ -40,7 +40,7 @@ import com.moilioncircle.redis.replicator.util.HostAndPort;
  * @author Leon Chen
  * @since 3.2.0
  */
-public class RedisSentinelReplicator implements Replicator {
+public class RedisSentinelReplicator implements Replicator, SentinelListener {
 
 	protected static final Logger logger = LoggerFactory.getLogger(RedisSentinelReplicator.class);
 
@@ -50,9 +50,9 @@ public class RedisSentinelReplicator implements Replicator {
 	public RedisSentinelReplicator(List<HostAndPort> hosts, String name, Configuration configuration) {
 		Objects.requireNonNull(hosts);
 		Objects.requireNonNull(configuration);
-		this.sentinel = new DefaultSentinel(hosts, name, configuration);
-		this.sentinel.addSentinelListener(new DefaultSentinelListener());
 		this.replicator = new RedisSocketReplicator("", 1, configuration);
+		this.sentinel = new DefaultSentinel(hosts, name, configuration);
+		this.sentinel.addSentinelListener(this);
 	}
 
 	@Override
@@ -165,20 +165,17 @@ public class RedisSentinelReplicator implements Replicator {
 		return replicator.getConfiguration();
 	}
 
-	private class DefaultSentinelListener implements SentinelListener {
+	@Override
+	public void onClose(Sentinel sentinel) {
+		Replicators.close(replicator);
+	}
 
-		@Override
-		public void onClose(Sentinel sentinel) {
-			Replicators.close(replicator);
-		}
-
-		@Override
-		public void onSwitch(Sentinel sentinel, HostAndPort host) {
-			logger.info("Sentinel switch master to [{}]", host);
-			Replicators.close(replicator);
-			replicator.setHost(host.getHost());
-			replicator.setPort(host.getPort());
-			Replicators.open(replicator);
-		}
+	@Override
+	public void onSwitch(Sentinel sentinel, HostAndPort host) {
+		logger.info("Sentinel switch master to [{}]", host);
+		Replicators.close(replicator);
+		replicator.setHost(host.getHost());
+		replicator.setPort(host.getPort());
+		Replicators.open(replicator);
 	}
 }

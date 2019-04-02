@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.util.HostAndPort;
 
 /**
@@ -28,10 +29,11 @@ import com.moilioncircle.redis.replicator.util.HostAndPort;
  */
 public class DefaultSentinel implements Sentinel {
 
+	private final Configuration configuration;
 	private List<SentinelListener> listeners = new CopyOnWriteArrayList<>();
 
-	public DefaultSentinel(List<HostAndPort> hosts, String name) {
-
+	public DefaultSentinel(List<HostAndPort> hosts, String name, Configuration configuration) {
+		this.configuration = configuration;
 	}
 
 	@Override

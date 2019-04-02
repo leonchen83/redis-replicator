@@ -50,7 +50,7 @@ public class RedisSentinelReplicator implements Replicator {
 	public RedisSentinelReplicator(List<HostAndPort> hosts, String name, Configuration configuration) {
 		Objects.requireNonNull(hosts);
 		Objects.requireNonNull(configuration);
-		this.sentinel = new DefaultSentinel(hosts, name);
+		this.sentinel = new DefaultSentinel(hosts, name, configuration);
 		this.sentinel.addSentinelListener(new DefaultSentinelListener());
 		this.replicator = new RedisSocketReplicator("", 1, configuration);
 	}

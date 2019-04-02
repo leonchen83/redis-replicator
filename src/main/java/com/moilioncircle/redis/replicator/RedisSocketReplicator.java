@@ -65,8 +65,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
     
     protected static final Logger logger = LoggerFactory.getLogger(RedisSocketReplicator.class);
     
-    protected final int port;
-    protected final String host;
+    protected int port;
+    protected String host;
     protected Socket socket;
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
@@ -87,14 +87,22 @@ public class RedisSocketReplicator extends AbstractReplicator {
             addExceptionListener(new DefaultExceptionListener());
     }
 
+    public int getPort() {
+        return this.port;
+    }
+
+    void setPort(int port) {
+        this.port = port;
+    }
+
     public String getHost() {
         return this.host;
     }
 
-    public int getPort() {
-        return this.port;
+    void setHost(String host) {
+        this.host = host;
     }
-    
+
     /**
      * PSYNC
      * <p>

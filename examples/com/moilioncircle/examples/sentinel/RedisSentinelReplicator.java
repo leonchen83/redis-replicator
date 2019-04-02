@@ -17,7 +17,7 @@
 package com.moilioncircle.examples.sentinel;
 
 import static com.moilioncircle.redis.replicator.util.Concurrents.terminateQuietly;
-import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.IOException;
@@ -57,9 +57,10 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
 
 	protected static final Logger logger = LoggerFactory.getLogger(RedisSentinelReplicator.class);
 
+	private HostAndPort prev;
 	private final Sentinel sentinel;
 	private final RedisSocketReplicator replicator;
-	protected final ExecutorService executors = newFixedThreadPool(2);
+	protected final ExecutorService executors = newSingleThreadExecutor();
 
 	public RedisSentinelReplicator(List<HostAndPort> hosts, String name, Configuration configuration) {
 		Objects.requireNonNull(hosts);
@@ -180,14 +181,17 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
 	}
 
 	@Override
-	public void onSwitch(Sentinel sentinel, HostAndPort host) {
-		executors.submit(() -> {
-			logger.info("Sentinel switch master to [{}]", host);
+	public void onSwitch(Sentinel sentinel, HostAndPort next) {
+		if (prev == null || !prev.equals(next)) {
+			logger.info("Sentinel switch master to [{}]", next);
 			Replicators.close(replicator);
-			Reflections.setField(replicator, "host", host.getHost());
-			Reflections.setField(replicator, "port", host.getPort());
-			Replicators.open(replicator);
-		});
+			executors.submit(() -> {
+				Reflections.setField(replicator, "host", next.getHost());
+				Reflections.setField(replicator, "port", next.getPort());
+				Replicators.open(replicator);
+			});
+		}
+		prev = next;
 	}
 
 	@Override

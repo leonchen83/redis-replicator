@@ -1,3 +1,6 @@
+### 3.1.1
+Fix `RedisScoketReplicator.executor` shutdown too early bug.  
+
 ### 3.1.0
 Support parse dump value.  
 

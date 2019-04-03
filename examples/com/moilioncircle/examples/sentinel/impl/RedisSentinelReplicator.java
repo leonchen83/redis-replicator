@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.moilioncircle.examples.util.Reflections;
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.ExceptionListener;
@@ -43,12 +44,12 @@ import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
-import com.moilioncircle.examples.util.Reflections;
 
 import redis.clients.jedis.HostAndPort;
 
 /**
  * @author Leon Chen
+ * @since 3.1.1
  */
 public class RedisSentinelReplicator implements Replicator, SentinelListener {
 

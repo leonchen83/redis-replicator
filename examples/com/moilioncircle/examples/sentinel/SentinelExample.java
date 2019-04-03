@@ -29,20 +29,19 @@ import redis.clients.jedis.HostAndPort;
 
 /**
  * @author Leon Chen
+ * @since 3.1.1
  */
 public class SentinelExample {
 	
 	public static void main(String[] args) throws Exception {
 		List<HostAndPort> hosts = new ArrayList<>();
 		// sentinel hosts
-		hosts.add(new HostAndPort("192.168.1.100", 26379));
-		hosts.add(new HostAndPort("192.168.1.101", 26379));
-		hosts.add(new HostAndPort("192.168.1.102", 26379));
+		hosts.add(new HostAndPort("127.0.0.1", 26379));
 		Replicator replicator = new RedisSentinelReplicator(hosts, "mymaster", Configuration.defaultSetting());
 		replicator.addEventListener(new EventListener() {
 			@Override
 			public void onEvent(Replicator replicator, Event event) {
-				
+				System.out.println(event);
 			}
 		});
 		replicator.open();

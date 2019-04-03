@@ -21,6 +21,7 @@ import java.io.IOException;
 
 /**
  * @author Leon Chen
+ * @since 3.1.1
  */
 public interface Sentinel extends Closeable {
 

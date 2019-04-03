@@ -21,6 +21,7 @@ import redis.clients.jedis.HostAndPort;
 
 /**
  * @author Leon Chen
+ * @since 3.1.1
  */
 public interface SentinelListener {
 

@@ -41,6 +41,7 @@ import redis.clients.jedis.exceptions.JedisException;
 
 /**
  * @author Leon Chen
+ * @since 3.1.1
  */
 public class DefaultSentinel implements Sentinel {
 

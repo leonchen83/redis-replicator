@@ -23,7 +23,7 @@ public class Tuple2<T1, T2> {
 	private T1 t1;
 	private T2 t2;
 
-	private Tuple2() {
+	public Tuple2() {
 	}
 
 	public T1 getT1() {

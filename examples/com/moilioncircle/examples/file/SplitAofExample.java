@@ -16,6 +16,7 @@
 
 package com.moilioncircle.examples.file;
 
+import com.moilioncircle.examples.util.Tuple2;
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
@@ -109,34 +110,5 @@ public class SplitAofExample {
         });
 
         replicator.open();
-    }
-
-    private static class Tuple2<T1, T2> {
-        private T1 t1;
-        private T2 t2;
-
-        private Tuple2() {
-        }
-
-        public T1 getT1() {
-            return t1;
-        }
-
-        public void setT1(T1 t1) {
-            this.t1 = t1;
-        }
-
-        public T2 getT2() {
-            return t2;
-        }
-
-        public void setT2(T2 t2) {
-            this.t2 = t2;
-        }
-
-        @Override
-        public String toString() {
-            return "<" + t1 + ", " + t2 + '>';
-        }
     }
 }

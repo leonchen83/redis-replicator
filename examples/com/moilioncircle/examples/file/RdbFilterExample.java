@@ -16,6 +16,7 @@
 
 package com.moilioncircle.examples.file;
 
+import com.moilioncircle.examples.util.Tuple2;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
 
@@ -51,7 +53,7 @@ public class RdbFilterExample {
 
     public static void main(String[] args) throws IOException {
         RdbFilterExample rdb = new RdbFilterExample();
-        rdb.filter("./src/test/resources/dumpV7.rdb", new Filter<byte[]>() {
+        rdb.filter("./src/test/resources/dumpV7.rdb", new Predicate<byte[]>() {
             @Override
             public boolean test(byte[] key) {
                 return !new String(key).startsWith("test");
@@ -60,7 +62,7 @@ public class RdbFilterExample {
     }
 
     @SuppressWarnings("resource")
-    private void filter(String source, final Filter<byte[]> filter, String target) throws IOException {
+    private void filter(String source, final Predicate<byte[]> filter, String target) throws IOException {
         final Replicator replicator = new RedisReplicator(new File(source), FileType.RDB, Configuration.defaultSetting());
         try (final CRCOutputStream out = new CRCOutputStream(new BufferedOutputStream(new FileOutputStream(new File(target))))) {
             //
@@ -124,39 +126,6 @@ public class RdbFilterExample {
             });
 
             replicator.open();
-        }
-    }
-
-    private interface Filter<T> {
-        boolean test(T t);
-    }
-
-    private static class Tuple2<T1, T2> {
-        private T1 t1;
-        private T2 t2;
-
-        private Tuple2() {
-        }
-
-        public T1 getT1() {
-            return t1;
-        }
-
-        public void setT1(T1 t1) {
-            this.t1 = t1;
-        }
-
-        public T2 getT2() {
-            return t2;
-        }
-
-        public void setT2(T2 t2) {
-            this.t2 = t2;
-        }
-
-        @Override
-        public String toString() {
-            return "<" + t1 + ", " + t2 + '>';
         }
     }
 }

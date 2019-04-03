@@ -16,6 +16,31 @@
 
 package com.moilioncircle.redis.replicator;
 
+import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
+import static com.moilioncircle.redis.replicator.Constants.STAR;
+import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.PSYNC;
+import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.SYNC;
+import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.SYNC_LATER;
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.Status.CONNECTING;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
+import static com.moilioncircle.redis.replicator.util.Concurrents.terminateQuietly;
+import static com.moilioncircle.redis.replicator.util.Strings.format;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.Socket;
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.moilioncircle.redis.replicator.cmd.BulkReplyHandler;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
@@ -32,30 +57,6 @@ import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 import com.moilioncircle.redis.replicator.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Socket;
-import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-
-import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
-import static com.moilioncircle.redis.replicator.Constants.STAR;
-import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.PSYNC;
-import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.SYNC;
-import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.SYNC_LATER;
-import static com.moilioncircle.redis.replicator.Status.CONNECTED;
-import static com.moilioncircle.redis.replicator.Status.CONNECTING;
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
-import static com.moilioncircle.redis.replicator.util.Concurrents.terminateQuietly;
-import static com.moilioncircle.redis.replicator.util.Strings.format;
-import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * @author Leon Chen
@@ -71,8 +72,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
+	protected ScheduledExecutorService executor;
     protected final RedisSocketFactory socketFactory;
-    protected ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         Objects.requireNonNull(host);
@@ -103,6 +104,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
      */
     @Override
     public void open() throws IOException {
+	    this.executor = Executors.newSingleThreadScheduledExecutor();
         try {
             new RedisSocketReplicatorRetrier().retry(this);
         } finally {

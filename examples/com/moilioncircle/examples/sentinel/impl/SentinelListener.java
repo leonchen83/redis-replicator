@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples.sentinel.extension;
+package com.moilioncircle.examples.sentinel.impl;
 
-import java.io.Closeable;
-import java.io.IOException;
+
+import redis.clients.jedis.HostAndPort;
 
 /**
  * @author Leon Chen
  */
-public interface Sentinel extends Closeable {
+public interface SentinelListener {
 
-	void open() throws IOException;
-
-	void close() throws IOException;
-
-	boolean addSentinelListener(SentinelListener listener);
-
-	boolean removeSentinelListener(SentinelListener listener);
+	void onClose(Sentinel sentinel);
+	
+	void onSwitch(Sentinel sentinel, HostAndPort host);
 }

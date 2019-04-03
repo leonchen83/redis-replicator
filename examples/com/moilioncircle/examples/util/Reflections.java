@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.examples.sentinel.util;
+package com.moilioncircle.examples.util;
 
 import java.lang.reflect.Field;
 

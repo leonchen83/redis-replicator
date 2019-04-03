@@ -182,11 +182,11 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
 	public void onSwitch(Sentinel sentinel, HostAndPort next) {
 		if (prev == null || !prev.equals(next)) {
 			logger.info("Sentinel switch master to [{}]", next);
-			Replicators.close(replicator);
+			Replicators.closeQuietly(replicator);
 			executors.submit(() -> {
 				Reflections.setField(replicator, "host", next.getHost());
 				Reflections.setField(replicator, "port", next.getPort());
-				Replicators.open(replicator);
+				Replicators.openQuietly(replicator);
 			});
 		}
 		prev = next;
@@ -194,7 +194,7 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
 
 	@Override
 	public void onClose(Sentinel sentinel) {
-		Replicators.close(replicator);
+		Replicators.closeQuietly(replicator);
 		terminateQuietly(executors, getConfiguration().getConnectionTimeout(), MILLISECONDS);
 	}
 }

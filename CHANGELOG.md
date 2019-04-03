@@ -1,4 +1,7 @@
-### 2.6.1
+### 2.6.3
+Fix `RedisScoketReplicator.executor` shutdown too early bug.  
+
+### 2.6.2
 Fix offset bug.  
 
 ### 2.6.1

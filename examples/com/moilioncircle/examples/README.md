@@ -28,6 +28,10 @@ Migrate data between two Redis.
 
 Broadcast event, TimerTask example.  
 
+### sentinel
+
+Redis sentinel example.  
+
 ### socket
 
 Replication data via Socket.  

@@ -28,6 +28,10 @@ PSYNC2 故障转移示例.
 
 广播事件与定时同步.  
 
+### sentinel
+
+Redis哨兵用例.  
+
 ### socket
 
 通过socket同步数据.  

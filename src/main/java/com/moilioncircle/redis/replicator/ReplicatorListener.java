@@ -51,4 +51,11 @@ public interface ReplicatorListener {
     boolean addExceptionListener(ExceptionListener listener);
 
     boolean removeExceptionListener(ExceptionListener listener);
+    
+    /*
+     * Connection
+     */
+    boolean addConnectionListener(ConnectionListener listener);
+    
+    boolean removeConnectionListener(ConnectionListener listener);
 }

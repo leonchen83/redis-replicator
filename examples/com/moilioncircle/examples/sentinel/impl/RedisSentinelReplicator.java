@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.moilioncircle.examples.util.Reflections;
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.ConnectionListener;
 import com.moilioncircle.redis.replicator.ExceptionListener;
 import com.moilioncircle.redis.replicator.RedisSocketReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
@@ -116,6 +117,16 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
 	@Override
 	public boolean removeExceptionListener(ExceptionListener listener) {
 		return replicator.removeExceptionListener(listener);
+	}
+
+	@Override
+	public boolean addConnectionListener(ConnectionListener listener) {
+		return replicator.addConnectionListener(listener);
+	}
+
+	@Override
+	public boolean removeConnectionListener(ConnectionListener listener) {
+		return replicator.removeConnectionListener(listener);
 	}
 
 	@Override

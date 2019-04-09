@@ -1,3 +1,6 @@
+### 3.2.0
+Add `ConnectinoListener`.  
+
 ### 3.1.1
 Fix `RedisScoketReplicator.executor` shutdown too early bug.  
 

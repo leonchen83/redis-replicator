@@ -32,6 +32,7 @@ public class AbstractReplicatorListener implements ReplicatorListener {
     protected final List<EventListener> eventListeners = new CopyOnWriteArrayList<>();
     protected final List<RawByteListener> rawByteListeners = new CopyOnWriteArrayList<>();
     protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
+    protected final List<ConnectionListener> connectionListeners = new CopyOnWriteArrayList<>();
 
     @Override
     public boolean addEventListener(EventListener listener) {
@@ -73,6 +74,16 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         return exceptionListeners.remove(listener);
     }
 
+    @Override
+    public boolean addConnectionListener(ConnectionListener listener) {
+        return connectionListeners.add(listener);
+    }
+
+    @Override
+    public boolean removeConnectionListener(ConnectionListener listener) {
+        return connectionListeners.remove(listener);
+    }
+
     protected void doEventListener(Replicator replicator, Event event) {
         if (eventListeners.isEmpty()) return;
         for (EventListener listener : eventListeners) {
@@ -91,6 +102,33 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         if (exceptionListeners.isEmpty()) return;
         for (ExceptionListener listener : exceptionListeners) {
             listener.handle(replicator, throwable, event);
+        }
+    }
+
+    protected void doConnectionListener(Replicator replicator, Status status) {
+        if (connectionListeners.isEmpty()) return;
+        switch (status) {
+            case CONNECTING:
+                for (ConnectionListener listener : connectionListeners)
+                    listener.onConnecting(replicator);
+                break;
+            case CONNECTED:
+                for (ConnectionListener listener : connectionListeners) {
+                    listener.onConnected(replicator);
+                }
+                break;
+            case DISCONNECTING:
+                for (ConnectionListener listener : connectionListeners) {
+                    listener.onDisconnecting(replicator);
+                }
+                break;
+            case DISCONNECTED:
+                for (ConnectionListener listener : connectionListeners) {
+                    listener.onDisconnected(replicator);
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException(status.name());
         }
     }
 }

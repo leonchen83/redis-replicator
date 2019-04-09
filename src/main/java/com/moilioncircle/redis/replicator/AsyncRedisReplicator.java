@@ -152,6 +152,16 @@ public class AsyncRedisReplicator implements AsyncReplicator {
     }
 
     @Override
+    public boolean addConnectionListener(ConnectionListener listener) {
+        return replicator.addConnectionListener(listener);
+    }
+
+    @Override
+    public boolean removeConnectionListener(ConnectionListener listener) {
+        return replicator.removeConnectionListener(listener);
+    }
+
+    @Override
     public boolean verbose() {
         return replicator.verbose();
     }

@@ -283,7 +283,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
     
     protected void connect() throws IOException {
-        if (!connected.compareAndSet(DISCONNECTED, CONNECTING)) return;
+        if (!compareAndSet(DISCONNECTED, CONNECTING)) return;
         try {
             socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
             outputStream = new RedisOutputStream(socket.getOutputStream());
@@ -299,13 +299,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
             replyParser = new ReplyParser(this.inputStream, new RedisCodec());
             logger.info("Connected to redis-server[{}:{}]", host, port);
         } finally {
-            connected.set(CONNECTED);
+            setStatus(CONNECTED);
         }
     }
     
     @Override
     protected void doClose() throws IOException {
-        connected.compareAndSet(CONNECTED, DISCONNECTING);
+        compareAndSet(CONNECTED, DISCONNECTING);
         
         try {
             if (heartbeat != null) {
@@ -333,7 +333,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
             logger.info("socket closed. redis-server[{}:{}]", host, port);
         } finally {
-            connected.set(DISCONNECTED);
+            setStatus(DISCONNECTED);
         }
     }
     

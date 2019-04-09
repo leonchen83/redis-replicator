@@ -175,6 +175,17 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         }
     }
     
+    protected boolean compareAndSet(Status prev, Status next) {
+        boolean result = connected.compareAndSet(prev, next);
+        if (result) doConnectionListener(this, next);
+        return result;
+    }
+    
+    protected void setStatus(Status next) {
+        connected.set(next);
+        doConnectionListener(this, next);
+    }
+    
     @Override
     public boolean verbose() {
         return configuration != null && configuration.isVerbose();
@@ -290,11 +301,11 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     
     @Override
     public void close() throws IOException {
-        this.connected.compareAndSet(CONNECTED, DISCONNECTING);
+        compareAndSet(CONNECTED, DISCONNECTING);
     }
     
     protected void doClose() throws IOException {
-        this.connected.compareAndSet(CONNECTED, DISCONNECTING);
+        compareAndSet(CONNECTED, DISCONNECTING);
         try {
             if (inputStream != null) {
                 this.inputStream.setRawByteListeners(null);
@@ -303,7 +314,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         } catch (IOException ignore) {
             /*NOP*/
         } finally {
-            this.connected.set(DISCONNECTED);
+            setStatus(DISCONNECTED);
         }
     }
 }

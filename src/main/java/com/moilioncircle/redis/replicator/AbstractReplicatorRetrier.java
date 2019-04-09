@@ -40,12 +40,7 @@ abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
         Configuration configuration = replicator.getConfiguration();
         for (; retries < configuration.getRetries() || configuration.getRetries() <= 0; retries++) {
             exception = null;
-            if (isManualClosed()) {
-                System.out.println("manual close");
-                break;
-            } else {
-                System.out.println("not manual close");
-            }
+	        if (isManualClosed()) break;
             final long interval = configuration.getRetryTimeInterval();
             try {
                 if (connect()) {

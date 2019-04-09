@@ -40,6 +40,7 @@ abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
         Configuration configuration = replicator.getConfiguration();
         for (; retries < configuration.getRetries() || configuration.getRetries() <= 0; retries++) {
             exception = null;
+	        if (isClosed()) break;
             final long interval = configuration.getRetryTimeInterval();
             try {
                 if (connect()) {
@@ -54,11 +55,6 @@ abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
                 exception = null;
                 break;
             } catch (IOException | UncheckedIOException e) {
-                //close manually
-                if (isClosed()) {
-                    exception = null;
-                    break;
-                }
                 exception = translate(e);
                 close(exception);
                 sleep(interval);

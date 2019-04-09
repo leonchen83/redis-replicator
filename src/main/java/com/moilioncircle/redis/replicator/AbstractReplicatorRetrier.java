@@ -19,8 +19,6 @@ package com.moilioncircle.redis.replicator;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import static com.moilioncircle.redis.replicator.Status.CONNECTED;
-
 /**
  * @author Leon Chen
  * @since 2.4.7
@@ -28,8 +26,10 @@ import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
     protected int retries = 0;
 
-    protected abstract boolean open() throws IOException;
+    protected abstract boolean isClosed();
 
+    protected abstract boolean open() throws IOException;
+    
     protected abstract boolean connect() throws IOException;
 
     protected abstract boolean close(IOException reason) throws IOException;
@@ -55,7 +55,7 @@ abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
                 break;
             } catch (IOException | UncheckedIOException e) {
                 //close manually
-                if (replicator.getStatus() != CONNECTED) {
+                if (isClosed()) {
                     exception = null;
                     break;
                 }

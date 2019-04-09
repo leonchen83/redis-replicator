@@ -104,6 +104,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
      */
     @Override
     public void open() throws IOException {
+        super.open();
 	    this.executor = Executors.newSingleThreadScheduledExecutor();
         try {
             new RedisSocketReplicatorRetrier().retry(this);
@@ -356,7 +357,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 logger.info("reconnecting to redis-server[{}:{}]. retry times:{}", host, port, (retries + 1));
             return true;
         }
-        
+
+        @Override
+        protected boolean isClosed() {
+            // is manual closed?
+            return RedisSocketReplicator.this.isClosed();
+        }
+
         @Override
         protected boolean open() throws IOException {
             String replId = configuration.getReplId();

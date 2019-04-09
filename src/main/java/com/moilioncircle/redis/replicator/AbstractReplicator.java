@@ -115,6 +115,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
@@ -130,6 +131,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     protected Configuration configuration;
     protected RedisInputStream inputStream;
     protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
+    protected final AtomicBoolean manual = new AtomicBoolean(false);
     protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
@@ -299,9 +301,18 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("XSETID"), new XSetIdParser());
     }
     
+    public void open() throws IOException {
+        manual.set(false);
+    }
+    
     @Override
     public void close() throws IOException {
+        manual.set(true);
         compareAndSet(CONNECTED, DISCONNECTING);
+    }
+    
+    protected boolean isClosed() {
+        return manual.get();
     }
     
     protected void doClose() throws IOException {

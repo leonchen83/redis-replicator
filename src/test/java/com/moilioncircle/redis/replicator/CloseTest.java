@@ -16,6 +16,15 @@
 
 package com.moilioncircle.redis.replicator;
 
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
@@ -24,14 +33,6 @@ import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Leon Chen
@@ -446,7 +447,7 @@ public class CloseTest {
                 }
             }
         }.start();
-        Thread.sleep(4000);
+        Thread.sleep(3500);
         replicator.close();
         Thread.sleep(2000);
         assertEquals(0, acc.get());

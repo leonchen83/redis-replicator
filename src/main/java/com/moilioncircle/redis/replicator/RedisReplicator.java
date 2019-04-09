@@ -16,6 +16,13 @@
 
 package com.moilioncircle.redis.replicator;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.Objects;
+
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
@@ -25,13 +32,6 @@ import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.util.Objects;
 
 /**
  * @author Leon Chen
@@ -215,13 +215,13 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
-    public boolean addConnectionListener(ConnectionListener listener) {
-        return replicator.addConnectionListener(listener);
+    public boolean addStatusListener(StatusListener listener) {
+        return replicator.addStatusListener(listener);
     }
 
     @Override
-    public boolean removeConnectionListener(ConnectionListener listener) {
-        return replicator.removeConnectionListener(listener);
+    public boolean removeStatusListener(StatusListener listener) {
+        return replicator.removeStatusListener(listener);
     }
 
     @Override

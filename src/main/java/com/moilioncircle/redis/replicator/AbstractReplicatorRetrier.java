@@ -26,7 +26,7 @@ import java.io.UncheckedIOException;
 abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
     protected int retries = 0;
 
-    protected abstract boolean isClosed();
+    protected abstract boolean isManualClosed();
 
     protected abstract boolean open() throws IOException;
     
@@ -40,7 +40,12 @@ abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
         Configuration configuration = replicator.getConfiguration();
         for (; retries < configuration.getRetries() || configuration.getRetries() <= 0; retries++) {
             exception = null;
-	        if (isClosed()) break;
+            if (isManualClosed()) {
+                System.out.println("manual close");
+                break;
+            } else {
+                System.out.println("not manual close");
+            }
             final long interval = configuration.getRetryTimeInterval();
             try {
                 if (connect()) {

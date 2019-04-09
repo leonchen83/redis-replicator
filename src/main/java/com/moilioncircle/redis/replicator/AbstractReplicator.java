@@ -179,13 +179,13 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     
     protected boolean compareAndSet(Status prev, Status next) {
         boolean result = connected.compareAndSet(prev, next);
-        if (result) doConnectionListener(this, next);
+        if (result) doStatusListener(this, next);
         return result;
     }
     
     protected void setStatus(Status next) {
         connected.set(next);
-        doConnectionListener(this, next);
+        doStatusListener(this, next);
     }
     
     @Override
@@ -302,14 +302,13 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     }
     
     public void open() throws IOException {
-        manual.set(false);
+        manual.compareAndSet(true, false);
     }
     
     @Override
     public void close() throws IOException {
-	    if (compareAndSet(CONNECTED, DISCONNECTING)) {
-		    manual.set(true);
-	    }
+        manual.compareAndSet(false, true);
+        compareAndSet(CONNECTED, DISCONNECTING);
     }
     
     protected boolean isClosed() {

@@ -20,13 +20,7 @@ package com.moilioncircle.redis.replicator;
  * @author Leon Chen
  * @since 3.2.0
  */
-public interface ConnectionListener {
-
-	void onConnecting(Replicator replicator);
-	
-	void onConnected(Replicator replicator);
-	
-	void onDisconnecting(Replicator replicator);
-	
-	void onDisconnected(Replicator replicator);
+@FunctionalInterface
+public interface StatusListener {
+	void handle(Replicator replicator, Status status);
 }

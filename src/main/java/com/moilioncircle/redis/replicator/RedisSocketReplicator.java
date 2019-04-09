@@ -359,8 +359,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
 
         @Override
-        protected boolean isClosed() {
-            // is manual closed?
+        protected boolean isManualClosed() {
             return RedisSocketReplicator.this.isClosed();
         }
 

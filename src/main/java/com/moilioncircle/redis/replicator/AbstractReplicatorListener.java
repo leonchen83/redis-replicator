@@ -16,12 +16,12 @@
 
 package com.moilioncircle.redis.replicator;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Leon Chen
@@ -30,9 +30,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class AbstractReplicatorListener implements ReplicatorListener {
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
     protected final List<EventListener> eventListeners = new CopyOnWriteArrayList<>();
+    protected final List<StatusListener> statusListeners = new CopyOnWriteArrayList<>();
     protected final List<RawByteListener> rawByteListeners = new CopyOnWriteArrayList<>();
     protected final List<ExceptionListener> exceptionListeners = new CopyOnWriteArrayList<>();
-    protected final List<ConnectionListener> connectionListeners = new CopyOnWriteArrayList<>();
 
     @Override
     public boolean addEventListener(EventListener listener) {
@@ -75,13 +75,13 @@ public class AbstractReplicatorListener implements ReplicatorListener {
     }
 
     @Override
-    public boolean addConnectionListener(ConnectionListener listener) {
-        return connectionListeners.add(listener);
+    public boolean addStatusListener(StatusListener listener) {
+        return statusListeners.add(listener);
     }
 
     @Override
-    public boolean removeConnectionListener(ConnectionListener listener) {
-        return connectionListeners.remove(listener);
+    public boolean removeStatusListener(StatusListener listener) {
+        return statusListeners.remove(listener);
     }
 
     protected void doEventListener(Replicator replicator, Event event) {
@@ -105,30 +105,10 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         }
     }
 
-    protected void doConnectionListener(Replicator replicator, Status status) {
-        if (connectionListeners.isEmpty()) return;
-        switch (status) {
-            case CONNECTING:
-                for (ConnectionListener listener : connectionListeners)
-                    listener.onConnecting(replicator);
-                break;
-            case CONNECTED:
-                for (ConnectionListener listener : connectionListeners) {
-                    listener.onConnected(replicator);
-                }
-                break;
-            case DISCONNECTING:
-                for (ConnectionListener listener : connectionListeners) {
-                    listener.onDisconnecting(replicator);
-                }
-                break;
-            case DISCONNECTED:
-                for (ConnectionListener listener : connectionListeners) {
-                    listener.onDisconnected(replicator);
-                }
-                break;
-            default:
-                throw new UnsupportedOperationException(status.name());
+    protected void doStatusListener(Replicator replicator, Status status) {
+        if (statusListeners.isEmpty()) return;
+        for (StatusListener listener : statusListeners) {
+            listener.handle(replicator, status);
         }
     }
 }

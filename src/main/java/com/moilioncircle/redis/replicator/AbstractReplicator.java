@@ -16,6 +16,17 @@
 
 package com.moilioncircle.redis.replicator;
 
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
@@ -110,17 +121,6 @@ import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleKey;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static com.moilioncircle.redis.replicator.Status.CONNECTED;
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 
 /**
  * @author Leon Chen
@@ -307,8 +307,9 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     
     @Override
     public void close() throws IOException {
-        manual.set(true);
-        compareAndSet(CONNECTED, DISCONNECTING);
+	    if (compareAndSet(CONNECTED, DISCONNECTING)) {
+		    manual.set(true);
+	    }
     }
     
     protected boolean isClosed() {

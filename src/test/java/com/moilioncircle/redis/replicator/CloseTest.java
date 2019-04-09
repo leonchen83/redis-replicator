@@ -373,7 +373,7 @@ public class CloseTest {
         Thread.sleep(2000);
         assertEquals(1, acc.get());
     }
-    
+
     @SuppressWarnings("resource")
     @Test
     public void testMixClose11() throws IOException {
@@ -420,5 +420,35 @@ public class CloseTest {
         replicator.open();
         assertEquals(0, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
+    }
+
+    @Test
+    public void testMixClose13() throws IOException, URISyntaxException, InterruptedException {
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6666?retries=-1");
+        final AtomicInteger acc = new AtomicInteger(0);
+        new Thread() {
+            @Override
+            public void run() {
+                replicator.addEventListener(new EventListener() {
+                    @Override
+                    public void onEvent(Replicator replicator, Event event) {
+                        if (event instanceof PreCommandSyncEvent) {
+                            acc.incrementAndGet();
+                        }
+                        if (event instanceof PostCommandSyncEvent) {
+                            acc.incrementAndGet();
+                        }
+                    }
+                });
+                try {
+                    replicator.open();
+                } catch (IOException e) {
+                }
+            }
+        }.start();
+        Thread.sleep(4000);
+        replicator.close();
+        Thread.sleep(2000);
+        assertEquals(0, acc.get());
     }
 }

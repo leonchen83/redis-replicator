@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class AbstractReplicatorListener implements ReplicatorListener {
     protected final List<RdbListener> rdbListeners = new CopyOnWriteArrayList<>();
     protected final List<CloseListener> closeListeners = new CopyOnWriteArrayList<>();
+    protected final List<StatusListener> statusListeners = new CopyOnWriteArrayList<>();
     protected final List<CommandListener> commandListeners = new CopyOnWriteArrayList<>();
     protected final List<RawByteListener> rawByteListeners = new CopyOnWriteArrayList<>();
     protected final List<AuxFieldListener> auxFieldListeners = new CopyOnWriteArrayList<>();
@@ -99,6 +100,16 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         return exceptionListeners.remove(listener);
     }
 
+    @Override
+    public boolean addStatusListener(StatusListener listener) {
+        return statusListeners.add(listener);
+    }
+
+    @Override
+    public boolean removeStatusListener(StatusListener listener) {
+        return statusListeners.remove(listener);
+    }
+
     /**
      * @param rawBytes input stream raw bytes
      * @since 2.2.0
@@ -155,6 +166,13 @@ public class AbstractReplicatorListener implements ReplicatorListener {
         if (exceptionListeners.isEmpty()) return;
         for (ExceptionListener listener : exceptionListeners) {
             listener.handle(replicator, throwable, event);
+        }
+    }
+
+    protected void doStatusListener(Replicator replicator, Status status) {
+        if (statusListeners.isEmpty()) return;
+        for (StatusListener listener : statusListeners) {
+            listener.handle(replicator, status);
         }
     }
 

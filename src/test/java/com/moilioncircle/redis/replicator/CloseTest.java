@@ -18,16 +18,19 @@ package com.moilioncircle.redis.replicator;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandListener;
+import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Leon Chen
@@ -245,6 +248,24 @@ public class CloseTest {
         replicator.close();
         Thread.sleep(100);
         assertEquals(0, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
+    }
+
+    @Test
+    public void testMixClose13() throws IOException, URISyntaxException, InterruptedException {
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:7777?retries=-1");
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    replicator.open();
+                } catch (IOException e) {
+                }
+            }
+        }.start();
+        Thread.sleep(3500);
+        replicator.close();
+        Thread.sleep(2000);
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
 }

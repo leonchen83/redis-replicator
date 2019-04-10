@@ -1,3 +1,6 @@
+### 2.6.4
+Add `StatusListener` .  
+
 ### 2.6.3
 Fix `RedisScoketReplicator.executor` shutdown too early bug.  
 

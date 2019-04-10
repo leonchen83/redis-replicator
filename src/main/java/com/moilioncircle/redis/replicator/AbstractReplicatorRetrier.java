@@ -17,8 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import java.io.IOException;
-
-import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import java.io.UncheckedIOException;
 
 /**
  * @author Leon Chen
@@ -26,6 +25,8 @@ import static com.moilioncircle.redis.replicator.Status.CONNECTED;
  */
 abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
     protected int retries = 0;
+
+    protected abstract boolean isManualClosed();
 
     protected abstract boolean open() throws IOException;
 
@@ -39,6 +40,7 @@ abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
         Configuration configuration = replicator.getConfiguration();
         for (; retries < configuration.getRetries() || configuration.getRetries() <= 0; retries++) {
             exception = null;
+	        if (isManualClosed()) break;
             final long interval = configuration.getRetryTimeInterval();
             try {
                 if (connect()) {
@@ -53,11 +55,6 @@ abstract class AbstractReplicatorRetrier implements ReplicatorRetrier {
                 exception = null;
                 break;
             } catch (IOException | UncheckedIOException e) {
-                //close manually
-                if (replicator.getStatus() != CONNECTED) {
-                    exception = null;
-                    break;
-                }
                 exception = translate(e);
                 close(exception);
                 sleep(interval);

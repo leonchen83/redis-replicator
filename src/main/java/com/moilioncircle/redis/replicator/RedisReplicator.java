@@ -232,6 +232,16 @@ public class RedisReplicator implements Replicator {
     }
 
     @Override
+    public boolean addStatusListener(StatusListener listener) {
+        return replicator.addStatusListener(listener);
+    }
+
+    @Override
+    public boolean removeStatusListener(StatusListener listener) {
+        return replicator.removeStatusListener(listener);
+    }
+
+    @Override
     public boolean verbose() {
         return replicator.verbose();
     }

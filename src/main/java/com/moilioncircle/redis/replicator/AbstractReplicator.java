@@ -118,6 +118,7 @@ import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
@@ -133,6 +134,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     protected Configuration configuration;
     protected RedisInputStream inputStream;
     protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
+    protected final AtomicBoolean manual = new AtomicBoolean(false);
     protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
@@ -187,7 +189,18 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
             doExceptionListener(this, e, event);
         }
     }
-
+    
+    protected boolean compareAndSet(Status prev, Status next) {
+        boolean result = connected.compareAndSet(prev, next);
+        if (result) doStatusListener(this, next);
+        return result;
+    }
+    
+    protected void setStatus(Status next) {
+        connected.set(next);
+        doStatusListener(this, next);
+    }
+    
     @Override
     public boolean verbose() {
         return configuration != null && configuration.isVerbose();
@@ -300,14 +313,23 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("XTRIM"), new XTrimParser());
         addCommandParser(CommandName.name("XSETID"), new XSetIdParser());
     }
-
+    
+    public void open() throws IOException {
+        manual.compareAndSet(true, false);
+    }
+    
     @Override
     public void close() throws IOException {
-        this.connected.compareAndSet(CONNECTED, DISCONNECTING);
+        compareAndSet(CONNECTED, DISCONNECTING);
+        manual.compareAndSet(false, true);
+    }
+    
+    protected boolean isClosed() {
+        return manual.get();
     }
 
     protected void doClose() throws IOException {
-        this.connected.compareAndSet(CONNECTED, DISCONNECTING);
+        compareAndSet(CONNECTED, DISCONNECTING);
         try {
             if (inputStream != null) {
                 this.inputStream.setRawByteListeners(null);
@@ -316,7 +338,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         } catch (IOException ignore) {
             /*NOP*/
         } finally {
-            this.connected.set(DISCONNECTED);
+            setStatus(DISCONNECTED);
         }
     }
 }

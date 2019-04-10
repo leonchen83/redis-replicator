@@ -52,7 +52,8 @@ public class RedisRdbReplicator extends AbstractReplicator {
 
     @Override
     public void open() throws IOException {
-        if (!this.connected.compareAndSet(DISCONNECTED, CONNECTED)) return;
+        super.open();
+        if (!compareAndSet(DISCONNECTED, CONNECTED)) return;
         try {
             doOpen();
         } catch (EOFException ignore) {

@@ -70,7 +70,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
-    protected ScheduledExecutorService executor;
+	protected ScheduledExecutorService executor;
     protected final RedisSocketFactory socketFactory;
 
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
@@ -94,7 +94,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
      */
     @Override
     public void open() throws IOException {
-        this.executor = Executors.newSingleThreadScheduledExecutor();
+        super.open();
+	    this.executor = Executors.newSingleThreadScheduledExecutor();
         try {
             new RedisSocketReplicatorRetrier().retry(this);
         } finally {
@@ -273,7 +274,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     }
 
     protected void connect() throws IOException {
-        if (!connected.compareAndSet(DISCONNECTED, CONNECTING)) return;
+        if (!compareAndSet(DISCONNECTED, CONNECTING)) return;
         try {
             socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
             outputStream = new RedisOutputStream(socket.getOutputStream());
@@ -289,14 +290,14 @@ public class RedisSocketReplicator extends AbstractReplicator {
             replyParser = new ReplyParser(this.inputStream, new RedisCodec());
             logger.info("Connected to redis-server[{}:{}]", host, port);
         } finally {
-            connected.set(CONNECTED);
+            setStatus(CONNECTED);
         }
     }
 
     @Override
     protected void doClose() throws IOException {
-        connected.compareAndSet(CONNECTED, DISCONNECTING);
-
+        compareAndSet(CONNECTED, DISCONNECTING);
+        
         try {
             if (heartbeat != null) {
                 if (!heartbeat.isCancelled()) heartbeat.cancel(true);
@@ -323,7 +324,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
             logger.info("socket closed. redis-server[{}:{}]", host, port);
         } finally {
-            connected.set(DISCONNECTED);
+            setStatus(DISCONNECTED);
         }
     }
 
@@ -345,6 +346,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
             if (reason != null)
                 logger.info("reconnecting to redis-server[{}:{}]. retry times:{}", host, port, (retries + 1));
             return true;
+        }
+
+        @Override
+        protected boolean isManualClosed() {
+            return RedisSocketReplicator.this.isClosed();
         }
 
         @Override

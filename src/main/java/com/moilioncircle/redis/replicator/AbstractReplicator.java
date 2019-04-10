@@ -307,8 +307,8 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     
     @Override
     public void close() throws IOException {
-        manual.compareAndSet(false, true);
         compareAndSet(CONNECTED, DISCONNECTING);
+        manual.compareAndSet(false, true);
     }
     
     protected boolean isClosed() {

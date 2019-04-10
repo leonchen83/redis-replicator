@@ -28,15 +28,15 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
  */
 public class ZPopMaxParser implements CommandParser<ZPopMaxCommand> {
 
-	@Override
-	public ZPopMaxCommand parse(Object[] command) {
-		int idx = 1;
-		byte[] key = toBytes(command[idx]);
-		int count = 1;
-		idx++;
-		if (idx < command.length) {
-			count = toInt(command[idx++]);
-		}
-		return new ZPopMaxCommand(key, count);
-	}
+    @Override
+    public ZPopMaxCommand parse(Object[] command) {
+        int idx = 1;
+        byte[] key = toBytes(command[idx]);
+        int count = 1;
+        idx++;
+        if (idx < command.length) {
+            count = toInt(command[idx++]);
+        }
+        return new ZPopMaxCommand(key, count);
+    }
 }

@@ -21,6 +21,6 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @since 2.6.0
  */
 public class ReplConfGetAckCommand extends ReplConfCommand {
-	
-	private static final long serialVersionUID = 1L;
+    
+    private static final long serialVersionUID = 1L;
 }

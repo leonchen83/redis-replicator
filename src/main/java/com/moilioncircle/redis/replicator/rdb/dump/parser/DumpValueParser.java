@@ -26,7 +26,7 @@ import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
  */
 public interface DumpValueParser {
 
-	KeyValuePair<?, ?> parse(DumpKeyValuePair kv);
+    KeyValuePair<?, ?> parse(DumpKeyValuePair kv);
 
-	void parse(DumpKeyValuePair kv, EventListener listener);
+    void parse(DumpKeyValuePair kv, EventListener listener);
 }

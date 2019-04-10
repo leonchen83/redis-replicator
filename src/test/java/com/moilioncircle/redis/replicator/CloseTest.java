@@ -425,7 +425,7 @@ public class CloseTest {
 
     @Test
     public void testMixClose13() throws IOException, URISyntaxException, InterruptedException {
-	    final Replicator replicator = new RedisReplicator("redis://127.0.0.1:7777?retries=-1");
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:7777?retries=-1");
         final AtomicInteger acc = new AtomicInteger(0);
         new Thread() {
             @Override

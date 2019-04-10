@@ -22,5 +22,5 @@ package com.moilioncircle.redis.replicator;
  */
 @FunctionalInterface
 public interface StatusListener {
-	void handle(Replicator replicator, Status status);
+    void handle(Replicator replicator, Status status);
 }

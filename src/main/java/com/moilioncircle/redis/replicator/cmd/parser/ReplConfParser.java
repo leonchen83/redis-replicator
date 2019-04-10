@@ -28,15 +28,15 @@ import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
  * @since 2.6.0
  */
 public class ReplConfParser implements CommandParser<ReplConfCommand> {
-	@Override
-	public ReplConfCommand parse(Object[] command) {
-		int idx = 1;
-		String type = toRune(command[idx]);
-		idx++;
-		if (isEquals(type, "GETACK")) {
-			return new ReplConfGetAckCommand();
-		} else {
-			throw new AssertionError("parse [REPLCONF] command error." + type);
-		}
-	}
+    @Override
+    public ReplConfCommand parse(Object[] command) {
+        int idx = 1;
+        String type = toRune(command[idx]);
+        idx++;
+        if (isEquals(type, "GETACK")) {
+            return new ReplConfGetAckCommand();
+        } else {
+            throw new AssertionError("parse [REPLCONF] command error." + type);
+        }
+    }
 }

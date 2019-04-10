@@ -25,7 +25,7 @@ import redis.clients.jedis.HostAndPort;
  */
 public interface SentinelListener {
 
-	void onClose(Sentinel sentinel);
-	
-	void onSwitch(Sentinel sentinel, HostAndPort host);
+    void onClose(Sentinel sentinel);
+    
+    void onSwitch(Sentinel sentinel, HostAndPort host);
 }

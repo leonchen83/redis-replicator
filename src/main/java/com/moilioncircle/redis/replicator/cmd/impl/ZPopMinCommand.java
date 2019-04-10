@@ -24,33 +24,33 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  */
 public class ZPopMinCommand implements Command {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private byte[] key;
-	private int count = 1;
+    private byte[] key;
+    private int count = 1;
 
-	public ZPopMinCommand() {
-	}
+    public ZPopMinCommand() {
+    }
 
-	public ZPopMinCommand(byte[] key, int count) {
-		this.key = key;
-		this.count = count;
-	}
+    public ZPopMinCommand(byte[] key, int count) {
+        this.key = key;
+        this.count = count;
+    }
 
-	public byte[] getKey() {
-		return key;
-	}
+    public byte[] getKey() {
+        return key;
+    }
 
-	public void setKey(byte[] key) {
-		this.key = key;
-	}
+    public void setKey(byte[] key) {
+        this.key = key;
+    }
 
-	public int getCount() {
-		return count;
-	}
+    public int getCount() {
+        return count;
+    }
 
-	public void setCount(int count) {
-		this.count = count;
-	}
+    public void setCount(int count) {
+        this.count = count;
+    }
 }
 

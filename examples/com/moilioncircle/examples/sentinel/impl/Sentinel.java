@@ -25,11 +25,11 @@ import java.io.IOException;
  */
 public interface Sentinel extends Closeable {
 
-	void open() throws IOException;
+    void open() throws IOException;
 
-	void close() throws IOException;
+    void close() throws IOException;
 
-	boolean addSentinelListener(SentinelListener listener);
+    boolean addSentinelListener(SentinelListener listener);
 
-	boolean removeSentinelListener(SentinelListener listener);
+    boolean removeSentinelListener(SentinelListener listener);
 }

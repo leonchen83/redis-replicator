@@ -72,7 +72,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
-	protected ScheduledExecutorService executor;
+    protected ScheduledExecutorService executor;
     protected final RedisSocketFactory socketFactory;
     
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
@@ -105,7 +105,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void open() throws IOException {
         super.open();
-	    this.executor = Executors.newSingleThreadScheduledExecutor();
+        this.executor = Executors.newSingleThreadScheduledExecutor();
         try {
             new RedisSocketReplicatorRetrier().retry(this);
         } finally {

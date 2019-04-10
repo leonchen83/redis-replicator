@@ -52,59 +52,59 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST
  */
 public class DefaultDumpValueParser implements DumpValueParser {
 
-	protected final Replicator replicator;
-	protected final RdbValueVisitor valueVisitor;
+    protected final Replicator replicator;
+    protected final RdbValueVisitor valueVisitor;
 
-	public DefaultDumpValueParser(Replicator replicator) {
-		Objects.requireNonNull(replicator);
-		this.replicator = replicator;
-		this.valueVisitor = new DefaultRdbValueVisitor(replicator);
-	}
+    public DefaultDumpValueParser(Replicator replicator) {
+        Objects.requireNonNull(replicator);
+        this.replicator = replicator;
+        this.valueVisitor = new DefaultRdbValueVisitor(replicator);
+    }
 
-	public void parse(DumpKeyValuePair kv, EventListener listener) {
-		Objects.requireNonNull(listener).onEvent(replicator, parse(kv));
-	}
+    public void parse(DumpKeyValuePair kv, EventListener listener) {
+        Objects.requireNonNull(listener).onEvent(replicator, parse(kv));
+    }
 
-	public KeyValuePair<?, ?> parse(DumpKeyValuePair kv) {
-		Objects.requireNonNull(kv);
-		try (RedisInputStream in = new RedisInputStream(new ByteArray(kv.getValue()))) {
-			int valueType = in.read();
-			switch (valueType) {
-				case RDB_TYPE_STRING:
-					return KeyValuePairs.string(kv, valueVisitor.applyString(in, 0));
-				case RDB_TYPE_LIST:
-					return KeyValuePairs.list(kv, valueVisitor.applyList(in, 0));
-				case RDB_TYPE_SET:
-					return KeyValuePairs.set(kv, valueVisitor.applySet(in, 0));
-				case RDB_TYPE_ZSET:
-					return KeyValuePairs.zset(kv, valueVisitor.applyZSet(in, 0));
-				case RDB_TYPE_ZSET_2:
-					return KeyValuePairs.zset(kv, valueVisitor.applyZSet2(in, 0));
-				case RDB_TYPE_HASH:
-					return KeyValuePairs.hash(kv, valueVisitor.applyHash(in, 0));
-				case RDB_TYPE_HASH_ZIPMAP:
-					return KeyValuePairs.hash(kv, valueVisitor.applyHashZipMap(in, 0));
-				case RDB_TYPE_LIST_ZIPLIST:
-					return KeyValuePairs.list(kv, valueVisitor.applyListZipList(in, 0));
-				case RDB_TYPE_SET_INTSET:
-					return KeyValuePairs.set(kv, valueVisitor.applySetIntSet(in, 0));
-				case RDB_TYPE_ZSET_ZIPLIST:
-					return KeyValuePairs.zset(kv, valueVisitor.applyZSetZipList(in, 0));
-				case RDB_TYPE_HASH_ZIPLIST:
-					return KeyValuePairs.hash(kv, valueVisitor.applyHashZipList(in, 0));
-				case RDB_TYPE_LIST_QUICKLIST:
-					return KeyValuePairs.list(kv, valueVisitor.applyListQuickList(in, 0));
-				case RDB_TYPE_MODULE:
-					return KeyValuePairs.module(kv, valueVisitor.applyModule(in, 0));
-				case RDB_TYPE_MODULE_2:
-					return KeyValuePairs.module(kv, valueVisitor.applyModule2(in, 0));
-				case RDB_TYPE_STREAM_LISTPACKS:
-					return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks(in, 0));
-				default:
-					throw new AssertionError("unexpected value type:" + valueType);
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
+    public KeyValuePair<?, ?> parse(DumpKeyValuePair kv) {
+        Objects.requireNonNull(kv);
+        try (RedisInputStream in = new RedisInputStream(new ByteArray(kv.getValue()))) {
+            int valueType = in.read();
+            switch (valueType) {
+                case RDB_TYPE_STRING:
+                    return KeyValuePairs.string(kv, valueVisitor.applyString(in, 0));
+                case RDB_TYPE_LIST:
+                    return KeyValuePairs.list(kv, valueVisitor.applyList(in, 0));
+                case RDB_TYPE_SET:
+                    return KeyValuePairs.set(kv, valueVisitor.applySet(in, 0));
+                case RDB_TYPE_ZSET:
+                    return KeyValuePairs.zset(kv, valueVisitor.applyZSet(in, 0));
+                case RDB_TYPE_ZSET_2:
+                    return KeyValuePairs.zset(kv, valueVisitor.applyZSet2(in, 0));
+                case RDB_TYPE_HASH:
+                    return KeyValuePairs.hash(kv, valueVisitor.applyHash(in, 0));
+                case RDB_TYPE_HASH_ZIPMAP:
+                    return KeyValuePairs.hash(kv, valueVisitor.applyHashZipMap(in, 0));
+                case RDB_TYPE_LIST_ZIPLIST:
+                    return KeyValuePairs.list(kv, valueVisitor.applyListZipList(in, 0));
+                case RDB_TYPE_SET_INTSET:
+                    return KeyValuePairs.set(kv, valueVisitor.applySetIntSet(in, 0));
+                case RDB_TYPE_ZSET_ZIPLIST:
+                    return KeyValuePairs.zset(kv, valueVisitor.applyZSetZipList(in, 0));
+                case RDB_TYPE_HASH_ZIPLIST:
+                    return KeyValuePairs.hash(kv, valueVisitor.applyHashZipList(in, 0));
+                case RDB_TYPE_LIST_QUICKLIST:
+                    return KeyValuePairs.list(kv, valueVisitor.applyListQuickList(in, 0));
+                case RDB_TYPE_MODULE:
+                    return KeyValuePairs.module(kv, valueVisitor.applyModule(in, 0));
+                case RDB_TYPE_MODULE_2:
+                    return KeyValuePairs.module(kv, valueVisitor.applyModule2(in, 0));
+                case RDB_TYPE_STREAM_LISTPACKS:
+                    return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks(in, 0));
+                default:
+                    throw new AssertionError("unexpected value type:" + valueType);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 }

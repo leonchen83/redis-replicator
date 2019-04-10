@@ -54,158 +54,158 @@ import redis.clients.jedis.HostAndPort;
  */
 public class RedisSentinelReplicator implements Replicator, SentinelListener {
 
-	protected static final Logger logger = LoggerFactory.getLogger(RedisSentinelReplicator.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RedisSentinelReplicator.class);
 
-	private HostAndPort prev;
-	private final Sentinel sentinel;
-	private final RedisSocketReplicator replicator;
-	protected final ExecutorService executors = newSingleThreadExecutor();
+    private HostAndPort prev;
+    private final Sentinel sentinel;
+    private final RedisSocketReplicator replicator;
+    protected final ExecutorService executors = newSingleThreadExecutor();
 
-	public RedisSentinelReplicator(List<HostAndPort> hosts, String name, Configuration configuration) {
-		Objects.requireNonNull(hosts);
-		Objects.requireNonNull(configuration);
-		this.replicator = new RedisSocketReplicator("", 1, configuration);
-		this.sentinel = new DefaultSentinel(hosts, name, configuration);
-		this.sentinel.addSentinelListener(this);
-	}
+    public RedisSentinelReplicator(List<HostAndPort> hosts, String name, Configuration configuration) {
+        Objects.requireNonNull(hosts);
+        Objects.requireNonNull(configuration);
+        this.replicator = new RedisSocketReplicator("", 1, configuration);
+        this.sentinel = new DefaultSentinel(hosts, name, configuration);
+        this.sentinel.addSentinelListener(this);
+    }
 
-	@Override
-	public void open() throws IOException {
-		this.sentinel.open();
-	}
+    @Override
+    public void open() throws IOException {
+        this.sentinel.open();
+    }
 
-	@Override
-	public void close() throws IOException {
-		this.sentinel.close();
-	}
+    @Override
+    public void close() throws IOException {
+        this.sentinel.close();
+    }
 
-	@Override
-	public boolean addEventListener(EventListener listener) {
-		return replicator.addEventListener(listener);
-	}
+    @Override
+    public boolean addEventListener(EventListener listener) {
+        return replicator.addEventListener(listener);
+    }
 
-	@Override
-	public boolean removeEventListener(EventListener listener) {
-		return replicator.removeEventListener(listener);
-	}
+    @Override
+    public boolean removeEventListener(EventListener listener) {
+        return replicator.removeEventListener(listener);
+    }
 
-	@Override
-	public boolean addRawByteListener(RawByteListener listener) {
-		return replicator.addRawByteListener(listener);
-	}
+    @Override
+    public boolean addRawByteListener(RawByteListener listener) {
+        return replicator.addRawByteListener(listener);
+    }
 
-	@Override
-	public boolean removeRawByteListener(RawByteListener listener) {
-		return replicator.removeRawByteListener(listener);
-	}
+    @Override
+    public boolean removeRawByteListener(RawByteListener listener) {
+        return replicator.removeRawByteListener(listener);
+    }
 
-	@Override
-	public boolean addCloseListener(CloseListener listener) {
-		return replicator.addCloseListener(listener);
-	}
+    @Override
+    public boolean addCloseListener(CloseListener listener) {
+        return replicator.addCloseListener(listener);
+    }
 
-	@Override
-	public boolean removeCloseListener(CloseListener listener) {
-		return replicator.removeCloseListener(listener);
-	}
+    @Override
+    public boolean removeCloseListener(CloseListener listener) {
+        return replicator.removeCloseListener(listener);
+    }
 
-	@Override
-	public boolean addExceptionListener(ExceptionListener listener) {
-		return replicator.addExceptionListener(listener);
-	}
+    @Override
+    public boolean addExceptionListener(ExceptionListener listener) {
+        return replicator.addExceptionListener(listener);
+    }
 
-	@Override
-	public boolean removeExceptionListener(ExceptionListener listener) {
-		return replicator.removeExceptionListener(listener);
-	}
+    @Override
+    public boolean removeExceptionListener(ExceptionListener listener) {
+        return replicator.removeExceptionListener(listener);
+    }
 
-	@Override
-	public boolean addStatusListener(StatusListener listener) {
-		return replicator.addStatusListener(listener);
-	}
+    @Override
+    public boolean addStatusListener(StatusListener listener) {
+        return replicator.addStatusListener(listener);
+    }
 
-	@Override
-	public boolean removeStatusListener(StatusListener listener) {
-		return replicator.removeStatusListener(listener);
-	}
+    @Override
+    public boolean removeStatusListener(StatusListener listener) {
+        return replicator.removeStatusListener(listener);
+    }
 
-	@Override
-	public void builtInCommandParserRegister() {
-		replicator.builtInCommandParserRegister();
-	}
+    @Override
+    public void builtInCommandParserRegister() {
+        replicator.builtInCommandParserRegister();
+    }
 
-	@Override
-	public CommandParser<? extends Command> getCommandParser(CommandName command) {
-		return replicator.getCommandParser(command);
-	}
+    @Override
+    public CommandParser<? extends Command> getCommandParser(CommandName command) {
+        return replicator.getCommandParser(command);
+    }
 
-	@Override
-	public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
-		replicator.addCommandParser(command, parser);
-	}
+    @Override
+    public <T extends Command> void addCommandParser(CommandName command, CommandParser<T> parser) {
+        replicator.addCommandParser(command, parser);
+    }
 
-	@Override
-	public CommandParser<? extends Command> removeCommandParser(CommandName command) {
-		return replicator.removeCommandParser(command);
-	}
+    @Override
+    public CommandParser<? extends Command> removeCommandParser(CommandName command) {
+        return replicator.removeCommandParser(command);
+    }
 
-	@Override
-	public ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion) {
-		return replicator.getModuleParser(moduleName, moduleVersion);
-	}
+    @Override
+    public ModuleParser<? extends Module> getModuleParser(String moduleName, int moduleVersion) {
+        return replicator.getModuleParser(moduleName, moduleVersion);
+    }
 
-	@Override
-	public <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser) {
-		replicator.addModuleParser(moduleName, moduleVersion, parser);
-	}
+    @Override
+    public <T extends Module> void addModuleParser(String moduleName, int moduleVersion, ModuleParser<T> parser) {
+        replicator.addModuleParser(moduleName, moduleVersion, parser);
+    }
 
-	@Override
-	public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
-		return replicator.removeModuleParser(moduleName, moduleVersion);
-	}
+    @Override
+    public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
+        return replicator.removeModuleParser(moduleName, moduleVersion);
+    }
 
-	@Override
-	public void setRdbVisitor(RdbVisitor rdbVisitor) {
-		replicator.setRdbVisitor(rdbVisitor);
-	}
+    @Override
+    public void setRdbVisitor(RdbVisitor rdbVisitor) {
+        replicator.setRdbVisitor(rdbVisitor);
+    }
 
-	@Override
-	public RdbVisitor getRdbVisitor() {
-		return replicator.getRdbVisitor();
-	}
+    @Override
+    public RdbVisitor getRdbVisitor() {
+        return replicator.getRdbVisitor();
+    }
 
-	@Override
-	public boolean verbose() {
-		return replicator.verbose();
-	}
+    @Override
+    public boolean verbose() {
+        return replicator.verbose();
+    }
 
-	@Override
-	public Status getStatus() {
-		return replicator.getStatus();
-	}
+    @Override
+    public Status getStatus() {
+        return replicator.getStatus();
+    }
 
-	@Override
-	public Configuration getConfiguration() {
-		return replicator.getConfiguration();
-	}
+    @Override
+    public Configuration getConfiguration() {
+        return replicator.getConfiguration();
+    }
 
-	@Override
-	public void onSwitch(Sentinel sentinel, HostAndPort next) {
-		if (prev == null || !prev.equals(next)) {
-			logger.info("Sentinel switch master to [{}]", next);
-			Replicators.closeQuietly(replicator);
-			executors.submit(() -> {
-				Reflections.setField(replicator, "host", next.getHost());
-				Reflections.setField(replicator, "port", next.getPort());
-				Replicators.openQuietly(replicator);
-			});
-		}
-		prev = next;
-	}
+    @Override
+    public void onSwitch(Sentinel sentinel, HostAndPort next) {
+        if (prev == null || !prev.equals(next)) {
+            logger.info("Sentinel switch master to [{}]", next);
+            Replicators.closeQuietly(replicator);
+            executors.submit(() -> {
+                Reflections.setField(replicator, "host", next.getHost());
+                Reflections.setField(replicator, "port", next.getPort());
+                Replicators.openQuietly(replicator);
+            });
+        }
+        prev = next;
+    }
 
-	@Override
-	public void onClose(Sentinel sentinel) {
-		Replicators.closeQuietly(replicator);
-		terminateQuietly(executors, getConfiguration().getConnectionTimeout(), MILLISECONDS);
-	}
+    @Override
+    public void onClose(Sentinel sentinel) {
+        Replicators.closeQuietly(replicator);
+        terminateQuietly(executors, getConfiguration().getConnectionTimeout(), MILLISECONDS);
+    }
 }

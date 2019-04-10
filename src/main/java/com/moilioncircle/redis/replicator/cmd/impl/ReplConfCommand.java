@@ -23,7 +23,7 @@ import com.moilioncircle.redis.replicator.cmd.Command;
  * @since 2.6.0
  */
 public abstract class ReplConfCommand implements Command {
-	
-	private static final long serialVersionUID = 1L;
-	
+    
+    private static final long serialVersionUID = 1L;
+    
 }

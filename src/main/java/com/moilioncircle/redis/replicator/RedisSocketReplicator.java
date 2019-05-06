@@ -139,6 +139,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
         } else {
             logger.info("SYNC");
             send("SYNC".getBytes());
+            // reset db
+            this.db = -1;
             parseDump(this);
             return SYNC;
         }

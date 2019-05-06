@@ -70,8 +70,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
     
     protected final int port;
     protected final String host;
-	protected int db = -1;
-	protected Socket socket;
+    protected int db = -1;
+    protected Socket socket;
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;

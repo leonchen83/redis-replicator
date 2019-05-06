@@ -25,6 +25,7 @@ import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.CONNECTING;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
 import static com.moilioncircle.redis.replicator.util.Concurrents.terminateQuietly;
 import static com.moilioncircle.redis.replicator.util.Strings.format;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
@@ -48,6 +49,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.OffsetHandler;
 import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
+import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
@@ -61,18 +63,19 @@ import com.moilioncircle.redis.replicator.util.Strings;
  * @since 2.1.0
  */
 public class RedisSocketReplicator extends AbstractReplicator {
-
+    
     protected static final Logger logger = LoggerFactory.getLogger(RedisSocketReplicator.class);
-
+    
     protected final int port;
     protected final String host;
-    protected Socket socket;
+	protected int db = -1;
+	protected Socket socket;
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
-	protected ScheduledExecutorService executor;
+    protected ScheduledExecutorService executor;
     protected final RedisSocketFactory socketFactory;
-
+    
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         Objects.requireNonNull(host);
         if (port <= 0 || port > 65535) throw new IllegalArgumentException("illegal argument port: " + port);
@@ -86,6 +89,14 @@ public class RedisSocketReplicator extends AbstractReplicator {
             addExceptionListener(new DefaultExceptionListener());
     }
 
+    public String getHost() {
+        return this.host;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+    
     /**
      * PSYNC
      * <p>
@@ -95,7 +106,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void open() throws IOException {
         super.open();
-	    this.executor = Executors.newSingleThreadScheduledExecutor();
+        this.executor = Executors.newSingleThreadScheduledExecutor();
         try {
             new RedisSocketReplicatorRetrier().retry(this);
         } finally {
@@ -104,10 +115,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
             terminateQuietly(executor, configuration.getConnectionTimeout(), MILLISECONDS);
         }
     }
-
+    
     protected SyncMode trySync(final String reply) throws IOException {
         logger.info(reply);
         if (reply.startsWith("FULLRESYNC")) {
+            // reset db
+            this.db = -1;
             parseDump(this);
             String[] ary = reply.split(" ");
             configuration.setReplId(ary[1]);
@@ -124,11 +137,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
         } else {
             logger.info("SYNC");
             send("SYNC".getBytes());
+            // reset db
+            this.db = -1;
             parseDump(this);
             return SYNC;
         }
     }
-
+    
     protected void parseDump(final AbstractReplicator replicator) throws IOException {
         byte[] rawReply = reply(new BulkReplyHandler() {
             @Override
@@ -153,7 +168,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if ("OK".equals(reply)) return;
         throw new IOException("SYNC failed. reason : [" + reply + "]");
     }
-
+    
     protected void establishConnection() throws IOException {
         connect();
         if (configuration.getAuthPassword() != null) auth(configuration.getAuthPassword());
@@ -163,7 +178,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         sendSlaveCapa("eof");
         sendSlaveCapa("psync2");
     }
-
+    
     protected void auth(String password) throws IOException {
         if (password != null) {
             logger.info("AUTH {}", password);
@@ -178,7 +193,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             throw new AssertionError("[AUTH " + password + "] failed. " + reply);
         }
     }
-
+    
     protected void sendPing() throws IOException {
         logger.info("PING");
         send("PING".getBytes());
@@ -189,7 +204,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (reply.contains("operation not permitted")) throw new AssertionError("-NOAUTH Authentication required.");
         logger.warn("[PING] failed. {}", reply);
     }
-
+    
     protected void sendSlavePort() throws IOException {
         // REPLCONF listening-prot ${port}
         logger.info("REPLCONF listening-port {}", socket.getLocalPort());
@@ -199,7 +214,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if ("OK".equals(reply)) return;
         logger.warn("[REPLCONF listening-port {}] failed. {}", socket.getLocalPort(), reply);
     }
-
+    
     protected void sendSlaveIp() throws IOException {
         // REPLCONF ip-address ${address}
         logger.info("REPLCONF ip-address {}", socket.getLocalAddress().getHostAddress());
@@ -210,7 +225,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         //redis 3.2+
         logger.warn("[REPLCONF ip-address {}] failed. {}", socket.getLocalAddress().getHostAddress(), reply);
     }
-
+    
     protected void sendSlaveCapa(String cmd) throws IOException {
         // REPLCONF capa eof
         logger.info("REPLCONF capa {}", cmd);
@@ -220,7 +235,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if ("OK".equals(reply)) return;
         logger.warn("[REPLCONF capa {}] failed. {}", cmd, reply);
     }
-
+    
     protected void heartbeat() {
         assert heartbeat == null || heartbeat.isCancelled();
         heartbeat = executor.scheduleWithFixedDelay(new Runnable() {
@@ -231,11 +246,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }, configuration.getHeartBeatPeriod(), configuration.getHeartBeatPeriod(), MILLISECONDS);
         logger.info("heartbeat started.");
     }
-
+    
     protected void send(byte[] command) throws IOException {
         send(command, new byte[0][]);
     }
-
+    
     protected void send(byte[] command, final byte[]... args) throws IOException {
         outputStream.write(STAR);
         outputStream.write(String.valueOf(args.length + 1).getBytes());
@@ -254,7 +269,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         }
         outputStream.flush();
     }
-
+    
     protected void sendQuietly(byte[] command, final byte[]... args) {
         try {
             send(command, args);
@@ -262,17 +277,17 @@ public class RedisSocketReplicator extends AbstractReplicator {
             // NOP
         }
     }
-
+    
     @SuppressWarnings("unchecked")
     protected <T> T reply() throws IOException {
         return (T) replyParser.parse();
     }
-
+    
     @SuppressWarnings("unchecked")
     protected <T> T reply(BulkReplyHandler handler) throws IOException {
         return (T) replyParser.parse(handler);
     }
-
+    
     protected void connect() throws IOException {
         if (!compareAndSet(DISCONNECTED, CONNECTING)) return;
         try {
@@ -293,7 +308,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             setStatus(CONNECTED);
         }
     }
-
+    
     @Override
     protected void doClose() throws IOException {
         compareAndSet(CONNECTED, DISCONNECTING);
@@ -303,7 +318,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                 if (!heartbeat.isCancelled()) heartbeat.cancel(true);
                 logger.info("heartbeat canceled.");
             }
-
+            
             try {
                 if (inputStream != null) {
                     inputStream.setRawByteListeners(null);
@@ -327,17 +342,17 @@ public class RedisSocketReplicator extends AbstractReplicator {
             setStatus(DISCONNECTED);
         }
     }
-
+    
     protected enum SyncMode {SYNC, PSYNC, SYNC_LATER}
-
+    
     private class RedisSocketReplicatorRetrier extends AbstractReplicatorRetrier {
-
+        
         @Override
         protected boolean connect() throws IOException {
             establishConnection();
             return true;
         }
-
+        
         @Override
         protected boolean close(IOException reason) throws IOException {
             if (reason != null)
@@ -360,12 +375,16 @@ public class RedisSocketReplicator extends AbstractReplicator {
             logger.info("PSYNC {} {}", replId, String.valueOf(replOffset >= 0 ? replOffset + 1 : replOffset));
             send("PSYNC".getBytes(), replId.getBytes(), String.valueOf(replOffset >= 0 ? replOffset + 1 : replOffset).getBytes());
             final String reply = Strings.toString(reply());
-
+            
             SyncMode mode = trySync(reply);
             if (mode == PSYNC && getStatus() == CONNECTED) {
                 heartbeat();
             } else if (mode == SYNC_LATER && getStatus() == CONNECTED) {
                 return false;
+            }
+            if (getStatus() != CONNECTED) return true;
+            if (db != -1) {
+                submitEvent(new SelectCommand(db));
             }
             final long[] offset = new long[1];
             while (getStatus() == CONNECTED) {
@@ -389,6 +408,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     }
                     if (isEquals(Strings.toString(raw[0]), "PING")) {
                         // NOP
+                    } else if (isEquals(Strings.toString(raw[0]), "SELECT")) {
+                        db = toInt(raw[1]);
+                        submitEvent(parser.parse(raw));
                     } else if (isEquals(Strings.toString(raw[0]), "REPLCONF") && isEquals(Strings.toString(raw[1]), "GETACK")) {
                         if (mode == PSYNC) executor.execute(new Runnable() {
                             @Override
@@ -400,7 +422,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         submitEvent(parser.parse(raw));
                     }
                 } else {
-                    logger.info("unexpected redis reply:{}", obj);
+                    logger.warn("unexpected redis reply:{}", obj);
                 }
                 configuration.addOffset(offset[0]);
                 offset[0] = 0L;

@@ -121,6 +121,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected SyncMode trySync(final String reply) throws IOException {
         logger.info(reply);
         if (reply.startsWith("FULLRESYNC")) {
+            // reset db
+            this.db = -1;
             parseDump(this);
             String[] ary = reply.split(" ");
             configuration.setReplId(ary[1]);

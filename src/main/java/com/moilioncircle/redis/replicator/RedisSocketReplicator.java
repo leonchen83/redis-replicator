@@ -70,8 +70,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
     
     protected final int port;
     protected final String host;
-    protected Socket socket;
-    protected int lastDb = -1;
+	protected int db = -1;
+	protected Socket socket;
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
@@ -382,8 +382,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
             if (getStatus() != CONNECTED) return true;
             submitEvent(new PreCommandSyncEvent());
-            if (lastDb != -1) {
-                submitEvent(new SelectCommand(lastDb));
+            if (db != -1) {
+                submitEvent(new SelectCommand(db));
             }
             final long[] offset = new long[1];
             while (getStatus() == CONNECTED) {
@@ -408,7 +408,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                     if (isEquals(Strings.toString(raw[0]), "PING")) {
                         // NOP
                     } else if (isEquals(Strings.toString(raw[0]), "SELECT")) {
-                        lastDb = toInt(raw[1]);
+                        db = toInt(raw[1]);
                         submitEvent(parser.parse(raw));
                     } else if (isEquals(Strings.toString(raw[0]), "REPLCONF") && isEquals(Strings.toString(raw[1]), "GETACK")) {
                         if (mode == PSYNC) executor.execute(new Runnable() {

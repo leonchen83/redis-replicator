@@ -1,3 +1,7 @@
+### 3.2.1
+Fix decode bug.  
+Fix select bug.  
+
 ### 3.2.0
 Add `ConnectinoListener`.  
 

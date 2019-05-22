@@ -1,3 +1,7 @@
+### 2.6.5
+Fix decode bug.  
+Fix select bug.  
+
 ### 2.6.4
 Add `StatusListener` .  
 

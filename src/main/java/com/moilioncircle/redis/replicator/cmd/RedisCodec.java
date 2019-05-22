@@ -106,9 +106,12 @@ public class RedisCodec {
                                 }
                                 break;
                             default:
+                                s.put((byte)'\\');
                                 s.put(bytes[i]);
                                 break;
                         }
+                    } else {
+                        s.put((byte)'\\');
                     }
                     break;
                 default:

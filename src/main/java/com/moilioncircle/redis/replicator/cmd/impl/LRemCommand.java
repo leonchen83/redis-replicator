@@ -16,36 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class LRemCommand implements Command {
+public class LRemCommand extends GenericKeyValueCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private long index;
-    private byte[] value;
-
 
     public LRemCommand() {
     }
 
     public LRemCommand(byte[] key, long index, byte[] value) {
-        this.key = key;
+        super(key, value);
         this.index = index;
-        this.value = value;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public long getIndex() {
@@ -54,13 +40,5 @@ public class LRemCommand implements Command {
 
     public void setIndex(long index) {
         this.index = index;
-    }
-
-    public byte[] getValue() {
-        return value;
-    }
-
-    public void setValue(byte[] value) {
-        this.value = value;
     }
 }

@@ -16,19 +16,16 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class SetCommand implements Command {
+public class SetCommand extends GenericKeyValueCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
-    private byte[] value;
     private ExpiredType expiredType;
     private Long expiredValue;
     private ExistType existType;
@@ -37,27 +34,10 @@ public class SetCommand implements Command {
     }
 
     public SetCommand(byte[] key, byte[] value, ExpiredType expiredType, Long expiredValue, ExistType existType) {
-        this.key = key;
-        this.value = value;
+        super(key, value);
         this.expiredType = expiredType;
         this.expiredValue = expiredValue;
         this.existType = existType;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
-    }
-
-    public byte[] getValue() {
-        return value;
-    }
-
-    public void setValue(byte[] value) {
-        this.value = value;
     }
 
     public ExpiredType getExpiredType() {

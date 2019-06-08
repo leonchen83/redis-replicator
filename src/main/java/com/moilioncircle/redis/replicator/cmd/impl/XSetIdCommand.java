@@ -1,36 +1,23 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.6.1
  */
-public class XSetIdCommand implements Command {
+public class XSetIdCommand extends GenericKeyCommand {
     
     private static final long serialVersionUID = 1L;
-    
-    private byte[] key;
     
     private byte[] id;
     
     public XSetIdCommand() {
-    
     }
     
     public XSetIdCommand(byte[] key, byte[] id) {
-        this.key = key;
+        super(key);
         this.id = id;
     }
-    
-    public byte[] getKey() {
-        return key;
-    }
-    
-    public void setKey(byte[] key) {
-        this.key = key;
-    }
-    
+
     public byte[] getId() {
         return id;
     }

@@ -16,17 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.3.1
  */
-public class SortCommand implements Command {
+public class SortCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private byte[] byPattern;
     private Limit limit;
     private byte[][] getPatterns;
@@ -38,7 +35,7 @@ public class SortCommand implements Command {
     }
 
     public SortCommand(byte[] key, byte[] byPattern, Limit limit, byte[][] getPatterns, OrderType order, boolean alpha, byte[] destination) {
-        this.key = key;
+        super(key);
         this.byPattern = byPattern;
         this.limit = limit;
         this.getPatterns = getPatterns;
@@ -49,14 +46,6 @@ public class SortCommand implements Command {
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getByPattern() {

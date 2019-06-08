@@ -16,17 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class HIncrByCommand implements Command {
+public class HIncrByCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private byte[] field;
     private long increment;
 
@@ -34,17 +31,9 @@ public class HIncrByCommand implements Command {
     }
 
     public HIncrByCommand(byte[] key, byte[] field, long increment) {
-        this.key = key;
+        super(key);
         this.field = field;
         this.increment = increment;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getField() {

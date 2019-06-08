@@ -16,15 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 import java.util.Map;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class MSetNxCommand implements Command {
+public class MSetNxCommand extends GenericCommand {
 
     private static final long serialVersionUID = 1L;
 

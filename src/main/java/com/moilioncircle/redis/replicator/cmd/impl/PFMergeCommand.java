@@ -16,13 +16,11 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class PFMergeCommand implements Command {
+public class PFMergeCommand extends GenericCommand {
 
     private static final long serialVersionUID = 1L;
 

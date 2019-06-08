@@ -16,36 +16,23 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @version 2.1.1
  * @since 2.1.0
  */
-public class LPushXCommand implements Command {
+public class LPushXCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private byte[][] values;
-
 
     public LPushXCommand() {
     }
 
-
     public LPushXCommand(byte[] key, byte[][] values) {
-        this.key = key;
+        super(key);
         this.values = values;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[][] getValues() {

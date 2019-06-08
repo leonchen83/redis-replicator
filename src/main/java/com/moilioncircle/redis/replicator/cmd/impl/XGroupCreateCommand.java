@@ -24,31 +24,18 @@ public class XGroupCreateCommand extends XGroupCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
-
     private byte[] group;
-
     private byte[] id;
-    
     private boolean mkStream;
 
     public XGroupCreateCommand() {
-
     }
     
     public XGroupCreateCommand(byte[] key, byte[] group, byte[] id, boolean mkStream) {
-        this.key = key;
+        super(key);
         this.group = group;
         this.id = id;
         this.mkStream = mkStream;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getGroup() {

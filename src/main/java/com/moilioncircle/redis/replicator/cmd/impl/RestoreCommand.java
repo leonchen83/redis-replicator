@@ -16,18 +16,16 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class RestoreCommand implements Command {
+public class RestoreCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private long ttl;
     private byte[] serializedValue;
     private boolean replace;
@@ -39,21 +37,13 @@ public class RestoreCommand implements Command {
     }
     
     public RestoreCommand(byte[] key, long ttl, byte[] serializedValue, boolean replace, boolean absTtl, EvictType evictType, Long evictValue) {
-        this.key = key;
+        super(key);
         this.ttl = ttl;
         this.serializedValue = serializedValue;
         this.replace = replace;
         this.absTtl = absTtl;
         this.evictType = evictType;
         this.evictValue = evictValue;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public long getTtl() {

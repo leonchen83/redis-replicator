@@ -16,33 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class SRemCommand implements Command {
+public class SRemCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private byte[][] members;
 
     public SRemCommand() {
     }
 
     public SRemCommand(byte[] key, byte[][] members) {
-        this.key = key;
+        super(key);
         this.members = members;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[][] getMembers() {

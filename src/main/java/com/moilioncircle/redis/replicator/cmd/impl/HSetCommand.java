@@ -16,17 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class HSetCommand implements Command {
+public class HSetCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private byte[] field;
     private byte[] value;
 
@@ -34,17 +31,9 @@ public class HSetCommand implements Command {
     }
 
     public HSetCommand(byte[] key, byte[] field, byte[] value) {
-        this.key = key;
+        super(key);
         this.field = field;
         this.value = value;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getField() {

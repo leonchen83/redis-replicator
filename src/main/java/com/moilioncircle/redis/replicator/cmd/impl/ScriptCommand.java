@@ -16,13 +16,11 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public abstract class ScriptCommand implements Command {
+public abstract class ScriptCommand extends GenericCommand {
 
     private static final long serialVersionUID = 1L;
 

@@ -16,35 +16,24 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 import java.util.Map;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class HMSetCommand implements Command {
+public class HMSetCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private Map<byte[], byte[]> fields;
 
     public HMSetCommand() {
     }
 
     public HMSetCommand(byte[] key, Map<byte[], byte[]> fields) {
-        this.key = key;
+        super(key);
         this.fields = fields;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public Map<byte[], byte[]> getFields() {

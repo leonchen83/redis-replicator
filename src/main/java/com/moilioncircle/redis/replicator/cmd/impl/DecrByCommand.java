@@ -16,33 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class DecrByCommand implements Command {
+public class DecrByCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private long value;
 
     public DecrByCommand() {
     }
 
     public DecrByCommand(byte[] key, long value) {
-        this.key = key;
+        super(key);
         this.value = value;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public long getValue() {

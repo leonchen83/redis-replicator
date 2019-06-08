@@ -16,18 +16,16 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class ZAddCommand implements Command {
+public class ZAddCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private ExistType existType;
     private boolean ch;
     private boolean incr;
@@ -37,19 +35,11 @@ public class ZAddCommand implements Command {
     }
     
     public ZAddCommand(byte[] key, ExistType existType, boolean ch, boolean incr, ZSetEntry[] zSetEntries) {
-        this.key = key;
+        super(key);
         this.existType = existType;
         this.ch = ch;
         this.incr = incr;
         this.zSetEntries = zSetEntries;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public ExistType getExistType() {
@@ -87,5 +77,4 @@ public class ZAddCommand implements Command {
     public void setzSetEntries(ZSetEntry[] zSetEntries) {
         this.zSetEntries = zSetEntries;
     }
-
 }

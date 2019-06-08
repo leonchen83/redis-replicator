@@ -16,24 +16,18 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 import java.util.Map;
 
 /**
  * @author Leon Chen
  * @since 2.6.0
  */
-public class XAddCommand implements Command {
+public class XAddCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
-
     private MaxLen maxLen;
-
     private byte[] id;
-
     private Map<byte[], byte[]> fields;
 
     public XAddCommand() {
@@ -41,18 +35,10 @@ public class XAddCommand implements Command {
     }
 
     public XAddCommand(byte[] key, MaxLen maxLen, byte[] id, Map<byte[], byte[]> fields) {
-        this.key = key;
+        super(key);
         this.maxLen = maxLen;
         this.id = id;
         this.fields = fields;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public MaxLen getMaxLen() {

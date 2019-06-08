@@ -409,11 +409,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         offset[0] = 0L;
                         continue;
                     }
-                    if (isEquals(Strings.toString(raw[0]), "PING")) {
-                        // NOP
-                    } else if (isEquals(Strings.toString(raw[0]), "SELECT")) {
+                    long startOffset = configuration.getReplOffset();
+                    if (isEquals(Strings.toString(raw[0]), "SELECT")) {
                         db = toInt(raw[1]);
-                        submitEvent(parser.parse(raw));
+                        submitEvent(parser.parse(raw), startOffset, startOffset + offset[0]);
                     } else if (isEquals(Strings.toString(raw[0]), "REPLCONF") && isEquals(Strings.toString(raw[1]), "GETACK")) {
                         if (mode == PSYNC) executor.execute(new Runnable() {
                             @Override
@@ -421,8 +420,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
                                 sendQuietly("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
                             }
                         });
-                    } else {
-                        submitEvent(parser.parse(raw));
+                    } else if (!isEquals(Strings.toString(raw[0]), "PING")) {
+                        submitEvent(parser.parse(raw), startOffset, startOffset + offset[0]);
                     }
                 } else {
                     logger.warn("unexpected redis reply:{}", obj);

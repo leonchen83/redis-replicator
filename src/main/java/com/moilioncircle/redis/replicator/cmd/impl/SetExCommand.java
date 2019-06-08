@@ -16,35 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class SetExCommand implements Command {
+public class SetExCommand extends GenericKeyValueCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private int ex;
-    private byte[] value;
 
     public SetExCommand() {
     }
 
     public SetExCommand(byte[] key, int ex, byte[] value) {
-        this.key = key;
+        super(key, value);
         this.ex = ex;
-        this.value = value;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public int getEx() {
@@ -53,13 +40,5 @@ public class SetExCommand implements Command {
 
     public void setEx(int ex) {
         this.ex = ex;
-    }
-
-    public byte[] getValue() {
-        return value;
-    }
-
-    public void setValue(byte[] value) {
-        this.value = value;
     }
 }

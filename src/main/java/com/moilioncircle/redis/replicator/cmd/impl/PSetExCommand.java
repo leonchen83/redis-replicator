@@ -16,17 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class PSetExCommand implements Command {
+public class PSetExCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private long ex;
     private byte[] value;
 
@@ -34,17 +31,9 @@ public class PSetExCommand implements Command {
     }
 
     public PSetExCommand(byte[] key, long ex, byte[] value) {
-        this.key = key;
+        super(key);
         this.ex = ex;
         this.value = value;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public long getEx() {

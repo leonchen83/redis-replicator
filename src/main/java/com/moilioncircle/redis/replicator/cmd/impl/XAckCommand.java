@@ -16,38 +16,24 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.6.0
  */
-public class XAckCommand implements Command {
+public class XAckCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
-
     private byte[] group;
-
     private byte[][] ids;
 
     public XAckCommand() {
-
     }
 
     public XAckCommand(byte[] key, byte[] group, byte[][] ids) {
-        this.key = key;
+        super(key);
         this.group = group;
         this.ids = ids;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getGroup() {

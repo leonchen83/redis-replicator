@@ -16,33 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class GeoAddCommand implements Command {
+public class GeoAddCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private Geo[] geos;
 
     public GeoAddCommand() {
     }
 
     public GeoAddCommand(byte[] key, Geo[] geos) {
-        this.key = key;
+        super(key);
         this.geos = geos;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public Geo[] getGeos() {

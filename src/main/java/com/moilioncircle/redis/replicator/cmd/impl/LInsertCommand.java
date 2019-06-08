@@ -16,37 +16,24 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class LInsertCommand implements Command {
+public class LInsertCommand extends GenericKeyValueCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private LInsertType lInsertType;
     private byte[] pivot;
-    private byte[] value;
 
     public LInsertCommand() {
     }
 
     public LInsertCommand(byte[] key, LInsertType lInsertType, byte[] pivot, byte[] value) {
-        this.key = key;
+        super(key, value);
         this.lInsertType = lInsertType;
         this.pivot = pivot;
-        this.value = value;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public LInsertType getlInsertType() {
@@ -63,13 +50,5 @@ public class LInsertCommand implements Command {
 
     public void setPivot(byte[] pivot) {
         this.pivot = pivot;
-    }
-
-    public byte[] getValue() {
-        return value;
-    }
-
-    public void setValue(byte[] value) {
-        this.value = value;
     }
 }

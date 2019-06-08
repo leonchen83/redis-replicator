@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.GenericCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.AppendParser;
 import com.moilioncircle.redis.replicator.cmd.parser.BRPopLPushParser;
 import com.moilioncircle.redis.replicator.cmd.parser.BitFieldParser;
@@ -165,9 +166,18 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     public ModuleParser<? extends Module> removeModuleParser(String moduleName, int moduleVersion) {
         return modules.remove(ModuleKey.key(moduleName, moduleVersion));
     }
-    
+
     public void submitEvent(Event event) {
+        submitEvent(event, 0, 0);
+    }
+
+    public void submitEvent(Event event, long startOffst, long endOffset) {
         try {
+            if (event instanceof GenericCommand) {
+                GenericCommand cmdEvent = (GenericCommand) event;
+                cmdEvent.setOffsetStart(startOffst);
+                cmdEvent.setOffsetEnd(endOffset);
+            }
             doEventListener(this, event);
         } catch (UncheckedIOException e) {
             throw e;

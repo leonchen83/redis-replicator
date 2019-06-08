@@ -16,33 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class PFAddCommand implements Command {
+public class PFAddCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private byte[][] elements;
 
     public PFAddCommand() {
     }
 
     public PFAddCommand(byte[] key, byte[][] elements) {
-        this.key = key;
+        super(key);
         this.elements = elements;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[][] getElements() {

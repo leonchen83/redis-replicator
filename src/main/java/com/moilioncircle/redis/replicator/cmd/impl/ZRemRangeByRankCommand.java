@@ -16,17 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.1
  */
-public class ZRemRangeByRankCommand implements Command {
+public class ZRemRangeByRankCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private long start;
     private long stop;
 
@@ -34,17 +31,9 @@ public class ZRemRangeByRankCommand implements Command {
     }
 
     public ZRemRangeByRankCommand(byte[] key, long start, long stop) {
-        this.key = key;
+        super(key);
         this.start = start;
         this.stop = stop;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public long getStart() {

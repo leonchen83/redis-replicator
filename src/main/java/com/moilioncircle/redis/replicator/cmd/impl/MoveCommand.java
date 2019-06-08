@@ -16,33 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class MoveCommand implements Command {
+public class MoveCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private int db;
 
     public MoveCommand() {
     }
 
     public MoveCommand(byte[] key, int db) {
-        this.key = key;
+        super(key);
         this.db = db;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public int getDb() {

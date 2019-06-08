@@ -16,44 +16,30 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.6.0
  */
-public class XClaimCommand implements Command {
+public class XClaimCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
-
     private byte[] group;
-
     private byte[] consumer;
-
     private long minIdle;
-
     private byte[][] ids;
-
     private Long idle;
-
     private Long time;
-
     private Long retryCount;
-    
     private boolean force;
-
     private boolean justId;
-    
     private byte[] lastId;
 
     public XClaimCommand() {
-
     }
     
     public XClaimCommand(byte[] key, byte[] group, byte[] consumer, long minIdle, byte[][] ids, Long idle, Long time, Long retryCount, boolean force, boolean justId, byte[] lastId) {
-        this.key = key;
+        super(key);
         this.group = group;
         this.consumer = consumer;
         this.minIdle = minIdle;
@@ -64,14 +50,6 @@ public class XClaimCommand implements Command {
         this.force = force;
         this.justId = justId;
         this.lastId = lastId;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getGroup() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Leon Chen
+ * Copyright René Kerner (@rk3rn3r)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,30 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.Command;
+
 /**
- * @author Leon Chen
- * @since 2.1.0
+ * @author René Kerner (@rk3rn3r)
+ * @since 3.3.0
  */
-public class PingCommand extends GenericCommand {
+public class GenericCommand implements Command {
 
-    private static final long serialVersionUID = 1L;
+    private long offsetStart;
+    private long offsetEnd;
 
-    private byte[] message;
-
-    public PingCommand() {
+    public void setOffsetStart(long offset) {
+        this.offsetStart = offset;
     }
 
-    public PingCommand(byte[] message) {
-        this.message = message;
+    public void setOffsetEnd(long offset) {
+        this.offsetEnd = offset;
     }
 
-    public byte[] getMessage() {
-        return message;
+    public long getOffsetStart() {
+        return this.offsetStart;
     }
 
-    public void setMessage(byte[] message) {
-        this.message = message;
-    }
-
-    @Override
-    public String toString() {
-        return "PingCommand{" +
-                "message='" + message + '\'' +
-                '}';
+    public long getOffsetEnd() {
+        return this.offsetEnd;
     }
 }

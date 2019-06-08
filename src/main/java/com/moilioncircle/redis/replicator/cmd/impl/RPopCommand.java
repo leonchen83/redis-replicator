@@ -16,30 +16,18 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class RPopCommand implements Command {
+public class RPopCommand extends  GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
-
-    private byte[] key;
 
     public RPopCommand() {
     }
 
     public RPopCommand(byte[] key) {
-        this.key = key;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
+        super(key);
     }
 }

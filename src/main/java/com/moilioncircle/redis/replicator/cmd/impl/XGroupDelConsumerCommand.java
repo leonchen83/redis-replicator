@@ -24,28 +24,16 @@ public class XGroupDelConsumerCommand extends XGroupCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
-
     private byte[] group;
-
     private byte[] consumer;
 
     public XGroupDelConsumerCommand() {
-
     }
 
     public XGroupDelConsumerCommand(byte[] key, byte[] group, byte[] consumer) {
-        this.key = key;
+        super(key);
         this.group = group;
         this.consumer = consumer;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getGroup() {

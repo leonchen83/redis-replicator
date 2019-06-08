@@ -16,35 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.6.0
  */
-public class XTrimCommand implements Command {
+public class XTrimCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
-
-    private byte[] key;
 
     private MaxLen maxLen;
 
     public XTrimCommand() {
-
     }
 
     public XTrimCommand(byte[] key, MaxLen maxLen) {
-        this.key = key;
+        super(key);
         this.maxLen = maxLen;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public MaxLen getMaxLen() {

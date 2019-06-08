@@ -16,33 +16,21 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.6.0
  */
-public class ZPopMinCommand implements Command {
+public class ZPopMinCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private int count = 1;
 
     public ZPopMinCommand() {
     }
 
     public ZPopMinCommand(byte[] key, int count) {
-        this.key = key;
         this.count = count;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public int getCount() {

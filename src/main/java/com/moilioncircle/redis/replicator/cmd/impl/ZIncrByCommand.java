@@ -16,17 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class ZIncrByCommand implements Command {
+public class ZIncrByCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private double increment;
     private byte[] member;
 
@@ -34,17 +31,9 @@ public class ZIncrByCommand implements Command {
     }
 
     public ZIncrByCommand(byte[] key, double increment, byte[] member) {
-        this.key = key;
+        super(key);
         this.increment = increment;
         this.member = member;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public double getIncrement() {

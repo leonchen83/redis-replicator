@@ -16,33 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class RenameNxCommand implements Command {
+public class RenameNxCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private byte[] newKey;
 
     public RenameNxCommand() {
     }
 
     public RenameNxCommand(byte[] key, byte[] newKey) {
-        this.key = key;
+        super(key);
         this.newKey = newKey;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getNewKey() {

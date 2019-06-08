@@ -16,13 +16,11 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class ZUnionStoreCommand implements Command {
+public class ZUnionStoreCommand extends GenericCommand {
 
     private static final long serialVersionUID = 1L;
 
@@ -82,5 +80,4 @@ public class ZUnionStoreCommand implements Command {
     public void setAggregateType(AggregateType aggregateType) {
         this.aggregateType = aggregateType;
     }
-
 }

@@ -16,33 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class ZRemCommand implements Command {
+public class ZRemCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private byte[][] members;
 
     public ZRemCommand() {
     }
 
     public ZRemCommand(byte[] key, byte[][] members) {
-        this.key = key;
+        super(key);
         this.members = members;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[][] getMembers() {
@@ -52,5 +41,4 @@ public class ZRemCommand implements Command {
     public void setMembers(byte[][] members) {
         this.members = members;
     }
-
 }

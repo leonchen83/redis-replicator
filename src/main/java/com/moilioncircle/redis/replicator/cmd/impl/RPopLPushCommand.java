@@ -16,13 +16,11 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.3.1
  */
-public class RPopLPushCommand implements Command {
+public class RPopLPushCommand extends GenericCommand {
 
     private static final long serialVersionUID = 1L;
 

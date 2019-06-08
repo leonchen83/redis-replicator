@@ -16,19 +16,16 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 import java.util.List;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class BitFieldCommand implements Command {
+public class BitFieldCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
     private List<Statement> statements;
     private List<OverFlow> overFlows;
 
@@ -36,17 +33,9 @@ public class BitFieldCommand implements Command {
     }
 
     public BitFieldCommand(byte[] key, List<Statement> statements, List<OverFlow> overFlows) {
-        this.key = key;
+        super(key);
         this.statements = statements;
         this.overFlows = overFlows;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public List<Statement> getStatements() {

@@ -16,35 +16,22 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-
 /**
  * @author Leon Chen
  * @since 2.6.0
  */
-public class XDelCommand implements Command {
+public class XDelCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
-
-    private byte[] key;
 
     private byte[][] ids;
 
     public XDelCommand() {
-
     }
 
     public XDelCommand(byte[] key, byte[][] ids) {
-        this.key = key;
+        super(key);
         this.ids = ids;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[][] getIds() {

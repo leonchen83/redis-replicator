@@ -24,25 +24,14 @@ public class XGroupDestroyCommand extends XGroupCommand {
     
     private static final long serialVersionUID = 1L;
 
-    private byte[] key;
-
     private byte[] group;
     
     public XGroupDestroyCommand() {
-    
     }
 
     public XGroupDestroyCommand(byte[] key, byte[] group) {
-        this.key = key;
+        super(key);
         this.group = group;
-    }
-
-    public byte[] getKey() {
-        return key;
-    }
-
-    public void setKey(byte[] key) {
-        this.key = key;
     }
 
     public byte[] getGroup() {

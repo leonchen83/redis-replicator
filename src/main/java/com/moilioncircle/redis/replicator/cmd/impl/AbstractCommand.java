@@ -17,29 +17,11 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.event.AbstractEvent;
 
 /**
  * @author René Kerner (@rk3rn3r)
  * @since 3.3.0
  */
-public class GenericCommand implements Command {
-
-    private long offsetStart;
-    private long offsetEnd;
-
-    public void setOffsetStart(long offset) {
-        this.offsetStart = offset;
-    }
-
-    public void setOffsetEnd(long offset) {
-        this.offsetEnd = offset;
-    }
-
-    public long getOffsetStart() {
-        return this.offsetStart;
-    }
-
-    public long getOffsetEnd() {
-        return this.offsetEnd;
-    }
+public abstract class AbstractCommand extends AbstractEvent implements Command {
 }

@@ -16,13 +16,13 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
-import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.AbstractEvent;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
-public class AuxField implements Event {
+public class AuxField extends AbstractEvent {
 
     private static final long serialVersionUID = 1L;
 

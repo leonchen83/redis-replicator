@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Leon Chen
+ * Copyright 2016-2017 Leon Chen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,35 @@
 
 package com.moilioncircle.redis.replicator.event;
 
-import java.io.Serializable;
-
 import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.3.0
  */
-public interface Event extends Serializable {
+public abstract class AbstractEvent implements Event {
+    protected Context context = new ContextImpl();
 
-    interface Context {
-        Tuple2<Long, Long> getOffsets();
-        void setOffsets(Tuple2<Long, Long> offset);
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    private static class ContextImpl implements Context {
+
+        private Tuple2<Long, Long> offsets;
+
+        @Override
+        public Tuple2<Long, Long> getOffsets() {
+            return offsets;
+        }
+
+        @Override
+        public void setOffsets(Tuple2<Long, Long> offset) {
+            this.offsets = offset;
+        }
     }
 }

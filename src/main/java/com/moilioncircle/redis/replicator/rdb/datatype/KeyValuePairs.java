@@ -148,7 +148,7 @@ public class KeyValuePairs {
 
     public static BatchedKeyStringValueList list(KeyValuePair<byte[], ?> raw, List<byte[]> value, int batch, boolean last) {
         BatchedKeyStringValueList kv = new BatchedKeyStringValueList();
-        copy(raw, kv);
+        copy(raw, kv, batch, last);
         kv.setValue(value);
         return kv;
     }
@@ -178,6 +178,7 @@ public class KeyValuePairs {
      * Helper
      */
     private static void copy(KeyValuePair<byte[], ?> source, KeyValuePair<byte[], ?> target) {
+        target.setContext(source.getContext());
         target.setDb(source.getDb());
         target.setExpiredType(source.getExpiredType());
         target.setExpiredValue(source.getExpiredValue());
@@ -188,6 +189,7 @@ public class KeyValuePairs {
     }
 
     private static void copy(KeyValuePair<byte[], ?> source, BatchedKeyValuePair<byte[], ?> target, int batch, boolean last) {
+        target.setContext(source.getContext());
         target.setDb(source.getDb());
         target.setExpiredType(source.getExpiredType());
         target.setExpiredValue(source.getExpiredValue());

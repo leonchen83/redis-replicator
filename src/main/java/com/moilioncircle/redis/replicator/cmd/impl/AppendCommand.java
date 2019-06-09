@@ -23,10 +23,10 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 public class AppendCommand extends GenericKeyValueCommand {
     private static final long serialVersionUID = 1L;
 
-    public AppendCommand(byte[] key, byte[] value) {
-        super(key, value);
+    public AppendCommand() {
     }
 
-    public AppendCommand() {
+    public AppendCommand(byte[] key, byte[] value) {
+        super(key, value);
     }
 }

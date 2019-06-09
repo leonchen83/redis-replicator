@@ -20,7 +20,7 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @author Leon Chen
  * @since 2.5.0
  */
-public class DefaultCommand extends GenericCommand {
+public class DefaultCommand extends AbstractCommand {
 
     private static final long serialVersionUID = 1L;
 

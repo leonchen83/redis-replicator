@@ -87,7 +87,7 @@ redis 2.6 - 5.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.2.1</version>
+        <version>3.3.0</version>
     </dependency>
 ```
 
@@ -178,7 +178,7 @@ redis 2.6 - 5.0
   
 ### 4.1.1. 首先写一个command类  
 ```java  
-    public static class YourAppendCommand implements Command {
+    public static class YourAppendCommand extends AbstractCommand {
         private final String key;
         private final String value;
     
@@ -284,7 +284,7 @@ redis 2.6 - 5.0
         }
     }
 
-    public class HelloTypeCommand implements Command {
+    public class HelloTypeCommand extends AbstractCommand {
         private final String key;
         private final long value;
 

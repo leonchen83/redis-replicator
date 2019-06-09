@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator;
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
+import static com.moilioncircle.redis.replicator.util.Tuples.of;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -30,7 +31,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.GenericCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.AppendParser;
 import com.moilioncircle.redis.replicator.cmd.parser.BRPopLPushParser;
 import com.moilioncircle.redis.replicator.cmd.parser.BitFieldParser;
@@ -115,6 +115,7 @@ import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByLexParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByRankParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZRemRangeByScoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ZUnionStoreParser;
+import com.moilioncircle.redis.replicator.event.AbstractEvent;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
@@ -122,6 +123,7 @@ import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleKey;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
+import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 /**
  * @author Leon Chen
@@ -168,15 +170,14 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     }
 
     public void submitEvent(Event event) {
-        submitEvent(event, 0, 0);
+        long offset = configuration.getReplOffset();
+        submitEvent(event, of(offset, offset));
     }
 
-    public void submitEvent(Event event, long startOffst, long endOffset) {
+    public void submitEvent(Event event, Tuple2<Long, Long> offsets) {
         try {
-            if (event instanceof GenericCommand) {
-                GenericCommand cmdEvent = (GenericCommand) event;
-                cmdEvent.setOffsetStart(startOffst);
-                cmdEvent.setOffsetEnd(endOffset);
+            if (event instanceof AbstractEvent) {
+                ((AbstractEvent) event).getContext().setOffsets(offsets);
             }
             doEventListener(this, event);
         } catch (UncheckedIOException e) {

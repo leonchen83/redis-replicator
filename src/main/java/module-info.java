@@ -20,5 +20,6 @@ module com.moilioncircle.redis.replicator {
     exports com.moilioncircle.redis.replicator.rdb.module;
     exports com.moilioncircle.redis.replicator.rdb.skip;
     exports com.moilioncircle.redis.replicator.util;
+    exports com.moilioncircle.redis.replicator.util.type;
     requires org.slf4j;
 }

@@ -16,17 +16,10 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.cmd.Command;
-import com.moilioncircle.redis.replicator.cmd.CommandName;
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.RedisCodec;
-import com.moilioncircle.redis.replicator.cmd.ReplyParser;
-import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
-import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import static com.moilioncircle.redis.replicator.util.Strings.format;
+import static com.moilioncircle.redis.replicator.util.Tuples.of;
 
 import java.io.EOFException;
 import java.io.File;
@@ -37,9 +30,18 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.Objects;
 
-import static com.moilioncircle.redis.replicator.Status.CONNECTED;
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
-import static com.moilioncircle.redis.replicator.util.Strings.format;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.moilioncircle.redis.replicator.cmd.Command;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.RedisCodec;
+import com.moilioncircle.redis.replicator.cmd.ReplyParser;
+import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
@@ -81,11 +83,12 @@ public class RedisAofReplicator extends AbstractReplicator {
     }
     
     protected void doOpen() throws IOException {
+        configuration.setReplOffset(0L);
         submitEvent(new PreCommandSyncEvent());
         try {
+            final long[] offset = new long[1];
             while (getStatus() == CONNECTED) {
-                Object obj = replyParser.parse();
-            
+                Object obj = replyParser.parse(len -> offset[0] = len);
                 if (obj instanceof Object[]) {
                     if (verbose() && logger.isDebugEnabled())
                         logger.debug(format((Object[]) obj));
@@ -94,12 +97,18 @@ public class RedisAofReplicator extends AbstractReplicator {
                     final CommandParser<? extends Command> parser;
                     if ((parser = commands.get(name)) == null) {
                         logger.warn("command [{}] not register. raw command:{}", name, format(raw));
+                        configuration.addOffset(offset[0]);
+                        offset[0] = 0L;
                         continue;
                     }
-                    submitEvent(parser.parse(raw));
+                    final long st = configuration.getReplOffset();
+                    final long ed = st + offset[0];
+                    submitEvent(parser.parse(raw), of(st, ed));
                 } else {
-                    logger.info("unexpected redis reply:{}", obj);
+                    logger.warn("unexpected redis reply:{}", obj);
                 }
+                configuration.addOffset(offset[0]);
+                offset[0] = 0L;
             }
         } catch (EOFException ignore) {
             submitEvent(new PostCommandSyncEvent());

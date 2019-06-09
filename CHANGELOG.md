@@ -1,3 +1,6 @@
+### 3.3.0
+Add `Event` offset.  
+
 ### 3.2.1
 Fix decode bug.  
 Fix select bug.  

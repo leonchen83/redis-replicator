@@ -23,6 +23,7 @@ import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.util.Tuples.of;
 
 /**
  * Redis RDB format
@@ -140,9 +142,12 @@ public class RdbParser {
          * 30 30 30 33                 # RDB Version Number in big endian. In this case, version = 0003 = 3
          * ----------------------------
          */
-        this.replicator.submitEvent(new PreRdbSyncEvent());
+        long offset = 0L;
+        this.replicator.submitEvent(new PreRdbSyncEvent(), of(0L, 0L));
+        in.mark();
         rdbVisitor.applyMagic(in);
         int version = rdbVisitor.applyVersion(in);
+        offset += in.unmark();
         DB db = null;
         /*
          * rdb
@@ -150,6 +155,7 @@ public class RdbParser {
         loop:
         while (this.replicator.getStatus() == CONNECTED) {
             Event event = null;
+            in.mark();
             int type = rdbVisitor.applyType(in);
             ContextKeyValuePair kv = new ContextKeyValuePair();
             kv.setDb(db);
@@ -180,7 +186,9 @@ public class RdbParser {
                     break;
                 case RDB_OPCODE_EOF:
                     long checksum = rdbVisitor.applyEof(in, version);
-                    this.replicator.submitEvent(new PostRdbSyncEvent(checksum));
+                    long start = offset;
+                    offset += in.unmark();
+                    this.replicator.submitEvent(new PostRdbSyncEvent(checksum), of(start, offset));
                     break loop;
                 case RDB_TYPE_STRING:
                     event = rdbVisitor.applyString(in, version, kv);
@@ -230,11 +238,13 @@ public class RdbParser {
                 default:
                     throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");
             }
+            long start = offset;
+            offset += in.unmark();
             if (event == null) continue;
             if (replicator.verbose() && logger.isDebugEnabled()) logger.debug("{}", event);
-            this.replicator.submitEvent(event);
+            this.replicator.submitEvent(event, of(start, offset));
         }
-        return in.total();
+        return offset;
     }
 }
 

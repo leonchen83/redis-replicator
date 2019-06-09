@@ -22,7 +22,7 @@ import java.util.Map;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class MSetNxCommand extends GenericCommand {
+public class MSetNxCommand extends AbstractCommand {
 
     private static final long serialVersionUID = 1L;
 

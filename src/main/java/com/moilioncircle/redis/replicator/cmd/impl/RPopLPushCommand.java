@@ -20,7 +20,7 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @author Leon Chen
  * @since 2.3.1
  */
-public class RPopLPushCommand extends GenericCommand {
+public class RPopLPushCommand extends AbstractCommand {
 
     private static final long serialVersionUID = 1L;
 

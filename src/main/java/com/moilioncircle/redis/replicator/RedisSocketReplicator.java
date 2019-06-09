@@ -29,6 +29,7 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
 import static com.moilioncircle.redis.replicator.util.Concurrents.terminateQuietly;
 import static com.moilioncircle.redis.replicator.util.Strings.format;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+import static com.moilioncircle.redis.replicator.util.Tuples.of;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.IOException;
@@ -46,7 +47,6 @@ import com.moilioncircle.redis.replicator.cmd.BulkReplyHandler;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.OffsetHandler;
 import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
@@ -391,12 +391,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
             final long[] offset = new long[1];
             while (getStatus() == CONNECTED) {
-                Object obj = replyParser.parse(new OffsetHandler() {
-                    @Override
-                    public void handle(long len) {
-                        offset[0] = len;
-                    }
-                });
+                Object obj = replyParser.parse(len -> offset[0] = len);
                 if (obj instanceof Object[]) {
                     if (verbose() && logger.isDebugEnabled())
                         logger.debug(format((Object[]) obj));
@@ -409,10 +404,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
                         offset[0] = 0L;
                         continue;
                     }
-                    long startOffset = configuration.getReplOffset();
+                    final long st = configuration.getReplOffset();
+                    final long ed = st + offset[0];
                     if (isEquals(Strings.toString(raw[0]), "SELECT")) {
                         db = toInt(raw[1]);
-                        submitEvent(parser.parse(raw), startOffset, startOffset + offset[0]);
+                        submitEvent(parser.parse(raw), of(st, ed));
                     } else if (isEquals(Strings.toString(raw[0]), "REPLCONF") && isEquals(Strings.toString(raw[1]), "GETACK")) {
                         if (mode == PSYNC) executor.execute(new Runnable() {
                             @Override
@@ -421,7 +417,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
                             }
                         });
                     } else if (!isEquals(Strings.toString(raw[0]), "PING")) {
-                        submitEvent(parser.parse(raw), startOffset, startOffset + offset[0]);
+                        submitEvent(parser.parse(raw), of(st, ed));
                     }
                 } else {
                     logger.warn("unexpected redis reply:{}", obj);

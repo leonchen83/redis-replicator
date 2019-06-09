@@ -20,6 +20,6 @@ package com.moilioncircle.redis.replicator.event;
  * @author Leon Chen
  * @since 3.0.0
  */
-public class PostCommandSyncEvent implements Event {
+public class PostCommandSyncEvent extends AbstractEvent {
     private static final long serialVersionUID = 1L;
 }

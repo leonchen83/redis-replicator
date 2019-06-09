@@ -16,11 +16,17 @@
 
 package com.moilioncircle.examples.extension;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+
+import java.io.IOException;
+import java.util.Arrays;
+
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.AbstractCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
@@ -28,12 +34,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.DefaultRdbModuleParser;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -109,7 +109,7 @@ public class ModuleExtensionExample {
         }
     }
 
-    public static class HelloTypeCommand implements Command {
+    public static class HelloTypeCommand extends AbstractCommand {
         /**
          *
          */

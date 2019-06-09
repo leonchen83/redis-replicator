@@ -16,15 +16,15 @@
 
 package com.moilioncircle.examples.extension;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.AbstractCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 
 /**
  * @author Leon Chen
@@ -57,7 +57,7 @@ public class CommandExtensionExample {
             return new YourAppendCommand(toRune(command[1]), toRune(command[2]));
         }
 
-        public static class YourAppendCommand implements Command {
+        public static class YourAppendCommand extends AbstractCommand {
             /**
              *
              */

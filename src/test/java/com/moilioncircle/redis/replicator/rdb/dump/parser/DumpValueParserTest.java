@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 /**
- * @author Baoyi Chen
+ * @author Leon Chen
  */
 @SuppressWarnings("unchecked")
 public class DumpValueParserTest {

@@ -20,7 +20,7 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @author Leon Chen
  * @since 2.4.7
  */
-public class EvalShaCommand extends GenericCommand {
+public class EvalShaCommand extends AbstractCommand {
 
     private static final long serialVersionUID = 1L;
 

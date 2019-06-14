@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.util.type;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,12 +30,16 @@ import com.moilioncircle.redis.replicator.util.Iterators;
  * @author Leon Chen
  */
 @SuppressWarnings("unchecked")
-public class Tuple5<T1, T2, T3, T4, T5> implements Iterable<Object> {
-    private final T1 v1;
-    private final T2 v2;
-    private final T3 v3;
-    private final T4 v4;
-    private final T5 v5;
+public class Tuple5<T1, T2, T3, T4, T5> implements Iterable<Object>, Serializable {
+    private static final long serialVersionUID = 1L;
+    private T1 v1;
+    private T2 v2;
+    private T3 v3;
+    private T4 v4;
+    private T5 v5;
+
+    public Tuple5() {
+    }
 
     public Tuple5(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5) {
         this.v1 = v1;
@@ -70,6 +75,26 @@ public class Tuple5<T1, T2, T3, T4, T5> implements Iterable<Object> {
 
     public T5 getV5() {
         return v5;
+    }
+
+    public void setV1(T1 v1) {
+        this.v1 = v1;
+    }
+
+    public void setV2(T2 v2) {
+        this.v2 = v2;
+    }
+
+    public void setV3(T3 v3) {
+        this.v3 = v3;
+    }
+
+    public void setV4(T4 v4) {
+        this.v4 = v4;
+    }
+
+    public void setV5(T5 v5) {
+        this.v5 = v5;
     }
 
     public <V1, V2, V3, V4, V5> Tuple5<V1, V2, V3, V4, V5> map(Function<Tuple5<T1, T2, T3, T4, T5>, Tuple5<V1, V2, V3, V4, V5>> function) {

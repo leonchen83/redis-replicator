@@ -16,7 +16,6 @@
 
 package com.moilioncircle.examples.file;
 
-import com.moilioncircle.examples.util.Tuple2;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -29,6 +28,7 @@ import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
+import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -64,21 +64,21 @@ public class SplitRdbExample {
             outs[i] = new CRCOutputStream(new BufferedOutputStream(new FileOutputStream(new File("./src/test/resources/dump-split-" + i + ".rdb"))));
         }
         final Tuple2<byte[], ByteBuilder> tuple = new Tuple2<>();
-        tuple.setT2(ByteBuilder.allocate(128));
+        tuple.setV2(ByteBuilder.allocate(128));
 
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
-                if (tuple.getT1() != null) {
+                if (tuple.getV1() != null) {
                     try {
                         // write file by key hashcode sharding
-                        int idx = tuple.getT1().hashCode() & (outs.length - 1);
+                        int idx = tuple.getV1().hashCode() & (outs.length - 1);
                         if (headers[idx].compareAndSet(false, true)) {
                             // you know your redis version. so you know your rdb version.
                             outs[idx].write(REDIS_MAGIC.getBytes());
                             outs[idx].write(REDIS_VERSION.getBytes());
                         }
-                        byte[] ary = tuple.getT2().array();
+                        byte[] ary = tuple.getV2().array();
                         if (ary.length > 9
                                 && header.compareAndSet(false, true)
                                 && Arrays.equals(REDIS_MAGIC.getBytes(), Arrays.copyOfRange(ary, 0, 5))) {
@@ -90,10 +90,10 @@ public class SplitRdbExample {
                         throw new UncheckedIOException(e);
                     }
 
-                    tuple.setT1(null);
-                    tuple.setT2(ByteBuilder.allocate(128));
+                    tuple.setV1(null);
+                    tuple.setV2(ByteBuilder.allocate(128));
                 }
-                for (byte b : rawBytes) tuple.getT2().put(b);
+                for (byte b : rawBytes) tuple.getV2().put(b);
             }
         };
 
@@ -105,10 +105,10 @@ public class SplitRdbExample {
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof AuxField) {
                     // clear aux field
-                    tuple.setT2(ByteBuilder.allocate(128));
+                    tuple.setV2(ByteBuilder.allocate(128));
                 }
                 if (event instanceof KeyValuePair<?, ?>) {
-                    tuple.setT1(((KeyValuePair<byte[], ?>) event).getKey());
+                    tuple.setV1(((KeyValuePair<byte[], ?>) event).getKey());
                 }
                 if (event instanceof PostRdbSyncEvent) {
                     for (int i = 0; i < len; i++) {

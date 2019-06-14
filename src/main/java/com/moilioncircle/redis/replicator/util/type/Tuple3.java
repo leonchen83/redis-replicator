@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.util.type;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,10 +30,14 @@ import com.moilioncircle.redis.replicator.util.Iterators;
  * @author Leon Chen
  */
 @SuppressWarnings("unchecked")
-public class Tuple3<T1, T2, T3> implements Iterable<Object> {
-    private final T1 v1;
-    private final T2 v2;
-    private final T3 v3;
+public class Tuple3<T1, T2, T3> implements Iterable<Object>, Serializable {
+    private static final long serialVersionUID = 1L;
+    private T1 v1;
+    private T2 v2;
+    private T3 v3;
+
+    public Tuple3() {
+    }
 
     public Tuple3(T1 v1, T2 v2, T3 v3) {
         this.v1 = v1;
@@ -56,6 +61,18 @@ public class Tuple3<T1, T2, T3> implements Iterable<Object> {
 
     public T3 getV3() {
         return v3;
+    }
+
+    public void setV1(T1 v1) {
+        this.v1 = v1;
+    }
+
+    public void setV2(T2 v2) {
+        this.v2 = v2;
+    }
+
+    public void setV3(T3 v3) {
+        this.v3 = v3;
     }
 
     public <V1, V2, V3> Tuple3<V1, V2, V3> map(Function<Tuple3<T1, T2, T3>, Tuple3<V1, V2, V3>> function) {

@@ -16,7 +16,6 @@
 
 package com.moilioncircle.examples.file;
 
-import com.moilioncircle.examples.util.Tuple2;
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
@@ -27,6 +26,7 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
+import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -53,24 +53,24 @@ public class SplitAofExample {
         }
 
         final Tuple2<Boolean, ByteBuilder> tuple = new Tuple2<>();
-        tuple.setT1(false);
-        tuple.setT2(ByteBuilder.allocate(128));
+        tuple.setV1(false);
+        tuple.setV2(ByteBuilder.allocate(128));
 
         final RawByteListener rawByteListener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
-                if (tuple.getT1()) {
+                if (tuple.getV1()) {
                     try {
                         int idx = ThreadLocalRandom.current().nextInt(outs.length);
-                        outs[idx].write(tuple.getT2().array());
+                        outs[idx].write(tuple.getV2().array());
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
 
-                    tuple.setT1(false);
-                    tuple.setT2(ByteBuilder.allocate(128));
+                    tuple.setV1(false);
+                    tuple.setV2(ByteBuilder.allocate(128));
                 }
-                for (byte b : rawBytes) tuple.getT2().put(b);
+                for (byte b : rawBytes) tuple.getV2().put(b);
             }
         };
 
@@ -91,7 +91,7 @@ public class SplitAofExample {
 //                    tuple.setT2(ByteBuilder.allocate(128));
 //                }
                 if (event instanceof Command) {
-                    tuple.setT1(true);
+                    tuple.setV1(true);
                 }
             }
         });

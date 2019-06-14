@@ -16,8 +16,6 @@
 
 package com.moilioncircle.redis.replicator.event;
 
-import java.io.Serializable;
-
 import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 /**
@@ -35,7 +33,7 @@ public abstract class AbstractEvent implements Event {
         this.context = context;
     }
 
-    private static class ContextImpl implements Context, Serializable {
+    private static class ContextImpl implements Context {
         private static final long serialVersionUID = 1L;
 
         private Tuple2<Long, Long> offsets;

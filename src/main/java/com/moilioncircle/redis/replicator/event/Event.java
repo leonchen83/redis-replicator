@@ -26,7 +26,7 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
  */
 public interface Event extends Serializable {
 
-    interface Context {
+    interface Context extends Serializable {
         Tuple2<Long, Long> getOffsets();
         void setOffsets(Tuple2<Long, Long> offset);
     }

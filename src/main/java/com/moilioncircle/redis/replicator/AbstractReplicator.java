@@ -175,10 +175,8 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     }
 
     public void submitEvent(Event event, Tuple2<Long, Long> offsets) {
+        dress(event, offsets);
         try {
-            if (event instanceof AbstractEvent) {
-                ((AbstractEvent) event).getContext().setOffsets(offsets);
-            }
             doEventListener(this, event);
         } catch (UncheckedIOException e) {
             throw e;
@@ -187,7 +185,13 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
             doExceptionListener(this, e, event);
         }
     }
-    
+
+    protected void dress(Event event, Tuple2<Long, Long> offsets) {
+        if (event instanceof AbstractEvent) {
+            ((AbstractEvent) event).getContext().setOffsets(offsets);
+        }
+    }
+
     protected boolean compareAndSet(Status prev, Status next) {
         boolean result = connected.compareAndSet(prev, next);
         if (result) doStatusListener(this, next);

@@ -175,8 +175,8 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     }
 
     public void submitEvent(Event event, Tuple2<Long, Long> offsets) {
-        dress(event, offsets);
         try {
+            dress(event, offsets);
             doEventListener(this, event);
         } catch (UncheckedIOException e) {
             throw e;

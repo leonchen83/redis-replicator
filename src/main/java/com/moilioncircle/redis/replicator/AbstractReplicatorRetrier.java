@@ -17,7 +17,6 @@
 package com.moilioncircle.redis.replicator;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
 /**
  * @author Leon Chen

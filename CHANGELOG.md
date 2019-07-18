@@ -1,3 +1,7 @@
+### 2.6.6
+
+Fix UncheckedIOException  
+
 ### 2.6.5
 Fix decode bug.  
 Fix select bug.  

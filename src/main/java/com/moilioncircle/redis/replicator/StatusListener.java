@@ -20,7 +20,6 @@ package com.moilioncircle.redis.replicator;
  * @author Leon Chen
  * @since 2.6.4
  */
-@FunctionalInterface
 public interface StatusListener {
 	void handle(Replicator replicator, Status status);
 }

@@ -209,8 +209,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.1.1</version>
                         <configuration>
+                            <source>${maven.compiler.source}</source>
+                            <additionalparam>-Xdoclint:none</additionalparam>
                             <encoding>${project.build.sourceEncoding}</encoding>
                             <sourceFileExcludes>
                                 <sourceFileExclude>**/module-info.java</sourceFileExclude>
@@ -251,6 +253,12 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                         <configuration>
@@ -356,8 +364,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.1.1</version>
                         <configuration>
+                            <source>${maven.compiler.source}</source>
+                            <additionalparam>-Xdoclint:none</additionalparam>
                             <encoding>${project.build.sourceEncoding}</encoding>
                             <sourceFileExcludes>
                                 <sourceFileExclude>**/module-info.java</sourceFileExclude>

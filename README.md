@@ -89,7 +89,7 @@ redis 2.6 - 5.0
   
 ```
     step 1: install jdk-1.8.x for compile
-    step 2: install jdk-9.0.x for compile
+    step 2: install jdk-9.0.x for compile(or jdk-11.0.x)
     step 3: git clone https://github.com/leonchen83/redis-replicator.git
     step 4: $cd ./redis-replicator 
             replace jdk path in toolchains.xml and save it.

@@ -102,7 +102,7 @@ redis 2.6 - 5.0
   
 ```
     step 1: 安装 jdk-1.8.x
-    step 2: 安装 jdk-9.0.x
+    step 2: 安装 jdk-9.0.x(或jdk-11.0.x)
     step 3: git clone https://github.com/leonchen83/redis-replicator.git
     step 4: cd ./redis-replicator 
             替换toolchains.xml中相应的jdk路径并保存

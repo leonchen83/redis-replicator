@@ -86,7 +86,8 @@ under the License.
             <vendor>oracle</vendor>
         </provides>
         <configuration>
-            <!-- Location of a JDK9 in the Travis build environment -->
+            <!-- Location of a JDK9 or JDK11 in the Travis build environment -->
+            <!--<jdkHome>/usr/lib/jvm/java-11-oracle</jdkHome>--> 
             <jdkHome>/usr/lib/jvm/java-9-oracle</jdkHome>
         </configuration>
     </toolchain>

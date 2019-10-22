@@ -12,9 +12,9 @@ services:
 before_install:
   - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh -O $TRAVIS_BUILD_DIR/install-jdk.sh
   - chmod u+x $TRAVIS_BUILD_DIR/install-jdk.sh
-  - $TRAVIS_BUILD_DIR/install-jdk.sh --feature 11 --target $TRAVIS_BUILD_DIR/jdk11
-  - $TRAVIS_BUILD_DIR/install-jdk.sh --feature 8 --target $TRAVIS_BUILD_DIR/jdk8
+  - $TRAVIS_BUILD_DIR/install-jdk.sh --feature 11 --target /usr/lib/jvm/openjdk11
   - ls $TRAVIS_BUILD_DIR
+  - ls /usr/lib/jvm
   - cp ./toolchains.xml ~/.m2/
   - wget https://github.com/antirez/redis/archive/3.2.3.tar.gz
   - tar -xvzf 3.2.3.tar.gz >/dev/null 2>&1

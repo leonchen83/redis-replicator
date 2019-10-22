@@ -10,6 +10,7 @@ branches:
 services:
   - redis-server
 before_install:
+  - pwd
   - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh -O $TRAVIS_BUILD_DIR/install-jdk.sh
   - chmod u+x $TRAVIS_BUILD_DIR/install-jdk.sh
   - $TRAVIS_BUILD_DIR/install-jdk.sh --feature 11 --target $TRAVIS_BUILD_DIR/openjdk11

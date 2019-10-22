@@ -10,7 +10,9 @@ branches:
 services:
   - redis-server
 before_install:
-  - ls /usr/lib/jvm
+  - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
+  - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk8 --target $JAVA_HOME
+  - ls $HOME/openjdk11
   - cp ./toolchains.xml ~/.m2/
   - wget https://github.com/antirez/redis/archive/3.2.3.tar.gz
   - tar -xvzf 3.2.3.tar.gz >/dev/null 2>&1

@@ -115,28 +115,12 @@ redis 2.6 - 5.0
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                System.out.println(event);
-            }
-        });
-        replicator.open();
-```
-
-print example（redis-replicator-2.4.0 after the version）
-
-```java  
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?authPassword=123456");
-        replicator.addEventListener(new EventListener() {
-            @Override
-            public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof KeyStringValueList) {
-                    KeyStringValueList kv = (KeyStringValueList) event;
-                    String key = new String(kv.getKey());
-                    System.out.println(key);
-                    List<byte[]> value = kv.getValue();
-                    for (int i = 0; i < value.size(); i++) {
-                        System.out.println(new String(value.get(i)));
-                    }
-                    System.out.println();
+                if (event instanceof KeyStringValueString) {
+                    KeyStringValueString kv = (KeyStringValueString) event;
+                    System.out.println(new String(kv.getKey()));
+                    System.out.println(new String(kv.getValue()));
+                } else {
+                    ....
                 }
             }
         });

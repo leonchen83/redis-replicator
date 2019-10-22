@@ -10,6 +10,7 @@ branches:
 services:
   - redis-server
 before_install:
+  - ls /usr/lib/jvm
   - cp ./toolchains.xml ~/.m2/
   - wget https://github.com/antirez/redis/archive/3.2.3.tar.gz
   - tar -xvzf 3.2.3.tar.gz >/dev/null 2>&1

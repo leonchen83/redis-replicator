@@ -127,6 +127,27 @@ redis 2.6 - 5.0
         replicator.open();
 ```
 
+打印示例（redis-replicator-2.4.0 版之后）
+
+```java  
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?authPassword=123456");
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueList) {
+                    KeyStringValueList kv = (KeyStringValueList) event;
+                    String key = new String(kv.getKey());
+                    System.out.println(key);
+                    List<byte[]> value = kv.getValue();
+                    for (int i = 0; i < value.size(); i++) {
+                        System.out.println(new String(value.get(i)));
+                    }
+                    System.out.println();
+                }
+            }
+        });
+        replicator.open();
+```
 ## 3.2. 备份远程redis的rdb文件  
 
 参阅 [RdbBackupExample.java](./examples/com/moilioncircle/examples/backup/RdbBackupExample.java)  

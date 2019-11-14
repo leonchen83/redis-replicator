@@ -20,7 +20,7 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @author René Kerner (@rk3rn3r)
  * @since 3.3.0
  */
-abstract class GenericKeyValueCommand extends GenericKeyCommand {
+public abstract class GenericKeyValueCommand extends GenericKeyCommand {
 
     private byte[] value;
 

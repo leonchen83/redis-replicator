@@ -28,6 +28,11 @@ public class RedisCodec {
 
     private static final byte[] NUMERALS = new byte[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
+    /**
+     * @param bytes bytes
+     * @return encoded bytes
+     * @see <a href="https://github.com/antirez/redis/blob/4.0/src/sds.c">sds.c sdscatrepr</a> sdssplitargs
+     */
     public byte[] encode(byte[] bytes) {
         ByteBuilder s = ByteBuilder.allocate(bytes.length);
         for (int i = 0; i < bytes.length; i++) {
@@ -47,6 +52,12 @@ public class RedisCodec {
             } else if (b == 7) {
                 s.put((byte) '\\');
                 s.put((byte) 'a');
+            } else if (b == '\\') {
+                s.put((byte) '\\');
+                s.put((byte) '\\');
+            } else if (b == '"') {
+                s.put((byte) '\\');
+                s.put((byte) '"');
             } else if (b > 32 && b < 127) {
                 s.put((byte) b); // printable
             } else {
@@ -62,6 +73,11 @@ public class RedisCodec {
         return s.array();
     }
 
+    /**
+     * @param bytes bytes
+     * @return decoded bytes
+     * @see <a href="https://github.com/antirez/redis/blob/4.0/src/sds.c">sds.c sdssplitargs</a> sdssplitargs
+     */
     public byte[] decode(byte[] bytes) {
         ByteBuilder s = ByteBuilder.allocate(bytes.length);
         for (int i = 0; i < bytes.length; i++) {
@@ -81,9 +97,6 @@ public class RedisCodec {
                                 break;
                             case 'b':
                                 s.put((byte) '\b');
-                                break;
-                            case 'f':
-                                s.put((byte) '\f');
                                 break;
                             case 'a':
                                 s.put((byte) 7);
@@ -106,12 +119,12 @@ public class RedisCodec {
                                 }
                                 break;
                             default:
-                                s.put((byte)'\\');
+                                // s.put((byte)'\\'); 
                                 s.put(bytes[i]);
                                 break;
                         }
                     } else {
-                        s.put((byte)'\\');
+                        // s.put((byte)'\\');
                     }
                     break;
                 default:

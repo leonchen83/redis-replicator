@@ -1,3 +1,7 @@
+### 2.6.7
+
+Fix RedisCodec bug  
+
 ### 2.6.6
 
 Fix UncheckedIOException  

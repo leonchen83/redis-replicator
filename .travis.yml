@@ -1,15 +1,19 @@
 language: java
 jdk:
-    - openjdk7
-    - oraclejdk8
-    - oraclejdk9
-    - openjdk10
+    - openjdk8
+    - openjdk11
 branches:
   only:
     - 2.x
 services:
   - redis-server
 before_install:
+  - pwd
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh -O $TRAVIS_BUILD_DIR/install-jdk.sh
+  - chmod u+x $TRAVIS_BUILD_DIR/install-jdk.sh
+  - $TRAVIS_BUILD_DIR/install-jdk.sh --feature 11 --target $TRAVIS_BUILD_DIR/openjdk11
+  - ls $TRAVIS_BUILD_DIR
+  - ls /usr/lib/jvm
   - cp ./toolchains.xml ~/.m2/
   - wget https://github.com/antirez/redis/archive/3.2.3.tar.gz
   - tar -xvzf 3.2.3.tar.gz >/dev/null 2>&1

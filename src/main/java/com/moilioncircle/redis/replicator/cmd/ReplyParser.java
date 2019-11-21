@@ -176,9 +176,4 @@ public class ReplyParser {
             }
         }
     }
-
-    public static void main(String[] args) {
-        byte[] b = new byte[]{116, 104, 66, 105, 122, 34, 58, 34, 77, 71, 82};
-        System.out.println(new String(b));
-    }
 }

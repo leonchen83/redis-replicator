@@ -1,3 +1,6 @@
+### 3.3.2
+Fix `RedisCodec` bug.  
+
 ### 3.3.1
 Add `GenericKeyCommand`,`GenericKeyValueCommand`.  
 

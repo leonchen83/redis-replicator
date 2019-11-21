@@ -46,7 +46,7 @@ public interface BulkReplyHandler {
             int c;
             if ((c = in.read()) != '\r') throw new AssertionError("expect '\\r' but :" + (char) c);
             if ((c = in.read()) != '\n') throw new AssertionError("expect '\\n' but :" + (char) c);
-            return codec == null ? reply : codec.decode(reply);
+            return reply;
         }
     }
 }

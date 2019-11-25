@@ -1,3 +1,6 @@
+### 3.3.3
+Parse `PING` command.  
+
 ### 3.3.2
 Fix `RedisCodec` bug.  
 

@@ -416,7 +416,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
                                 sendQuietly("REPLCONF".getBytes(), "ACK".getBytes(), String.valueOf(configuration.getReplOffset()).getBytes());
                             }
                         });
-                    } else if (!isEquals(Strings.toString(raw[0]), "PING")) {
+                    } else {
+                        // include ping command
                         submitEvent(parser.parse(raw), of(st, ed));
                     }
                 } else {

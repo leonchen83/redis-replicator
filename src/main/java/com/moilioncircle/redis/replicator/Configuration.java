@@ -74,6 +74,11 @@ public class Configuration {
      * redis input stream buffer size
      */
     private int bufferSize = 8 * 1024;
+    
+    /**
+     * auth user (redis 6.0)
+     */
+    private String authUser = null;
 
     /**
      * auth password
@@ -173,6 +178,15 @@ public class Configuration {
 
     public Configuration setRetries(int retries) {
         this.retries = retries;
+        return this;
+    }
+
+    public String getAuthUser() {
+        return authUser;
+    }
+
+    public Configuration setAuthUser(String authUser) {
+        this.authUser = authUser;
         return this;
     }
 
@@ -367,6 +381,9 @@ public class Configuration {
         if (parameters.containsKey("bufferSize")) {
             configuration.setBufferSize(getInt(parameters.get("bufferSize"), 8 * 1024));
         }
+        if (parameters.containsKey("authUser")) {
+            configuration.setAuthPassword(parameters.get("authUser"));
+        }
         if (parameters.containsKey("authPassword")) {
             configuration.setAuthPassword(parameters.get("authPassword"));
         }
@@ -399,6 +416,16 @@ public class Configuration {
         }
         if (parameters.containsKey("replOffset")) {
             configuration.setReplOffset(getLong(parameters.get("replOffset"), -1L));
+        }
+        // redis 6
+        if (uri.isSsl()) {
+            configuration.setSsl(true);
+        }
+        if (uri.getUser() != null) {
+            configuration.setAuthUser(uri.getUser());
+        }
+        if (uri.getPassword() != null) {
+            configuration.setAuthPassword(uri.getPassword());
         }
         return configuration;
     }
@@ -443,6 +470,7 @@ public class Configuration {
                 ", retries=" + retries +
                 ", retryTimeInterval=" + retryTimeInterval +
                 ", bufferSize=" + bufferSize +
+                ", authUser='" + authUser + '\'' +
                 ", authPassword='" + authPassword + '\'' +
                 ", discardRdbEvent=" + discardRdbEvent +
                 ", asyncCachedBytes=" + asyncCachedBytes +

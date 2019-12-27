@@ -49,6 +49,15 @@ public class SetParserTest extends AbstractParserTest {
         assertEquals("b", cmd.getValue());
         TestCase.assertEquals(ExpiredType.MS, cmd.getExpiredType());
         assertEquals(123L, cmd.getExpiredValue());
+        assertEquals(false, cmd.getKeepTtl());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+
+        cmd = parser.parse(toObjectArray("set a b xx keepttl px 123".split(" ")));
+        assertEquals("a", cmd.getKey());
+        assertEquals("b", cmd.getValue());
+        TestCase.assertEquals(ExpiredType.MS, cmd.getExpiredType());
+        assertEquals(true, cmd.getKeepTtl());
+        assertEquals(123L, cmd.getExpiredValue());
         TestCase.assertEquals(ExistType.XX, cmd.getExistType());
 
     }

@@ -39,6 +39,7 @@ public class SetParser implements CommandParser<SetCommand> {
         ExistType existType = ExistType.NONE;
         Long expiredValue = null;
         boolean et = false, st = false;
+        boolean keepTtl = false;
         ExpiredType expiredType = ExpiredType.NONE;
         while (idx < command.length) {
             String param = toRune(command[idx++]);
@@ -48,6 +49,8 @@ public class SetParser implements CommandParser<SetCommand> {
             } else if (!et && isEquals(param, "XX")) {
                 existType = ExistType.XX;
                 et = true;
+            } else if (!keepTtl && isEquals(param, "KEEPTTL")) {
+                keepTtl = true;
             }
 
             if (!st && isEquals(param, "EX")) {
@@ -60,7 +63,7 @@ public class SetParser implements CommandParser<SetCommand> {
                 st = true;
             }
         }
-        return new SetCommand(key, value, expiredType, expiredValue, existType);
+        return new SetCommand(key, value, keepTtl, expiredType, expiredValue, existType);
     }
 
 }

@@ -49,11 +49,14 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     private String string;
 
+    private transient String user;
+    private transient boolean ssl;
     private transient String host;
     private transient String path;
     private transient String query;
     private transient int port = -1;
     private transient String scheme;
+    private transient String password;
     private transient String userInfo;
     private transient String fragment;
     private transient String authority;
@@ -93,6 +96,14 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
         return port;
     }
 
+    public boolean isSsl() {
+        return ssl;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
     public String getHost() {
         return host;
     }
@@ -107,6 +118,10 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     public String getScheme() {
         return scheme;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getUserInfo() {
@@ -176,10 +191,17 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     private void parse(String uri) throws URISyntaxException {
         this.uri = new URI(uri);
-        if (this.uri.getScheme() != null && this.uri.getScheme().equalsIgnoreCase("redis")) {
-            this.scheme = "redis";
+        if (this.uri.getScheme() != null) {
+            if (this.uri.getScheme().equalsIgnoreCase("redis")) {
+                this.scheme = "redis";
+            } else if (this.uri.getScheme().equalsIgnoreCase("rediss")) {
+                this.scheme = "rediss";
+                this.ssl = true;
+            } else {
+                throw new URISyntaxException(uri, "scheme must be [redis] or [rediss].");
+            }
         } else {
-            throw new URISyntaxException(uri, "scheme must be [redis].");
+            throw new URISyntaxException(uri, "scheme must be [redis] or [rediss].");
         }
         this.host = this.uri.getHost();
         this.path = this.uri.getPath();
@@ -193,6 +215,20 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
             if (idx >= 0) {
                 String type = this.path.substring(idx + 1);
                 this.fileType = FileType.parse(type);
+            }
+        }
+        
+        if (this.userInfo != null) {
+            String[] ary = this.userInfo.split(":");
+            String user = ary[0];
+            if (user != null && user.length() != 0) {
+                this.user = user;
+            }
+            if (ary.length == 2) {
+                String password = ary[1];
+                if (password != null && password.length() != 0) {
+                    this.password = password;
+                }
             }
         }
 

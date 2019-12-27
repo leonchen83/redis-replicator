@@ -26,6 +26,7 @@ public class SetCommand extends GenericKeyValueCommand {
 
     private static final long serialVersionUID = 1L;
 
+    private boolean keepTtl;
     private ExpiredType expiredType;
     private Long expiredValue;
     private ExistType existType;
@@ -33,11 +34,20 @@ public class SetCommand extends GenericKeyValueCommand {
     public SetCommand() {
     }
 
-    public SetCommand(byte[] key, byte[] value, ExpiredType expiredType, Long expiredValue, ExistType existType) {
+    public SetCommand(byte[] key, byte[] value, boolean keepTtl, ExpiredType expiredType, Long expiredValue, ExistType existType) {
         super(key, value);
+        this.keepTtl = keepTtl;
         this.expiredType = expiredType;
         this.expiredValue = expiredValue;
         this.existType = existType;
+    }
+
+    public boolean getKeepTtl() {
+        return keepTtl;
+    }
+
+    public void setKeepTtl(boolean keepTtl) {
+        this.keepTtl = keepTtl;
     }
 
     public ExpiredType getExpiredType() {

@@ -173,7 +173,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     
     protected void establishConnection() throws IOException {
         connect();
-        if (configuration.getAuthPassword() != null) auth(configuration.getAuthPassword());
+        if (configuration.getAuthPassword() != null) auth(configuration.getAuthUser(), configuration.getAuthPassword());
         sendPing();
         sendSlavePort();
         sendSlaveIp();
@@ -181,18 +181,22 @@ public class RedisSocketReplicator extends AbstractReplicator {
         sendSlaveCapa("psync2");
     }
     
-    protected void auth(String password) throws IOException {
+    protected void auth(String user, String password) throws IOException {
         if (password != null) {
-            logger.info("AUTH {}", password);
-            send("AUTH".getBytes(), password.getBytes());
+            logger.info("AUTH {} {}", user, password);
+            if (user != null) {
+                send("AUTH".getBytes(), user.getBytes(), password.getBytes());
+            } else {
+                send("AUTH".getBytes(), password.getBytes());
+            }
             final String reply = Strings.toString(reply());
             logger.info(reply);
             if ("OK".equals(reply)) return;
             if (reply.contains("no password")) {
-                logger.warn("[AUTH {}] failed. {}", password, reply);
+                logger.warn("[AUTH {} {}] failed. {}", user, password, reply);
                 return;
             }
-            throw new AssertionError("[AUTH " + password + "] failed. " + reply);
+            throw new AssertionError("[AUTH " + user + " " + password + "] failed. " + reply);
         }
     }
     

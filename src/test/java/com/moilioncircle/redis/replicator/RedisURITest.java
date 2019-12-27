@@ -143,5 +143,26 @@ public class RedisURITest {
         uri = new RedisURI(str);
         assertEquals(str, uri.toASCIIString());
         assertEquals(" ", uri.parameters.get("key"));
+
+        str = "rediss://user:pass@host:6379";
+        uri = new RedisURI(str);
+
+        assertEquals("user", uri.getUser());
+        assertEquals("pass", uri.getPassword());
+        assertEquals(true, uri.isSsl());
+
+        str = "rediss://:pass@host:6379";
+        uri = new RedisURI(str);
+
+        assertEquals(null, uri.getUser());
+        assertEquals("pass", uri.getPassword());
+        assertEquals(true, uri.isSsl());
+
+        str = "rediss://user@host:6379";
+        uri = new RedisURI(str);
+
+        assertEquals("user", uri.getUser());
+        assertEquals(null, uri.getPassword());
+        assertEquals(true, uri.isSsl());
     }
 }

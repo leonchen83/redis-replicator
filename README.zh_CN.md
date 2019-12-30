@@ -406,6 +406,7 @@ Replicator replicator = new RedisReplicator("redis:///path/to/appendonly.aof");
 // 配置的例子
 Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?authPassword=foobared&readTimeout=10000&ssl=yes");
 Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit=1000000");
+Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?rateLimit=1000000");
 ```
 
 
@@ -469,19 +470,23 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 
     Configuration.defaultSetting().setSsl(true);
 
-    //可选设置
+    // 可选设置
     Configuration.defaultSetting().setSslSocketFactory(sslSocketFactory);
     Configuration.defaultSetting().setSslParameters(sslParameters);
     Configuration.defaultSetting().setHostnameVerifier(hostnameVerifier);
-
+    // redis uri
+    "redis://127.0.0.1:6379?ssl=yes"
+    "rediss://127.0.0.1:6379"
 ```
   
 ## 5.5. redis认证  
   
 ```java  
+    Configuration.defaultSetting().setAuthUser("default");
     Configuration.defaultSetting().setAuthPassword("foobared");
     // redis uri
-    "redis://127.0.0.1:6379?authPassword=foobared"
+    "redis://127.0.0.1:6379?authPassword=foobared&authUser=default"
+    "redis://default:foobared@127.0.0.1:6379"
 ```  
 
 ## 5.6. 避免全量同步  

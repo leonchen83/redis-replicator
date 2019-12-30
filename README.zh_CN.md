@@ -44,6 +44,9 @@
       * [5.6. 避免全量同步](#56-避免全量同步)
       * [5.7. 生命周期事件](#57-生命周期事件)
       * [5.8. 处理巨大的KV](#58-处理巨大的kv)
+      * [5.9. Redis6支持](#59-redis6支持)
+         * [5.9.1. SSL支持](#591-ssl支持)
+         * [5.9.2. ACL支持](#592-acl支持)
    * [6. 贡献者](#6-贡献者)
    * [7. 相关引用](#7-相关引用)
    * [8. 致谢](#8-致谢)
@@ -456,14 +459,21 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 ## 5.4. SSL安全链接  
   
 ```java  
+    System.setProperty("javax.net.ssl.keyStore", "/path/to/keystore");
+    System.setProperty("javax.net.ssl.keyStorePassword", "password");
+    System.setProperty("javax.net.ssl.keyStoreType", "your_type");
+
     System.setProperty("javax.net.ssl.trustStore", "/path/to/truststore");
     System.setProperty("javax.net.ssl.trustStorePassword", "password");
     System.setProperty("javax.net.ssl.trustStoreType", "your_type");
+
     Configuration.defaultSetting().setSsl(true);
+
     //可选设置
     Configuration.defaultSetting().setSslSocketFactory(sslSocketFactory);
     Configuration.defaultSetting().setSslParameters(sslParameters);
     Configuration.defaultSetting().setHostnameVerifier(hostnameVerifier);
+
 ```
   
 ## 5.5. redis认证  
@@ -515,6 +525,41 @@ Replicator replicator = new RedisReplicator("redis:///path/to/dump.rdb?rateLimit
 [1] [HugeKVFileExample.java](./examples/com/moilioncircle/examples/huge/HugeKVFileExample.java)  
 [2] [HugeKVSocketExample.java](./examples/com/moilioncircle/examples/huge/HugeKVSocketExample.java)  
   
+## 5.9. Redis6支持
+
+### 5.9.1. SSL支持
+
+```
+    $cd /path/to/redis
+    $./utils/gen-test-certs.sh
+    $cd tests/tls
+    $openssl pkcs12 -export -in redis.crt -inkey redis.key -out redis.p12
+    $keytool -import -file ca.crt -alias redis -keystore redis.p12
+    $cd /path/to/redis
+    $./src/redis-server --tls-port 6379 --port 0 --tls-cert-file ./tests/tls/redis.crt \
+         --tls-key-file ./tests/tls/redis.key --tls-ca-cert-file ./tests/tls/ca.crt \
+         --tls-replication yes --bind 0.0.0.0 --protected-mode no
+
+    System.setProperty("javax.net.ssl.keyStore", "/path/to/redis/tests/tls/redis.p12");
+    System.setProperty("javax.net.ssl.keyStorePassword", "password");
+    System.setProperty("javax.net.ssl.keyStoreType", "pkcs12");
+
+    System.setProperty("javax.net.ssl.trustStore", "/path/to/redis/tests/tls/redis.p12");
+    System.setProperty("javax.net.ssl.trustStorePassword", "password");
+    System.setProperty("javax.net.ssl.trustStoreType", "pkcs12");
+
+    Replicator replicator = new RedisReplicator("rediss://127.0.0.1:6379");
+
+```
+
+### 5.9.2. ACL支持
+
+```java  
+
+    Replicator replicator = new RedisReplicator("redis://user:pass@127.0.0.1:6379");
+
+```
+
 # 6. 贡献者  
 
 * [Leon Chen](https://github.com/leonchen83)  

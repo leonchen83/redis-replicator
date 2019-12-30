@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_DOUBLE;
@@ -142,5 +143,15 @@ public class DefaultRdbModuleParser {
                 throw new UnsupportedOperationException("Error loading float from RDB.");
         }
         return parser.rdbLoadBinaryFloatValue();
+    }
+
+    /**
+     * @param version param version of {@link ModuleParser#parse(RedisInputStream, int)}
+     * @return BigDecimal(long double in c)
+     * @throws IOException io exception
+     * @since 3.4.0
+     */
+    public BigDecimal loadLongDouble(int version) throws IOException {
+        return new BigDecimal(loadString(version));
     }
 }

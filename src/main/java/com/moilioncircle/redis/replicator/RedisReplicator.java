@@ -85,7 +85,7 @@ public class RedisReplicator implements Replicator {
      */
     public RedisReplicator(String uri) throws URISyntaxException, IOException {
         Objects.requireNonNull(uri);
-        initialize(new RedisURI(uri));
+        initialize(new RedisURI(uri), null);
     }
 
     /**
@@ -94,12 +94,38 @@ public class RedisReplicator implements Replicator {
      * @since 2.4.2
      */
     public RedisReplicator(RedisURI uri) throws IOException {
-        initialize(uri);
+        initialize(uri, null);
     }
 
-    private void initialize(RedisURI uri) throws IOException {
+    /**
+     * @param uri redis uri.
+     * @param sslConfiguration ssl configuration.
+     * @throws URISyntaxException uri syntax error.
+     * @throws IOException        read timeout or read EOF.
+     * @see RedisURI
+     * @see SslConfiguration
+     * @since 3.4.0
+     */
+    public RedisReplicator(String uri, SslConfiguration sslConfiguration) throws URISyntaxException, IOException {
         Objects.requireNonNull(uri);
-        Configuration configuration = Configuration.valueOf(uri);
+        initialize(new RedisURI(uri), sslConfiguration);
+    }
+
+    /**
+     * @param uri redis uri.
+     * @param sslConfiguration ssl configuration.
+     * @throws IOException read timeout or read EOF.
+     * @see RedisURI
+     * @see SslConfiguration
+     * @since 3.4.0
+     */
+    public RedisReplicator(RedisURI uri, SslConfiguration sslConfiguration) throws IOException {
+        initialize(uri, sslConfiguration);
+    }
+
+    private void initialize(RedisURI uri, SslConfiguration sslConfiguration) throws IOException {
+        Objects.requireNonNull(uri);
+        Configuration configuration = Configuration.valueOf(uri).merge(sslConfiguration);
         if (uri.getFileType() != null) {
             PeekableInputStream in = new PeekableInputStream(uri.toURL().openStream());
             switch (uri.getFileType()) {

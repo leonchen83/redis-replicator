@@ -22,6 +22,8 @@ import javax.net.ssl.SSLSocketFactory;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.moilioncircle.redis.replicator.net.RedisSslContextFactory;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
@@ -77,6 +79,8 @@ public class Configuration {
     
     /**
      * auth user (redis 6.0)
+     * 
+     * @since 3.4.0
      */
     private String authUser = null;
 
@@ -128,6 +132,13 @@ public class Configuration {
      * ssl socket factory
      */
     private SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+    
+    /**
+     * redis ssl context factory
+     * 
+     * @since 3.4.0
+     */
+    private RedisSslContextFactory redisSslContextFactory;
 
     /**
      * ssl parameters
@@ -339,6 +350,15 @@ public class Configuration {
         return this;
     }
 
+    public RedisSslContextFactory getRedisSslContextFactory() {
+        return redisSslContextFactory;
+    }
+
+    public Configuration setRedisSslContextFactory(RedisSslContextFactory redisSslContextFactory) {
+        this.redisSslContextFactory = redisSslContextFactory;
+        return this;
+    }
+
     public SSLParameters getSslParameters() {
         return sslParameters;
     }
@@ -354,6 +374,15 @@ public class Configuration {
 
     public Configuration setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
+        return this;
+    }
+    
+    public Configuration merge(SslConfiguration sslConfiguration) {
+        if (sslConfiguration == null) return this;
+        this.setSslParameters(sslConfiguration.getSslParameters());
+        this.setSslSocketFactory(sslConfiguration.getSslSocketFactory());
+        this.setHostnameVerifier(sslConfiguration.getHostnameVerifier());
+        this.setRedisSslContextFactory(sslConfiguration.getRedisSslContextFactory());
         return this;
     }
 
@@ -480,6 +509,7 @@ public class Configuration {
                 ", useDefaultExceptionListener=" + useDefaultExceptionListener +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +
+                ", redisSslContextFactory=" + redisSslContextFactory +
                 ", sslParameters=" + sslParameters +
                 ", hostnameVerifier=" + hostnameVerifier +
                 ", replId='" + replId + '\'' +

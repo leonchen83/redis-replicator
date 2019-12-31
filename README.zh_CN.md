@@ -556,6 +556,24 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
     Replicator replicator = new RedisReplicator("rediss://127.0.0.1:6379");
 
 ```
+  
+如果你不想设置 `System.setProperty` 可以使用下面的方式  
+  
+```java  
+
+    RedisSslContextFactory factory = new RedisSslContextFactory();
+    factory.setKeyStorePath("/path/to/redis/tests/tls/redis.p12");
+    factory.setKeyStoreType("pkcs12");
+    factory.setKeyStorePassword("password");
+
+    factory.setTrustStorePath("/path/to/redis/tests/tls/redis.p12");
+    factory.setTrustStoreType("pkcs12");
+    factory.setTrustStorePassword("password");
+
+    SslConfiguration ssl = SslConfiguration.defaultSetting().setRedisSslContextFactory(factory);
+    Replicator replicator = new RedisReplicator("rediss://127.0.0.1:6379", ssl);
+
+``` 
 
 ### 5.9.2. ACL支持
 

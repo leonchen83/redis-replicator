@@ -548,6 +548,24 @@ More details please refer to:
     Replicator replicator = new RedisReplicator("rediss://127.0.0.1:6379");
 
 ```
+  
+If you don't want to use `System.setProperty` you can programing as following  
+  
+```java  
+
+    RedisSslContextFactory factory = new RedisSslContextFactory();
+    factory.setKeyStorePath("/path/to/redis/tests/tls/redis.p12");
+    factory.setKeyStoreType("pkcs12");
+    factory.setKeyStorePassword("password");
+
+    factory.setTrustStorePath("/path/to/redis/tests/tls/redis.p12");
+    factory.setTrustStoreType("pkcs12");
+    factory.setTrustStorePassword("password");
+
+    SslConfiguration ssl = SslConfiguration.defaultSetting().setRedisSslContextFactory(factory);
+    Replicator replicator = new RedisReplicator("rediss://127.0.0.1:6379", ssl);
+
+``` 
 
 ### 5.9.2. ACL support
 

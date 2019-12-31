@@ -123,18 +123,22 @@ public class RedisSslContextFactory {
 
             if (keyStorePath != null) {
                 KeyStore ks = KeyStore.getInstance(requireNonNull(keyStoreType));
-                ks.load(new FileInputStream(keyStorePath), requireNonNull(keyStorePassword).toCharArray());
-                KeyManagerFactory kmf = KeyManagerFactory.getInstance(getDefaultAlgorithm());
-                kmf.init(ks, requireNonNull(keyStorePassword).toCharArray());
-                kms = kmf.getKeyManagers();
+                try(FileInputStream in = new FileInputStream(keyStorePath)) {
+                    ks.load(in, requireNonNull(keyStorePassword).toCharArray());
+                    KeyManagerFactory kmf = KeyManagerFactory.getInstance(getDefaultAlgorithm());
+                    kmf.init(ks, requireNonNull(keyStorePassword).toCharArray());
+                    kms = kmf.getKeyManagers();
+                }
             }
 
             if (trustStorePath != null) {
                 KeyStore ks = KeyStore.getInstance(requireNonNull(trustStoreType));
-                ks.load(new FileInputStream(trustStorePath), requireNonNull(trustStorePassword).toCharArray());
-                TrustManagerFactory tmf = TrustManagerFactory.getInstance(getDefaultAlgorithm());
-                tmf.init(ks);
-                tms = tmf.getTrustManagers();
+                try(FileInputStream in = new FileInputStream(keyStorePath)) {
+                    ks.load(in, requireNonNull(trustStorePassword).toCharArray());
+                    TrustManagerFactory tmf = TrustManagerFactory.getInstance(getDefaultAlgorithm());
+                    tmf.init(ks);
+                    tms = tmf.getTrustManagers();
+                }
             }
 
             this.context.init(kms, tms, null);

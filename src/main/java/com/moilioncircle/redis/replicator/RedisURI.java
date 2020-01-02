@@ -231,17 +231,6 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
                     this.password = password;
                 }
             }
-            String[] ary = this.userInfo.split(":");
-            String user = ary[0];
-            if (user != null && user.length() != 0) {
-                this.user = user;
-            }
-            if (ary.length == 2) {
-                String password = ary[1];
-                if (password != null && password.length() != 0) {
-                    this.password = password;
-                }
-            }
         }
 
         String rawQuery = this.uri.getRawQuery();

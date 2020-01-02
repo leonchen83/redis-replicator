@@ -36,7 +36,6 @@ import javax.net.ssl.X509TrustManager;
  */
 public class RedisSslContextFactory {
 
-    private SSLContext context;
     private String protocol = "TLS";
 
     private String keyStorePath;
@@ -112,11 +111,7 @@ public class RedisSslContextFactory {
 
     public SSLContext create() {
         try {
-            if (this.context != null) {
-                return this.context;
-            }
-            
-            this.context = SSLContext.getInstance(requireNonNull(this.protocol));
+            SSLContext context = SSLContext.getInstance(requireNonNull(this.protocol));
 
             KeyManager[] kms = null;
             TrustManager[] tms = new TrustManager[]{new TrustAllManager()};
@@ -141,8 +136,8 @@ public class RedisSslContextFactory {
                 }
             }
 
-            this.context.init(kms, tms, null);
-            return this.context;
+            context.init(kms, tms, null);
+            return context;
         } catch (Exception e) {
             throw new UnsupportedOperationException(e);
         }

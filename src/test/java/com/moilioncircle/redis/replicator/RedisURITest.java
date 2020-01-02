@@ -164,5 +164,19 @@ public class RedisURITest {
         assertEquals("user", uri.getUser());
         assertEquals(null, uri.getPassword());
         assertEquals(true, uri.isSsl());
+
+        str = "rediss://user:@host:6379";
+        uri = new RedisURI(str);
+
+        assertEquals("user", uri.getUser());
+        assertEquals(null, uri.getPassword());
+        assertEquals(true, uri.isSsl());
+
+        str = "rediss://user:pa:ss@host:6379";
+        uri = new RedisURI(str);
+
+        assertEquals("user", uri.getUser());
+        assertEquals("pa:ss", uri.getPassword());
+        assertEquals(true, uri.isSsl());
     }
 }

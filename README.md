@@ -531,8 +531,7 @@ More details please refer to:
     $cd /path/to/redis
     $./utils/gen-test-certs.sh
     $cd tests/tls
-    $openssl pkcs12 -export -in redis.crt -inkey redis.key -out redis.p12
-    $keytool -import -file ca.crt -alias redis -keystore redis.p12
+    $openssl pkcs12 -export -CAfile ca.crt -in redis.crt -inkey redis.key -out redis.p12
     $cd /path/to/redis
     $./src/redis-server --tls-port 6379 --port 0 --tls-cert-file ./tests/tls/redis.crt \
          --tls-key-file ./tests/tls/redis.key --tls-ca-cert-file ./tests/tls/ca.crt \

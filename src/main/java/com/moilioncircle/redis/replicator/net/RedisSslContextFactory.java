@@ -34,7 +34,7 @@ import javax.net.ssl.X509TrustManager;
  * @author Leon Chen
  * @since 3.4.0
  */
-public class RedisSslContextFactory {
+public class RedisSslContextFactory implements SslContextFactory {
 
     private String protocol = "TLS";
 
@@ -109,6 +109,7 @@ public class RedisSslContextFactory {
         return this;
     }
 
+    @Override
     public SSLContext create() {
         try {
             SSLContext context = SSLContext.getInstance(requireNonNull(this.protocol));

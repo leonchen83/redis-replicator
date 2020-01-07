@@ -20,7 +20,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocketFactory;
 
-import com.moilioncircle.redis.replicator.net.RedisSslContextFactory;
+import com.moilioncircle.redis.replicator.net.SslContextFactory;
 
 /**
  * @author Leon Chen
@@ -48,7 +48,7 @@ public class SslConfiguration {
     /**
      * ssl context factory
      */
-    private RedisSslContextFactory redisSslContextFactory;
+    private SslContextFactory sslContextFactory;
 
     /**
      * ssl parameters
@@ -69,12 +69,12 @@ public class SslConfiguration {
         return this;
     }
 
-    public RedisSslContextFactory getRedisSslContextFactory() {
-        return redisSslContextFactory;
+    public SslContextFactory getSslContextFactory() {
+        return sslContextFactory;
     }
 
-    public SslConfiguration setRedisSslContextFactory(RedisSslContextFactory redisSslContextFactory) {
-        this.redisSslContextFactory = redisSslContextFactory;
+    public SslConfiguration setSslContextFactory(SslContextFactory sslContextFactory) {
+        this.sslContextFactory = sslContextFactory;
         return this;
     }
 
@@ -100,7 +100,7 @@ public class SslConfiguration {
     public String toString() {
         return "SslConfiguration{" +
                 "sslSocketFactory=" + sslSocketFactory +
-                ", redisSslContextFactory=" + redisSslContextFactory +
+                ", sslContextFactory=" + sslContextFactory +
                 ", sslParameters=" + sslParameters +
                 ", hostnameVerifier=" + hostnameVerifier +
                 '}';

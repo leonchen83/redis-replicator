@@ -562,7 +562,7 @@ If you don't want to use `System.setProperty` you can programing as following
     factory.setTrustStoreType("pkcs12");
     factory.setTrustStorePassword("password");
 
-    SslConfiguration ssl = SslConfiguration.defaultSetting().setRedisSslContextFactory(factory);
+    SslConfiguration ssl = SslConfiguration.defaultSetting().setSslContextFactory(factory);
     Replicator replicator = new RedisReplicator("rediss://127.0.0.1:6379", ssl);
 
 ``` 

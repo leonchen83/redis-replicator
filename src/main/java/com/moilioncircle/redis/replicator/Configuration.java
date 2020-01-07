@@ -16,13 +16,14 @@
 
 package com.moilioncircle.redis.replicator;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLParameters;
-import javax.net.ssl.SSLSocketFactory;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.moilioncircle.redis.replicator.net.RedisSslContextFactory;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLSocketFactory;
+
+import com.moilioncircle.redis.replicator.net.SslContextFactory;
 
 /**
  * @author Leon Chen
@@ -134,11 +135,11 @@ public class Configuration {
     private SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
     
     /**
-     * redis ssl context factory
+     * ssl context factory
      * 
      * @since 3.4.0
      */
-    private RedisSslContextFactory redisSslContextFactory;
+    private SslContextFactory sslContextFactory;
 
     /**
      * ssl parameters
@@ -350,12 +351,12 @@ public class Configuration {
         return this;
     }
 
-    public RedisSslContextFactory getRedisSslContextFactory() {
-        return redisSslContextFactory;
+    public SslContextFactory getSslContextFactory() {
+        return sslContextFactory;
     }
 
-    public Configuration setRedisSslContextFactory(RedisSslContextFactory redisSslContextFactory) {
-        this.redisSslContextFactory = redisSslContextFactory;
+    public Configuration setSslContextFactory(SslContextFactory sslContextFactory) {
+        this.sslContextFactory = sslContextFactory;
         return this;
     }
 
@@ -382,7 +383,7 @@ public class Configuration {
         this.setSslParameters(sslConfiguration.getSslParameters());
         this.setSslSocketFactory(sslConfiguration.getSslSocketFactory());
         this.setHostnameVerifier(sslConfiguration.getHostnameVerifier());
-        this.setRedisSslContextFactory(sslConfiguration.getRedisSslContextFactory());
+        this.setSslContextFactory(sslConfiguration.getSslContextFactory());
         return this;
     }
 
@@ -509,7 +510,7 @@ public class Configuration {
                 ", useDefaultExceptionListener=" + useDefaultExceptionListener +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +
-                ", redisSslContextFactory=" + redisSslContextFactory +
+                ", sslContextFactory=" + sslContextFactory +
                 ", sslParameters=" + sslParameters +
                 ", hostnameVerifier=" + hostnameVerifier +
                 ", replId='" + replId + '\'' +

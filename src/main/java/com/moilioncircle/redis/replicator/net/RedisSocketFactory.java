@@ -16,17 +16,17 @@
 
 package com.moilioncircle.redis.replicator.net;
 
-import com.moilioncircle.redis.replicator.Configuration;
-
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
+
+import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+
+import com.moilioncircle.redis.replicator.Configuration;
 
 /**
  * @author Leon Chen
@@ -117,8 +117,8 @@ public class RedisSocketFactory extends SocketFactory {
     
     private SSLSocketFactory buildSslSocketFactory() {
         SSLSocketFactory factory;
-        if (configuration.getRedisSslContextFactory() != null) {
-            factory = configuration.getRedisSslContextFactory().create().getSocketFactory();
+        if (configuration.getSslContextFactory() != null) {
+            factory = configuration.getSslContextFactory().create().getSocketFactory();
         } else {
             factory = configuration.getSslSocketFactory();
         }

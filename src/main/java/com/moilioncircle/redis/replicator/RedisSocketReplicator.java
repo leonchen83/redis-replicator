@@ -183,7 +183,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
     
     protected void auth(String user, String password) throws IOException {
         if (password != null) {
-            logger.info("AUTH {} {}", user, password);
+            // sha256 mask password
+            String mask = "#" + Strings.mask(password);
+            logger.info("AUTH {} {}", user, mask);
             if (user != null) {
                 send("AUTH".getBytes(), user.getBytes(), password.getBytes());
             } else {
@@ -193,10 +195,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
             logger.info(reply);
             if ("OK".equals(reply)) return;
             if (reply.contains("no password")) {
-                logger.warn("[AUTH {} {}] failed. {}", user, password, reply);
+                logger.warn("[AUTH {} {}] failed. {}", user, mask, reply);
                 return;
             }
-            throw new AssertionError("[AUTH " + user + " " + password + "] failed. " + reply);
+            throw new AssertionError("[AUTH " + user + " " + mask + "] failed. " + reply);
         }
     }
     

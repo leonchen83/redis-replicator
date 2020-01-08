@@ -24,6 +24,7 @@ import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLSocketFactory;
 
 import com.moilioncircle.redis.replicator.net.SslContextFactory;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
@@ -501,7 +502,7 @@ public class Configuration {
                 ", retryTimeInterval=" + retryTimeInterval +
                 ", bufferSize=" + bufferSize +
                 ", authUser='" + authUser + '\'' +
-                ", authPassword='" + authPassword + '\'' +
+                ", authPassword='" + Strings.mask(authPassword) + '\'' +
                 ", discardRdbEvent=" + discardRdbEvent +
                 ", asyncCachedBytes=" + asyncCachedBytes +
                 ", rateLimit=" + rateLimit +

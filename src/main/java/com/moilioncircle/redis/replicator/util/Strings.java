@@ -31,7 +31,7 @@ import java.util.Objects;
  */
 public class Strings {
 
-    private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
+    private static final char[] HEX_ARRAY = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     public static String toString(Object object) {
         return toString(object, UTF_8);

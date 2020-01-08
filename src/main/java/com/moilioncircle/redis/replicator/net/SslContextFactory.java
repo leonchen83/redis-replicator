@@ -19,8 +19,9 @@ package com.moilioncircle.redis.replicator.net;
 import javax.net.ssl.SSLContext;
 
 /**
- * @author Baoyi Chen
+ * @author Leon Chen
+ * @since 3.4.0
  */
 public interface SslContextFactory {
-	SSLContext create();
+    SSLContext create();
 }

@@ -33,24 +33,24 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
  * @since 3.3.0
  */
 public class SerializeTest {
-	
-	@Test
-	public void test() throws Exception {
-		SetCommand command = new SetCommand();
-		command.setKey("key".getBytes());
-		command.setValue("value".getBytes());
-		command.getContext().setOffsets(of(1L, 10L));
-		ByteArrayOutputStream o = new ByteArrayOutputStream();
-		ObjectOutputStream os = new ObjectOutputStream(o);
-		os.writeObject(command);
-		os.close();
-		byte[] serialized = o.toByteArray();
-		ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(serialized));
-		SetCommand command1 = (SetCommand)is.readObject();
-		is.close();
-		assertEquals("key", new String(command1.getKey()));
-		assertEquals("value", new String(command1.getValue()));
-		assertEquals(1L, command1.getContext().getOffsets().getV1().longValue());
-		assertEquals(10L, command1.getContext().getOffsets().getV2().longValue());
-	}
+    
+    @Test
+    public void test() throws Exception {
+        SetCommand command = new SetCommand();
+        command.setKey("key".getBytes());
+        command.setValue("value".getBytes());
+        command.getContext().setOffsets(of(1L, 10L));
+        ByteArrayOutputStream o = new ByteArrayOutputStream();
+        ObjectOutputStream os = new ObjectOutputStream(o);
+        os.writeObject(command);
+        os.close();
+        byte[] serialized = o.toByteArray();
+        ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(serialized));
+        SetCommand command1 = (SetCommand)is.readObject();
+        is.close();
+        assertEquals("key", new String(command1.getKey()));
+        assertEquals("value", new String(command1.getValue()));
+        assertEquals(1L, command1.getContext().getOffsets().getV1().longValue());
+        assertEquals(10L, command1.getContext().getOffsets().getV2().longValue());
+    }
 }

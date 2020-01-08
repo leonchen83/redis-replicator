@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 import static javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 
@@ -45,6 +46,20 @@ public class RedisSslContextFactory implements SslContextFactory {
     private String trustStorePath;
     private String trustStoreType;
     private String trustStorePassword;
+    
+    /*
+     * if loader == null use absolute file path to load keystore and truststore
+     * else use classpath to load keystore and truststore. by default use file path.
+     */
+    private final ClassLoader loader; 
+    
+    public RedisSslContextFactory() {
+        this(null);
+    }
+    
+    public RedisSslContextFactory(ClassLoader loader) {
+        this.loader = loader;
+    }
 
     public String getProtocol() {
         return protocol;
@@ -119,7 +134,7 @@ public class RedisSslContextFactory implements SslContextFactory {
 
             if (keyStorePath != null) {
                 KeyStore ks = KeyStore.getInstance(requireNonNull(keyStoreType));
-                try(FileInputStream in = new FileInputStream(keyStorePath)) {
+                try(InputStream in = getInputStream(loader, keyStorePath)) {
                     ks.load(in, requireNonNull(keyStorePassword).toCharArray());
                     KeyManagerFactory kmf = KeyManagerFactory.getInstance(getDefaultAlgorithm());
                     kmf.init(ks, requireNonNull(keyStorePassword).toCharArray());
@@ -129,7 +144,7 @@ public class RedisSslContextFactory implements SslContextFactory {
 
             if (trustStorePath != null) {
                 KeyStore ks = KeyStore.getInstance(requireNonNull(trustStoreType));
-                try(FileInputStream in = new FileInputStream(keyStorePath)) {
+                try(InputStream in = getInputStream(loader, keyStorePath)) {
                     ks.load(in, requireNonNull(trustStorePassword).toCharArray());
                     TrustManagerFactory tmf = TrustManagerFactory.getInstance(getDefaultAlgorithm());
                     tmf.init(ks);
@@ -141,6 +156,14 @@ public class RedisSslContextFactory implements SslContextFactory {
             return context;
         } catch (Exception e) {
             throw new UnsupportedOperationException(e);
+        }
+    }
+    
+    protected InputStream getInputStream(ClassLoader loader, String path) throws Exception {
+        if (loader == null) {
+            return new FileInputStream(path);
+        } else {
+            return loader.getResourceAsStream(path);
         }
     }
 

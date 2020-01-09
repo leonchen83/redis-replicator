@@ -63,7 +63,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](./ANTI-996-LICENSE)  
   
-Redis Replicator implement Redis Replication protocol written in java. It can parse, filter, broadcast the RDB and AOF events in a real time manner. It also can synchronize redis data to your local cache or to database. The following I mentioned `Command` which means `Writable Command`(e.g. `set`,`hmset`) in Redis and excludes the `Readable Command`(e.g. `get`,`hmget`), Supported redis-5.0 and former redis versions.  
+Redis Replicator implement Redis Replication protocol written in java. It can parse, filter, broadcast the RDB and AOF events in a real time manner. It also can synchronize redis data to your local cache or to database. The following I mentioned `Command` which means `Writable Command`(e.g. `set`,`hmset`) in Redis and excludes the `Readable Command`(e.g. `get`,`hmget`), Supported redis-6.0 and former redis versions.  
 
 ## 1.2. Chat with author  
   
@@ -77,7 +77,7 @@ Redis Replicator implement Redis Replication protocol written in java. It can pa
 ## 2.1. Requirements  
 jdk 1.8+  
 maven-3.3.1+(support [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
-redis 2.6 - 5.0  
+redis 2.6 - 6.0  
 
 ## 2.2. Maven dependency  
 ```xml  

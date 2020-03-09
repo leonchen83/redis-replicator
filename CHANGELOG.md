@@ -1,3 +1,7 @@
+### 3.4.2
+
+add ssl support on `AsyncRedisReplicator`.  
+
 ### 3.4.1
 
 Mask auth password.  

@@ -61,6 +61,30 @@ public class AsyncRedisReplicator implements AsyncReplicator {
         this.replicator = new RedisReplicator(uri);
     }
 
+    /**
+     * @param uri redis uri.
+     * @param sslConfiguration ssl configuration.
+     * @throws IOException read timeout or read EOF.
+     * @see RedisURI
+     * @see SslConfiguration
+     * @since 3.4.2
+     */
+    public AsyncRedisReplicator(String uri, SslConfiguration sslConfiguration) throws URISyntaxException, IOException {
+        this.replicator = new RedisReplicator(uri, sslConfiguration);
+    }
+
+    /**
+     * @param uri redis uri.
+     * @param sslConfiguration ssl configuration.
+     * @throws IOException read timeout or read EOF.
+     * @see RedisURI
+     * @see SslConfiguration
+     * @since 3.4.2
+     */
+    public AsyncRedisReplicator(RedisURI uri, SslConfiguration sslConfiguration) throws IOException {
+        this.replicator = new RedisReplicator(uri, sslConfiguration);
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Replicator> T getReplicator() {
         return (T) this.replicator;

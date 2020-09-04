@@ -1,6 +1,7 @@
 ### 3.4.2
 
 add ssl support on `AsyncRedisReplicator`.  
+fix issue [#38](https://github.com/leonchen83/redis-replicator/issues/38).  
 
 ### 3.4.1
 

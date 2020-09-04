@@ -51,6 +51,7 @@ import org.junit.Test;
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LFU;
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LRU;
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.NONE;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Leon Chen
@@ -58,6 +59,7 @@ import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.NONE;
  */
 public class PingParserTest extends AbstractParserTest {
     @Test
+    @SuppressWarnings("deprecation")
     public void parse() {
         {
             PingParser parser = new PingParser();
@@ -136,6 +138,18 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals("fie", cmd.getField());
             assertEquals("val", cmd.getValue());
+        }
+
+        {
+            HSetParser parser = new HSetParser();
+            HSetCommand cmd = parser.parse(toObjectArray("hset key fie val fie1 val1".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("fie", cmd.getField());
+            assertEquals("val", cmd.getValue());
+            assertTrue(cmd.getFields().containsKey("fie".getBytes()));
+            assertTrue(cmd.getFields().containsKey("fie1".getBytes()));
+            assertEquals("val", cmd.getFields().get("fie".getBytes()));
+            assertEquals("val1", cmd.getFields().get("fie1".getBytes()));
         }
     
         {

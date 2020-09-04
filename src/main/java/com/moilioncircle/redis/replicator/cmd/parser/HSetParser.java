@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.HSetCommand;
+import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 
@@ -28,15 +29,31 @@ import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 public class HSetParser implements CommandParser<HSetCommand> {
 
     @Override
+    @SuppressWarnings("deprecation")
     public HSetCommand parse(Object[] command) {
         int idx = 1;
         byte[] key = toBytes(command[idx]);
         idx++;
-        byte[] field = toBytes(command[idx]);
-        idx++;
-        byte[] value = toBytes(command[idx]);
-        idx++;
-        return new HSetCommand(key, field, value);
+        ByteArrayMap fields = new ByteArrayMap();
+        byte[] firstField = null;
+        byte[] firstValue = null;
+        while (idx < command.length) {
+            byte[] field = toBytes(command[idx]);
+            idx++;
+            byte[] value = idx == command.length ? null : toBytes(command[idx]);
+            idx++;
+            if (firstField == null) {
+                firstField = field;
+            }
+            if (firstValue == null) {
+                firstValue = value;
+            }
+            fields.put(field, value);
+        }
+        HSetCommand hSetCommand =  new HSetCommand(key, fields);
+        hSetCommand.setField(firstField);
+        hSetCommand.setValue(firstValue);
+        return hSetCommand;
     }
 
 }

@@ -73,6 +73,7 @@ public class Strings {
     }
     
     public static String mask(String password) {
+        if (password == null) return "mask(password)";
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             return bytesToHex(digest.digest(password.getBytes(UTF_8)));

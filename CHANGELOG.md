@@ -1,3 +1,6 @@
+### 3.4.3
+Fix NPE of `Configuration.toString()`.  
+
 ### 3.4.2
 
 add ssl support on `AsyncRedisReplicator`.  

@@ -42,7 +42,7 @@ public class CRCOutputStream extends OutputStream {
     @Override
     public void write(int b) throws IOException {
         out.write(b);
-        checksum = crc64(new byte[]{(byte) b}, checksum);
+        checksum = crc64((byte) b, checksum);
     }
 
     public void write(byte[] b) throws IOException {

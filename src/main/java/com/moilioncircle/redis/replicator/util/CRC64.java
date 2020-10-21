@@ -96,13 +96,17 @@ public class CRC64 {
         return crc64(bytes, 0, bytes.length, sum);
     }
 
+    public static long crc64(byte b, long sum) {
+        return (sum >>> 8) ^ LOOKUP_TABLE[((int) sum ^ b) & 0xFF];
+    }
+
     public static long crc64(byte[] bytes, int start, int length) {
         return crc64(bytes, start, length, 0L);
     }
 
     public static long crc64(byte[] bytes, int start, int length, long sum) {
         for (int i = start; i < start + length; i++) {
-            sum = (sum >>> 8) ^ LOOKUP_TABLE[((int) sum ^ bytes[i]) & 0xFF];
+            sum = crc64(bytes[i], sum);
         }
         return sum;
     }

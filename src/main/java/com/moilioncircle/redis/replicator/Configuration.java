@@ -413,7 +413,7 @@ public class Configuration {
             configuration.setBufferSize(getInt(parameters.get("bufferSize"), 8 * 1024));
         }
         if (parameters.containsKey("authUser")) {
-            configuration.setAuthPassword(parameters.get("authUser"));
+            configuration.setAuthUser(parameters.get("authUser"));
         }
         if (parameters.containsKey("authPassword")) {
             configuration.setAuthPassword(parameters.get("authPassword"));

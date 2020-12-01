@@ -1,3 +1,7 @@
+### 3.4.4
+
+Fix `RedisURI` `setAuthUser` bug.  
+
 ### 3.4.3
 Fix NPE of `Configuration.toString()`.  
 

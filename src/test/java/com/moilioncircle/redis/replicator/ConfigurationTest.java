@@ -2,6 +2,8 @@ package com.moilioncircle.redis.replicator;
 
 import static org.junit.Assert.*;
 
+import java.net.URISyntaxException;
+
 import org.junit.Test;
 
 /**
@@ -25,5 +27,18 @@ public class ConfigurationTest {
         } catch (Throwable e) {
             fail();
         }
+    }
+    
+    @Test
+    public void test2() throws URISyntaxException {
+        RedisURI uri = new RedisURI("redis://127.0.0.1:6379?authUser=user&authPassword=password");
+        Configuration configuration = Configuration.valueOf(uri);
+        assertEquals("user", configuration.getAuthUser());
+        assertEquals("password", configuration.getAuthPassword());
+    
+        uri = new RedisURI("redis://us:ps@127.0.0.1:6379?authUser=user&authPassword=password");
+        configuration = Configuration.valueOf(uri);
+        assertEquals("us", configuration.getAuthUser());
+        assertEquals("ps", configuration.getAuthPassword());
     }
 }

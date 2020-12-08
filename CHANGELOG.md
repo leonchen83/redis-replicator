@@ -1,6 +1,7 @@
 ### 3.4.4
 
 Fix `RedisURI` `setAuthUser` bug.  
+Change default `readTimeout`, `connectionTimeout` from `30` seconds to `60` seconds.  
 
 ### 3.4.3
 Fix NPE of `Configuration.toString()`.  

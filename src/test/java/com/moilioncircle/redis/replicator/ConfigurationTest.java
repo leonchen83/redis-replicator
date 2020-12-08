@@ -41,4 +41,14 @@ public class ConfigurationTest {
         assertEquals("us", configuration.getAuthUser());
         assertEquals("ps", configuration.getAuthPassword());
     }
+    
+    @Test
+    public void test3() {
+        try {
+            int timeout = Configuration.defaultSetting().getReadTimeout();
+            assertEquals(60000, timeout);
+        } catch (Throwable e) {
+            fail();
+        }
+    }
 }

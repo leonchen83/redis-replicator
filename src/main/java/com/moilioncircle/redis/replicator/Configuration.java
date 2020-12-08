@@ -46,13 +46,15 @@ public class Configuration {
 
     /**
      * socket connection timeout
+     * same as redis.conf repl-timeout
      */
-    private int connectionTimeout = 30000;
+    private int connectionTimeout = 60000;
 
     /**
      * socket input stream read timeout
+     * same as redis.conf repl-timeout
      */
-    private int readTimeout = 30000;
+    private int readTimeout = 60000;
 
     /**
      * socket receive buffer size
@@ -115,6 +117,7 @@ public class Configuration {
 
     /**
      * used in psync heartbeat
+     * same as redis.conf repl-ping-replica-period
      */
     private int heartbeatPeriod = 1000;
 
@@ -392,10 +395,10 @@ public class Configuration {
         Configuration configuration = defaultSetting();
         Map<String, String> parameters = uri.parameters;
         if (parameters.containsKey("connectionTimeout")) {
-            configuration.setConnectionTimeout(getInt(parameters.get("connectionTimeout"), 30000));
+            configuration.setConnectionTimeout(getInt(parameters.get("connectionTimeout"), 60000));
         }
         if (parameters.containsKey("readTimeout")) {
-            configuration.setReadTimeout(getInt(parameters.get("readTimeout"), 30000));
+            configuration.setReadTimeout(getInt(parameters.get("readTimeout"), 60000));
         }
         if (parameters.containsKey("receiveBufferSize")) {
             configuration.setReceiveBufferSize(getInt(parameters.get("receiveBufferSize"), 0));

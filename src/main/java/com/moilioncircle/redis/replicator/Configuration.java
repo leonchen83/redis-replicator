@@ -117,7 +117,6 @@ public class Configuration {
 
     /**
      * used in psync heartbeat
-     * same as redis.conf repl-ping-replica-period
      */
     private int heartbeatPeriod = 1000;
 

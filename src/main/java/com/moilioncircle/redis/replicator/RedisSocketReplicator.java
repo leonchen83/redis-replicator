@@ -185,10 +185,11 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (password != null) {
             // sha256 mask password
             String mask = "#" + Strings.mask(password);
-            logger.info("AUTH {} {}", user, mask);
             if (user != null) {
+                logger.info("AUTH {} {}", user, mask);
                 send("AUTH".getBytes(), user.getBytes(), password.getBytes());
             } else {
+                logger.info("AUTH {}", mask);
                 send("AUTH".getBytes(), password.getBytes());
             }
             final String reply = Strings.toString(reply());

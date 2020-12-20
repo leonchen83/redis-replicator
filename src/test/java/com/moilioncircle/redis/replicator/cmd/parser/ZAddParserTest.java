@@ -16,13 +16,16 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByLexCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByRankCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZRemRangeByScoreCommand;
+
 import junit.framework.TestCase;
-import org.junit.Test;
 
 /**
  * @author Leon Chen
@@ -39,7 +42,25 @@ public class ZAddParserTest extends AbstractParserTest {
         assertEquals(true, cmd.isIncr());
         TestCase.assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
-
+    
+        cmd = parser.parse(toObjectArray("zadd abc nx ch gt incr 1 b".split(" ")));
+        assertEquals("abc", cmd.getKey());
+        TestCase.assertEquals(ExistType.NX, cmd.getExistType());
+        assertEquals(true, cmd.isCh());
+        assertEquals(true, cmd.isIncr());
+        TestCase.assertEquals(CompareType.GT, cmd.getCompareType());
+        TestCase.assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
+        assertEquals("b", cmd.getZSetEntries()[0].getElement());
+    
+        cmd = parser.parse(toObjectArray("zadd abc lt incr 1 b".split(" ")));
+        assertEquals("abc", cmd.getKey());
+        TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+        assertEquals(false, cmd.isCh());
+        assertEquals(true, cmd.isIncr());
+        TestCase.assertEquals(CompareType.LT, cmd.getCompareType());
+        TestCase.assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
+        assertEquals("b", cmd.getZSetEntries()[0].getElement());
+    
         cmd = parser.parse(toObjectArray("zadd abc 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
         TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
@@ -47,7 +68,7 @@ public class ZAddParserTest extends AbstractParserTest {
         assertEquals(false, cmd.isIncr());
         TestCase.assertEquals(1, cmd.getZSetEntries()[0].getScore(), 0);
         assertEquals("b", cmd.getZSetEntries()[0].getElement());
-
+    
         cmd = parser.parse(toObjectArray("zadd abc xx 1 b".split(" ")));
         assertEquals("abc", cmd.getKey());
         TestCase.assertEquals(ExistType.XX, cmd.getExistType());

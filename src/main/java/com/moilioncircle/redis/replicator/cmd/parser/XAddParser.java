@@ -16,17 +16,17 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.MaxLen;
-import com.moilioncircle.redis.replicator.cmd.impl.XAddCommand;
-import com.moilioncircle.redis.replicator.util.ByteArrayMap;
-
-import java.util.Objects;
-
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
+import java.util.Objects;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.MaxLen;
+import com.moilioncircle.redis.replicator.cmd.impl.XAddCommand;
+import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
 /**
  * @author Leon Chen
@@ -39,29 +39,37 @@ public class XAddParser implements CommandParser<XAddCommand> {
         byte[] key = toBytes(command[idx]);
         idx++;
         MaxLen maxLen = null;
-        if (isEquals(toRune(command[idx]), "MAXLEN")) {
-            idx++;
-            boolean approximation = false;
-            if (Objects.equals(toRune(command[idx]), "~")) {
-                approximation = true;
-                idx++;
-            } else if (Objects.equals(toRune(command[idx]), "=")) {
-                idx++;
-            }
-            long count = toLong(command[idx]);
-            idx++;
-            maxLen = new MaxLen(approximation, count);
-        }
-        byte[] id = toBytes(command[idx]);
-        idx++;
+        boolean nomkstream = false;
+        byte[] id = null;
         ByteArrayMap fields = new ByteArrayMap();
-        while (idx < command.length) {
-            byte[] field = toBytes(command[idx]);
-            idx++;
-            byte[] value = idx == command.length ? null : toBytes(command[idx]);
-            idx++;
-            fields.put(field, value);
+        for (; idx < command.length; idx++) {
+            String token = toRune(command[idx]);
+            if (isEquals(token, "MAXLEN")) {
+                idx++;
+                boolean approximation = false;
+                if (Objects.equals(toRune(command[idx]), "~")) {
+                    approximation = true;
+                    idx++;
+                } else if (Objects.equals(toRune(command[idx]), "=")) {
+                    idx++;
+                }
+                long count = toLong(command[idx]);
+                maxLen = new MaxLen(approximation, count);
+            } else if (isEquals(token, "NOMKSTREAM")) {
+                nomkstream = true;
+            } else {
+                id = toBytes(command[idx]);
+                idx++;
+                while (idx < command.length) {
+                    byte[] field = toBytes(command[idx]);
+                    idx++;
+                    byte[] value = idx == command.length ? null : toBytes(command[idx]);
+                    idx++;
+                    fields.put(field, value);
+                }
+            }
         }
-        return new XAddCommand(key, maxLen, id, fields);
+    
+        return new XAddCommand(key, maxLen, nomkstream, id, fields);
     }
 }

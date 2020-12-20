@@ -16,17 +16,18 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
-import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
-import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
+import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
+import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 
 /**
  * @author Leon Chen
@@ -39,27 +40,24 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
         int idx = 1;
         boolean isCh = false, isIncr = false;
         ExistType existType = ExistType.NONE;
+        CompareType compareType = CompareType.NONE;
         List<ZSetEntry> list = new ArrayList<>();
         byte[] key = toBytes(command[idx]);
         idx++;
-        boolean et = false;
         while (idx < command.length) {
             String param = toRune(command[idx]);
-            if (!et && isEquals(param, "NX")) {
+            if (isEquals(param, "NX")) {
                 existType = ExistType.NX;
-                et = true;
-                idx++;
-                continue;
-            } else if (!et && isEquals(param, "XX")) {
+            } else if (isEquals(param, "XX")) {
                 existType = ExistType.XX;
-                et = true;
-                idx++;
-                continue;
-            }
-            if (!isCh && isEquals(param, "CH")) {
+            } else if (isEquals(param, "CH")) {
                 isCh = true;
-            } else if (!isIncr && isEquals(param, "INCR")) {
+            } else if (isEquals(param, "INCR")) {
                 isIncr = true;
+            } else if (isEquals(param, "GT")) {
+                compareType = CompareType.GT;
+            } else if (isEquals(param, "LT")) {
+                compareType = CompareType.LT;
             } else {
                 double score = Double.parseDouble(param);
                 idx++;
@@ -70,7 +68,7 @@ public class ZAddParser implements CommandParser<ZAddCommand> {
         }
         ZSetEntry[] zSetEntries = new ZSetEntry[list.size()];
         list.toArray(zSetEntries);
-        return new ZAddCommand(key, existType, isCh, isIncr, zSetEntries);
+        return new ZAddCommand(key, existType, compareType, isCh, isIncr, zSetEntries);
     }
 
 }

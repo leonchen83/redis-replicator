@@ -25,23 +25,39 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 public class SetCommand extends GenericKeyValueCommand {
 
     private static final long serialVersionUID = 1L;
-
+    
     private boolean keepTtl;
     private ExpiredType expiredType;
     private Long expiredValue;
     private ExistType existType;
-
+    private boolean get = false;
+    
     public SetCommand() {
     }
-
+    
     public SetCommand(byte[] key, byte[] value, boolean keepTtl, ExpiredType expiredType, Long expiredValue, ExistType existType) {
+        this(key, value, keepTtl, expiredType, expiredValue, existType, false);
+    }
+    
+    /**
+     * @param key key
+     * @param value value
+     * @param keepTtl keepttl since redis 6.0
+     * @param expiredType expiredType
+     * @param expiredValue expiredValue
+     * @param existType existType
+     * @param get get since redis 6.2
+     * @since 3.5.0
+     */
+    public SetCommand(byte[] key, byte[] value, boolean keepTtl, ExpiredType expiredType, Long expiredValue, ExistType existType, boolean get) {
         super(key, value);
         this.keepTtl = keepTtl;
         this.expiredType = expiredType;
         this.expiredValue = expiredValue;
         this.existType = existType;
+        this.get = get;
     }
-
+    
     public boolean getKeepTtl() {
         return keepTtl;
     }
@@ -65,12 +81,28 @@ public class SetCommand extends GenericKeyValueCommand {
     public void setExpiredValue(Long expiredValue) {
         this.expiredValue = expiredValue;
     }
-
+    
     public ExistType getExistType() {
         return existType;
     }
-
+    
     public void setExistType(ExistType existType) {
         this.existType = existType;
+    }
+    
+    /**
+     * @return get is set
+     * @since 3.5.0
+     */
+    public boolean isGet() {
+        return get;
+    }
+    
+    /**
+     * @param get set get parameter
+     * @since 3.5.0
+     */
+    public void setGet(boolean get) {
+        this.get = get;
     }
 }

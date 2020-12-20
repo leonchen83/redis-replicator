@@ -16,6 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.cmd.impl.XAckCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XAddCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XClaimCommand;
@@ -27,12 +34,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.XGroupDestroyCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
-import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen
@@ -59,7 +60,7 @@ public class StreamParserTest extends AbstractParserTest {
             assertEquals(2, cmd.getIds().length);
             assertEquals("1528524789760-0", cmd.getIds()[1]);
         }
-        
+    
         {
             XAddParser parser = new XAddParser();
             XAddCommand cmd = parser.parse(toObjectArray("XADD key * field value".split(" ")));
@@ -68,7 +69,17 @@ public class StreamParserTest extends AbstractParserTest {
             assertNull(cmd.getMaxLen());
             assertTrue(cmd.getFields().containsKey("field".getBytes()));
         }
-        
+    
+        {
+            XAddParser parser = new XAddParser();
+            XAddCommand cmd = parser.parse(toObjectArray("XADD key NOMKSTREAM * field value".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(true, cmd.isNomkstream());
+            assertEquals("*", cmd.getId());
+            assertNull(cmd.getMaxLen());
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
+        }
+    
         {
             XAddParser parser = new XAddParser();
             XAddCommand cmd = parser.parse(toObjectArray("XADD key maxlen 100 * field value".split(" ")));
@@ -78,7 +89,18 @@ public class StreamParserTest extends AbstractParserTest {
             assertFalse(cmd.getMaxLen().isApproximation());
             assertTrue(cmd.getFields().containsKey("field".getBytes()));
         }
-        
+    
+        {
+            XAddParser parser = new XAddParser();
+            XAddCommand cmd = parser.parse(toObjectArray("XADD key maxlen 100 NOMKSTREAM * field value".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("*", cmd.getId());
+            assertEquals(100L, cmd.getMaxLen().getCount());
+            assertFalse(cmd.getMaxLen().isApproximation());
+            assertEquals(true, cmd.isNomkstream());
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
+        }
+    
         {
             XAddParser parser = new XAddParser();
             XAddCommand cmd = parser.parse(toObjectArray("XADD key maxlen ~ 100 * field value field1 value1".split(" ")));

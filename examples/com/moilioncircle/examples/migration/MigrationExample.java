@@ -16,6 +16,15 @@
 
 package com.moilioncircle.examples.migration;
 
+import static redis.clients.jedis.Protocol.Command.AUTH;
+import static redis.clients.jedis.Protocol.Command.RESTORE;
+import static redis.clients.jedis.Protocol.Command.SELECT;
+import static redis.clients.jedis.Protocol.toByteArray;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -24,6 +33,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.DefaultCommandParser;
+import com.moilioncircle.redis.replicator.cmd.parser.GeoSearchStoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.PingParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ReplConfParser;
 import com.moilioncircle.redis.replicator.event.Event;
@@ -32,17 +42,9 @@ import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
+
 import redis.clients.jedis.Client;
 import redis.clients.jedis.Protocol;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static redis.clients.jedis.Protocol.Command.AUTH;
-import static redis.clients.jedis.Protocol.Command.RESTORE;
-import static redis.clients.jedis.Protocol.Command.SELECT;
-import static redis.clients.jedis.Protocol.toByteArray;
 
 /**
  * @author Leon Chen
@@ -209,6 +211,12 @@ public class MigrationExample {
         r.addCommandParser(CommandName.name("XGROUP"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("XTRIM"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("XSETID"), new DefaultCommandParser());
+        // since redis 6.2
+        r.addCommandParser(CommandName.name("COPY"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("LMOVE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("BLMOVE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("ZDIFFSTORE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("GEOSEARCHSTORE"), new GeoSearchStoreParser());
         return r;
     }
 

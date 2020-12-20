@@ -64,7 +64,7 @@
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](./ANTI-996-LICENSE_CN)  
   
-Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实现了Redis Replication协议. 支持SYNC, PSYNC, PSYNC2等三种同步命令. 还支持远程RDB文件备份以及数据同步等功能. 此文中提到的 `命令` 特指Redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`), 支持的redis版本范围从2.6到6.0  
+Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实现了Redis Replication协议. 支持SYNC, PSYNC, PSYNC2等三种同步命令. 还支持远程RDB文件备份以及数据同步等功能. 此文中提到的 `命令` 特指Redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`), 支持的redis版本范围从2.6到6.2  
 
 ## 1.2. QQ讨论组  
   
@@ -83,7 +83,7 @@ Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实�
 ## 2.1. 安装前置条件  
 jdk 1.8+  
 maven-3.3.1+(支持 [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
-redis 2.6 - 6.0  
+redis 2.6 - 6.2  
 
 ## 2.2. Maven依赖  
 ```xml  
@@ -109,7 +109,8 @@ redis 2.6 - 6.0
 
 |     **redis 版本**        |**redis-replicator 版本**  |  
 | ------------------------- | ------------------------- |  
-|  \[2.6, 6.0.x\]           |       \[3.4.0, \]         |  
+|  \[2.6, 6.2.x\]           |       \[3.5.0, \]         |  
+|  \[2.6, 6.0.x\]           |       \[3.4.0, 3.4.4\]    |  
 |  \[2.6, 5.0.x\]           |       \[2.6.1, 3.3.3\]    |  
 |  \[2.6, 4.0.x\]           |       \[2.3.0, 2.5.0\]    |  
 |  \[2.6, 4.0-RC3\]         |       \[2.1.0, 2.2.0\]    |  
@@ -415,22 +416,23 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
   
 ## 5.1. 内置的Command Parser  
 
-|  **命令**  |**命令**  |  **命令**  |**命令**|**命令**  | **命令**   |
-| ---------- | ------------ | ---------------| ---------- | ------------ | ------------------ |    
-|  **PING**  |  **APPEND**  |  **SET**       |  **SETEX** |  **MSET**    |  **DEL**           |  
-|  **SADD**  |  **HMSET**   |  **HSET**      |  **LSET**  |  **EXPIRE**  |  **EXPIREAT**      |  
-| **GETSET** | **HSETNX**   |  **MSETNX**    | **PSETEX** | **SETNX**    |  **SETRANGE**      |  
-| **HDEL**   | **UNLINK**   |  **SREM**      | **LPOP**   |  **LPUSH**   | **LPUSHX**         |  
-| **LRem**   | **RPOP**     |  **RPUSH**     | **RPUSHX** |  **ZREM**    |  **ZINTERSTORE**   |  
-| **INCR**   |  **DECR**    |  **INCRBY**    |**PERSIST** |  **SELECT**  | **FLUSHALL**       |  
-|**FLUSHDB** |  **HINCRBY** | **ZINCRBY**    | **MOVE**   |  **SMOVE**   |**BRPOPLPUSH**      |  
-|**PFCOUNT** |  **PFMERGE** | **SDIFFSTORE** |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE**     |  
-|**ZADD**    | **BITFIELD** |**SUNIONSTORE** |**RESTORE** | **LINSERT**  |**ZREMRANGEBYLEX**  |  
-|**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
-|**PUBLISH** |  **BITOP**   |**SETBIT**      | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
-|**RENAME**  |  **MULTI**   |  **EXEC**      | **LTRIM**  |**RPOPLPUSH** |     **SORT**       |  
-|**EVALSHA** | **ZPOPMAX**  | **ZPOPMIN**    | **XACK**   | **XADD**     |  **XCLAIM**        |  
-|**XDEL**    | **XGROUP**   | **XTRIM**      | **XSETID** |              |                    |  
+|  **命令**   |**命令**        |  **命令**            |**命令**     |**命令**      | **命令**            |  
+| ---------- | -------------- | --------------------| ---------- | ------------ | ------------------ |  
+|  **PING**  |  **APPEND**    |  **SET**            |  **SETEX** |  **MSET**    |  **DEL**           |  
+|  **SADD**  |  **HMSET**     |  **HSET**           |  **LSET**  |  **EXPIRE**  |  **EXPIREAT**      |  
+| **GETSET** | **HSETNX**     |  **MSETNX**         | **PSETEX** | **SETNX**    |  **SETRANGE**      |  
+| **HDEL**   | **UNLINK**     |  **SREM**           | **LPOP**   |  **LPUSH**   | **LPUSHX**         |  
+| **LRem**   | **RPOP**       |  **RPUSH**          | **RPUSHX** |  **ZREM**    |  **ZINTERSTORE**   |  
+| **INCR**   |  **DECR**      |  **INCRBY**         |**PERSIST** |  **SELECT**  | **FLUSHALL**       |  
+|**FLUSHDB** |  **HINCRBY**   | **ZINCRBY**         | **MOVE**   |  **SMOVE**   |**BRPOPLPUSH**      |  
+|**PFCOUNT** |  **PFMERGE**   | **SDIFFSTORE**      |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE**     |  
+|**ZADD**    | **BITFIELD**   |**SUNIONSTORE**      |**RESTORE** | **LINSERT**  |**ZREMRANGEBYLEX**  |  
+|**GEOADD**  | **PEXPIRE**    |**ZUNIONSTORE**      |**EVAL**    |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
+|**PUBLISH** |  **BITOP**     |**SETBIT**           | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
+|**RENAME**  |  **MULTI**     |  **EXEC**           | **LTRIM**  |**RPOPLPUSH** |     **SORT**       |  
+|**EVALSHA** | **ZPOPMAX**    | **ZPOPMIN**         | **XACK**   | **XADD**     |  **XCLAIM**        |  
+|**XDEL**    | **XGROUP**     | **XTRIM**           | **XSETID** | **COPY**     |  **LMOVE**         |  
+|**BLMOVE**  | **ZDIFFSTORE** | **GEOSEARCHSTORE**  |            |              |                    |  
   
 ## 5.2. 当出现EOFException
   

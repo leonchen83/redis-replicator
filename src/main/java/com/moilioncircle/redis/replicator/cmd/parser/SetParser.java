@@ -16,14 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
-
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -40,6 +40,7 @@ public class SetParser implements CommandParser<SetCommand> {
         Long expiredValue = null;
         boolean et = false, st = false;
         boolean keepTtl = false;
+        boolean get = false;
         ExpiredType expiredType = ExpiredType.NONE;
         while (idx < command.length) {
             String param = toRune(command[idx++]);
@@ -51,6 +52,8 @@ public class SetParser implements CommandParser<SetCommand> {
                 et = true;
             } else if (!keepTtl && isEquals(param, "KEEPTTL")) {
                 keepTtl = true;
+            } else if (!keepTtl && isEquals(param, "GET")) {
+                get = true;
             }
 
             if (!st && isEquals(param, "EX")) {
@@ -63,7 +66,7 @@ public class SetParser implements CommandParser<SetCommand> {
                 st = true;
             }
         }
-        return new SetCommand(key, value, keepTtl, expiredType, expiredValue, existType);
+        return new SetCommand(key, value, keepTtl, expiredType, expiredValue, existType, get);
     }
 
 }

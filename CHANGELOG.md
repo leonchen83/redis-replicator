@@ -1,6 +1,12 @@
 ### 3.5.0
 
 Redis 6.2 support.  
+Add command `COPY`,`LMOVE`,`BLMOVE`,`ZDIFFSTORE`,`GEOSEARCHSTORE`.  
+
+Modify command  
+1. `ZADD` add `GT`, `LT` option.
+2. `XADD` add `NOMKSTREAM` option.
+3. `SET` add `GET` option.
 
 ### 3.4.4
 

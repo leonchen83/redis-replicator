@@ -25,25 +25,40 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 public class ZAddCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
-
-    private ExistType existType;
-    private boolean ch;
-    private boolean incr;
-    private ZSetEntry[] zSetEntries;
-
-    public ZAddCommand() {
-    }
-    
-    public ZAddCommand(byte[] key, ExistType existType, boolean ch, boolean incr, ZSetEntry[] zSetEntries) {
-        super(key);
-        this.existType = existType;
-        this.ch = ch;
-        this.incr = incr;
-        this.zSetEntries = zSetEntries;
-    }
-
-    public ExistType getExistType() {
-        return existType;
+	
+	private ExistType existType;
+	private CompareType compareType;
+	private boolean ch;
+	private boolean incr;
+	private ZSetEntry[] zSetEntries;
+	
+	public ZAddCommand() {
+	}
+	
+	public ZAddCommand(byte[] key, ExistType existType, boolean ch, boolean incr, ZSetEntry[] zSetEntries) {
+		this(key, existType, CompareType.NONE, ch, incr, zSetEntries);
+	}
+	
+	/**
+	 * @param key key
+	 * @param existType existType
+	 * @param compareType compareType since redis 6.2
+	 * @param ch ch
+	 * @param incr incr
+	 * @param zSetEntries zSetEntries
+	 * @since 3.5.0
+	 */
+	public ZAddCommand(byte[] key, ExistType existType, CompareType compareType, boolean ch, boolean incr, ZSetEntry[] zSetEntries) {
+		super(key);
+		this.existType = existType;
+		this.compareType = compareType;
+		this.ch = ch;
+		this.incr = incr;
+		this.zSetEntries = zSetEntries;
+	}
+	
+	public ExistType getExistType() {
+		return existType;
     }
 
     public void setExistType(ExistType existType) {
@@ -67,14 +82,30 @@ public class ZAddCommand extends GenericKeyCommand {
     }
 
     public ZSetEntry[] getZSetEntries() {
-        return zSetEntries;
+	    return zSetEntries;
     }
-
-    public ZSetEntry[] getzSetEntries() {
-        return zSetEntries;
-    }
-
-    public void setzSetEntries(ZSetEntry[] zSetEntries) {
-        this.zSetEntries = zSetEntries;
-    }
+	
+	public ZSetEntry[] getzSetEntries() {
+		return zSetEntries;
+	}
+	
+	public void setzSetEntries(ZSetEntry[] zSetEntries) {
+		this.zSetEntries = zSetEntries;
+	}
+	
+	/**
+	 * @return compareType
+	 * @since 3.5.0
+	 */
+	public CompareType getCompareType() {
+		return compareType;
+	}
+	
+	/**
+	 * @param compareType compareType
+	 * @since 3.5.0
+	 */
+	public void setCompareType(CompareType compareType) {
+		this.compareType = compareType;
+	}
 }

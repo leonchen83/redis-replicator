@@ -63,7 +63,7 @@ Table of Contents([中文说明](./README.zh_CN.md))
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](./ANTI-996-LICENSE)  
   
-Redis Replicator implement Redis Replication protocol written in java. It can parse, filter, broadcast the RDB and AOF events in a real time manner. It also can synchronize redis data to your local cache or to database. The following I mentioned `Command` which means `Writable Command`(e.g. `set`,`hmset`) in Redis and excludes the `Readable Command`(e.g. `get`,`hmget`), Supported redis-6.0 and former redis versions.  
+Redis Replicator implement Redis Replication protocol written in java. It can parse, filter, broadcast the RDB and AOF events in a real time manner. It also can synchronize redis data to your local cache or to database. The following I mentioned `Command` which means `Writable Command`(e.g. `set`,`hmset`) in Redis and excludes the `Readable Command`(e.g. `get`,`hmget`), Supported redis-6.2 and former redis versions.  
 
 ## 1.2. Chat with author  
   
@@ -77,7 +77,7 @@ Redis Replicator implement Redis Replication protocol written in java. It can pa
 ## 2.1. Requirements  
 jdk 1.8+  
 maven-3.3.1+(support [toolchains](https://maven.apache.org/guides/mini/guide-using-toolchains.html))  
-redis 2.6 - 6.0  
+redis 2.6 - 6.2  
 
 ## 2.2. Maven dependency  
 ```xml  
@@ -103,7 +103,8 @@ redis 2.6 - 6.0
 
 |     **redis version**        |**redis-replicator version**  |  
 | ---------------------------- | ---------------------------- |  
-|  \[2.6, 6.0.x\]              |       \[3.4.0, \]            |  
+|  \[2.6, 6.2.x\]              |       \[3.5.0, \]            |  
+|  \[2.6, 6.0.x\]              |       \[3.4.0, 3.4.4\]       |  
 |  \[2.6, 5.0.x\]              |       \[2.6.1, 3.3.3\]       |  
 |  \[2.6, 4.0.x\]              |       \[2.3.0, 2.5.0\]       |  
 |  \[2.6, 4.0-RC3\]            |       \[2.1.0, 2.2.0\]       |  
@@ -407,22 +408,23 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
   
 ## 5.1. Built-in command parser  
 
-|**commands**|**commands**  |  **commands**  |**commands**|**commands**  | **commands**       |
-| ---------- | ------------ | ---------------| ---------- | ------------ | ------------------ |    
-|  **PING**  |  **APPEND**  |  **SET**       |  **SETEX** |  **MSET**    |  **DEL**           |  
-|  **SADD**  |  **HMSET**   |  **HSET**      |  **LSET**  |  **EXPIRE**  |  **EXPIREAT**      |  
-| **GETSET** | **HSETNX**   |  **MSETNX**    | **PSETEX** | **SETNX**    |  **SETRANGE**      |  
-| **HDEL**   | **UNLINK**   |  **SREM**      | **LPOP**   |  **LPUSH**   | **LPUSHX**         |  
-| **LRem**   | **RPOP**     |  **RPUSH**     | **RPUSHX** |  **ZREM**    |  **ZINTERSTORE**   |  
-| **INCR**   |  **DECR**    |  **INCRBY**    |**PERSIST** |  **SELECT**  | **FLUSHALL**       |  
-|**FLUSHDB** |  **HINCRBY** | **ZINCRBY**    | **MOVE**   |  **SMOVE**   |**BRPOPLPUSH**      |  
-|**PFCOUNT** |  **PFMERGE** | **SDIFFSTORE** |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE**     |  
-|**ZADD**    | **BITFIELD** |**SUNIONSTORE** |**RESTORE** | **LINSERT**  |**ZREMRANGEBYLEX**  |  
-|**GEOADD**  | **PEXPIRE**  |**ZUNIONSTORE** |**EVAL**    |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
-|**PUBLISH** |  **BITOP**   |**SETBIT**      | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
-|**RENAME**  |  **MULTI**   |  **EXEC**      | **LTRIM**  |**RPOPLPUSH** |     **SORT**       |  
-|**EVALSHA** | **ZPOPMAX**  | **ZPOPMIN**    | **XACK**   | **XADD**     |  **XCLAIM**        |  
-|**XDEL**    | **XGROUP**   | **XTRIM**      | **XSETID** |              |                    |  
+|**commands**|**commands**    |  **commands**       |**commands**|**commands**  | **commands**       |
+| ---------- | -------------- | --------------------| ---------- | ------------ | ------------------ |    
+|  **PING**  |  **APPEND**    |  **SET**            |  **SETEX** |  **MSET**    |  **DEL**           |  
+|  **SADD**  |  **HMSET**     |  **HSET**           |  **LSET**  |  **EXPIRE**  |  **EXPIREAT**      |  
+| **GETSET** | **HSETNX**     |  **MSETNX**         | **PSETEX** | **SETNX**    |  **SETRANGE**      |  
+| **HDEL**   | **UNLINK**     |  **SREM**           | **LPOP**   |  **LPUSH**   | **LPUSHX**         |  
+| **LRem**   | **RPOP**       |  **RPUSH**          | **RPUSHX** |  **ZREM**    |  **ZINTERSTORE**   |  
+| **INCR**   |  **DECR**      |  **INCRBY**         |**PERSIST** |  **SELECT**  | **FLUSHALL**       |  
+|**FLUSHDB** |  **HINCRBY**   | **ZINCRBY**         | **MOVE**   |  **SMOVE**   |**BRPOPLPUSH**      |  
+|**PFCOUNT** |  **PFMERGE**   | **SDIFFSTORE**      |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE**     |  
+|**ZADD**    | **BITFIELD**   |**SUNIONSTORE**      |**RESTORE** | **LINSERT**  |**ZREMRANGEBYLEX**  |  
+|**GEOADD**  | **PEXPIRE**    |**ZUNIONSTORE**      |**EVAL**    |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
+|**PUBLISH** |  **BITOP**     |**SETBIT**           | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
+|**RENAME**  |  **MULTI**     |  **EXEC**           | **LTRIM**  |**RPOPLPUSH** |     **SORT**       |  
+|**EVALSHA** | **ZPOPMAX**    | **ZPOPMIN**         | **XACK**   | **XADD**     |  **XCLAIM**        |  
+|**XDEL**    | **XGROUP**     | **XTRIM**           | **XSETID** | **COPY**     |  **LMOVE**         |  
+|**BLMOVE**  | **ZDIFFSTORE** | **GEOSEARCHSTORE**  |            |              |                    |  
   
 ## 5.2. EOFException
   

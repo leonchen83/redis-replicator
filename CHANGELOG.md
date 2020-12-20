@@ -1,3 +1,7 @@
+### 3.5.0
+
+Redis 6.2 support.  
+
 ### 3.4.4
 
 Fix `RedisURI` `setAuthUser` bug.  

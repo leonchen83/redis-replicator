@@ -84,7 +84,7 @@ redis 2.6 - 6.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.4.4</version>
+        <version>3.5.0</version>
     </dependency>
 ```
 

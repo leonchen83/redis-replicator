@@ -185,21 +185,29 @@ public class RedisSocketReplicator extends AbstractReplicator {
         if (password != null) {
             // sha256 mask password
             String mask = "#" + Strings.mask(password);
-            if (user != null) {
-                logger.info("AUTH {} {}", user, mask);
-                send("AUTH".getBytes(), user.getBytes(), password.getBytes());
-            } else {
+            if (user == null) {
                 logger.info("AUTH {}", mask);
                 send("AUTH".getBytes(), password.getBytes());
+            } else {
+                logger.info("AUTH {} {}", user, mask);
+                send("AUTH".getBytes(), user.getBytes(), password.getBytes());
             }
             final String reply = Strings.toString(reply());
             logger.info(reply);
             if ("OK".equals(reply)) return;
             if (reply.contains("no password")) {
-                logger.warn("[AUTH {} {}] failed. {}", user, mask, reply);
+                if (user == null) {
+                    logger.warn("[AUTH {}] failed. {}", mask, reply);
+                } else {
+                    logger.warn("[AUTH {} {}] failed. {}", user, mask, reply);
+                }
                 return;
             }
-            throw new AssertionError("[AUTH " + user + " " + mask + "] failed. " + reply);
+            if (user == null) {
+                throw new AssertionError("[AUTH " + mask + "] failed. " + reply);
+            } else {
+                throw new AssertionError("[AUTH " + user + " " + mask + "] failed. " + reply);
+            }
         }
     }
     

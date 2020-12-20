@@ -29,6 +29,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.XClaimCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XDelCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateConsumerCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelConsumerCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupDestroyCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
@@ -299,6 +300,19 @@ public class StreamParserTest extends AbstractParserTest {
                 fail();
             } else if (cmd instanceof XGroupDelConsumerCommand) {
                 XGroupDelConsumerCommand ccmd = (XGroupDelConsumerCommand) cmd;
+                assertEquals("key", ccmd.getKey());
+                assertEquals("group", ccmd.getGroup());
+                assertEquals("consumer", ccmd.getConsumer());
+            }
+        }
+    
+        {
+            XGroupParser parser = new XGroupParser();
+            XGroupCommand cmd = parser.parse(toObjectArray("XGROUP CREATECONSUMER key group consumer".split(" ")));
+            if (cmd instanceof XGroupCreateCommand) {
+                fail();
+            } else if (cmd instanceof XGroupCreateConsumerCommand) {
+                XGroupCreateConsumerCommand ccmd = (XGroupCreateConsumerCommand) cmd;
                 assertEquals("key", ccmd.getKey());
                 assertEquals("group", ccmd.getGroup());
                 assertEquals("consumer", ccmd.getConsumer());

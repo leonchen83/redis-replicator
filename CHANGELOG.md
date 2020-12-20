@@ -1,7 +1,7 @@
 ### 3.5.0
 
 Redis 6.2 support.  
-Add command `COPY`,`LMOVE`,`BLMOVE`,`ZDIFFSTORE`,`GEOSEARCHSTORE`.  
+Add command `COPY`,`LMOVE`,`BLMOVE`,`ZDIFFSTORE`,`GEOSEARCHSTORE`, `XGROUP CREATECONSUMER`.  
 
 Modify command  
 1. `ZADD` add `GT`, `LT` option.

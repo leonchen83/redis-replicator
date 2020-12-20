@@ -16,16 +16,17 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.XGroupCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelConsumerCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.XGroupDestroyCommand;
-import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
-
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupCreateConsumerCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupDelConsumerCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupDestroyCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 
 /**
  * @author Leon Chen
@@ -67,6 +68,14 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             byte[] group = toBytes(command[idx]);
             idx++;
             return new XGroupDestroyCommand(key, group);
+        } else if (isEquals(next, "CREATECONSUMER")) {
+            byte[] key = toBytes(command[idx]);
+            idx++;
+            byte[] group = toBytes(command[idx]);
+            idx++;
+            byte[] consumer = toBytes(command[idx]);
+            idx++;
+            return new XGroupCreateConsumerCommand(key, group, consumer);
         } else if (isEquals(next, "DELCONSUMER")) {
             byte[] key = toBytes(command[idx]);
             idx++;

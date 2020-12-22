@@ -86,6 +86,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         this.port = port;
         this.configuration = configuration;
         this.socketFactory = new RedisSocketFactory(configuration);
+        this.executor = configuration.getExecutor();
         builtInCommandParserRegister();
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
@@ -108,13 +109,18 @@ public class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void open() throws IOException {
         super.open();
-        this.executor = Executors.newSingleThreadScheduledExecutor();
+        boolean usingCustomExecutor = this.executor != null;
+        if (!usingCustomExecutor) {
+            this.executor = Executors.newSingleThreadScheduledExecutor();
+        }
         try {
             new RedisSocketReplicatorRetrier().retry(this);
         } finally {
             doClose();
             doCloseListener(this);
-            terminateQuietly(executor, configuration.getConnectionTimeout(), MILLISECONDS);
+            if (!usingCustomExecutor) {
+                terminateQuietly(executor, configuration.getConnectionTimeout(), MILLISECONDS);
+            }
         }
     }
     

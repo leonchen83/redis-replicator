@@ -171,9 +171,10 @@ public class Configuration {
     private final AtomicLong replOffset = new AtomicLong(-1);
     
     /**
-     * heartbeat executor
+     * @since 3.5.0
+     * heartbeat scheduled executor
      */
-    private ScheduledExecutorService executor;
+    private ScheduledExecutorService scheduledExecutor;
     
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -387,12 +388,12 @@ public class Configuration {
         return this;
     }
     
-    public ScheduledExecutorService getExecutor() {
-        return executor;
+    public ScheduledExecutorService getScheduledExecutor() {
+        return scheduledExecutor;
     }
     
-    public Configuration setExecutor(ScheduledExecutorService executor) {
-        this.executor = executor;
+    public Configuration setScheduledExecutor(ScheduledExecutorService scheduledExecutor) {
+        this.scheduledExecutor = scheduledExecutor;
         return this;
     }
     
@@ -525,6 +526,7 @@ public class Configuration {
                 ", rateLimit=" + rateLimit +
                 ", verbose=" + verbose +
                 ", heartbeatPeriod=" + heartbeatPeriod +
+                ", scheduledExecutor=" + scheduledExecutor +
                 ", useDefaultExceptionListener=" + useDefaultExceptionListener +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +

@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.net.ssl.HostnameVerifier;
@@ -168,7 +169,12 @@ public class Configuration {
      * psync offset
      */
     private final AtomicLong replOffset = new AtomicLong(-1);
-
+    
+    /**
+     * heartbeat executor
+     */
+    private ScheduledExecutorService executor;
+    
     public int getConnectionTimeout() {
         return connectionTimeout;
     }
@@ -378,6 +384,15 @@ public class Configuration {
 
     public Configuration setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
+        return this;
+    }
+    
+    public ScheduledExecutorService getExecutor() {
+        return executor;
+    }
+    
+    public Configuration setExecutor(ScheduledExecutorService executor) {
+        this.executor = executor;
         return this;
     }
     

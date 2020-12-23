@@ -43,6 +43,7 @@
         <developer>
             <name>Leon Chen</name>
             <email>chen.bao.yi@gmail.com</email>
+            <url>https://github.com/leonchen83</url>
             <organization>moilioncircle</organization>
             <organizationUrl>http://www.moilioncircle.com/</organizationUrl>
             <roles>
@@ -53,14 +54,16 @@
 
         <developer>
             <name>Adrian Yao</name>
-            <email>adrianyaofly@gmail.com</email>
             <organization>unstudy</organization>
+            <email>adrianyaofly@gmail.com</email>
+            <url>https://github.com/adrianyao89</url>
             <timezone>+8</timezone>
         </developer>
 
         <developer>
             <name>Trydofor</name>
             <email>trydofor@gmail.com</email>
+            <url>https://github.com/trydofor</url>
             <organization>moilioncircle</organization>
             <organizationUrl>http://www.moilioncircle.com/</organizationUrl>
             <roles>

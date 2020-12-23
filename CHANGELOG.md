@@ -2,11 +2,14 @@
 
 Redis 6.2 support.  
 Add command `COPY`,`LMOVE`,`BLMOVE`,`ZDIFFSTORE`,`GEOSEARCHSTORE`, `XGROUP CREATECONSUMER`.  
-
+  
 Modify command  
 1. `ZADD` add `GT`, `LT` option.
 2. `XADD` add `NOMKSTREAM` option.
 3. `SET` add `GET` option.
+  
+External heartbeat scheduled executor support.  
+1. `Configuration.setScheduledExecutor();`  
 
 ### 3.4.4
 

@@ -49,6 +49,15 @@ public class XScheduledExecutorService extends AbstractExecutorService implement
         }
     }
     
+    public long terminate(long timeout, TimeUnit unit) throws InterruptedException {
+        ScheduledExecutorService executor = configuration.getScheduledExecutor();
+        if (executor != null) {
+            return 0L;
+        } else {
+            return Concurrents.terminate(this.executor, timeout, unit);
+        }
+    }
+    
     public long terminateQuietly(long timeout, TimeUnit unit) {
         ScheduledExecutorService executor = configuration.getScheduledExecutor();
         if (executor != null) {

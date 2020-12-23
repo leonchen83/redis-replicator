@@ -21,43 +21,43 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @since 3.5.0
  */
 public class ZDiffStoreCommand extends AbstractCommand {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private byte[] destination;
-	private int numkeys;
-	private byte[][] keys;
-	
-	public ZDiffStoreCommand() {
-	}
-	
-	public ZDiffStoreCommand(byte[] destination, int numkeys, byte[][] keys) {
-		this.destination = destination;
-		this.numkeys = numkeys;
-		this.keys = keys;
-	}
-	
-	public byte[] getDestination() {
-		return destination;
-	}
-	
-	public void setDestination(byte[] destination) {
-		this.destination = destination;
-	}
-	
-	public int getNumkeys() {
-		return numkeys;
-	}
-	
-	public void setNumkeys(int numkeys) {
-		this.numkeys = numkeys;
-	}
-	
-	public byte[][] getKeys() {
-		return keys;
-	}
-	
-	public void setKeys(byte[][] keys) {
-		this.keys = keys;
-	}
+    
+    private static final long serialVersionUID = 1L;
+    
+    private byte[] destination;
+    private int numkeys;
+    private byte[][] keys;
+    
+    public ZDiffStoreCommand() {
+    }
+    
+    public ZDiffStoreCommand(byte[] destination, int numkeys, byte[][] keys) {
+        this.destination = destination;
+        this.numkeys = numkeys;
+        this.keys = keys;
+    }
+    
+    public byte[] getDestination() {
+        return destination;
+    }
+    
+    public void setDestination(byte[] destination) {
+        this.destination = destination;
+    }
+    
+    public int getNumkeys() {
+        return numkeys;
+    }
+    
+    public void setNumkeys(int numkeys) {
+        this.numkeys = numkeys;
+    }
+    
+    public byte[][] getKeys() {
+        return keys;
+    }
+    
+    public void setKeys(byte[][] keys) {
+        this.keys = keys;
+    }
 }

@@ -16,27 +16,29 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * @author Leon Chen
  * @since 3.5.0
  */
-public class FromMember {
-	private static final long serialVersionUID = 1L;
-	
-	private byte[] member;
-	
-	public FromMember() {
-	}
-	
-	public FromMember(byte[] member) {
-		this.member = member;
-	}
-	
-	public byte[] getMember() {
-		return member;
-	}
-	
-	public void setMember(byte[] member) {
-		this.member = member;
-	}
+public class FromMember implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private byte[] member;
+    
+    public FromMember() {
+    }
+    
+    public FromMember(byte[] member) {
+        this.member = member;
+    }
+    
+    public byte[] getMember() {
+        return member;
+    }
+    
+    public void setMember(byte[] member) {
+        this.member = member;
+    }
 }

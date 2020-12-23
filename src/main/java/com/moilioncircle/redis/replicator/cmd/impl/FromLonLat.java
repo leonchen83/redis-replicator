@@ -16,37 +16,39 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * @author Leon Chen
  * @since 3.5.0
  */
-public class FromLonLat {
-	private static final long serialVersionUID = 1L;
-	
-	private double longitude;
-	private double latitude;
-	
-	public FromLonLat() {
-	}
-	
-	public FromLonLat(double longitude, double latitude) {
-		this.longitude = longitude;
-		this.latitude = latitude;
-	}
-	
-	public double getLongitude() {
-		return longitude;
-	}
-	
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-	
-	public double getLatitude() {
-		return latitude;
-	}
-	
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
+public class FromLonLat implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private double longitude;
+    private double latitude;
+    
+    public FromLonLat() {
+    }
+    
+    public FromLonLat(double longitude, double latitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+    
+    public double getLongitude() {
+        return longitude;
+    }
+    
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+    
+    public double getLatitude() {
+        return latitude;
+    }
+    
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
 }

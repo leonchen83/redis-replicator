@@ -16,37 +16,39 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * @author Leon Chen
  * @since 3.5.0
  */
-public class ByRadius {
-	private static final long serialVersionUID = 1L;
-	
-	private double radius;
-	private UnitType unitType;
-	
-	public ByRadius() {
-	}
-	
-	public ByRadius(double radius, UnitType unitType) {
-		this.radius = radius;
-		this.unitType = unitType;
-	}
-	
-	public double getRadius() {
-		return radius;
-	}
-	
-	public void setRadius(double radius) {
-		this.radius = radius;
-	}
-	
-	public UnitType getUnitType() {
-		return unitType;
-	}
-	
-	public void setUnitType(UnitType unitType) {
-		this.unitType = unitType;
-	}
+public class ByRadius implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private double radius;
+    private UnitType unitType;
+    
+    public ByRadius() {
+    }
+    
+    public ByRadius(double radius, UnitType unitType) {
+        this.radius = radius;
+        this.unitType = unitType;
+    }
+    
+    public double getRadius() {
+        return radius;
+    }
+    
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+    
+    public UnitType getUnitType() {
+        return unitType;
+    }
+    
+    public void setUnitType(UnitType unitType) {
+        this.unitType = unitType;
+    }
 }

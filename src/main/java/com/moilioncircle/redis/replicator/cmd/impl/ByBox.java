@@ -16,47 +16,49 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * @author Leon Chen
  * @since 3.5.0
  */
-public class ByBox {
-	private static final long serialVersionUID = 1L;
-	
-	private double width;
-	private double height;
-	private UnitType unitType;
-	
-	public ByBox() {
-	}
-	
-	public ByBox(double width, double height, UnitType unitType) {
-		this.width = width;
-		this.height = height;
-		this.unitType = unitType;
-	}
-	
-	public double getWidth() {
-		return width;
-	}
-	
-	public void setWidth(double width) {
-		this.width = width;
-	}
-	
-	public double getHeight() {
-		return height;
-	}
-	
-	public void setHeight(double height) {
-		this.height = height;
-	}
-	
-	public UnitType getUnitType() {
-		return unitType;
-	}
-	
-	public void setUnitType(UnitType unitType) {
-		this.unitType = unitType;
-	}
+public class ByBox implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private double width;
+    private double height;
+    private UnitType unitType;
+    
+    public ByBox() {
+    }
+    
+    public ByBox(double width, double height, UnitType unitType) {
+        this.width = width;
+        this.height = height;
+        this.unitType = unitType;
+    }
+    
+    public double getWidth() {
+        return width;
+    }
+    
+    public void setWidth(double width) {
+        this.width = width;
+    }
+    
+    public double getHeight() {
+        return height;
+    }
+    
+    public void setHeight(double height) {
+        this.height = height;
+    }
+    
+    public UnitType getUnitType() {
+        return unitType;
+    }
+    
+    public void setUnitType(UnitType unitType) {
+        this.unitType = unitType;
+    }
 }

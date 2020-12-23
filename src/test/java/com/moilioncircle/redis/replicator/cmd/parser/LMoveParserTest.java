@@ -28,24 +28,24 @@ import junit.framework.TestCase;
  * @since 3.5.0
  */
 public class LMoveParserTest extends AbstractParserTest {
-	@Test
-	public void parse() {
-		{
-			LMoveParser parser = new LMoveParser();
-			LMoveCommand cmd = parser.parse(toObjectArray("LMOVE aaa bbb LEFT RIGHT".split(" ")));
-			assertEquals("aaa", cmd.getSource());
-			assertEquals("bbb", cmd.getDestination());
-			TestCase.assertEquals(DirectionType.LEFT, cmd.getFrom());
-			TestCase.assertEquals(DirectionType.RIGHT, cmd.getTo());
-		}
-		
-		{
-			LMoveParser parser = new LMoveParser();
-			LMoveCommand cmd = parser.parse(toObjectArray("LMOVE aaa bbb RIGHT LEFT".split(" ")));
-			assertEquals("aaa", cmd.getSource());
-			assertEquals("bbb", cmd.getDestination());
-			TestCase.assertEquals(DirectionType.RIGHT, cmd.getFrom());
-			TestCase.assertEquals(DirectionType.LEFT, cmd.getTo());
-		}
-	}
+    @Test
+    public void parse() {
+        {
+            LMoveParser parser = new LMoveParser();
+            LMoveCommand cmd = parser.parse(toObjectArray("LMOVE aaa bbb LEFT RIGHT".split(" ")));
+            assertEquals("aaa", cmd.getSource());
+            assertEquals("bbb", cmd.getDestination());
+            TestCase.assertEquals(DirectionType.LEFT, cmd.getFrom());
+            TestCase.assertEquals(DirectionType.RIGHT, cmd.getTo());
+        }
+        
+        {
+            LMoveParser parser = new LMoveParser();
+            LMoveCommand cmd = parser.parse(toObjectArray("LMOVE aaa bbb RIGHT LEFT".split(" ")));
+            assertEquals("aaa", cmd.getSource());
+            assertEquals("bbb", cmd.getDestination());
+            TestCase.assertEquals(DirectionType.RIGHT, cmd.getFrom());
+            TestCase.assertEquals(DirectionType.LEFT, cmd.getTo());
+        }
+    }
 }

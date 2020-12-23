@@ -31,89 +31,89 @@ import junit.framework.TestCase;
  * @since 3.5.0
  */
 public class GeoSearchStoreParserTest extends AbstractParserTest {
-	@Test
-	public void parse() {
-		{
-			GeoSearchStoreParser parser = new GeoSearchStoreParser();
-			GeoSearchStoreCommand cmd = parser.parse(toObjectArray("GEOSEARCHSTORE aaa bbb FROMMEMBER ccc FROMLONLAT 100.32 200.45 BYRADIUS 123.5 mi BYBOX 100 200 km desc count 10 WITHCOORD WITHDIST WITHHASH STOREDIST".split(" ")));
-			assertEquals("aaa", cmd.getDestination());
-			assertEquals("bbb", cmd.getSource());
-			assertEquals("ccc", cmd.getFromMember().getMember());
-			TestCase.assertEquals(100.32d, cmd.getFromLonLat().getLongitude());
-			TestCase.assertEquals(200.45d, cmd.getFromLonLat().getLatitude());
-			
-			TestCase.assertEquals(123.5d, cmd.getByRadius().getRadius());
-			TestCase.assertEquals(UnitType.MI, cmd.getByRadius().getUnitType());
-			
-			TestCase.assertEquals(100d, cmd.getByBox().getWidth());
-			TestCase.assertEquals(200d, cmd.getByBox().getHeight());
-			TestCase.assertEquals(UnitType.KM, cmd.getByBox().getUnitType());
-			
-			TestCase.assertEquals(OrderType.DESC, cmd.getOrderType());
-			TestCase.assertEquals(10, cmd.getCount().getCount());
-			TestCase.assertTrue(cmd.isStoreDist());
-			TestCase.assertTrue(cmd.isWithCoord());
-			TestCase.assertTrue(cmd.isWithDist());
-			TestCase.assertTrue(cmd.isWithHash());
-		}
-		
-		{
-			GeoSearchStoreParser parser = new GeoSearchStoreParser();
-			GeoSearchStoreCommand cmd = parser.parse(toObjectArray("GEOSEARCHSTORE aaa bbb FROMLONLAT 100.32 200.45 BYBOX 100 200 km desc count 10 WITHHASH STOREDIST".split(" ")));
-			assertEquals("aaa", cmd.getDestination());
-			assertEquals("bbb", cmd.getSource());
-			assertNull(cmd.getFromMember());
-			TestCase.assertEquals(100.32d, cmd.getFromLonLat().getLongitude());
-			TestCase.assertEquals(200.45d, cmd.getFromLonLat().getLatitude());
-			
-			assertNull(cmd.getByRadius());
-			
-			TestCase.assertEquals(100d, cmd.getByBox().getWidth());
-			TestCase.assertEquals(200d, cmd.getByBox().getHeight());
-			TestCase.assertEquals(UnitType.KM, cmd.getByBox().getUnitType());
-			
-			TestCase.assertEquals(OrderType.DESC, cmd.getOrderType());
-			TestCase.assertEquals(10, cmd.getCount().getCount());
-			TestCase.assertTrue(cmd.isStoreDist());
-			TestCase.assertFalse(cmd.isWithCoord());
-			TestCase.assertFalse(cmd.isWithDist());
-			TestCase.assertTrue(cmd.isWithHash());
-		}
-		
-		{
-			GeoSearchStoreParser parser = new GeoSearchStoreParser();
-			GeoSearchStoreCommand cmd = parser.parse(toObjectArray("GEOSEARCHSTORE aaa bbb".split(" ")));
-			assertEquals("aaa", cmd.getDestination());
-			assertEquals("bbb", cmd.getSource());
-			assertNull(cmd.getFromMember());
-			assertNull(cmd.getFromLonLat());
-			assertNull(cmd.getByRadius());
-			assertNull(cmd.getByBox());
-			
-			TestCase.assertEquals(OrderType.NONE, cmd.getOrderType());
-			assertNull(cmd.getCount());
-			TestCase.assertFalse(cmd.isStoreDist());
-			TestCase.assertFalse(cmd.isWithCoord());
-			TestCase.assertFalse(cmd.isWithDist());
-			TestCase.assertFalse(cmd.isWithHash());
-		}
-		
-		{
-			GeoSearchStoreParser parser = new GeoSearchStoreParser();
-			GeoSearchStoreCommand cmd = parser.parse(toObjectArray("GEOSEARCHSTORE aaa bbb ASC count 10 STOREDIST".split(" ")));
-			assertEquals("aaa", cmd.getDestination());
-			assertEquals("bbb", cmd.getSource());
-			assertNull(cmd.getFromMember());
-			assertNull(cmd.getFromLonLat());
-			assertNull(cmd.getByRadius());
-			assertNull(cmd.getByBox());
-			
-			TestCase.assertEquals(OrderType.ASC, cmd.getOrderType());
-			assertEquals(10, cmd.getCount().getCount());
-			TestCase.assertTrue(cmd.isStoreDist());
-			TestCase.assertFalse(cmd.isWithCoord());
-			TestCase.assertFalse(cmd.isWithDist());
-			TestCase.assertFalse(cmd.isWithHash());
-		}
-	}
+    @Test
+    public void parse() {
+        {
+            GeoSearchStoreParser parser = new GeoSearchStoreParser();
+            GeoSearchStoreCommand cmd = parser.parse(toObjectArray("GEOSEARCHSTORE aaa bbb FROMMEMBER ccc FROMLONLAT 100.32 200.45 BYRADIUS 123.5 mi BYBOX 100 200 km desc count 10 WITHCOORD WITHDIST WITHHASH STOREDIST".split(" ")));
+            assertEquals("aaa", cmd.getDestination());
+            assertEquals("bbb", cmd.getSource());
+            assertEquals("ccc", cmd.getFromMember().getMember());
+            TestCase.assertEquals(100.32d, cmd.getFromLonLat().getLongitude());
+            TestCase.assertEquals(200.45d, cmd.getFromLonLat().getLatitude());
+            
+            TestCase.assertEquals(123.5d, cmd.getByRadius().getRadius());
+            TestCase.assertEquals(UnitType.MI, cmd.getByRadius().getUnitType());
+            
+            TestCase.assertEquals(100d, cmd.getByBox().getWidth());
+            TestCase.assertEquals(200d, cmd.getByBox().getHeight());
+            TestCase.assertEquals(UnitType.KM, cmd.getByBox().getUnitType());
+            
+            TestCase.assertEquals(OrderType.DESC, cmd.getOrderType());
+            TestCase.assertEquals(10, cmd.getCount().getCount());
+            TestCase.assertTrue(cmd.isStoreDist());
+            TestCase.assertTrue(cmd.isWithCoord());
+            TestCase.assertTrue(cmd.isWithDist());
+            TestCase.assertTrue(cmd.isWithHash());
+        }
+        
+        {
+            GeoSearchStoreParser parser = new GeoSearchStoreParser();
+            GeoSearchStoreCommand cmd = parser.parse(toObjectArray("GEOSEARCHSTORE aaa bbb FROMLONLAT 100.32 200.45 BYBOX 100 200 km desc count 10 WITHHASH STOREDIST".split(" ")));
+            assertEquals("aaa", cmd.getDestination());
+            assertEquals("bbb", cmd.getSource());
+            assertNull(cmd.getFromMember());
+            TestCase.assertEquals(100.32d, cmd.getFromLonLat().getLongitude());
+            TestCase.assertEquals(200.45d, cmd.getFromLonLat().getLatitude());
+            
+            assertNull(cmd.getByRadius());
+            
+            TestCase.assertEquals(100d, cmd.getByBox().getWidth());
+            TestCase.assertEquals(200d, cmd.getByBox().getHeight());
+            TestCase.assertEquals(UnitType.KM, cmd.getByBox().getUnitType());
+            
+            TestCase.assertEquals(OrderType.DESC, cmd.getOrderType());
+            TestCase.assertEquals(10, cmd.getCount().getCount());
+            TestCase.assertTrue(cmd.isStoreDist());
+            TestCase.assertFalse(cmd.isWithCoord());
+            TestCase.assertFalse(cmd.isWithDist());
+            TestCase.assertTrue(cmd.isWithHash());
+        }
+        
+        {
+            GeoSearchStoreParser parser = new GeoSearchStoreParser();
+            GeoSearchStoreCommand cmd = parser.parse(toObjectArray("GEOSEARCHSTORE aaa bbb".split(" ")));
+            assertEquals("aaa", cmd.getDestination());
+            assertEquals("bbb", cmd.getSource());
+            assertNull(cmd.getFromMember());
+            assertNull(cmd.getFromLonLat());
+            assertNull(cmd.getByRadius());
+            assertNull(cmd.getByBox());
+            
+            TestCase.assertEquals(OrderType.NONE, cmd.getOrderType());
+            assertNull(cmd.getCount());
+            TestCase.assertFalse(cmd.isStoreDist());
+            TestCase.assertFalse(cmd.isWithCoord());
+            TestCase.assertFalse(cmd.isWithDist());
+            TestCase.assertFalse(cmd.isWithHash());
+        }
+        
+        {
+            GeoSearchStoreParser parser = new GeoSearchStoreParser();
+            GeoSearchStoreCommand cmd = parser.parse(toObjectArray("GEOSEARCHSTORE aaa bbb ASC count 10 STOREDIST".split(" ")));
+            assertEquals("aaa", cmd.getDestination());
+            assertEquals("bbb", cmd.getSource());
+            assertNull(cmd.getFromMember());
+            assertNull(cmd.getFromLonLat());
+            assertNull(cmd.getByRadius());
+            assertNull(cmd.getByBox());
+            
+            TestCase.assertEquals(OrderType.ASC, cmd.getOrderType());
+            assertEquals(10, cmd.getCount().getCount());
+            TestCase.assertTrue(cmd.isStoreDist());
+            TestCase.assertFalse(cmd.isWithCoord());
+            TestCase.assertFalse(cmd.isWithDist());
+            TestCase.assertFalse(cmd.isWithHash());
+        }
+    }
 }

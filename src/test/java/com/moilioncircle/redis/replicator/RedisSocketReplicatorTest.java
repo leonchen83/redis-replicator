@@ -17,12 +17,17 @@
 package com.moilioncircle.redis.replicator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -30,6 +35,7 @@ import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
+import com.moilioncircle.redis.replicator.cmd.impl.PingCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZAddCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
@@ -38,7 +44,9 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.util.Concurrents;
 import com.moilioncircle.redis.replicator.util.Strings;
+import com.moilioncircle.redis.replicator.util.XScheduledExecutorService;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ZParams;
@@ -329,5 +337,49 @@ public class RedisSocketReplicatorTest {
         });
         redisReplicator.open();
         assertEquals(8000, acc.get());
+    }
+    
+    @Test
+    public void testExecutor1() throws IOException {
+        Configuration configuration = Configuration.defaultSetting();
+        configuration.setScheduledExecutor(Executors.newScheduledThreadPool(4));
+        RedisSocketReplicator replicator = new RedisSocketReplicator("127.0.0.1", 6379, configuration);
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PingCommand) {
+                    try {
+                        replicator.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        });
+        replicator.open();
+        assertFalse(configuration.getScheduledExecutor().isShutdown());
+        assertFalse(configuration.getScheduledExecutor().isTerminated());
+        Concurrents.terminateQuietly(configuration.getScheduledExecutor(), 30, TimeUnit.SECONDS);
+    }
+    
+    @Test
+    public void testExecutor2() throws Exception {
+        RedisSocketReplicator replicator = new RedisSocketReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PingCommand) {
+                    try {
+                        replicator.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        });
+        replicator.open();
+        Field field = RedisSocketReplicator.class.getDeclaredField("executor");
+        field.setAccessible(true);
+        XScheduledExecutorService executor = (XScheduledExecutorService)field.get(replicator);
+        assertTrue(executor.isShutdown());
+        assertTrue(executor.isTerminated());
     }
 }

@@ -10,6 +10,8 @@ Modify command
   
 External heartbeat scheduled executor support.  
 1. `Configuration.setScheduledExecutor();`  
+  
+Fix `ZPopMinCommand.getKey()` return `null` bug.  
 
 ### 3.4.4
 

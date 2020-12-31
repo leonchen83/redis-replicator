@@ -592,6 +592,8 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
 * [Trydofor](https://github.com/trydofor)  
 * [Argun](https://github.com/Argun)  
 * [Sean Pan](https://github.com/XinYang-Pan)  
+* [René Kerner](https://github.com/rk3rn3r)  
+* [Maplestoria](https://github.com/maplestoria)  
 * 特别感谢 [Kevin Zheng](https://github.com/KevinZheng001)  
   
 # 7. 相关引用  

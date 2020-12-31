@@ -26,7 +26,6 @@ import static com.moilioncircle.redis.replicator.Status.CONNECTING;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
-import static com.moilioncircle.redis.replicator.util.Concurrents.terminateQuietly;
 import static com.moilioncircle.redis.replicator.util.Strings.format;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 import static com.moilioncircle.redis.replicator.util.Tuples.of;
@@ -36,8 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 import org.slf4j.Logger;
@@ -59,6 +56,7 @@ import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
 import com.moilioncircle.redis.replicator.rdb.RdbParser;
 import com.moilioncircle.redis.replicator.util.Strings;
+import com.moilioncircle.redis.replicator.util.XScheduledExecutorService;
 
 /**
  * @author Leon Chen
@@ -75,7 +73,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
-    protected ScheduledExecutorService executor;
+    protected XScheduledExecutorService executor;
     protected final RedisSocketFactory socketFactory;
     
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
@@ -108,13 +106,13 @@ public class RedisSocketReplicator extends AbstractReplicator {
     @Override
     public void open() throws IOException {
         super.open();
-        this.executor = Executors.newSingleThreadScheduledExecutor();
+        this.executor = new XScheduledExecutorService(configuration);
         try {
             new RedisSocketReplicatorRetrier().retry(this);
         } finally {
             doClose();
             doCloseListener(this);
-            terminateQuietly(executor, configuration.getConnectionTimeout(), MILLISECONDS);
+            this.executor.terminateQuietly(configuration.getConnectionTimeout(), MILLISECONDS);
         }
     }
     

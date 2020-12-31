@@ -28,24 +28,24 @@ import junit.framework.TestCase;
  * @since 3.5.0
  */
 public class BLMoveParserTest extends AbstractParserTest {
-	@Test
-	public void parse() {
-		{
-			BLMoveParser parser = new BLMoveParser();
-			BLMoveCommand cmd = parser.parse(toObjectArray("BLMOVE aaa bbb LEFT RIGHT".split(" ")));
-			assertEquals("aaa", cmd.getSource());
-			assertEquals("bbb", cmd.getDestination());
-			TestCase.assertEquals(DirectionType.LEFT, cmd.getFrom());
-			TestCase.assertEquals(DirectionType.RIGHT, cmd.getTo());
-		}
-		
-		{
-			BLMoveParser parser = new BLMoveParser();
-			BLMoveCommand cmd = parser.parse(toObjectArray("BLMOVE aaa bbb RIGHT LEFT".split(" ")));
-			assertEquals("aaa", cmd.getSource());
-			assertEquals("bbb", cmd.getDestination());
-			TestCase.assertEquals(DirectionType.RIGHT, cmd.getFrom());
-			TestCase.assertEquals(DirectionType.LEFT, cmd.getTo());
-		}
-	}
+    @Test
+    public void parse() {
+        {
+            BLMoveParser parser = new BLMoveParser();
+            BLMoveCommand cmd = parser.parse(toObjectArray("BLMOVE aaa bbb LEFT RIGHT".split(" ")));
+            assertEquals("aaa", cmd.getSource());
+            assertEquals("bbb", cmd.getDestination());
+            TestCase.assertEquals(DirectionType.LEFT, cmd.getFrom());
+            TestCase.assertEquals(DirectionType.RIGHT, cmd.getTo());
+        }
+        
+        {
+            BLMoveParser parser = new BLMoveParser();
+            BLMoveCommand cmd = parser.parse(toObjectArray("BLMOVE aaa bbb RIGHT LEFT".split(" ")));
+            assertEquals("aaa", cmd.getSource());
+            assertEquals("bbb", cmd.getDestination());
+            TestCase.assertEquals(DirectionType.RIGHT, cmd.getFrom());
+            TestCase.assertEquals(DirectionType.LEFT, cmd.getTo());
+        }
+    }
 }

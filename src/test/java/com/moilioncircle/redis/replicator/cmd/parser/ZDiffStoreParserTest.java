@@ -25,23 +25,23 @@ import com.moilioncircle.redis.replicator.cmd.impl.ZDiffStoreCommand;
  * @since 3.5.0
  */
 public class ZDiffStoreParserTest extends AbstractParserTest {
-	@Test
-	public void parse() {
-		{
-			ZDiffStoreParser parser = new ZDiffStoreParser();
-			ZDiffStoreCommand cmd = parser.parse(toObjectArray("zdiffstore aaa 2 key1 key2".split(" ")));
-			assertEquals("aaa", cmd.getDestination());
-			assertEquals(2, cmd.getNumkeys());
-			assertEquals("key1", cmd.getKeys()[0]);
-			assertEquals("key2", cmd.getKeys()[1]);
-		}
-		
-		{
-			ZDiffStoreParser parser = new ZDiffStoreParser();
-			ZDiffStoreCommand cmd = parser.parse(toObjectArray("zdiffstore aaa 1 key1".split(" ")));
-			assertEquals("aaa", cmd.getDestination());
-			assertEquals(1, cmd.getNumkeys());
-			assertEquals("key1", cmd.getKeys()[0]);
-		}
-	}
+    @Test
+    public void parse() {
+        {
+            ZDiffStoreParser parser = new ZDiffStoreParser();
+            ZDiffStoreCommand cmd = parser.parse(toObjectArray("zdiffstore aaa 2 key1 key2".split(" ")));
+            assertEquals("aaa", cmd.getDestination());
+            assertEquals(2, cmd.getNumkeys());
+            assertEquals("key1", cmd.getKeys()[0]);
+            assertEquals("key2", cmd.getKeys()[1]);
+        }
+        
+        {
+            ZDiffStoreParser parser = new ZDiffStoreParser();
+            ZDiffStoreCommand cmd = parser.parse(toObjectArray("zdiffstore aaa 1 key1".split(" ")));
+            assertEquals("aaa", cmd.getDestination());
+            assertEquals(1, cmd.getNumkeys());
+            assertEquals("key1", cmd.getKeys()[0]);
+        }
+    }
 }

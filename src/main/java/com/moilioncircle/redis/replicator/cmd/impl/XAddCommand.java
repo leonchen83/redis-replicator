@@ -25,70 +25,70 @@ import java.util.Map;
 public class XAddCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
-	
-	private MaxLen maxLen;
-	private boolean nomkstream = false;
-	private byte[] id;
-	private Map<byte[], byte[]> fields;
-	
-	public XAddCommand() {
-		
-	}
-	
-	public XAddCommand(byte[] key, MaxLen maxLen, byte[] id, Map<byte[], byte[]> fields) {
-		this(key, maxLen, false, id, fields);
-	}
-	
-	/**
-	 * @param key key
-	 * @param maxLen maxlen
-	 * @param nomkstream nomkstream since redis 6.2
-	 * @param id id or *
-	 * @param fields fields
-	 * @since 3.5.0
-	 */
-	public XAddCommand(byte[] key, MaxLen maxLen, boolean nomkstream, byte[] id, Map<byte[], byte[]> fields) {
-		super(key);
-		this.maxLen = maxLen;
-		this.nomkstream = nomkstream;
-		this.id = id;
-		this.fields = fields;
-	}
-	
-	public MaxLen getMaxLen() {
-		return maxLen;
-	}
-	
-	public void setMaxLen(MaxLen maxLen) {
-		this.maxLen = maxLen;
-	}
-	
-	/**
-	 * @return nomkstream
-	 * @since 3.5.0
-	 */
-	public boolean isNomkstream() {
-		return nomkstream;
-	}
-	
-	/**
-	 * @param nomkstream nomkstream since redis 6.2
-	 * @since 3.5.0
-	 */
-	public void setNomkstream(boolean nomkstream) {
-		this.nomkstream = nomkstream;
-	}
-	
-	public byte[] getId() {
-		return id;
-	}
-	
-	public void setId(byte[] id) {
-		this.id = id;
-	}
-	
-	public Map<byte[], byte[]> getFields() {
-		return fields;
+    
+    private MaxLen maxLen;
+    private boolean nomkstream = false;
+    private byte[] id;
+    private Map<byte[], byte[]> fields;
+    
+    public XAddCommand() {
+        
+    }
+    
+    public XAddCommand(byte[] key, MaxLen maxLen, byte[] id, Map<byte[], byte[]> fields) {
+        this(key, maxLen, false, id, fields);
+    }
+    
+    /**
+     * @param key key
+     * @param maxLen maxlen
+     * @param nomkstream nomkstream since redis 6.2
+     * @param id id or *
+     * @param fields fields
+     * @since 3.5.0
+     */
+    public XAddCommand(byte[] key, MaxLen maxLen, boolean nomkstream, byte[] id, Map<byte[], byte[]> fields) {
+        super(key);
+        this.maxLen = maxLen;
+        this.nomkstream = nomkstream;
+        this.id = id;
+        this.fields = fields;
+    }
+    
+    public MaxLen getMaxLen() {
+        return maxLen;
+    }
+    
+    public void setMaxLen(MaxLen maxLen) {
+        this.maxLen = maxLen;
+    }
+    
+    /**
+     * @return nomkstream
+     * @since 3.5.0
+     */
+    public boolean isNomkstream() {
+        return nomkstream;
+    }
+    
+    /**
+     * @param nomkstream nomkstream since redis 6.2
+     * @since 3.5.0
+     */
+    public void setNomkstream(boolean nomkstream) {
+        this.nomkstream = nomkstream;
+    }
+    
+    public byte[] getId() {
+        return id;
+    }
+    
+    public void setId(byte[] id) {
+        this.id = id;
+    }
+    
+    public Map<byte[], byte[]> getFields() {
+        return fields;
     }
 
     public void setFields(Map<byte[], byte[]> fields) {

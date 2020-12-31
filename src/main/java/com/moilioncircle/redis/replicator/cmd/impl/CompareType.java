@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * @author Leon Chen
  * @since 3.5.0
  */
-public enum CompareType {
-	GT, LT, NONE;
+public enum CompareType implements Serializable {
+    GT, LT, NONE;
 }

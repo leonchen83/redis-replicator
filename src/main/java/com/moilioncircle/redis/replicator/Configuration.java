@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.net.ssl.HostnameVerifier;
@@ -168,7 +169,13 @@ public class Configuration {
      * psync offset
      */
     private final AtomicLong replOffset = new AtomicLong(-1);
-
+    
+    /**
+     * @since 3.5.0
+     * heartbeat scheduled executor
+     */
+    private ScheduledExecutorService scheduledExecutor;
+    
     public int getConnectionTimeout() {
         return connectionTimeout;
     }
@@ -381,6 +388,15 @@ public class Configuration {
         return this;
     }
     
+    public ScheduledExecutorService getScheduledExecutor() {
+        return scheduledExecutor;
+    }
+    
+    public Configuration setScheduledExecutor(ScheduledExecutorService scheduledExecutor) {
+        this.scheduledExecutor = scheduledExecutor;
+        return this;
+    }
+    
     public Configuration merge(SslConfiguration sslConfiguration) {
         if (sslConfiguration == null) return this;
         this.setSslParameters(sslConfiguration.getSslParameters());
@@ -510,6 +526,7 @@ public class Configuration {
                 ", rateLimit=" + rateLimit +
                 ", verbose=" + verbose +
                 ", heartbeatPeriod=" + heartbeatPeriod +
+                ", scheduledExecutor=" + scheduledExecutor +
                 ", useDefaultExceptionListener=" + useDefaultExceptionListener +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +

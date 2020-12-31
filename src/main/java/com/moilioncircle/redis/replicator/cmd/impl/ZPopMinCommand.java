@@ -30,6 +30,7 @@ public class ZPopMinCommand extends GenericKeyCommand {
     }
 
     public ZPopMinCommand(byte[] key, int count) {
+        super(key);
         this.count = count;
     }
 

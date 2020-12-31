@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * @author Leon Chen
  * @since 3.5.0
  */
-public enum UnitType {
-	M, KM, FT, MI
+public enum UnitType implements Serializable {
+    M, KM, FT, MI
 }

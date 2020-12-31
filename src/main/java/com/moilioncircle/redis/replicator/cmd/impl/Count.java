@@ -16,28 +16,30 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * @author Leon Chen
  * @since 3.5.0
  */
-public class Count {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private int count;
-	
-	public Count() {
-	}
-	
-	public Count(int count) {
-		this.count = count;
-	}
-	
-	public int getCount() {
-		return count;
-	}
-	
-	public void setCount(int count) {
-		this.count = count;
-	}
+public class Count implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
+    
+    private int count;
+    
+    public Count() {
+    }
+    
+    public Count(int count) {
+        this.count = count;
+    }
+    
+    public int getCount() {
+        return count;
+    }
+    
+    public void setCount(int count) {
+        this.count = count;
+    }
 }

@@ -27,42 +27,42 @@ import com.moilioncircle.redis.replicator.cmd.impl.CopyCommand;
  * @since 3.5.0
  */
 public class CopyParserTest extends AbstractParserTest {
-	@Test
-	public void parse() {
-		{
-			CopyParser parser = new CopyParser();
-			CopyCommand cmd = parser.parse(toObjectArray("copy aaa bbb db 1 replace".split(" ")));
-			assertEquals("aaa", cmd.getSource());
-			assertEquals("bbb", cmd.getDestination());
-			assertEquals(1, cmd.getDb());
-			assertEquals(true, cmd.isReplace());
-		}
-		
-		{
-			CopyParser parser = new CopyParser();
-			CopyCommand cmd = parser.parse(toObjectArray("copy aaa bbb replace".split(" ")));
-			assertEquals("aaa", cmd.getSource());
-			assertEquals("bbb", cmd.getDestination());
-			assertNull(cmd.getDb());
-			assertEquals(true, cmd.isReplace());
-		}
-		
-		{
-			CopyParser parser = new CopyParser();
-			CopyCommand cmd = parser.parse(toObjectArray("copy aaa bbb db 1".split(" ")));
-			assertEquals("aaa", cmd.getSource());
-			assertEquals("bbb", cmd.getDestination());
-			assertEquals(1, cmd.getDb());
-			assertEquals(false, cmd.isReplace());
-		}
-		
-		{
-			CopyParser parser = new CopyParser();
-			CopyCommand cmd = parser.parse(toObjectArray("copy aaa bbb".split(" ")));
-			assertEquals("aaa", cmd.getSource());
-			assertEquals("bbb", cmd.getDestination());
-			assertNull(cmd.getDb());
-			assertEquals(false, cmd.isReplace());
-		}
-	}
+    @Test
+    public void parse() {
+        {
+            CopyParser parser = new CopyParser();
+            CopyCommand cmd = parser.parse(toObjectArray("copy aaa bbb db 1 replace".split(" ")));
+            assertEquals("aaa", cmd.getSource());
+            assertEquals("bbb", cmd.getDestination());
+            assertEquals(1, cmd.getDb());
+            assertEquals(true, cmd.isReplace());
+        }
+        
+        {
+            CopyParser parser = new CopyParser();
+            CopyCommand cmd = parser.parse(toObjectArray("copy aaa bbb replace".split(" ")));
+            assertEquals("aaa", cmd.getSource());
+            assertEquals("bbb", cmd.getDestination());
+            assertNull(cmd.getDb());
+            assertEquals(true, cmd.isReplace());
+        }
+        
+        {
+            CopyParser parser = new CopyParser();
+            CopyCommand cmd = parser.parse(toObjectArray("copy aaa bbb db 1".split(" ")));
+            assertEquals("aaa", cmd.getSource());
+            assertEquals("bbb", cmd.getDestination());
+            assertEquals(1, cmd.getDb());
+            assertEquals(false, cmd.isReplace());
+        }
+        
+        {
+            CopyParser parser = new CopyParser();
+            CopyCommand cmd = parser.parse(toObjectArray("copy aaa bbb".split(" ")));
+            assertEquals("aaa", cmd.getSource());
+            assertEquals("bbb", cmd.getDestination());
+            assertNull(cmd.getDb());
+            assertEquals(false, cmd.isReplace());
+        }
+    }
 }

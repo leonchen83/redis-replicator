@@ -21,52 +21,53 @@ package com.moilioncircle.redis.replicator.cmd.impl;
  * @since 3.5.0
  */
 public class LMoveCommand extends AbstractCommand {
-	private static final long serialVersionUID = 1L;
-	
-	private byte[] source;
-	private byte[] destination;
-	private DirectionType from;
-	private DirectionType to;
-	
-	public LMoveCommand() {
-	}
-	
-	public LMoveCommand(byte[] source, byte[] destination, DirectionType from, DirectionType to) {
-		this.source = source;
-		this.destination = destination;
-		this.from = from;
-		this.to = to;
-	}
-	
-	public byte[] getSource() {
-		return source;
-	}
-	
-	public void setSource(byte[] source) {
-		this.source = source;
-	}
-	
-	public byte[] getDestination() {
-		return destination;
-	}
-	
-	public void setDestination(byte[] destination) {
-		this.destination = destination;
-	}
-	
-	public DirectionType getFrom() {
-		return from;
-	}
-	
-	public void setFrom(DirectionType from) {
-		this.from = from;
-	}
-	
-	public DirectionType getTo() {
-		return to;
-	}
-	
-	public void setTo(DirectionType to) {
-		this.to = to;
-	}
+
+    private static final long serialVersionUID = 1L;
+    
+    private byte[] source;
+    private byte[] destination;
+    private DirectionType from;
+    private DirectionType to;
+    
+    public LMoveCommand() {
+    }
+    
+    public LMoveCommand(byte[] source, byte[] destination, DirectionType from, DirectionType to) {
+        this.source = source;
+        this.destination = destination;
+        this.from = from;
+        this.to = to;
+    }
+    
+    public byte[] getSource() {
+        return source;
+    }
+    
+    public void setSource(byte[] source) {
+        this.source = source;
+    }
+    
+    public byte[] getDestination() {
+        return destination;
+    }
+    
+    public void setDestination(byte[] destination) {
+        this.destination = destination;
+    }
+    
+    public DirectionType getFrom() {
+        return from;
+    }
+    
+    public void setFrom(DirectionType from) {
+        this.from = from;
+    }
+    
+    public DirectionType getTo() {
+        return to;
+    }
+    
+    public void setTo(DirectionType to) {
+        this.to = to;
+    }
 }

@@ -1,5 +1,12 @@
 package com.moilioncircle.redis.replicator.rdb.dump;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -8,12 +15,6 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
-import org.junit.Test;
-
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.fail;
 
 public class DumpRdbVisitorTest {
     @Test
@@ -59,5 +60,36 @@ public class DumpRdbVisitorTest {
         assertArrayEquals(zset, azset.get());
         assertArrayEquals(list, alist.get());
         assertArrayEquals(map, amap.get());
+    }
+    
+    @Test
+    public void test2() {
+        String[] resources = new String[]{"dictionary.rdb",
+                "easily_compressible_string_key.rdb", "empty_database.rdb",
+                "hash_as_ziplist.rdb", "integer_keys.rdb", "intset_16.rdb",
+                "intset_32.rdb", "intset_64.rdb", "keys_with_expiry.rdb",
+                "linkedlist.rdb", "multiple_databases.rdb",
+                "parser_filters.rdb", "rdb_version_5_with_checksum.rdb", "regular_set.rdb",
+                "regular_sorted_set.rdb", "sorted_set_as_ziplist.rdb", "uncompressible_string_keys.rdb",
+                "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
+                "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
+                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb",
+                "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "dump-stream.rdb", "dump-module-2.rdb"};
+        for (String resource : resources) {
+            template(resource);
+        }
+    }
+    
+    public void template(String filename) {
+        try {
+            @SuppressWarnings("resource")
+            Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                    getClassLoader().getResourceAsStream(filename)
+                    , FileType.RDB, Configuration.defaultSetting());
+            replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+            replicator.open();
+        } catch (Exception e) {
+            fail();
+        }
     }
 }

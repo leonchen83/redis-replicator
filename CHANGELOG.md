@@ -1,3 +1,7 @@
+### 3.5.1
+
+Fix `DumpRdbValueVisitor` OOM bug.  
+
 ### 3.5.0
 
 Redis 6.2 support.  

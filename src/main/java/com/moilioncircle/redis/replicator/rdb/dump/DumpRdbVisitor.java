@@ -21,6 +21,7 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.RdbValueVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
@@ -55,7 +56,8 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
 
     /**
      * @param replicator the replicator
-     * @param version    dumped version : redis 2.8.x = 6, redis 3.x = 7, redis 4.0.x = 8, -1 means dumped version = rdb version
+     * @param version    dumped version : redis 2.8.x = 6, redis 3.x = 7, redis 4.0.x = 8, redis 5.0+ = 9. 
+     *                   -1 means dumped version = rdb version
      * @since 2.6.0
      */
     public DumpRdbVisitor(Replicator replicator, int version) {
@@ -64,6 +66,15 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
 
     public DumpRdbVisitor(Replicator replicator, int version, int size) {
         super(replicator, new DumpRdbValueVisitor(replicator, version, size));
+    }
+    
+    /**
+     * @param replicator the replicator
+     * @param valueVisitor rdb value visitor
+     * @since 3.5.1
+     */
+    public DumpRdbVisitor(Replicator replicator, RdbValueVisitor valueVisitor) {
+        super(replicator, valueVisitor);
     }
 
     @Override

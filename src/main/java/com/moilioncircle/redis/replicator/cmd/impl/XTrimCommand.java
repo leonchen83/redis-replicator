@@ -25,13 +25,28 @@ public class XTrimCommand extends GenericKeyCommand {
     private static final long serialVersionUID = 1L;
 
     private MaxLen maxLen;
+    private MinId minId;
+    private Limit limit;
 
     public XTrimCommand() {
     }
 
     public XTrimCommand(byte[] key, MaxLen maxLen) {
+        this(key, maxLen, null, null);
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param key key
+     * @param maxLen maxLen
+     * @param minId minId
+     * @param limit limit
+     */
+    public XTrimCommand(byte[] key, MaxLen maxLen, MinId minId, Limit limit) {
         super(key);
         this.maxLen = maxLen;
+        this.minId = minId;
+        this.limit = limit;
     }
 
     public MaxLen getMaxLen() {
@@ -40,5 +55,37 @@ public class XTrimCommand extends GenericKeyCommand {
 
     public void setMaxLen(MaxLen maxLen) {
         this.maxLen = maxLen;
+    }
+    
+    /**
+     * @return
+     * @since 3.5.2
+     */
+    public MinId getMinId() {
+        return minId;
+    }
+    
+    /**
+     * @param minId minId
+     * @since 3.5.2
+     */
+    public void setMinId(MinId minId) {
+        this.minId = minId;
+    }
+    
+    /**
+     * @return
+     * @since 3.5.2
+     */
+    public Limit getLimit() {
+        return limit;
+    }
+    
+    /**
+     * @param limit limit
+     * @since 3.5.2
+     */
+    public void setLimit(Limit limit) {
+        this.limit = limit;
     }
 }

@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.LPopCommand;
-
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.Count;
+import com.moilioncircle.redis.replicator.cmd.impl.LPopCommand;
 
 /**
  * @author Leon Chen
@@ -29,7 +31,11 @@ public class LPopParser implements CommandParser<LPopCommand> {
     @Override
     public LPopCommand parse(Object[] command) {
         byte[] key = toBytes(command[1]);
-        return new LPopCommand(key);
+        Count count = null;
+        if (command.length == 3) {
+            count = new Count(toInt(command[2]));
+        }
+        return new LPopCommand(key, count);
     }
 
 }

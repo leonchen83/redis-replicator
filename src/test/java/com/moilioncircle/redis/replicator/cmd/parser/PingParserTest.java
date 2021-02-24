@@ -38,6 +38,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.SAddCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SDiffStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SInterStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SUnionStoreCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ScriptFlushCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ScriptLoadCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SetBitCommand;
@@ -283,7 +284,23 @@ public class PingParserTest extends AbstractParserTest {
     
         {
             ScriptParser parser = new ScriptParser();
-            parser.parse(toObjectArray(new Object[]{"script", "flush"}));
+            ScriptFlushCommand cmd = (ScriptFlushCommand)parser.parse(toObjectArray(new Object[]{"script", "flush"}));
+            assertEquals(false, cmd.isAsync());
+            assertEquals(false, cmd.isSync());
+        }
+    
+        {
+            ScriptParser parser = new ScriptParser();
+            ScriptFlushCommand cmd = (ScriptFlushCommand)parser.parse(toObjectArray(new Object[]{"script", "flush", "async"}));
+            assertEquals(true, cmd.isAsync());
+            assertEquals(false, cmd.isSync());
+        }
+    
+        {
+            ScriptParser parser = new ScriptParser();
+            ScriptFlushCommand cmd = (ScriptFlushCommand)parser.parse(toObjectArray(new Object[]{"script", "flush", "sync"}));
+            assertEquals(false, cmd.isAsync());
+            assertEquals(true, cmd.isSync());
         }
     
         {

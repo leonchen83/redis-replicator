@@ -23,6 +23,7 @@ import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XATType;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 
 /**
@@ -38,6 +39,8 @@ public class SetParser implements CommandParser<SetCommand> {
         int idx = 3;
         ExistType existType = ExistType.NONE;
         Long expiredValue = null;
+        XATType xatType = XATType.NONE;
+        Long xatValue = null;
         boolean et = false, st = false;
         boolean keepTtl = false;
         boolean get = false;
@@ -64,9 +67,17 @@ public class SetParser implements CommandParser<SetCommand> {
                 expiredType = ExpiredType.MS;
                 expiredValue = Long.valueOf(toRune(command[idx++]));
                 st = true;
+            } else if (!st && isEquals(param, "EXAT")) {
+                xatType = XATType.EXAT;
+                xatValue = Long.valueOf(toRune(command[idx++]));
+                st = true;
+            } else if (!st && isEquals(param, "PXAT")) {
+                xatType = XATType.PXAT;
+                xatValue = Long.valueOf(toRune(command[idx++]));
+                st = true;
             }
         }
-        return new SetCommand(key, value, keepTtl, expiredType, expiredValue, existType, get);
+        return new SetCommand(key, value, keepTtl, expiredType, expiredValue, xatType, xatValue, existType, get);
     }
 
 }

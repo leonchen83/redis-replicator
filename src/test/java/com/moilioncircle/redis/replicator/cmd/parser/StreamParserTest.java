@@ -36,6 +36,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
 
+import junit.framework.TestCase;
+
 /**
  * @author Leon Chen
  * @since 2.6.0
@@ -115,11 +117,46 @@ public class StreamParserTest extends AbstractParserTest {
     
         {
             XAddParser parser = new XAddParser();
-            XAddCommand cmd = parser.parse(toObjectArray("XADD key maxlen = 100 * field value field1 value1".split(" ")));
+            XAddCommand cmd = parser.parse(toObjectArray("XADD key maxlen = 100 limit 5 * field value field1 value1".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("*", cmd.getId());
             assertEquals(100L, cmd.getMaxLen().getCount());
             assertFalse(cmd.getMaxLen().isApproximation());
+            assertEquals(5L, cmd.getLimit().getCount());
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
+            assertTrue(cmd.getFields().containsKey("field1".getBytes()));
+        }
+    
+        {
+            XAddParser parser = new XAddParser();
+            XAddCommand cmd = parser.parse(toObjectArray("XADD key minid = 1528524799760-0 * field value field1 value1".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("*", cmd.getId());
+            assertEquals("1528524799760-0", cmd.getMinId().getId());
+            assertFalse(cmd.getMinId().isApproximation());
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
+            assertTrue(cmd.getFields().containsKey("field1".getBytes()));
+        }
+    
+        {
+            XAddParser parser = new XAddParser();
+            XAddCommand cmd = parser.parse(toObjectArray("XADD key minid ~ 1528524799760-0 * field value field1 value1".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("*", cmd.getId());
+            assertEquals("1528524799760-0", cmd.getMinId().getId());
+            assertTrue(cmd.getMinId().isApproximation());
+            assertTrue(cmd.getFields().containsKey("field".getBytes()));
+            assertTrue(cmd.getFields().containsKey("field1".getBytes()));
+        }
+    
+        {
+            XAddParser parser = new XAddParser();
+            XAddCommand cmd = parser.parse(toObjectArray("XADD key minid ~ 1528524799760-0 limit 5 * field value field1 value1".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("*", cmd.getId());
+            assertEquals("1528524799760-0", cmd.getMinId().getId());
+            assertTrue(cmd.getMinId().isApproximation());
+            assertEquals(5L, cmd.getLimit().getCount());
             assertTrue(cmd.getFields().containsKey("field".getBytes()));
             assertTrue(cmd.getFields().containsKey("field1".getBytes()));
         }
@@ -353,6 +390,24 @@ public class StreamParserTest extends AbstractParserTest {
             assertEquals("key", cmd.getKey());
             assertEquals(100L, cmd.getMaxLen().getCount());
             assertFalse(cmd.getMaxLen().isApproximation());
+        }
+    
+        {
+            XTrimParser parser = new XTrimParser();
+            XTrimCommand cmd = parser.parse(toObjectArray("XTRIM key maxlen = 100 limit 5".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(100L, cmd.getMaxLen().getCount());
+            assertEquals(5L, cmd.getLimit().getCount());
+            assertFalse(cmd.getMaxLen().isApproximation());
+        }
+    
+        {
+            XTrimParser parser = new XTrimParser();
+            XTrimCommand cmd = parser.parse(toObjectArray("XTRIM key minid = 1528524899760-0 limit 5".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("1528524899760-0", cmd.getMinId().getId());
+            assertEquals(5L, cmd.getLimit().getCount());
+            assertFalse(cmd.getMinId().isApproximation());
         }
     
         {

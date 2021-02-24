@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.GeoAddCommand;
 import junit.framework.TestCase;
 import org.junit.Test;
@@ -27,16 +28,63 @@ import org.junit.Test;
 public class GeoAddParserTest extends AbstractParserTest {
     @Test
     public void parse() {
-        GeoAddParser parser = new GeoAddParser();
-        GeoAddCommand cmd = parser.parse(toObjectArray("GEOADD Sicily 13.361389 38.115556 Palermo 15.087269 37.502669 Catania".split(" ")));
-        assertEquals("Sicily", cmd.getKey());
-        TestCase.assertEquals(13.361389, cmd.getGeos()[0].getLongitude(), 0.000001);
-        TestCase.assertEquals(38.115556, cmd.getGeos()[0].getLatitude(), 0.000001);
-        assertEquals("Palermo", cmd.getGeos()[0].getMember());
-
-        TestCase.assertEquals(15.087269, cmd.getGeos()[1].getLongitude(), 0.000001);
-        TestCase.assertEquals(37.502669, cmd.getGeos()[1].getLatitude(), 0.000001);
-        assertEquals("Catania", cmd.getGeos()[1].getMember());
+        {
+            GeoAddParser parser = new GeoAddParser();
+            GeoAddCommand cmd = parser.parse(toObjectArray("GEOADD Sicily 13.361389 38.115556 Palermo 15.087269 37.502669 Catania".split(" ")));
+            assertEquals("Sicily", cmd.getKey());
+            TestCase.assertEquals(13.361389, cmd.getGeos()[0].getLongitude(), 0.000001);
+            TestCase.assertEquals(38.115556, cmd.getGeos()[0].getLatitude(), 0.000001);
+            assertEquals("Palermo", cmd.getGeos()[0].getMember());
+    
+            TestCase.assertEquals(15.087269, cmd.getGeos()[1].getLongitude(), 0.000001);
+            TestCase.assertEquals(37.502669, cmd.getGeos()[1].getLatitude(), 0.000001);
+            assertEquals("Catania", cmd.getGeos()[1].getMember());
+        }
+    
+        {
+            GeoAddParser parser = new GeoAddParser();
+            GeoAddCommand cmd = parser.parse(toObjectArray("GEOADD Sicily nx ch 13.361389 38.115556 Palermo 15.087269 37.502669 Catania".split(" ")));
+            assertEquals("Sicily", cmd.getKey());
+            TestCase.assertEquals(ExistType.NX, cmd.getExistType());
+            TestCase.assertEquals(true, cmd.isCh());
+            TestCase.assertEquals(13.361389, cmd.getGeos()[0].getLongitude(), 0.000001);
+            TestCase.assertEquals(38.115556, cmd.getGeos()[0].getLatitude(), 0.000001);
+            assertEquals("Palermo", cmd.getGeos()[0].getMember());
+        
+            TestCase.assertEquals(15.087269, cmd.getGeos()[1].getLongitude(), 0.000001);
+            TestCase.assertEquals(37.502669, cmd.getGeos()[1].getLatitude(), 0.000001);
+            assertEquals("Catania", cmd.getGeos()[1].getMember());
+        }
+    
+        {
+            GeoAddParser parser = new GeoAddParser();
+            GeoAddCommand cmd = parser.parse(toObjectArray("GEOADD Sicily 13.361389 38.115556 Palermo xx ch 15.087269 37.502669 Catania".split(" ")));
+            assertEquals("Sicily", cmd.getKey());
+            TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+            TestCase.assertEquals(true, cmd.isCh());
+            TestCase.assertEquals(13.361389, cmd.getGeos()[0].getLongitude(), 0.000001);
+            TestCase.assertEquals(38.115556, cmd.getGeos()[0].getLatitude(), 0.000001);
+            assertEquals("Palermo", cmd.getGeos()[0].getMember());
+        
+            TestCase.assertEquals(15.087269, cmd.getGeos()[1].getLongitude(), 0.000001);
+            TestCase.assertEquals(37.502669, cmd.getGeos()[1].getLatitude(), 0.000001);
+            assertEquals("Catania", cmd.getGeos()[1].getMember());
+        }
+    
+        {
+            GeoAddParser parser = new GeoAddParser();
+            GeoAddCommand cmd = parser.parse(toObjectArray("GEOADD Sicily ch 13.361389 38.115556 Palermo xx 15.087269 37.502669 Catania".split(" ")));
+            assertEquals("Sicily", cmd.getKey());
+            TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+            TestCase.assertEquals(true, cmd.isCh());
+            TestCase.assertEquals(13.361389, cmd.getGeos()[0].getLongitude(), 0.000001);
+            TestCase.assertEquals(38.115556, cmd.getGeos()[0].getLatitude(), 0.000001);
+            assertEquals("Palermo", cmd.getGeos()[0].getMember());
+        
+            TestCase.assertEquals(15.087269, cmd.getGeos()[1].getLongitude(), 0.000001);
+            TestCase.assertEquals(37.502669, cmd.getGeos()[1].getLatitude(), 0.000001);
+            assertEquals("Catania", cmd.getGeos()[1].getMember());
+        }
     }
 
 }

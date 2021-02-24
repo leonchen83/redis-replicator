@@ -25,13 +25,28 @@ public class GeoAddCommand extends GenericKeyCommand {
     private static final long serialVersionUID = 1L;
 
     private Geo[] geos;
+    private boolean ch;
+    private ExistType existType;
 
     public GeoAddCommand() {
     }
 
     public GeoAddCommand(byte[] key, Geo[] geos) {
+        this(key, geos, ExistType.NONE, false);
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param key key
+     * @param geos geos
+     * @param existType existType
+     * @param ch ch
+     */
+    public GeoAddCommand(byte[] key, Geo[] geos, ExistType existType, boolean ch) {
         super(key);
         this.geos = geos;
+        this.existType = existType;
+        this.ch = ch;
     }
 
     public Geo[] getGeos() {
@@ -40,5 +55,37 @@ public class GeoAddCommand extends GenericKeyCommand {
 
     public void setGeos(Geo[] geos) {
         this.geos = geos;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @return ch
+     */
+    public boolean isCh() {
+        return ch;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param ch ch
+     */
+    public void setCh(boolean ch) {
+        this.ch = ch;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @return existType
+     */
+    public ExistType getExistType() {
+        return existType;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param existType existType
+     */
+    public void setExistType(ExistType existType) {
+        this.existType = existType;
     }
 }

@@ -23,11 +23,36 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 public class RPopCommand extends  GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;
-
-    public RPopCommand() {
-    }
-
+    
+    private Count count;
+    
     public RPopCommand(byte[] key) {
+        this(key, null);
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param key key
+     * @param count count
+     */
+    public RPopCommand(byte[] key, Count count) {
         super(key);
+        this.count = count;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @return count
+     */
+    public Count getCount() {
+        return count;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param count count
+     */
+    public void setCount(Count count) {
+        this.count = count;
     }
 }

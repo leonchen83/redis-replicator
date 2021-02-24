@@ -34,12 +34,24 @@ public class ScriptParser implements CommandParser<ScriptCommand> {
     public ScriptCommand parse(Object[] command) {
         int idx = 1;
         String keyword = toRune(command[idx++]);
+        boolean isAsync = false;
+        boolean isSync = false;
         if (isEquals(keyword, "LOAD")) {
             byte[] script = toBytes(command[idx]);
             idx++;
             return new ScriptLoadCommand(script);
         } else if (isEquals(keyword, "FLUSH")) {
-            return new ScriptFlushCommand();
+            if (idx >= command.length) {
+                return new ScriptFlushCommand(false, false);
+            } else {
+                String value = toRune(command[idx]);
+                if (isEquals(value, "ASYNC")) {
+                    isAsync = true;
+                } else if (isEquals(value, "SYNC")) {
+                    isSync = true;
+                }
+                return new ScriptFlushCommand(isAsync, isSync);
+            }
         }
         throw new AssertionError("SCRIPT " + keyword);
     }

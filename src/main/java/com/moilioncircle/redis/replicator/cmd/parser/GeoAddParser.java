@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.Geo;
 import com.moilioncircle.redis.replicator.cmd.impl.GeoAddCommand;
 
@@ -25,6 +26,8 @@ import java.util.List;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toDouble;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -37,16 +40,26 @@ public class GeoAddParser implements CommandParser<GeoAddCommand> {
         byte[] key = toBytes(command[idx]);
         idx++;
         List<Geo> list = new ArrayList<>();
-        while (idx < command.length) {
-            double longitude = toDouble(command[idx++]);
-            double latitude = toDouble(command[idx++]);
-            byte[] member = toBytes(command[idx]);
-            idx++;
-            list.add(new Geo(member, longitude, latitude));
+        ExistType existType = ExistType.NONE;
+        boolean ch = false;
+        for (; idx < command.length; idx++) {
+            String token = toRune(command[idx]);
+            if (isEquals(token, "NX")) {
+                existType = ExistType.NX;
+            } else if (isEquals(token, "XX")) {
+                existType = ExistType.XX;
+            } else if (isEquals(token, "CH")) {
+                ch = true;
+            } else {
+                double longitude = toDouble(command[idx++]);
+                double latitude = toDouble(command[idx++]);
+                byte[] member = toBytes(command[idx]);
+                list.add(new Geo(member, longitude, latitude));
+            }
         }
         Geo[] geos = new Geo[list.size()];
         list.toArray(geos);
-        return new GeoAddCommand(key, geos);
+        return new GeoAddCommand(key, geos, existType, ch);
     }
 
 }

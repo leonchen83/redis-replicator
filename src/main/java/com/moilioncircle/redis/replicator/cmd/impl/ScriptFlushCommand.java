@@ -23,4 +23,52 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 public class ScriptFlushCommand extends ScriptCommand {
 
     private static final long serialVersionUID = 1L;
+    
+    private boolean async;
+    private boolean sync;
+    
+    public ScriptFlushCommand() {
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param async async
+     * @param sync sync
+     */
+    public ScriptFlushCommand(boolean async, boolean sync) {
+        this.async = async;
+        this.sync = sync;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @return async
+     */
+    public boolean isAsync() {
+        return async;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param async async
+     */
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @return sync
+     */
+    public boolean isSync() {
+        return sync;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param sync sync
+     */
+    public void setSync(boolean sync) {
+        this.sync = sync;
+    }
 }

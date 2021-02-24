@@ -31,21 +31,34 @@ public class FlushAllParserTest extends AbstractParserTest {
             FlushAllParser parser = new FlushAllParser();
             FlushAllCommand cmd = parser.parse(toObjectArray("flushall".split(" ")));
             assertEquals(false, cmd.isAsync());
+            assertEquals(false, cmd.isSync());
 
             parser = new FlushAllParser();
             cmd = parser.parse(toObjectArray("flushall async".split(" ")));
             assertEquals(true, cmd.isAsync());
+            assertEquals(false, cmd.isSync());
+    
+            parser = new FlushAllParser();
+            cmd = parser.parse(toObjectArray("flushall sync".split(" ")));
+            assertEquals(false, cmd.isAsync());
+            assertEquals(true, cmd.isSync());
         }
 
         {
             FlushDBParser parser = new FlushDBParser();
             FlushDBCommand cmd = parser.parse(toObjectArray("flushdb".split(" ")));
             assertEquals(false, cmd.isAsync());
+            assertEquals(false, cmd.isSync());
 
             parser = new FlushDBParser();
             cmd = parser.parse(toObjectArray("flushdb async".split(" ")));
             assertEquals(true, cmd.isAsync());
+            assertEquals(false, cmd.isSync());
+    
+            parser = new FlushDBParser();
+            cmd = parser.parse(toObjectArray("flushdb sync".split(" ")));
+            assertEquals(false, cmd.isAsync());
+            assertEquals(true, cmd.isSync());
         }
     }
-
 }

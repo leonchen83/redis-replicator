@@ -17,7 +17,9 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.Limit;
 import com.moilioncircle.redis.replicator.cmd.impl.MaxLen;
+import com.moilioncircle.redis.replicator.cmd.impl.MinId;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
 
 import java.util.Objects;
@@ -38,19 +40,39 @@ public class XTrimParser implements CommandParser<XTrimCommand> {
         byte[] key = toBytes(command[idx]);
         idx++;
         MaxLen maxLen = null;
-        if (isEquals(toRune(command[idx]), "MAXLEN")) {
-            idx++;
-            boolean approximation = false;
-            if (Objects.equals(toRune(command[idx]), "~")) {
-                approximation = true;
+        MinId minId = null;
+        Limit limit = null;
+        for (; idx < command.length; idx++) {
+            String token = toRune(command[idx]);
+            if (isEquals(token, "MAXLEN")) {
                 idx++;
-            } else if (Objects.equals(toRune(command[idx]), "=")) {
+                boolean approximation = false;
+                if (Objects.equals(toRune(command[idx]), "~")) {
+                    approximation = true;
+                    idx++;
+                } else if (Objects.equals(toRune(command[idx]), "=")) {
+                    idx++;
+                }
+                long count = toLong(command[idx]);
+                maxLen = new MaxLen(approximation, count);
+            } else if (isEquals(token, "MINID")) {
                 idx++;
+                boolean approximation = false;
+                if (Objects.equals(toRune(command[idx]), "~")) {
+                    approximation = true;
+                    idx++;
+                } else if (Objects.equals(toRune(command[idx]), "=")) {
+                    idx++;
+                }
+                byte[] mid = toBytes(command[idx]);
+                minId = new MinId(approximation, mid);
+            } else if (isEquals(token, "LIMIT")) {
+                idx++;
+                long count = toLong(command[idx]);
+                limit = new Limit(0, count);
             }
-            long count = toLong(command[idx]);
-            idx++;
-            maxLen = new MaxLen(approximation, count);
         }
-        return new XTrimCommand(key, maxLen);
+        
+        return new XTrimCommand(key, maxLen, minId, limit);
     }
 }

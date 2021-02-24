@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Leon Chen
+ * Copyright 2016-2017 Leon Chen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,46 +16,26 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import java.io.Serializable;
+
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.5.2
  */
-public class LPopCommand extends GenericKeyCommand {
-
-    private static final long serialVersionUID = 1L;
-    
-    private Count count;
-
-    public LPopCommand() {
-    }
-
-    public LPopCommand(byte[] key) {
-        this(key, null);
-    }
+public enum  XATType implements Serializable {
     
     /**
-     * @since 3.5.2
-     * @param key key
-     * @param count count
+     * not set
      */
-    public LPopCommand(byte[] key, Count count) {
-        super(key);
-        this.count = count;
-    }
+    NONE,
     
     /**
-     * @since 3.5.2
-     * @return count
+     * timestamp-seconds
      */
-    public Count getCount() {
-        return count;
-    }
+    EXAT,
     
     /**
-     * @since 3.5.2
-     * @param count count
+     * timestamp-milliseconds
      */
-    public void setCount(Count count) {
-        this.count = count;
-    }
+    PXAT;
 }

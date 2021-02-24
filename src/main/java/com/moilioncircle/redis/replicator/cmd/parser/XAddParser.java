@@ -24,7 +24,9 @@ import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 import java.util.Objects;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.Limit;
 import com.moilioncircle.redis.replicator.cmd.impl.MaxLen;
+import com.moilioncircle.redis.replicator.cmd.impl.MinId;
 import com.moilioncircle.redis.replicator.cmd.impl.XAddCommand;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
@@ -39,6 +41,8 @@ public class XAddParser implements CommandParser<XAddCommand> {
         byte[] key = toBytes(command[idx]);
         idx++;
         MaxLen maxLen = null;
+        MinId minId = null;
+        Limit limit = null;
         boolean nomkstream = false;
         byte[] id = null;
         ByteArrayMap fields = new ByteArrayMap();
@@ -55,6 +59,21 @@ public class XAddParser implements CommandParser<XAddCommand> {
                 }
                 long count = toLong(command[idx]);
                 maxLen = new MaxLen(approximation, count);
+            } else if (isEquals(token, "MINID")) {
+                idx++;
+                boolean approximation = false;
+                if (Objects.equals(toRune(command[idx]), "~")) {
+                    approximation = true;
+                    idx++;
+                } else if (Objects.equals(toRune(command[idx]), "=")) {
+                    idx++;
+                }
+                byte[] mid = toBytes(command[idx]);
+                minId = new MinId(approximation, mid);
+            } else if (isEquals(token, "LIMIT")) {
+                idx++;
+                long count = toLong(command[idx]);
+                limit = new Limit(0, count);
             } else if (isEquals(token, "NOMKSTREAM")) {
                 nomkstream = true;
             } else {
@@ -70,6 +89,6 @@ public class XAddParser implements CommandParser<XAddCommand> {
             }
         }
     
-        return new XAddCommand(key, maxLen, nomkstream, id, fields);
+        return new XAddCommand(key, maxLen, minId, limit, nomkstream, id, fields);
     }
 }

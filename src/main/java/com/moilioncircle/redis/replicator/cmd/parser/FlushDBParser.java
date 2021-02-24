@@ -30,10 +30,13 @@ public class FlushDBParser implements CommandParser<FlushDBCommand> {
     @Override
     public FlushDBCommand parse(Object[] command) {
         boolean isAsync = false;
+        boolean isSync = false;
         if (command.length == 2 && isEquals(toRune(command[1]), "ASYNC")) {
             isAsync = true;
+        } else if (command.length == 2 && isEquals(toRune(command[1]), "SYNC")) {
+            isSync = true;
         }
-        return new FlushDBCommand(isAsync);
+        return new FlushDBCommand(isAsync, isSync);
     }
 
 }

@@ -29,6 +29,8 @@ public class SetCommand extends GenericKeyValueCommand {
     private boolean keepTtl;
     private ExpiredType expiredType;
     private Long expiredValue;
+    private XATType xatType;
+    private Long xatValue;
     private ExistType existType;
     private boolean get = false;
     
@@ -50,10 +52,28 @@ public class SetCommand extends GenericKeyValueCommand {
      * @since 3.5.0
      */
     public SetCommand(byte[] key, byte[] value, boolean keepTtl, ExpiredType expiredType, Long expiredValue, ExistType existType, boolean get) {
+        this(key, value, keepTtl, expiredType, expiredValue, XATType.NONE, null, existType, get);
+    }
+    
+    /**
+     * @param key key
+     * @param value value
+     * @param keepTtl keepttl since redis 6.0
+     * @param expiredType expiredType
+     * @param expiredValue expiredValue
+     * @param xatType xatType
+     * @param xatValue xatValue
+     * @param existType existType
+     * @param get get since redis 6.2
+     * @since 3.5.2
+     */
+    public SetCommand(byte[] key, byte[] value, boolean keepTtl, ExpiredType expiredType, Long expiredValue, XATType xatType, Long xatValue, ExistType existType, boolean get) {
         super(key, value);
         this.keepTtl = keepTtl;
         this.expiredType = expiredType;
         this.expiredValue = expiredValue;
+        this.xatType = xatType;
+        this.xatValue = xatValue;
         this.existType = existType;
         this.get = get;
     }
@@ -104,5 +124,37 @@ public class SetCommand extends GenericKeyValueCommand {
      */
     public void setGet(boolean get) {
         this.get = get;
+    }
+    
+    /**
+     * @return xatType
+     * @since 3.5.2
+     */
+    public XATType getXatType() {
+        return xatType;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param xatType xatType
+     */
+    public void setXatType(XATType xatType) {
+        this.xatType = xatType;
+    }
+    
+    /**
+     * @return xatValue
+     * @since 3.5.2
+     */
+    public Long getXatValue() {
+        return xatValue;
+    }
+    
+    /**
+     * @since 3.5.2
+     * @param xatValue xatValue
+     */
+    public void setXatValue(Long xatValue) {
+        this.xatValue = xatValue;
     }
 }

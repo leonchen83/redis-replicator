@@ -1,10 +1,20 @@
+### 3.5.2
+
+Redis 6.2 support.  
+  
+1. Add `PXAT/EXAT` arguments to `SET` command.  
+2. Add the `CH`, `NX`, `XX` arguments to `GEOADD`.
+3. Add the `COUNT` argument to `LPOP` and `RPOP`.
+4. Add `SYNC` arg to `FLUSHALL` and `FLUSHDB`, and `ASYNC/SYNC` arg to `SCRIPT FLUSH`
+5. Add the `MINID` trimming strategy and the `LIMIT` argument to `XADD` and `XTRIM`
+
 ### 3.5.1
 
 Fix `DumpRdbValueVisitor` OOM bug.  
 
 ### 3.5.0
 
-Redis 6.2 support.  
+Redis 6.2-rc1 support.  
 Add command `COPY`,`LMOVE`,`BLMOVE`,`ZDIFFSTORE`,`GEOSEARCHSTORE`, `XGROUP CREATECONSUMER`.  
   
 Modify command  

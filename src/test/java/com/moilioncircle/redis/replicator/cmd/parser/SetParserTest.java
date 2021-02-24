@@ -16,10 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static junit.framework.TestCase.assertNull;
+
 import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.XATType;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 
 import junit.framework.TestCase;
@@ -69,7 +72,27 @@ public class SetParserTest extends AbstractParserTest {
         assertEquals(true, cmd.getKeepTtl());
         assertEquals(123L, cmd.getExpiredValue());
         TestCase.assertEquals(ExistType.XX, cmd.getExistType());
-
+    
+        cmd = parser.parse(toObjectArray("set a b xx keepttl EXAT 1614139099".split(" ")));
+        assertEquals("a", cmd.getKey());
+        assertEquals("b", cmd.getValue());
+        TestCase.assertEquals(ExpiredType.NONE, cmd.getExpiredType());
+        assertEquals(true, cmd.getKeepTtl());
+        assertNull(cmd.getExpiredValue());
+        TestCase.assertEquals(XATType.EXAT, cmd.getXatType());
+        assertEquals(1614139099L, cmd.getXatValue());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+    
+        cmd = parser.parse(toObjectArray("set a b xx keepttl PXAT 1614139099000".split(" ")));
+        assertEquals("a", cmd.getKey());
+        assertEquals("b", cmd.getValue());
+        TestCase.assertEquals(ExpiredType.NONE, cmd.getExpiredType());
+        assertEquals(true, cmd.getKeepTtl());
+        assertNull(cmd.getExpiredValue());
+        TestCase.assertEquals(XATType.PXAT, cmd.getXatType());
+        assertEquals(1614139099000L, cmd.getXatValue());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+    
     }
 
 }

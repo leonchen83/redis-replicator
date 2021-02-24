@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static junit.framework.TestCase.assertNull;
+
 import com.moilioncircle.redis.replicator.cmd.impl.LPopCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LPushCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LPushXCommand;
@@ -67,12 +69,28 @@ public class RPushParserTest extends AbstractParserTest {
             LPopParser parser = new LPopParser();
             LPopCommand cmd = parser.parse(toObjectArray("lpop key".split(" ")));
             assertEquals("key", cmd.getKey());
+            assertNull(cmd.getCount());
         }
 
         {
             RPopParser parser = new RPopParser();
             RPopCommand cmd = parser.parse(toObjectArray("rpop key".split(" ")));
             assertEquals("key", cmd.getKey());
+            assertNull(cmd.getCount());
+        }
+    
+        {
+            LPopParser parser = new LPopParser();
+            LPopCommand cmd = parser.parse(toObjectArray("lpop key 5".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(5, cmd.getCount().getCount());
+        }
+    
+        {
+            RPopParser parser = new RPopParser();
+            RPopCommand cmd = parser.parse(toObjectArray("rpop key 5".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(5, cmd.getCount().getCount());
         }
     }
 

@@ -17,6 +17,8 @@
 package com.moilioncircle.redis.replicator.rdb;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_ENC;
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
@@ -81,6 +83,39 @@ public class BaseRdbEncoderTest {
 			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
 			double value1 = parser.rdbLoadDoubleValue();
 			assertEquals(value, value1, 0.00000001d);
+		}
+		
+		{
+			double value = NEGATIVE_INFINITY;
+			BaseRdbEncoder encoder = new BaseRdbEncoder();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			encoder.rdbSaveDoubleValue(value, out);
+			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+			double value1 = parser.rdbLoadDoubleValue();
+			assertTrue(value1 == NEGATIVE_INFINITY);
+		}
+		
+		{
+			double value = POSITIVE_INFINITY;
+			BaseRdbEncoder encoder = new BaseRdbEncoder();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			encoder.rdbSaveDoubleValue(value, out);
+			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+			double value1 = parser.rdbLoadDoubleValue();
+			assertTrue(value1 == POSITIVE_INFINITY);
+		}
+		
+		{
+			double value = Double.NaN;
+			BaseRdbEncoder encoder = new BaseRdbEncoder();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			encoder.rdbSaveDoubleValue(value, out);
+			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+			double value1 = parser.rdbLoadDoubleValue();
+			assertTrue(Double.isNaN(value1));
 		}
 	}
 	

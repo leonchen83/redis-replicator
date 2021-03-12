@@ -49,6 +49,8 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST
  * @since 2.5.0
  */
 public class DumpRdbVisitor extends DefaultRdbVisitor {
+    
+    protected int version = -1;
 
     public DumpRdbVisitor(Replicator replicator) {
         this(replicator, -1);
@@ -66,6 +68,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
 
     public DumpRdbVisitor(Replicator replicator, int version, int size) {
         super(replicator, new DumpRdbValueVisitor(replicator, version, size));
+        this.version = version;
     }
     
     /**
@@ -130,8 +133,11 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o5 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-
-        o5.setValueRdbType(RDB_TYPE_ZSET_2);
+        if (this.version != -1 && this.version < 8 /* since redis rdb version 8 */) {
+            o5.setValueRdbType(RDB_TYPE_ZSET);
+        } else {
+            o5.setValueRdbType(RDB_TYPE_ZSET_2);
+        }
         o5.setKey(key);
         o5.setValue(valueVisitor.applyZSet2(in, version));
         return context.valueOf(o5);
@@ -214,8 +220,11 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o14 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-
-        o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
+        if (this.version != -1 && this.version < 7 /* since redis rdb version 7 */) {
+            o14.setValueRdbType(RDB_TYPE_LIST);
+        } else {
+            o14.setValueRdbType(RDB_TYPE_LIST_QUICKLIST);
+        }
         o14.setKey(key);
         o14.setValue(valueVisitor.applyListQuickList(in, version));
         return context.valueOf(o14);

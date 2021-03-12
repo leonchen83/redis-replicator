@@ -1,3 +1,7 @@
+### 3.6.0
+
+`DumpRdbValueVisitor` support downgrade from redis 6.2 to 2.8.  
+
 ### 3.5.2
 
 Redis 6.2 support.  

@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -61,14 +62,59 @@ public class LzfTest {
         }
 
     }
+    
+    @Test
+    public void encode() throws Exception {
+        
+        {
+            String str = "use lz4 compress if length large than 20 bytes";
+            byte[] out = compress(str.getBytes());
+            byte[] out1 = compress1(str.getBytes());
+            assertEquals(out.length, out1.length);
+            assertArrayEquals(out, out1);
+        }
+        
+        {
+            String str = "abcdsklafjslfjfd;sfdklafjlsafjslfjasl;fkjdsalfjasfjlas;dkfjalsvlasfkal;sj";
+            byte[] out = compress(str.getBytes());
+            byte[] out1 = compress1(str.getBytes());
+            assertEquals(out.length, out1.length);
+            assertArrayEquals(out, out1);
+        }
+    
+        {
+            InputStream in = LzfTest.class.getClassLoader().getResourceAsStream("low-comp-120k.txt");
+            byte[] bytes = new byte[121444];
+            in.read(bytes);
+            byte[] out = compress(bytes);
+            byte[] out1 = compress1(bytes);
+            assertEquals(out.length, out1.length);
+            assertArrayEquals(out, out1);
+        }
+    
+        {
+            InputStream in = LzfTest.class.getClassLoader().getResourceAsStream("appendonly6.aof");
+            byte[] bytes = new byte[3949];
+            in.read(bytes);
+            byte[] out = compress(bytes);
+            byte[] out1 = compress1(bytes);
+            assertEquals(out.length, out1.length);
+            assertArrayEquals(out, out1);
+        }
+    }
 
     private byte[] compress(byte[] in) {
         CompressLZF c = new CompressLZF();
-        byte[] compressed = new byte[in.length];
+        byte[] compressed = new byte[in.length + 4];
         int idx = c.compress(in, in.length, compressed, 0);
         byte[] out = new byte[idx];
         System.arraycopy(compressed, 0, out, 0, out.length);
         return out;
+    }
+    
+    private byte[] compress1(byte[] in) {
+        ByteArray out = Lzf.encode(new ByteArray(in));
+        return out.first();
     }
 
 }

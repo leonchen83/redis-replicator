@@ -95,7 +95,6 @@ public class BaseRdbEncoder {
     /**
      * @since 3.6.0
      * @param len len
-     * @param out out
      * @return byte array
      * @throws IOException IOException
      * @see BaseRdbParser#rdbLoadLen()

@@ -49,6 +49,7 @@ public class HSetCommand extends GenericKeyCommand {
 
     /**
      * @deprecated Use {@link #getFields()} instead. will remove this method in 4.0.0
+     * @return field
      */
     @Deprecated
     public byte[] getField() {
@@ -57,6 +58,7 @@ public class HSetCommand extends GenericKeyCommand {
 
     /**
      * @deprecated Use {@link #setFields(Map)} instead. will remove this method in 4.0.0
+     * @param field field
      */
     @Deprecated
     public void setField(byte[] field) {
@@ -65,6 +67,7 @@ public class HSetCommand extends GenericKeyCommand {
 
     /**
      * @deprecated Use {@link #getFields()} instead. will remove this method in 4.0.0
+     * @return value
      */
     @Deprecated
     public byte[] getValue() {
@@ -73,6 +76,7 @@ public class HSetCommand extends GenericKeyCommand {
 
     /**
      * @deprecated Use {@link #setFields(Map)} instead. will remove this method in 4.0.0
+     * @param value value
      */
     @Deprecated
     public void setValue(byte[] value) {

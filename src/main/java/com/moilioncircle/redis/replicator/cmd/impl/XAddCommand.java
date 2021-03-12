@@ -82,7 +82,7 @@ public class XAddCommand extends GenericKeyCommand {
     }
     
     /**
-     * @return
+     * @return min id
      * @since 3.5.2
      */
     public MinId getMinId() {
@@ -98,7 +98,7 @@ public class XAddCommand extends GenericKeyCommand {
     }
     
     /**
-     * @return
+     * @return limit
      * @since 3.5.2
      */
     public Limit getLimit() {

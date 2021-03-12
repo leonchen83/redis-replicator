@@ -65,6 +65,7 @@ public class AsyncRedisReplicator implements AsyncReplicator {
      * @param uri redis uri.
      * @param sslConfiguration ssl configuration.
      * @throws IOException read timeout or read EOF.
+     * @throws URISyntaxException uri syntax error
      * @see RedisURI
      * @see SslConfiguration
      * @since 3.4.2

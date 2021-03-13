@@ -175,9 +175,10 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             // downgrade to RDB_TYPE_ZSET
             BaseRdbParser parser = new BaseRdbParser(in);
             BaseRdbEncoder encoder = new BaseRdbEncoder();
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET, version);
             try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
                 long len = parser.rdbLoadLen().len;
-                long temp = len;
+                listener.handle(encoder.rdbSaveLen(len));
                 while (len > 0) {
                     ByteArray element = parser.rdbLoadEncodedStringObject();
                     encoder.rdbGenericSaveStringObject(element, out);
@@ -185,9 +186,6 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
                     encoder.rdbSaveDoubleValue(score, out);
                     len--;
                 }
-        
-                DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET, version);
-                listener.handle(encoder.rdbSaveLen(temp));
                 listener.handle(out.toByteArray());
                 return (T) listener.getBytes();
             }

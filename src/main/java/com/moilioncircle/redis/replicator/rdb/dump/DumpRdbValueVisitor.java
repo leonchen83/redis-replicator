@@ -175,22 +175,22 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             // downgrade to RDB_TYPE_ZSET
             BaseRdbParser parser = new BaseRdbParser(in);
             BaseRdbEncoder encoder = new BaseRdbEncoder();
-            ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
-            
-            long len = parser.rdbLoadLen().len;
-            long temp = len;
-            while (len > 0) {
-                ByteArray element = parser.rdbLoadEncodedStringObject();
-                encoder.rdbGenericSaveStringObject(element, out);
-                double score = parser.rdbLoadBinaryDoubleValue();
-                encoder.rdbSaveDoubleValue(score, out);
-                len--;
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+                long len = parser.rdbLoadLen().len;
+                long temp = len;
+                while (len > 0) {
+                    ByteArray element = parser.rdbLoadEncodedStringObject();
+                    encoder.rdbGenericSaveStringObject(element, out);
+                    double score = parser.rdbLoadBinaryDoubleValue();
+                    encoder.rdbSaveDoubleValue(score, out);
+                    len--;
+                }
+        
+                DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET, version);
+                listener.handle(encoder.rdbSaveLen(temp));
+                listener.handle(out.toByteArray());
+                return (T) listener.getBytes();
             }
-    
-            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET, version);
-            listener.handle(encoder.rdbSaveLen(temp));
-            listener.handle(out.toByteArray());
-            return (T) listener.getBytes();
         } else {
             DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET_2, version);
             replicator.addRawByteListener(listener);
@@ -293,31 +293,31 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             // downgrade to RDB_TYPE_LIST
             BaseRdbParser parser = new BaseRdbParser(in);
             BaseRdbEncoder encoder = new BaseRdbEncoder();
-            ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+                int total = 0;
+                long len = parser.rdbLoadLen().len;
+                for (long i = 0; i < len; i++) {
+                    RedisInputStream stream = new RedisInputStream(parser.rdbGenericLoadStringObject(RDB_LOAD_NONE));
             
-            int total = 0;
-            long len = parser.rdbLoadLen().len;
-            for (long i = 0; i < len; i++) {
-                RedisInputStream stream = new RedisInputStream(parser.rdbGenericLoadStringObject(RDB_LOAD_NONE));
+                    BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
+                    BaseRdbParser.LenHelper.zltail(stream); // zltail
+                    int zllen = BaseRdbParser.LenHelper.zllen(stream);
+                    for (int j = 0; j < zllen; j++) {
+                        byte[] e = BaseRdbParser.StringHelper.zipListEntry(stream);
+                        encoder.rdbGenericSaveStringObject(new ByteArray(e), out);
+                        total++;
+                    }
+                    int zlend = BaseRdbParser.LenHelper.zlend(stream);
+                    if (zlend != 255) {
+                        throw new AssertionError("zlend expect 255 but " + zlend);
+                    }
+                }
         
-                BaseRdbParser.LenHelper.zlbytes(stream); // zlbytes
-                BaseRdbParser.LenHelper.zltail(stream); // zltail
-                int zllen = BaseRdbParser.LenHelper.zllen(stream);
-                for (int j = 0; j < zllen; j++) {
-                    byte[] e = BaseRdbParser.StringHelper.zipListEntry(stream);
-                    encoder.rdbGenericSaveStringObject(new ByteArray(e), out);
-                    total++;
-                }
-                int zlend = BaseRdbParser.LenHelper.zlend(stream);
-                if (zlend != 255) {
-                    throw new AssertionError("zlend expect 255 but " + zlend);
-                }
+                DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST, version);
+                listener.handle(encoder.rdbSaveLen(total));
+                listener.handle(out.toByteArray());
+                return (T) listener.getBytes();
             }
-    
-            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST, version);
-            listener.handle(encoder.rdbSaveLen(total));
-            listener.handle(out.toByteArray());
-            return (T) listener.getBytes();
         } else {
             DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST_QUICKLIST, version);
             replicator.addRawByteListener(listener);

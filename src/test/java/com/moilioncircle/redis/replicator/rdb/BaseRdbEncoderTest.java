@@ -19,7 +19,8 @@ package com.moilioncircle.redis.replicator.rdb;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_ENC;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +33,7 @@ import com.moilioncircle.redis.replicator.util.ByteArray;
 
 /**
  * @author Leon Chen
- * @since 3.6.0
+ * @since 3.5.3
  */
 public class BaseRdbEncoderTest {
 	

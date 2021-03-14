@@ -36,39 +36,39 @@ import com.moilioncircle.redis.replicator.util.Lzf;
 
 /**
  * @author Leon Chen
- * @since 3.6.0
+ * @since 3.5.3
  */
 public class BaseRdbEncoder {
     
     /**
-     * @since 3.6.0
      * @param time time
      * @param out out
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbLoadTime() 
+     * @see BaseRdbParser#rdbLoadTime()
+     * @since 3.5.3
      */
     public void rdbSaveTime(int time, OutputStream out) throws IOException {
         out.write(ByteBuffer.allocate(Integer.BYTES).order(LITTLE_ENDIAN).putInt(time).array());
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param timestamp timestamp
      * @param out out
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbLoadMillisecondTime() 
+     * @see BaseRdbParser#rdbLoadMillisecondTime()
      */
     public void rdbSaveMillisecondTime(long timestamp, OutputStream out) throws IOException {
         out.write(ByteBuffer.allocate(Long.BYTES).order(LITTLE_ENDIAN).putLong(timestamp).array());
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param len len
      * @param out out
      * @return length
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbLoadLen() 
+     * @see BaseRdbParser#rdbLoadLen()
      */
     public int rdbSaveLen(long len, OutputStream out) throws IOException {
         if (len < (1 << 6)) {
@@ -93,7 +93,7 @@ public class BaseRdbEncoder {
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param len len
      * @return byte array
      * @throws IOException IOException
@@ -115,11 +115,11 @@ public class BaseRdbEncoder {
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param value value
      * @param out out
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbLoadDoubleValue() 
+     * @see BaseRdbParser#rdbLoadDoubleValue()
      */
     public void rdbSaveDoubleValue(double value, OutputStream out) throws IOException {
         if (value == Double.NEGATIVE_INFINITY) {
@@ -141,33 +141,33 @@ public class BaseRdbEncoder {
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param value value
      * @param out out
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbLoadBinaryFloatValue() 
+     * @see BaseRdbParser#rdbLoadBinaryFloatValue()
      */
     public void rdbSaveBinaryFloatValue(float value, OutputStream out) throws IOException {
         out.write(ByteBuffer.allocate(Long.BYTES).order(LITTLE_ENDIAN).putLong(floatToIntBits(value)).array());
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param value value
      * @param out out
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbLoadBinaryDoubleValue() 
+     * @see BaseRdbParser#rdbLoadBinaryDoubleValue()
      */
     public void rdbSaveBinaryDoubleValue(double value, OutputStream out) throws IOException {
         out.write(ByteBuffer.allocate(Long.BYTES).order(LITTLE_ENDIAN).putLong(doubleToLongBits(value)).array());
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param bytes input
      * @param out out
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbLoadEncodedStringObject() 
+     * @see BaseRdbParser#rdbLoadEncodedStringObject()
      */
     public void rdbSaveEncodedStringObject(ByteArray bytes, OutputStream out) throws IOException {
         int type = (RDB_ENCVAL << 6) | RDB_ENC_LZF;
@@ -180,11 +180,11 @@ public class BaseRdbEncoder {
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param bytes bytes
      * @param out out
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbGenericLoadStringObject(int) 
+     * @see BaseRdbParser#rdbGenericLoadStringObject(int)
      */
     public void rdbGenericSaveStringObject(ByteArray bytes, OutputStream out) throws IOException {
         if (bytes.length() > 20) {
@@ -195,11 +195,11 @@ public class BaseRdbEncoder {
     }
     
     /**
-     * @since 3.6.0
+     * @since 3.5.3
      * @param bytes bytes
      * @param out out
      * @throws IOException IOException
-     * @see BaseRdbParser#rdbLoadPlainStringObject() 
+     * @see BaseRdbParser#rdbLoadPlainStringObject()
      */
     public void rdbSavePlainStringObject(ByteArray bytes, OutputStream out) throws IOException {
         rdbSaveLen(bytes.length(), out);

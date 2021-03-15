@@ -1,3 +1,7 @@
+### 3.5.4
+
+Fix `DumpRdbValueVisitor` lzf compress bug.  
+
 ### 3.5.3
 
 `DumpRdbValueVisitor` support downgrade from redis 6.2 to 2.8.  

@@ -103,6 +103,11 @@ public final class CompressLZF {
                 if (maxLen > MAX_REF) {
                     maxLen = MAX_REF;
                 }
+                if (outPos + 3 + 1 >= out.length) {
+                    int c = literals == 0 ? 1 : 0;
+                    if (outPos - c + 3 + 1 >= out.length)
+                        return 0;
+                }
                 if (literals == 0) {
                     // multiple back-references,
                     // so there is no literal run control byte
@@ -138,6 +143,9 @@ public final class CompressLZF {
                 hashTab[hash(future)] = inPos++;
             } else {
                 // copy one byte from input to output as part of literal
+                if (outPos >= out.length) {
+                    return 0;
+                }
                 out[outPos++] = in[inPos++];
                 literals++;
                 // at the end of this literal chunk, write the length
@@ -151,6 +159,11 @@ public final class CompressLZF {
                 }
             }
         }
+    
+        if (outPos + 3 > out.length) {
+            return 0;
+        }
+        
         // write the remaining few bytes as literals
         while (inPos < inLen) {
             out[outPos++] = in[inPos++];

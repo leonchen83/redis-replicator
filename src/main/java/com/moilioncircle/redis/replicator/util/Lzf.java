@@ -248,11 +248,15 @@ public class Lzf {
     
     public static ByteArray encode(ByteArray bytes) {
         long len = bytes.length();
-        ByteArray out = new ByteArray(len + 4);
+        ByteArray out = new ByteArray(len - 4);
         len = encode(bytes, len, out, 0);
-        ByteArray r = new ByteArray(len);
-        ByteArray.arraycopy(out, 0, r, 0, len);
-        return r;
+        if (len <= 0) {
+            return bytes;
+        } else {
+            ByteArray r = new ByteArray(len);
+            ByteArray.arraycopy(out, 0, r, 0, len);
+            return r;
+        }
     }
     
     public static long encode(ByteArray in, long inLen, ByteArray out, long outPos) {
@@ -285,6 +289,11 @@ public class Lzf {
                 long maxLen = inLen - inPos - 2;
                 if (maxLen > MAX_REF) {
                     maxLen = MAX_REF;
+                }
+                if (outPos + 3 + 1 >= out.length()) {
+                    int c = literals == 0 ? 1 : 0;
+                    if (outPos - c + 3 + 1 >= out.length())
+                        return 0;
                 }
                 if (literals == 0) {
                     // multiple back-references,
@@ -321,6 +330,9 @@ public class Lzf {
                 hashTab[hash(future)] = inPos++;
             } else {
                 // copy one byte from input to output as part of literal
+                if (outPos >= out.length()) {
+                    return 0;
+                }
                 out.set(outPos++, in.get(inPos++));
                 literals++;
                 // at the end of this literal chunk, write the length
@@ -334,6 +346,11 @@ public class Lzf {
                 }
             }
         }
+        
+        if (outPos + 3 > out.length()) {
+            return 0;
+        }
+        
         // write the remaining few bytes as literals
         while (inPos < inLen) {
             out.set(outPos++, in.get(inPos++));

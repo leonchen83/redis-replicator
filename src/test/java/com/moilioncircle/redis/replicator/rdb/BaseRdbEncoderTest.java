@@ -19,12 +19,14 @@ package com.moilioncircle.redis.replicator.rdb;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_ENC;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.Test;
 
@@ -59,6 +61,22 @@ public class BaseRdbEncoderTest {
 			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
 			byte[] bytes = parser.rdbGenericLoadStringObject(RDB_LOAD_ENC).first();
 			assertEquals(s, new String(bytes));
+		}
+	}
+	
+	@Test
+	public void testLzf() throws IOException {
+		for (int i = 0; i < 1000; i++) {
+			int length = ThreadLocalRandom.current().nextInt(50000) + 20;
+			byte[] value = new byte[length];
+			ThreadLocalRandom.current().nextBytes(value);
+			BaseRdbEncoder encoder = new BaseRdbEncoder();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			encoder.rdbGenericSaveStringObject(new ByteArray(value), out);
+			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+			byte[] bytes = parser.rdbGenericLoadStringObject(RDB_LOAD_ENC).first();
+			assertArrayEquals(value, bytes);
 		}
 	}
 	

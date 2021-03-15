@@ -19,9 +19,11 @@ package com.moilioncircle.redis.replicator.util;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Leon Chen
@@ -75,6 +77,15 @@ public class LzfTest {
         }
         
         {
+            String str = "thisisalongstringthatcancompressbylzfthisisalongstringthatcancompressbylzf";
+            byte[] out = compress(str.getBytes());
+            byte[] out1 = compress1(str.getBytes());
+            assertTrue(str.getBytes().length > out.length);
+            assertEquals(out.length, out1.length);
+            assertArrayEquals(out, out1);
+        }
+        
+        {
             String str = "abcdsklafjslfjfd;sfdklafjlsafjslfjasl;fkjdsalfjasfjlas;dkfjalsvlasfkal;sj";
             byte[] out = compress(str.getBytes());
             byte[] out1 = compress1(str.getBytes());
@@ -102,14 +113,32 @@ public class LzfTest {
             assertArrayEquals(out, out1);
         }
     }
+    
+    @Test
+    public void test1() {
+        for (int i = 0; i < 1000; i++) {
+            int length = ThreadLocalRandom.current().nextInt(50000) + 20;
+            byte[] value = new byte[length];
+            ThreadLocalRandom.current().nextBytes(value);
+            byte[] out = compress(value);
+            byte[] out1 = compress1(value);
+            assertEquals(out.length, out1.length);
+            assertArrayEquals(out, out1);
+        }
+    }
 
     private byte[] compress(byte[] in) {
         CompressLZF c = new CompressLZF();
-        byte[] compressed = new byte[in.length + 4];
+        byte[] compressed = new byte[in.length -4];
         int idx = c.compress(in, in.length, compressed, 0);
-        byte[] out = new byte[idx];
-        System.arraycopy(compressed, 0, out, 0, out.length);
-        return out;
+        if (idx <= 0) {
+            return in;
+        } else {
+            byte[] out = new byte[idx];
+            System.arraycopy(compressed, 0, out, 0, out.length);
+            return out;
+        }
+        
     }
     
     private byte[] compress1(byte[] in) {

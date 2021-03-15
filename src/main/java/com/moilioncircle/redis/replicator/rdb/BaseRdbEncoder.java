@@ -170,13 +170,18 @@ public class BaseRdbEncoder {
      * @see BaseRdbParser#rdbLoadEncodedStringObject()
      */
     public void rdbSaveEncodedStringObject(ByteArray bytes, OutputStream out) throws IOException {
-        int type = (RDB_ENCVAL << 6) | RDB_ENC_LZF;
-        out.write(type);
-        ByteArray compressed = new ByteArray(bytes.length() + 4);
+        // at least compress 4 bytes
+        ByteArray compressed = new ByteArray(bytes.length() - 4);
         long length = Lzf.encode(bytes, bytes.length(), compressed, 0);
-        rdbSaveLen(length, out);
-        rdbSaveLen(bytes.length(), out);
-        out.write(compressed.first(), 0, (int) length);
+        if (length <= 0) {
+            rdbSavePlainStringObject(bytes, out);
+        } else {
+            int type = (RDB_ENCVAL << 6) | RDB_ENC_LZF;
+            out.write(type);
+            rdbSaveLen(length, out);
+            rdbSaveLen(bytes.length(), out);
+            out.write(compressed.first(), 0, (int) length);
+        }
     }
     
     /**

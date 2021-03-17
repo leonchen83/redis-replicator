@@ -55,6 +55,8 @@ Table of Contents([中文说明](./README.zh_CN.md))
   
 # 1. Redis-replicator  
 
+<a href="https://www.buymeacoffee.com/leonchen83" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>  
+
 ## 1.1. Brief introduction
 [![Build Status](https://travis-ci.org/leonchen83/redis-replicator.svg?branch=master)](https://travis-ci.org/leonchen83/redis-replicator)
 [![Coverage Status](https://coveralls.io/repos/github/leonchen83/redis-replicator/badge.svg?branch=master)](https://coveralls.io/github/leonchen83/redis-replicator?branch=master)

@@ -214,8 +214,8 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>3.1.1</version>
                         <configuration>
+                            <doclint>none</doclint>
                             <source>${maven.compiler.source}</source>
-                            <additionalparam>-Xdoclint:none</additionalparam>
                             <encoding>${project.build.sourceEncoding}</encoding>
                             <sourceFileExcludes>
                                 <sourceFileExclude>**/module-info.java</sourceFileExclude>
@@ -363,8 +363,8 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>3.1.1</version>
                         <configuration>
+                            <doclint>none</doclint>
                             <source>${maven.compiler.source}</source>
-                            <additionalparam>-Xdoclint:none</additionalparam>
                             <encoding>${project.build.sourceEncoding}</encoding>
                             <sourceFileExcludes>
                                 <sourceFileExclude>**/module-info.java</sourceFileExclude>

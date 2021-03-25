@@ -1,3 +1,7 @@
+### 3.5.5
+
+Optimize `DumpRdbValueVisitor` memory usage.  
+
 ### 3.5.4
 
 Fix `DumpRdbValueVisitor` lzf compress bug.  

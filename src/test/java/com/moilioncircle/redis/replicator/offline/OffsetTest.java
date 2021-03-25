@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator;
+package com.moilioncircle.redis.replicator.offline;
 
 import static junit.framework.TestCase.assertEquals;
 
 import java.io.IOException;
+
 import org.junit.Test;
 
+import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
+import com.moilioncircle.redis.replicator.RedisReplicator;
+import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.event.AbstractEvent;
 import com.moilioncircle.redis.replicator.event.Event;
@@ -30,6 +35,7 @@ import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
+import com.moilioncircle.redis.replicator.online.RedisSocketReplicatorTest;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.type.Tuple2;
 

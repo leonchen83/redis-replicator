@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.cmd.impl.BitOpCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.Op;
+
 import junit.framework.TestCase;
-import org.junit.Test;
 
 /**
  * @author Leon Chen

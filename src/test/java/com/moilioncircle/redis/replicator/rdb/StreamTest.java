@@ -16,6 +16,21 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -28,21 +43,8 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
 import com.moilioncircle.redis.replicator.util.Strings;
+
 import junit.framework.TestCase;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen

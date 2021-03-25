@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator;
 
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 import static com.moilioncircle.redis.replicator.util.Strings.format;
 import static com.moilioncircle.redis.replicator.util.Tuples.of;
 
@@ -27,7 +28,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -69,19 +69,6 @@ public class RedisAofReplicator extends AbstractReplicator {
     }
     
     @Override
-    public void open() throws IOException {
-        super.open();
-        if (!compareAndSet(DISCONNECTED, CONNECTED)) return;
-        try {
-            doOpen();
-        } catch (UncheckedIOException e) {
-            if (!(e.getCause() instanceof EOFException)) throw e.getCause();
-        } finally {
-            doClose();
-            doCloseListener(this);
-        }
-    }
-    
     protected void doOpen() throws IOException {
         configuration.setReplOffset(0L);
         submitEvent(new PreCommandSyncEvent());
@@ -112,6 +99,21 @@ public class RedisAofReplicator extends AbstractReplicator {
             }
         } catch (EOFException ignore) {
             submitEvent(new PostCommandSyncEvent());
+        }
+    }
+    
+    @Override
+    protected void doClose() throws IOException {
+        compareAndSet(CONNECTED, DISCONNECTING);
+        try {
+            if (inputStream != null) {
+                this.inputStream.setRawByteListeners(null);
+                inputStream.close();
+            }
+        } catch (IOException ignore) {
+            /*NOP*/
+        } finally {
+            setStatus(DISCONNECTED);
         }
     }
 }

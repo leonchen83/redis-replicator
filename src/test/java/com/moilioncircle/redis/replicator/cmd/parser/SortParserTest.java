@@ -16,12 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.SortCommand;
-import junit.framework.TestCase;
-import org.junit.Test;
-
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.DESC;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.NONE;
+
+import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.cmd.impl.SortCommand;
+
+import junit.framework.TestCase;
 
 /**
  * @author Leon Chen

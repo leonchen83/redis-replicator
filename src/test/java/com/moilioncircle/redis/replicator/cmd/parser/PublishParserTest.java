@@ -16,8 +16,9 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.PublishCommand;
 import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.cmd.impl.PublishCommand;
 
 /**
  * @author Leon Chen

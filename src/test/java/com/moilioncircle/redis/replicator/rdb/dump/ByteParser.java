@@ -16,9 +16,9 @@
 
 package com.moilioncircle.redis.replicator.rdb.dump;
 
-import com.moilioncircle.redis.replicator.util.ByteBuilder;
-
 import static java.lang.Integer.parseInt;
+
+import com.moilioncircle.redis.replicator.util.ByteBuilder;
 
 /**
  * @author Leon Chen

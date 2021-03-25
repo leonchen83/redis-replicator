@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.util.Strings;
+
 import junit.framework.TestCase;
 
 /**

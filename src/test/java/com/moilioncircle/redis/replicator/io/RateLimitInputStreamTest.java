@@ -16,12 +16,13 @@
 
 package com.moilioncircle.redis.replicator.io;
 
-import com.moilioncircle.redis.replicator.util.ByteArray;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.util.ByteArray;
 
 /**
  * @author Leon Chen

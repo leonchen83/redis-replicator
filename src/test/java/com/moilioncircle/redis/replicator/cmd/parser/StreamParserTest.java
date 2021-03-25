@@ -36,8 +36,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.XGroupSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XSetIdCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
 
-import junit.framework.TestCase;
-
 /**
  * @author Leon Chen
  * @since 2.6.0

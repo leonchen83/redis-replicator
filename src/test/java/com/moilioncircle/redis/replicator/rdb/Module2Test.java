@@ -16,20 +16,10 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.FileType;
-import com.moilioncircle.redis.replicator.RedisReplicator;
-import com.moilioncircle.redis.replicator.RedisSocketReplicatorTest;
-import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
-import com.moilioncircle.redis.replicator.rdb.datatype.Module;
-import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
-import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
-import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
-import com.moilioncircle.redis.replicator.util.Strings;
-import org.junit.Test;
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,10 +27,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
+import com.moilioncircle.redis.replicator.RedisReplicator;
+import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.online.RedisSocketReplicatorTest;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
+import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen

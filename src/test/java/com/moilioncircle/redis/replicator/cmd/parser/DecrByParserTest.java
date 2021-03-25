@@ -16,14 +16,16 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.cmd.impl.DecrByCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.DecrCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.HIncrByCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.IncrByCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.IncrCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZIncrByCommand;
+
 import junit.framework.TestCase;
-import org.junit.Test;
 
 /**
  * @author Leon Chen

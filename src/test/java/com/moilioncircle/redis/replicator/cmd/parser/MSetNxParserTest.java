@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.cmd.impl.MSetCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.MSetNxCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.PFAddCommand;
@@ -23,7 +25,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.PFCountCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.PFMergeCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.PSetExCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.PersistCommand;
-import org.junit.Test;
 
 /**
  * @author Leon Chen

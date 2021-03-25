@@ -16,6 +16,9 @@
 
 package com.moilioncircle.redis.replicator.util;
 
+import java.nio.ByteBuffer;
+import java.util.List;
+
 /**
  * @author Leon Chen
  * @since 2.5.0
@@ -91,9 +94,41 @@ public class CRC64 {
     public static long crc64(byte[] bytes) {
         return crc64(bytes, 0, bytes.length);
     }
-
+    
     public static long crc64(byte[] bytes, long sum) {
         return crc64(bytes, 0, bytes.length, sum);
+    }
+    
+    /**
+     * @since 3.5.5
+     * @param buf buf
+     * @return checksum
+     */
+    public static long crc64(ByteBuffer buf) {
+        return crc64(buf, 0L);
+    }
+    
+    /**
+     * @since 3.5.5
+     * @param buf buf
+     * @param sum checksum
+     * @return checksum
+     */
+    public static long crc64(ByteBuffer buf, long sum) {
+        return crc64(buf.array(), buf.position(), buf.limit(), sum);
+    }
+    
+    /**
+     * @since 3.5.5
+     * @param list buf list
+     * @return checksum
+     */
+    public static long crc64(List<ByteBuffer> list) {
+        long sum = 0L;
+        for (ByteBuffer buf : list) {
+            sum = crc64(buf, sum);
+        }
+        return sum;
     }
 
     public static long crc64(byte b, long sum) {

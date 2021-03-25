@@ -16,6 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LFU;
+import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LRU;
+import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.NONE;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.EvalCommand;
@@ -46,13 +53,8 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetNxCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SetRangeCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
-import junit.framework.TestCase;
-import org.junit.Test;
 
-import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LFU;
-import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LRU;
-import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.NONE;
-import static org.junit.Assert.assertTrue;
+import junit.framework.TestCase;
 
 /**
  * @author Leon Chen

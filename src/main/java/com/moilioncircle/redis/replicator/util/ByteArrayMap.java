@@ -88,7 +88,8 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
     @Override
     public byte[] get(Object key) {
         if (key != null && !(key instanceof byte[])) return null;
-        return map.get(new Element((byte[]) key)).bytes;
+        final Element value = map.get(new Element((byte[]) key));
+        return value == null ? null : value.bytes;
     }
     
     @Override

@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator;
+package com.moilioncircle.redis.replicator.offline;
 
-import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
-import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
-import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import com.moilioncircle.redis.replicator.util.Strings;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +24,21 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.CloseListener;
+import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.FileType;
+import com.moilioncircle.redis.replicator.RedisReplicator;
+import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
+import com.moilioncircle.redis.replicator.online.RedisSocketReplicatorTest;
+import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen

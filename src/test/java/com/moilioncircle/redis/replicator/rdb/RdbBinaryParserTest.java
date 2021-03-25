@@ -16,6 +16,19 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -31,18 +44,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.util.ByteArrayList;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import com.moilioncircle.redis.replicator.util.Strings;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen

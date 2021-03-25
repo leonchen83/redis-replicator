@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,15 +67,18 @@ public class RedisSocketReplicator extends AbstractReplicator {
     
     protected static final Logger logger = LoggerFactory.getLogger(RedisSocketReplicator.class);
     
-    protected final int port;
-    protected final String host;
     protected int db = -1;
     protected Socket socket;
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
     protected XScheduledExecutorService executor;
+    
+    //
+    protected final int port;
+    protected final String host;
     protected final RedisSocketFactory socketFactory;
+    protected final AtomicBoolean manual = new AtomicBoolean(false);
     
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         Objects.requireNonNull(host);
@@ -105,7 +109,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
      */
     @Override
     public void open() throws IOException {
-        super.open();
+        manual.compareAndSet(true, false);
         this.executor = new XScheduledExecutorService(configuration);
         try {
             new RedisSocketReplicatorRetrier().retry(this);
@@ -114,6 +118,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
             doCloseListener(this);
             this.executor.terminateQuietly(configuration.getConnectionTimeout(), MILLISECONDS);
         }
+    }
+    
+    @Override
+    public void close() throws IOException {
+        super.close();
+        manual.compareAndSet(false, true);
     }
     
     protected SyncMode trySync(final String reply) throws IOException {
@@ -380,7 +390,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
 
         @Override
         protected boolean isManualClosed() {
-            return RedisSocketReplicator.this.isClosed();
+            return manual.get();
         }
 
         @Override

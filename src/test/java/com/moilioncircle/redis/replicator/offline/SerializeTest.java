@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator;
+package com.moilioncircle.redis.replicator.offline;
 
 import static com.moilioncircle.redis.replicator.util.Tuples.of;
 import static junit.framework.TestCase.assertEquals;

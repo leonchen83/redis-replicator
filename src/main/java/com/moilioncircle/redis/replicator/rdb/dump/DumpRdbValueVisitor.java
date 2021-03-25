@@ -37,11 +37,13 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST
 import static com.moilioncircle.redis.replicator.util.CRC64.crc64;
 import static com.moilioncircle.redis.replicator.util.CRC64.longToByteArray;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.io.ByteBufferOutputStream;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbEncoder;
@@ -73,14 +75,18 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
 
         @Override
         public void handle(byte... rawBytes) {
-            for (byte b : rawBytes) this.builder.put(b);
+            this.builder.put(rawBytes);
+        }
+    
+        public void handle(ByteBuffer buffer) {
+            this.builder.put(buffer);
         }
 
         public byte[] getBytes() {
             this.builder.put((byte) version);
             this.builder.put((byte) 0x00);
-            byte[] bytes = this.builder.array();
-            byte[] crc = longToByteArray(crc64(bytes));
+            List<ByteBuffer> buffers = this.builder.buffers();
+            byte[] crc = longToByteArray(crc64(buffers));
             for (byte b : crc) {
                 this.builder.put(b);
             }
@@ -176,7 +182,7 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             BaseRdbParser parser = new BaseRdbParser(in);
             BaseRdbEncoder encoder = new BaseRdbEncoder();
             DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET, version);
-            try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+            try (ByteBufferOutputStream out = new ByteBufferOutputStream(size)) {
                 long len = parser.rdbLoadLen().len;
                 listener.handle(encoder.rdbSaveLen(len));
                 while (len > 0) {
@@ -186,7 +192,7 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
                     encoder.rdbSaveDoubleValue(score, out);
                     len--;
                 }
-                listener.handle(out.toByteArray());
+                listener.handle(out.toByteBuffer());
                 return (T) listener.getBytes();
             }
         } else {
@@ -291,7 +297,7 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             // downgrade to RDB_TYPE_LIST
             BaseRdbParser parser = new BaseRdbParser(in);
             BaseRdbEncoder encoder = new BaseRdbEncoder();
-            try (ByteArrayOutputStream out = new ByteArrayOutputStream(8192)) {
+            try (ByteBufferOutputStream out = new ByteBufferOutputStream(size)) {
                 int total = 0;
                 long len = parser.rdbLoadLen().len;
                 for (long i = 0; i < len; i++) {
@@ -313,7 +319,7 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
         
                 DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST, version);
                 listener.handle(encoder.rdbSaveLen(total));
-                listener.handle(out.toByteArray());
+                listener.handle(out.toByteBuffer());
                 return (T) listener.getBytes();
             }
         } else {

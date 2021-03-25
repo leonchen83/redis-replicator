@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator;
+package com.moilioncircle.redis.replicator.online;
 
-import com.moilioncircle.redis.replicator.cmd.CommandName;
-import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
-import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
-import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
-import com.moilioncircle.redis.replicator.util.Strings;
-import org.junit.Test;
-import redis.clients.jedis.Jedis;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +27,20 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.RedisSocketReplicator;
+import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
+import com.moilioncircle.redis.replicator.util.Strings;
+
+import redis.clients.jedis.Jedis;
 
 /**
  * @author Leon Chen

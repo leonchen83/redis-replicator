@@ -16,8 +16,9 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.RPopLPushCommand;
 import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.cmd.impl.RPopLPushCommand;
 
 /**
  * @author Leon Chen

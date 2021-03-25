@@ -21,11 +21,11 @@ import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 import static com.moilioncircle.redis.replicator.util.Tuples.of;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.moilioncircle.redis.replicator.cmd.Command;
@@ -139,7 +139,6 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     protected Configuration configuration;
     protected RedisInputStream inputStream;
     protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
-    protected final AtomicBoolean manual = new AtomicBoolean(false);
     protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
@@ -327,31 +326,29 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("GEOSEARCHSTORE"), new GeoSearchStoreParser());
     }
     
+    @Override
     public void open() throws IOException {
-        manual.compareAndSet(true, false);
+        if (!compareAndSet(DISCONNECTED, CONNECTED)) return;
+        try {
+            doOpen();
+        } catch (UncheckedIOException e) {
+            if (!(e.getCause() instanceof EOFException)) throw e.getCause();
+        } finally {
+            doClose();
+            doCloseListener(this);
+        }
     }
     
     @Override
     public void close() throws IOException {
         compareAndSet(CONNECTED, DISCONNECTING);
-        manual.compareAndSet(false, true);
     }
     
-    protected boolean isClosed() {
-        return manual.get();
+    protected void doOpen() throws IOException {
+        // NOP
     }
     
     protected void doClose() throws IOException {
-        compareAndSet(CONNECTED, DISCONNECTING);
-        try {
-            if (inputStream != null) {
-                this.inputStream.setRawByteListeners(null);
-                inputStream.close();
-            }
-        } catch (IOException ignore) {
-            /*NOP*/
-        } finally {
-            setStatus(DISCONNECTED);
-        }
+        // NOP
     }
 }

@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator.util;
 
+import static java.nio.ByteBuffer.wrap;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ public class ByteBuilder {
     
     private int total = 0;
     private final ByteBuffer buffer;
-    private final List<byte[]> list = new ArrayList<>();
+    private final List<ByteBuffer> list = new ArrayList<>();
 
     private ByteBuilder(int cap) {
         this.buffer = ByteBuffer.allocate(cap);
@@ -46,16 +48,44 @@ public class ByteBuilder {
         } else {
             byte[] temp = new byte[buffer.capacity()];
             System.arraycopy(buffer.array(), 0, temp, 0, buffer.capacity());
-            list.add(temp);
+            list.add(wrap(temp));
             buffer.clear();
             buffer.put(b);
         }
     }
-
+    
+    /**
+     * @param bytes bytes
+     * @since 3.5.5
+     */
+    public void put(byte[] bytes) {
+        put(bytes, 0, bytes.length);
+    }
+    
+    /**
+     * @since 3.5.5
+     * @param bytes bytes
+     * @param offset offset
+     * @param length length
+     */
+    public void put(byte[] bytes, int offset, int length) {
+        for (int i = offset; i < length; i++) {
+            put(bytes[i]);
+        }
+    }
+    
+    /**
+     * @param buf buf
+     * @since 3.5.5
+     */
+    public void put(ByteBuffer buf) {
+        put(buf.array(), buf.position(), buf.limit());
+    }
+    
     public int length() {
         return total;
     }
-
+    
     public byte[] array() {
         int len = total, offset = 0;
         byte[] ary = new byte[len];
@@ -63,13 +93,25 @@ public class ByteBuilder {
             System.arraycopy(buffer.array(), 0, ary, offset, len);
             return ary;
         }
-        for (byte[] ba : list) {
-            System.arraycopy(ba, 0, ary, offset, ba.length);
-            offset += ba.length;
-            len -= ba.length;
+        for (ByteBuffer buf : list) {
+            int length = buf.remaining();
+            System.arraycopy(buf.array(), 0, ary, offset, length);
+            offset += length;
+            len -= length;
         }
         if (len > 0) System.arraycopy(buffer.array(), 0, ary, offset, len);
         return ary;
+    }
+    
+    /**
+     * @since 3.5.5
+     * @return list buffers
+     */
+    public List<ByteBuffer> buffers() {
+        List<ByteBuffer> r = new ArrayList<>(list.size() + 1);
+        for (ByteBuffer buf : list) r.add(buf.duplicate());
+        r.add((ByteBuffer) this.buffer.duplicate().flip());
+        return r;
     }
     
     public void clear() {

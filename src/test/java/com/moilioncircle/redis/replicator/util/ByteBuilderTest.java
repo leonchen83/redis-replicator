@@ -16,9 +16,12 @@
 
 package com.moilioncircle.redis.replicator.util;
 
-import org.junit.Test;
-
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
+import java.nio.ByteBuffer;
+
+import org.junit.Test;
 
 /**
  * @author Leon Chen
@@ -36,5 +39,39 @@ public class ByteBuilderTest {
         String s = bytes.toString();
         assertEquals(test, s);
         assertEquals(test.getBytes().length, bytes.length());
+    }
+    
+    @Test
+    public void put0() {
+        ByteBuilder bytes = ByteBuilder.allocate(20);
+        String test = "fjdsklafjsdklafjaklfdsjkfsdkjakjdkasjdkajdkajqwieuiqwueiqweqwieuqidasjkasjkajdkcnxzcnzxasjdksadasiuqwieuqwiejaskdajskcxnzcznczkxnasdjasjdjadqweiqwueidjdskdjaskdjskajdakjcncnzxknczxjkasdjaskdjqwieuqwiuakdakncxzkjsakdasjdiqwueijcnkdasjdiuewiqeqdijqdsahdiadiwqueqiwqidjaskdjaskdjqwjieuqfhhaksjduqiwehcaskdjasdaiqwewiqdhashdadashjqweyqwuh";
+        bytes.put(test.getBytes());
+        String s = bytes.toString();
+        assertEquals(test, s);
+        assertEquals(test.getBytes().length, bytes.length());
+    }
+    
+    @Test
+    public void put1() {
+        ByteBuilder bytes = ByteBuilder.allocate(20);
+        String test = "fjdsklafjsdklafjaklfdsjkfsdkjakjdkasjdkajdkajqwieuiqwueiqweqwieuqidasjkasjkajdkcnxzcnzxasjdksadasiuqwieuqwiejaskdajskcxnzcznczkxnasdjasjdjadqweiqwueidjdskdjaskdjskajdakjcncnzxknczxjkasdjaskdjqwieuqwiuakdakncxzkjsakdasjdiqwueijcnkdasjdiuewiqeqdijqdsahdiadiwqueqiwqidjaskdjaskdjqwjieuqfhhaksjduqiwehcaskdjasdaiqwewiqdhashdadashjqweyqwuh";
+        bytes.put(ByteBuffer.wrap(test.getBytes()));
+        String s = bytes.toString();
+        assertEquals(test, s);
+        assertEquals(test.getBytes().length, bytes.length());
+    }
+    
+    @Test
+    public void put2() {
+        ByteBuilder bytes = ByteBuilder.allocate(20);
+        String test = "fjdsklafjsdklafjaklfdsjkfsdkjakjdkasjdkajdkajqwieuiqwueiqweqwieuqidasjkasjkajdkcnxzcnzxasjdksadasiuqwieuqwiejaskdajskcxnzcznczkxnasdjasjdjadqweiqwueidjdskdjaskdjskajdakjcncnzxknczxjkasdjaskdjqwieuqwiuakdakncxzkjsakdasjdiqwueijcnkdasjdiuewiqeqdijqdsahdiadiwqueqiwqidjaskdjaskdjqwjieuqfhhaksjduqiwehcaskdjasdaiqwewiqdhashdadashjqweyqwuh";
+        bytes.put(ByteBuffer.wrap(test.getBytes()));
+        String s = bytes.toString();
+        assertEquals(test, s);
+        ByteBuilder bytes1 = ByteBuilder.allocate(20);
+        for (ByteBuffer buf : bytes.buffers()) {
+            bytes1.put(buf);
+        }
+        assertArrayEquals(bytes1.array(), bytes.array());
     }
 }

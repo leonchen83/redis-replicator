@@ -16,6 +16,14 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import static junit.framework.TestCase.assertEquals;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -26,13 +34,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static junit.framework.TestCase.assertEquals;
 
 /**
  * @author Leon Chen

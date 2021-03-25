@@ -16,7 +16,8 @@
 
 package com.moilioncircle.redis.replicator.util;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 /**
  * @author Leon Chen
@@ -166,6 +167,12 @@ public class ByteArrayMapTest {
             it.remove();
         }
         assertEquals(0, bytes.size());
+    }
+    
+    @Test
+    public void test2() {
+        ByteArrayMap map = new ByteArrayMap();
+        assertNull(map.get("a".getBytes()));
     }
     
     @Test

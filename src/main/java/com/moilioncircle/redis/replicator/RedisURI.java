@@ -16,8 +16,6 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.util.Strings;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -34,6 +32,8 @@ import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
@@ -138,6 +138,14 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
 
     public FileType getFileType() {
         return fileType;
+    }
+    
+    /**
+     * @since 3.5.5
+     * @return parameters map
+     */
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     @Override

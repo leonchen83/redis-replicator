@@ -16,10 +16,20 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
-import com.moilioncircle.redis.replicator.RedisSocketReplicatorTest;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
@@ -27,6 +37,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.online.RedisSocketReplicatorTest;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
@@ -35,17 +46,8 @@ import com.moilioncircle.redis.replicator.rdb.module.DefaultRdbModuleParser;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
 import com.moilioncircle.redis.replicator.util.Strings;
+
 import junit.framework.TestCase;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen

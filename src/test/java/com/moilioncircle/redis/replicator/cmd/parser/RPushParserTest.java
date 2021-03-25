@@ -18,13 +18,14 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import static junit.framework.TestCase.assertNull;
 
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.cmd.impl.LPopCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LPushCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LPushXCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.RPopCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.RPushCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.RPushXCommand;
-import org.junit.Test;
 
 /**
  * @author Leon Chen

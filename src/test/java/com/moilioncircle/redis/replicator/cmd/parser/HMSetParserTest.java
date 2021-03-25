@@ -16,8 +16,9 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.impl.HMSetCommand;
 import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.cmd.impl.HMSetCommand;
 
 /**
  * @author Leon Chen

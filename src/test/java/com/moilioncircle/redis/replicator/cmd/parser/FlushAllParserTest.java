@@ -16,9 +16,10 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.cmd.impl.FlushAllCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.FlushDBCommand;
-import org.junit.Test;
 
 /**
  * @author Leon Chen

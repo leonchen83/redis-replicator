@@ -16,6 +16,17 @@
 
 package com.moilioncircle.redis.replicator.rdb.dump.parser;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.junit.Test;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -33,17 +44,8 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyString
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueZSet;
 import com.moilioncircle.redis.replicator.util.Strings;
+
 import junit.framework.TestCase;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * @author Leon Chen

@@ -16,8 +16,9 @@
 
 package com.moilioncircle.redis.replicator;
 
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.RdbParser;
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 
 import java.io.EOFException;
 import java.io.File;
@@ -25,11 +26,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.Objects;
 
-import static com.moilioncircle.redis.replicator.Status.CONNECTED;
-import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.RdbParser;
 
 /**
  * @author Leon Chen
@@ -52,23 +52,25 @@ public class RedisRdbReplicator extends AbstractReplicator {
     }
     
     @Override
-    public void open() throws IOException {
-        super.open();
-        if (!compareAndSet(DISCONNECTED, CONNECTED)) return;
-        try {
-            doOpen();
-        } catch (UncheckedIOException e) {
-            if (!(e.getCause() instanceof EOFException)) throw e.getCause();
-        } finally {
-            doClose();
-            doCloseListener(this);
-        }
-    }
-    
     protected void doOpen() throws IOException {
         try {
             new RdbParser(inputStream, this).parse();
         } catch (EOFException ignore) {
+        }
+    }
+    
+    @Override
+    protected void doClose() throws IOException {
+        compareAndSet(CONNECTED, DISCONNECTING);
+        try {
+            if (inputStream != null) {
+                this.inputStream.setRawByteListeners(null);
+                inputStream.close();
+            }
+        } catch (IOException ignore) {
+            /*NOP*/
+        } finally {
+            setStatus(DISCONNECTED);
         }
     }
 }

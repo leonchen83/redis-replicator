@@ -16,12 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd;
 
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
 
 /**
  * @author Leon Chen

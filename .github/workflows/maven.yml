@@ -1,0 +1,49 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ master, dev, 3.x ]
+  pull_request:
+    branches: [ master, dev, 3.x ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ '8', '11' ]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup redis1
+      uses: getong/redis-action@v1
+      with:
+        redis version: '3.2.3'
+        host port: 6380
+        container port: 6380
+        redis password: 'test'
+    - name: Setup redis2
+      uses: getong/redis-action@v1
+      with:
+        host port: 6379
+        container port: 6379
+    - name: Setup JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Setup JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+    - name: Sleep
+      run: sleep 10
+    - name: Compile
+      run: mvn clean package -P travis --batch-mode --quiet --global-toolchains ./toolchains.xml
+    - name: Test
+      run: mvn clean test jacoco:report coveralls:report --batch-mode --quiet --global-toolchains ./toolchains.xml
+      

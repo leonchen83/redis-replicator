@@ -71,12 +71,12 @@ public class RedisSocketReplicatorTest {
     @Test
     public void testSet() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        Replicator replicator = new RedisReplicator("localhost", 6379, Configuration.defaultSetting().setRetries(0));
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("localhost", 6379);
+                    Jedis jedis = new Jedis("127.0.0.1", 6379);
                     jedis.del("abc");
                     jedis.set("abc", "bcd");
                     jedis.close();
@@ -100,12 +100,12 @@ public class RedisSocketReplicatorTest {
     @Test
     public void testZInterStore() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("localhost", 6379, Configuration.defaultSetting().setRetries(0));
+        final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("localhost", 6379);
+                    Jedis jedis = new Jedis("127.0.0.1", 6379);
                     jedis.del("zset1");
                     jedis.del("zset2");
                     jedis.del("out");
@@ -145,12 +145,12 @@ public class RedisSocketReplicatorTest {
     @Test
     public void testZUnionStore() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("localhost", 6379, Configuration.defaultSetting().setRetries(0));
+        final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("localhost", 6379);
+                    Jedis jedis = new Jedis("127.0.0.1", 6379);
                     jedis.del("zset3");
                     jedis.del("zset4");
                     jedis.del("out1");
@@ -209,12 +209,12 @@ public class RedisSocketReplicatorTest {
     @Test
     public void testZAdd() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("localhost", 6379, Configuration.defaultSetting().setRetries(0));
+        final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("localhost", 6379);
+                    Jedis jedis = new Jedis("127.0.0.1", 6379);
                     jedis.del("abc");
                     jedis.zrem("zzlist", "member");
                     jedis.set("abc", "bcd");
@@ -247,13 +247,13 @@ public class RedisSocketReplicatorTest {
     @Test
     public void testV7() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("localhost", 6380, Configuration.defaultSetting().setAuthPassword("test").setRetries(0));
+        final Replicator replicator = new RedisReplicator("127.0.0.1", 6380, Configuration.defaultSetting().setAuthPassword("test").setRetries(0));
 
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("localhost", 6380);
+                    Jedis jedis = new Jedis("127.0.0.1", 6380);
                     jedis.auth("test");
                     jedis.del("abc");
                     jedis.set("abc", "bcd");
@@ -277,7 +277,7 @@ public class RedisSocketReplicatorTest {
 
     @Test
     public void testExpireV6() throws Exception {
-        Jedis jedis = new Jedis("localhost", 6379);
+        Jedis jedis = new Jedis("127.0.0.1", 6379);
         jedis.del("abc");
         jedis.del("bbb");
         jedis.set("abc", "bcd");
@@ -286,7 +286,7 @@ public class RedisSocketReplicatorTest {
         jedis.expireAt("bbb", System.currentTimeMillis() + 1000000);
         jedis.close();
 
-        Replicator replicator = new RedisReplicator("localhost", 6379, Configuration.defaultSetting().setRetries(0));
+        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
         final List<KeyValuePair<?, ?>> list = new ArrayList<>();
         replicator.addEventListener(new EventListener() {
             @Override
@@ -396,12 +396,12 @@ public class RedisSocketReplicatorTest {
     @SuppressWarnings("resource")
     public void testSetUrl() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        Replicator replicator = new RedisReplicator("redis://localhost?retries=0");
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1?retries=0");
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("localhost", 6379);
+                    Jedis jedis = new Jedis("127.0.0.1", 6379);
                     jedis.del("abca");
                     jedis.set("abca", "bcd");
                     jedis.close();

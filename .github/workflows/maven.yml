@@ -27,11 +27,9 @@ jobs:
           container port: 6380
           redis password: 'test'
       - name: Setup redis 2
-        uses: getong/redis-action@v1
+        uses: shogo82148/actions-setup-redis@v1
         with:
-          host port: 6379
-          container port: 6379
-          redis password:
+          redis-version: '6.x'
       - name: Setup JDK 11
         uses: actions/setup-java@v2
         with:
@@ -48,4 +46,4 @@ jobs:
         run: mvn clean package -P travis --batch-mode --quiet --global-toolchains ./toolchains.xml
       - name: Test
         run: mvn clean test jacoco:report coveralls:report --batch-mode --quiet --global-toolchains ./toolchains.xml
-      
+

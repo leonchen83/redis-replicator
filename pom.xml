@@ -275,9 +275,9 @@
                 </repository>
             </distributionManagement>
         </profile>
-        <!-- travis ci -->
+        <!-- CI -->
         <profile>
-            <id>travis</id>
+            <id>CI</id>
             <build>
                 <plugins>
                     <plugin>

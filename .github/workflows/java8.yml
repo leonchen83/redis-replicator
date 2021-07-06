@@ -11,12 +11,8 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '8', '11' ]
-    name: Java ${{ matrix.Java }} job
+    name: Java 8 job
     steps:
       - uses: actions/checkout@v2
       - name: Setup redis 1
@@ -43,7 +39,7 @@ jobs:
       - name: Version
         run: java -version
       - name: Compile
-        run: mvn clean package -P travis --batch-mode --quiet --global-toolchains ./toolchains.xml
+        run: mvn clean package -P CI --batch-mode --quiet --global-toolchains ./toolchains.xml
       - name: Test
         run: mvn clean test jacoco:report coveralls:report --batch-mode --quiet --global-toolchains ./toolchains.xml
 

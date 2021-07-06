@@ -479,6 +479,13 @@
                 <configuration>
                     <repoToken>IgJ5nELUEO3RFdZl8BYnkeNjOxXMFQIkT</repoToken>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.3.0</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

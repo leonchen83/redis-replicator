@@ -75,7 +75,7 @@ under the License.
             <vendor>oracle</vendor>
         </provides>
         <configuration>
-            <jdkHome>/usr/lib/jvm/java-8-openjdk-amd64</jdkHome>
+            <jdkHome>/opt/hostedtoolcache/Java_Adopt_jdk/8.0.292-1/x64</jdkHome>
         </configuration>
     </toolchain>
     <toolchain>
@@ -85,7 +85,7 @@ under the License.
             <vendor>oracle</vendor>
         </provides>
         <configuration>
-            <jdkHome>/home/travis/build/leonchen83/redis-replicator/openjdk11</jdkHome>
+            <jdkHome>/opt/hostedtoolcache/Java_Adopt_jdk/11.0.11-9/x64</jdkHome>
         </configuration>
     </toolchain>
 

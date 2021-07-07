@@ -31,11 +31,13 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+          check-latest: false
       - name: Setup JDK 8
         uses: actions/setup-java@v2
         with:
           java-version: '8'
           distribution: 'adopt'
+          check-latest: false
       - name: Version
         run: java -version
       - name: Compile
@@ -63,11 +65,13 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
+          check-latest: false
       - name: Setup JDK 11
         uses: actions/setup-java@v2
         with:
           java-version: '11'
           distribution: 'adopt'
+          check-latest: false
       - name: Version
         run: java -version
       - name: Compile

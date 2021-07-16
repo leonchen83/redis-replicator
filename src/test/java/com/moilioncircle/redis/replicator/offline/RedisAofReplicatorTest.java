@@ -30,7 +30,6 @@ import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.online.RedisSocketReplicatorTest;
 import com.moilioncircle.redis.replicator.util.Strings;
 
@@ -44,7 +43,7 @@ public class RedisAofReplicatorTest {
     @Test
     public void open() throws Exception {
         Replicator replicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"), 1000), FileType.AOF,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addEventListener(new EventListener() {
@@ -62,7 +61,7 @@ public class RedisAofReplicatorTest {
     @Test
     public void open2() throws Exception {
         Replicator replicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly2.aof"), 1024 * 1000), FileType.AOF,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly2.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addEventListener(new EventListener() {
@@ -80,7 +79,7 @@ public class RedisAofReplicatorTest {
     @Test
     public void open3() throws Exception {
         Replicator replicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly3.aof"), 1024 * 1000), FileType.AOF,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly3.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addEventListener(new EventListener() {
@@ -98,7 +97,7 @@ public class RedisAofReplicatorTest {
     @Test
     public void open4() throws Exception {
         Replicator replicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), 1000), FileType.AOF,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly5.aof"), FileType.AOF,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addEventListener(new EventListener() {

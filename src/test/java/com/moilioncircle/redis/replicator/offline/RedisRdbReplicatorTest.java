@@ -34,7 +34,6 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
-import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.online.RedisSocketReplicatorTest;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
@@ -49,7 +48,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testChecksumV7() throws IOException {
         Replicator redisReplicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")), FileType.RDB,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong atomicChecksum = new AtomicLong(0);
@@ -72,7 +71,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testChecksumV6() throws IOException {
         Replicator redisReplicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), 1000), FileType.RDB,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong atomicChecksum = new AtomicLong(0);
@@ -96,7 +95,7 @@ public class RedisRdbReplicatorTest {
     public void testCloseListener1() throws IOException {
         final AtomicInteger acc = new AtomicInteger(0);
         Replicator replicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), 1000), FileType.RDB,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addCloseListener(new CloseListener() {
             @Override
@@ -111,7 +110,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFileV7() throws IOException {
         Replicator redisReplicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), 1000), FileType.RDB,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final List<KeyValuePair<?, ?>> list = new ArrayList<>();
@@ -142,7 +141,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFilter() throws IOException {
         Replicator redisReplicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), 1000), FileType.RDB,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addEventListener(new EventListener() {
@@ -162,7 +161,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFileV6() throws IOException {
         Replicator redisReplicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), 1000), FileType.RDB,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV6.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addEventListener(new EventListener() {
@@ -180,7 +179,7 @@ public class RedisRdbReplicatorTest {
     @Test
     public void testFileV8() throws IOException {
         Replicator redisReplicator = new RedisReplicator(
-                new RateLimitInputStream(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV8.rdb"), 100 * 1024), FileType.RDB,
+                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV8.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);

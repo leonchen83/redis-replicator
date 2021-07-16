@@ -35,7 +35,6 @@ import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
-import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 /**
@@ -47,7 +46,7 @@ public class CloseTest {
     @SuppressWarnings("resource")
     public void testRdbClose() throws IOException {
         Replicator r = new RedisReplicator(
-                new RateLimitInputStream(CloseTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb")),
+                CloseTest.class.getClassLoader().getResourceAsStream("dumpV7.rdb"),
                 FileType.RDB, Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         r.addEventListener(new EventListener() {

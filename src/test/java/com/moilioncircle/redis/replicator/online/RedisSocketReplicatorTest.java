@@ -426,60 +426,58 @@ public class RedisSocketReplicatorTest {
     public void testMixClose13() throws IOException, URISyntaxException, InterruptedException {
         final Replicator replicator = new RedisReplicator("redis://127.0.0.1:7777?retries=-1");
         final AtomicInteger acc = new AtomicInteger(0);
-        new Thread() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void run() {
-                replicator.addEventListener(new EventListener() {
-                    @Override
-                    public void onEvent(Replicator replicator, Event event) {
-                        if (event instanceof PreCommandSyncEvent) {
-                            acc.incrementAndGet();
-                        }
-                        if (event instanceof PostCommandSyncEvent) {
-                            acc.incrementAndGet();
-                        }
-                    }
-                });
-                try {
-                    replicator.open();
-                } catch (IOException e) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostCommandSyncEvent) {
+                    acc.incrementAndGet();
                 }
             }
-        }.start();
-        Thread.sleep(3500);
-        replicator.close();
-        Thread.sleep(2000);
-        assertEquals(0, acc.get());
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                assertEquals(0, acc.get());
+            }
+        });
+    
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000);
+                replicator.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+        replicator.open();
     }
     
     @Test
     public void testMixClose10() throws IOException, URISyntaxException, InterruptedException {
         final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         final AtomicInteger acc = new AtomicInteger(0);
-        new Thread() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void run() {
-                replicator.addEventListener(new EventListener() {
-                    @Override
-                    public void onEvent(Replicator replicator, Event event) {
-                        if (event instanceof PreCommandSyncEvent) {
-                            acc.incrementAndGet();
-                        }
-                        if (event instanceof PostCommandSyncEvent) {
-                            acc.incrementAndGet();
-                        }
-                    }
-                });
-                try {
-                    replicator.open();
-                } catch (IOException e) {
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof PreCommandSyncEvent) {
+                    acc.incrementAndGet();
+                }
+                if (event instanceof PostCommandSyncEvent) {
+                    acc.incrementAndGet();
                 }
             }
-        }.start();
-        Thread.sleep(2000);
-        replicator.close();
-        Thread.sleep(2000);
-        assertEquals(1, acc.get());
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                assertEquals(1, acc.get());
+            }
+        });
+        replicator.open();
+        
     }
     
     @SuppressWarnings("resource")

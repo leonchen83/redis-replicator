@@ -74,7 +74,6 @@ public class RdbBinaryParserTest {
         for (String resource : resources) {
             template(resource, map);
         }
-        //Thread.sleep(5000);
         
         assertByteArray("zero".getBytes(), map.get("key_in_zeroth_database"));
         assertByteArray("second".getBytes(), map.get("key_in_second_database"));

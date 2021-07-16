@@ -162,28 +162,28 @@ public class CloseTest {
                 CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        new Thread() {
+        replicator.addCloseListener(new CloseListener() {
             @Override
-            public void run() {
-                replicator.addCloseListener(new CloseListener() {
-                    @Override
-                    public void handle(Replicator replicator) {
-                        acc.incrementAndGet();
-                    }
-                });
-                try {
-                    replicator.open();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public void handle(Replicator replicator) {
+                acc.incrementAndGet();
             }
-        }.start();
-    
-        Thread.sleep(2000);
-        replicator.close();
-        Thread.sleep(2000);
-        assertEquals(1, acc.get());
-        assertEquals(DISCONNECTED, replicator.getStatus());
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                assertEquals(1, acc.get());
+                assertEquals(DISCONNECTED, replicator.getStatus());
+            }
+        });
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                replicator.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+        replicator.open();
     }
     
     @Test
@@ -192,32 +192,32 @@ public class CloseTest {
                 CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
-        new Thread() {
+        replicator.addEventListener(new EventListener() {
             @Override
-            public void run() {
-                replicator.addEventListener(new EventListener() {
-                    @Override
-                    public void onEvent(Replicator replicator, Event event) {
-                        if (event instanceof KeyValuePair<?, ?>) {
-                            if (replicator.getStatus() == DISCONNECTED) {
-                                acc.incrementAndGet();
-                            }
-                        }
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    if (replicator.getStatus() == DISCONNECTED) {
+                        acc.incrementAndGet();
                     }
-                });
-                try {
-                    replicator.open();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
-        }.start();
-    
-        Thread.sleep(2000);
-        replicator.close();
-        Thread.sleep(2000);
-        assertEquals(0, acc.get());
-        assertEquals(DISCONNECTED, replicator.getStatus());
+        });
+        replicator.addCloseListener(new CloseListener() {
+            @Override
+            public void handle(Replicator replicator) {
+                assertEquals(0, acc.get());
+                assertEquals(DISCONNECTED, replicator.getStatus());
+            }
+        });
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                replicator.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+        replicator.open();
     }
     
     @Test

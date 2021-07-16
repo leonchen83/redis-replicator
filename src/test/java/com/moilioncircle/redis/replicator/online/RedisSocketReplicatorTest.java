@@ -446,7 +446,7 @@ public class RedisSocketReplicatorTest {
     
         new Thread(() -> {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(2000);
                 replicator.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -476,6 +476,15 @@ public class RedisSocketReplicatorTest {
                 assertEquals(1, acc.get());
             }
         });
+    
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000);
+                replicator.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
         replicator.open();
         
     }

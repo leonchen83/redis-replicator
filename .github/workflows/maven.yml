@@ -41,7 +41,7 @@ jobs:
       - name: Version
         run: java -version
       - name: Compile
-        run: mvn clean package -P CI --batch-mode --quiet --global-toolchains ./toolchains.xml
+        run: mvn clean package -DskipTests -P CI --batch-mode --quiet --global-toolchains ./toolchains.xml
       - name: Test
         run: mvn clean test jacoco:report coveralls:report --batch-mode --quiet --global-toolchains ./toolchains.xml
   jdk11:

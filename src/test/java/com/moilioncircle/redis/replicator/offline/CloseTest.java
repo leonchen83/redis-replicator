@@ -16,10 +16,12 @@
 
 package com.moilioncircle.redis.replicator.offline;
 
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
@@ -29,6 +31,8 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.Status;
+import com.moilioncircle.redis.replicator.StatusListener;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
@@ -168,22 +172,26 @@ public class CloseTest {
                 acc.incrementAndGet();
             }
         });
-        replicator.addCloseListener(new CloseListener() {
+        CompletableFuture<Status> future = new CompletableFuture<>();
+        replicator.addStatusListener(new StatusListener() {
             @Override
-            public void handle(Replicator replicator) {
-                assertEquals(1, acc.get());
-                assertEquals(DISCONNECTED, replicator.getStatus());
+            public void handle(Replicator replicator, Status status) {
+                if (status == CONNECTED) {
+                    future.complete(status);
+                }
             }
         });
         new Thread(() -> {
             try {
-                Thread.sleep(2000);
+                future.get();
                 replicator.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
         replicator.open();
+        assertEquals(1, acc.get());
+        assertEquals(DISCONNECTED, replicator.getStatus());
     }
     
     @Test
@@ -192,6 +200,7 @@ public class CloseTest {
                 CloseTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
+        CompletableFuture<Void> future = new CompletableFuture<>();
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
@@ -199,6 +208,9 @@ public class CloseTest {
                     if (replicator.getStatus() == DISCONNECTED) {
                         acc.incrementAndGet();
                     }
+                }
+                if (event instanceof PostRdbSyncEvent) {
+                    future.complete(null);
                 }
             }
         });
@@ -211,7 +223,7 @@ public class CloseTest {
         });
         new Thread(() -> {
             try {
-                Thread.sleep(2000);
+                future.get();
                 replicator.close();
             } catch (Exception e) {
                 e.printStackTrace();

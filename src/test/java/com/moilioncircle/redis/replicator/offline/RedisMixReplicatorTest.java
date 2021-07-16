@@ -30,7 +30,6 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.online.RedisSocketReplicatorTest;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 /**
@@ -42,7 +41,7 @@ public class RedisMixReplicatorTest {
     @Test
     public void testOpen() throws IOException {
         Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
+                RedisMixReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly4.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);
@@ -65,7 +64,7 @@ public class RedisMixReplicatorTest {
     @Test
     public void testOpen1() throws IOException {
         Replicator replicator = new RedisReplicator(
-                RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"), FileType.MIXED,
+                RedisMixReplicatorTest.class.getClassLoader().getResourceAsStream("appendonly1.aof"), FileType.MIXED,
                 Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicInteger acc1 = new AtomicInteger(0);

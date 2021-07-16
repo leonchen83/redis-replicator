@@ -35,7 +35,6 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.online.RedisSocketReplicatorTest;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
@@ -77,7 +76,7 @@ public class Module2Test {
     @Test
     public void testSkipModule() {
         @SuppressWarnings("resource")
-        Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
+        Replicator replicator = new RedisReplicator(Module2Test.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
 
         final Map<String, Module> map = new HashMap<>();
@@ -104,7 +103,7 @@ public class Module2Test {
 
     @Test
     public void testSkipModule1() {
-        Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
+        Replicator replicator = new RedisReplicator(Module2Test.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
 
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
@@ -114,7 +113,7 @@ public class Module2Test {
             fail();
         }
 
-        replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
+        replicator = new RedisReplicator(Module2Test.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                 Configuration.defaultSetting());
         replicator.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
@@ -128,7 +127,7 @@ public class Module2Test {
     @Test
     public void testDumpModule1() {
         {
-            Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
+            Replicator replicator = new RedisReplicator(Module2Test.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                     Configuration.defaultSetting());
             replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
 
@@ -155,7 +154,7 @@ public class Module2Test {
         }
 
         {
-            Replicator replicator = new RedisReplicator(RedisSocketReplicatorTest.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
+            Replicator replicator = new RedisReplicator(Module2Test.class.getClassLoader().getResourceAsStream("dump-module-2.rdb"), FileType.RDB,
                     Configuration.defaultSetting());
             replicator.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());
             replicator.setRdbVisitor(new DumpRdbVisitor(replicator));

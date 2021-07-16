@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -459,11 +460,13 @@ public class RedisSocketReplicatorTest {
     public void testMixClose10() throws IOException, URISyntaxException, InterruptedException {
         final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
         final AtomicInteger acc = new AtomicInteger(0);
+        CompletableFuture<Void> future = new CompletableFuture<>();
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PreCommandSyncEvent) {
                     acc.incrementAndGet();
+                    future.complete(null);
                 }
                 if (event instanceof PostCommandSyncEvent) {
                     acc.incrementAndGet();
@@ -479,7 +482,7 @@ public class RedisSocketReplicatorTest {
     
         new Thread(() -> {
             try {
-                Thread.sleep(2000);
+                future.get();
                 replicator.close();
             } catch (Exception e) {
                 e.printStackTrace();

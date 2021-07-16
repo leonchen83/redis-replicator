@@ -36,7 +36,6 @@ import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.ModuleTest;
-import com.moilioncircle.redis.replicator.rdb.ValueIterableRdbParserTest;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 /**
@@ -64,7 +63,7 @@ public class SkipRdbVisitorTest {
     private void testFile(String fileName) {
         final AtomicInteger acc = new AtomicInteger(0);
         final AtomicLong count = new AtomicLong(0);
-        CountInputStream in = new CountInputStream(ValueIterableRdbParserTest.class.getClassLoader().getResourceAsStream(fileName));
+        CountInputStream in = new CountInputStream(SkipRdbVisitorTest.class.getClassLoader().getResourceAsStream(fileName));
         Replicator r = new RedisReplicator(in, FileType.RDB, Configuration.defaultSetting());
         r.setRdbVisitor(new SkipRdbVisitor(r));
         r.addModuleParser("hellotype", 0, new ModuleTest.HelloTypeModuleParser());

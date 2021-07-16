@@ -16,8 +16,8 @@
 
 package com.moilioncircle.redis.replicator.rdb.dump.parser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
@@ -44,6 +44,8 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyString
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueZSet;
 import com.moilioncircle.redis.replicator.util.Strings;
+
+import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -131,10 +133,10 @@ public class DumpValueParserTest {
         } catch (Exception e) {
             fail();
         }
-        assertEquals(1, string.get());
-        assertEquals(5, map.get());
-        assertEquals(5, list.get());
-        assertEquals(5, set.get());
-        assertEquals(5, zset.get());
+        TestCase.assertEquals(1, string.get());
+        TestCase.assertEquals(5, map.get());
+        TestCase.assertEquals(5, list.get());
+        TestCase.assertEquals(5, set.get());
+        TestCase.assertEquals(5, zset.get());
     }
 }

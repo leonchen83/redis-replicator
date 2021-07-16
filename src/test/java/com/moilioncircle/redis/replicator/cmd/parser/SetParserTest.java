@@ -16,15 +16,16 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static junit.framework.TestCase.assertNull;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.XATType;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
+
+import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -37,60 +38,60 @@ public class SetParserTest extends AbstractParserTest {
         SetCommand cmd = parser.parse(toObjectArray("set a b ex 15 nx".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        Assertions.assertEquals(ExpiredType.SECOND, cmd.getExpiredType());
+        TestCase.assertEquals(ExpiredType.SECOND, cmd.getExpiredType());
         assertEquals(15L, cmd.getExpiredValue());
-        Assertions.assertEquals(ExistType.NX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.NX, cmd.getExistType());
     
         cmd = parser.parse(toObjectArray("set a b px 123 xx".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        Assertions.assertEquals(ExpiredType.MS, cmd.getExpiredType());
+        TestCase.assertEquals(ExpiredType.MS, cmd.getExpiredType());
         assertEquals(123L, cmd.getExpiredValue());
-        Assertions.assertEquals(ExistType.XX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
     
         cmd = parser.parse(toObjectArray("set a b px 123 xx get".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        Assertions.assertEquals(ExpiredType.MS, cmd.getExpiredType());
+        TestCase.assertEquals(ExpiredType.MS, cmd.getExpiredType());
         assertEquals(123L, cmd.getExpiredValue());
         assertEquals(true, cmd.isGet());
-        Assertions.assertEquals(ExistType.XX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
     
         cmd = parser.parse(toObjectArray("set a b xx px 123".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        Assertions.assertEquals(ExpiredType.MS, cmd.getExpiredType());
+        TestCase.assertEquals(ExpiredType.MS, cmd.getExpiredType());
         assertEquals(123L, cmd.getExpiredValue());
         assertEquals(false, cmd.getKeepTtl());
-        Assertions.assertEquals(ExistType.XX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
     
         cmd = parser.parse(toObjectArray("set a b xx keepttl px 123".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        Assertions.assertEquals(ExpiredType.MS, cmd.getExpiredType());
+        TestCase.assertEquals(ExpiredType.MS, cmd.getExpiredType());
         assertEquals(true, cmd.getKeepTtl());
         assertEquals(123L, cmd.getExpiredValue());
-        Assertions.assertEquals(ExistType.XX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
     
         cmd = parser.parse(toObjectArray("set a b xx keepttl EXAT 1614139099".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        Assertions.assertEquals(ExpiredType.NONE, cmd.getExpiredType());
+        TestCase.assertEquals(ExpiredType.NONE, cmd.getExpiredType());
         assertEquals(true, cmd.getKeepTtl());
         assertNull(cmd.getExpiredValue());
-        Assertions.assertEquals(XATType.EXAT, cmd.getXatType());
+        TestCase.assertEquals(XATType.EXAT, cmd.getXatType());
         assertEquals(1614139099L, cmd.getXatValue());
-        Assertions.assertEquals(ExistType.XX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
     
         cmd = parser.parse(toObjectArray("set a b xx keepttl PXAT 1614139099000".split(" ")));
         assertEquals("a", cmd.getKey());
         assertEquals("b", cmd.getValue());
-        Assertions.assertEquals(ExpiredType.NONE, cmd.getExpiredType());
+        TestCase.assertEquals(ExpiredType.NONE, cmd.getExpiredType());
         assertEquals(true, cmd.getKeepTtl());
         assertNull(cmd.getExpiredValue());
-        Assertions.assertEquals(XATType.PXAT, cmd.getXatType());
+        TestCase.assertEquals(XATType.PXAT, cmd.getXatType());
         assertEquals(1614139099000L, cmd.getXatValue());
-        Assertions.assertEquals(ExistType.XX, cmd.getExistType());
+        TestCase.assertEquals(ExistType.XX, cmd.getExistType());
     
     }
 

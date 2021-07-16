@@ -1,12 +1,12 @@
 package com.moilioncircle.redis.replicator.io;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  * @author Leon Chen

@@ -16,9 +16,9 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import org.junit.jupiter.api.Assertions;
-
 import com.moilioncircle.redis.replicator.util.Strings;
+
+import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -36,18 +36,18 @@ public class AbstractParserTest {
     }
 
     protected void assertEquals(String str, byte[] bytes) {
-        Assertions.assertEquals(str, Strings.toString(bytes));
+        TestCase.assertEquals(str, Strings.toString(bytes));
     }
 
     protected void assertEquals(boolean a, boolean b) {
-        Assertions.assertEquals(a, b);
+        TestCase.assertEquals(a, b);
     }
 
     protected void assertEquals(long a, long b) {
-        Assertions.assertEquals(a, b);
+        TestCase.assertEquals(a, b);
     }
 
     protected void assertEquals(Boolean a, Boolean b) {
-        Assertions.assertEquals(a, b);
+        TestCase.assertEquals(a, b);
     }
 }

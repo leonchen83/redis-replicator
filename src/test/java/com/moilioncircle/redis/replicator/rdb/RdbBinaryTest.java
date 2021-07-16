@@ -16,8 +16,8 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,7 +47,7 @@ import com.moilioncircle.redis.replicator.util.Strings;
  */
 public class RdbBinaryTest {
 
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     @SuppressWarnings({"resource", "unchecked"})
     public void testRdb() throws IOException {
         final List<KeyValuePair<byte[], ?>> list = new ArrayList<>();
@@ -100,7 +100,7 @@ public class RdbBinaryTest {
         }
     }
 
-    @org.junit.jupiter.api.Test
+    @org.junit.Test
     @SuppressWarnings("resource")
     public void testAof() throws IOException {
         final List<Command> list = new ArrayList<>();

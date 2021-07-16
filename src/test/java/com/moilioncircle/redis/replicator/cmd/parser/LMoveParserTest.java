@@ -16,11 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.DirectionType;
 import com.moilioncircle.redis.replicator.cmd.impl.LMoveCommand;
+
+import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -34,8 +35,8 @@ public class LMoveParserTest extends AbstractParserTest {
             LMoveCommand cmd = parser.parse(toObjectArray("LMOVE aaa bbb LEFT RIGHT".split(" ")));
             assertEquals("aaa", cmd.getSource());
             assertEquals("bbb", cmd.getDestination());
-            Assertions.assertEquals(DirectionType.LEFT, cmd.getFrom());
-            Assertions.assertEquals(DirectionType.RIGHT, cmd.getTo());
+            TestCase.assertEquals(DirectionType.LEFT, cmd.getFrom());
+            TestCase.assertEquals(DirectionType.RIGHT, cmd.getTo());
         }
         
         {
@@ -43,8 +44,8 @@ public class LMoveParserTest extends AbstractParserTest {
             LMoveCommand cmd = parser.parse(toObjectArray("LMOVE aaa bbb RIGHT LEFT".split(" ")));
             assertEquals("aaa", cmd.getSource());
             assertEquals("bbb", cmd.getDestination());
-            Assertions.assertEquals(DirectionType.RIGHT, cmd.getFrom());
-            Assertions.assertEquals(DirectionType.LEFT, cmd.getTo());
+            TestCase.assertEquals(DirectionType.RIGHT, cmd.getFrom());
+            TestCase.assertEquals(DirectionType.LEFT, cmd.getTo());
         }
     }
 }

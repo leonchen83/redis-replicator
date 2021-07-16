@@ -17,14 +17,14 @@
 package com.moilioncircle.redis.replicator.offline;
 
 import static com.moilioncircle.redis.replicator.util.Tuples.of;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static junit.framework.TestCase.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 

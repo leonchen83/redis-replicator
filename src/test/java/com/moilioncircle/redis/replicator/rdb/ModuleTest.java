@@ -16,17 +16,16 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
@@ -47,6 +46,8 @@ import com.moilioncircle.redis.replicator.rdb.module.DefaultRdbModuleParser;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
 import com.moilioncircle.redis.replicator.util.Strings;
+
+import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -157,7 +158,7 @@ public class ModuleTest {
             fail();
         }
 
-        Assertions.assertEquals(27, map.size());
+        TestCase.assertEquals(27, map.size());
         for (Map.Entry<String, byte[]> entry : map.entrySet()) {
             assertNotNull(entry.getValue());
         }

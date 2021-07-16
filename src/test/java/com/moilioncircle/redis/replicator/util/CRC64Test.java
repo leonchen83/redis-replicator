@@ -2,12 +2,12 @@ package com.moilioncircle.redis.replicator.util;
 
 import static com.moilioncircle.redis.replicator.util.CRC64.crc64;
 import static com.moilioncircle.redis.replicator.util.CRC64.longToByteArray;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  * @since 3.5.5

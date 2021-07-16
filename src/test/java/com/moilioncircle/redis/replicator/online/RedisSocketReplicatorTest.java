@@ -58,6 +58,7 @@ import com.moilioncircle.redis.replicator.util.Strings;
 import com.moilioncircle.redis.replicator.util.XScheduledExecutorService;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ZParams;
 import redis.clients.jedis.params.ZAddParams;
 
@@ -76,10 +77,10 @@ public class RedisSocketReplicatorTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("127.0.0.1", 6379);
-                    jedis.del("abc");
-                    jedis.set("abc", "bcd");
-                    jedis.close();
+                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                        jedis.del("abc");
+                        jedis.set("abc", "bcd");
+                    }
                 }
                 if (event instanceof SetCommand) {
                     SetCommand setCommand = (SetCommand) event;
@@ -105,21 +106,21 @@ public class RedisSocketReplicatorTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("127.0.0.1", 6379);
-                    jedis.del("zset1");
-                    jedis.del("zset2");
-                    jedis.del("out");
-                    jedis.zadd("zset1", 1, "one");
-                    jedis.zadd("zset1", 2, "two");
-                    jedis.zadd("zset2", 1, "one");
-                    jedis.zadd("zset2", 2, "two");
-                    jedis.zadd("zset2", 3, "three");
-                    //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
-                    ZParams zParams = new ZParams();
-                    zParams.weights(2, 3);
-                    zParams.aggregate(ZParams.Aggregate.MIN);
-                    jedis.zinterstore("out", zParams, "zset1", "zset2");
-                    jedis.close();
+                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                        jedis.del("zset1");
+                        jedis.del("zset2");
+                        jedis.del("out");
+                        jedis.zadd("zset1", 1, "one");
+                        jedis.zadd("zset1", 2, "two");
+                        jedis.zadd("zset2", 1, "one");
+                        jedis.zadd("zset2", 2, "two");
+                        jedis.zadd("zset2", 3, "three");
+                        //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
+                        ZParams zParams = new ZParams();
+                        zParams.weights(2, 3);
+                        zParams.aggregate(ZParams.Aggregate.MIN);
+                        jedis.zinterstore("out", zParams, "zset1", "zset2");
+                    }
                 }
                 if (event instanceof ZInterStoreCommand) {
                     ZInterStoreCommand zInterStoreCommand = (ZInterStoreCommand) event;
@@ -150,21 +151,21 @@ public class RedisSocketReplicatorTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("127.0.0.1", 6379);
-                    jedis.del("zset3");
-                    jedis.del("zset4");
-                    jedis.del("out1");
-                    jedis.zadd("zset3", 1, "one");
-                    jedis.zadd("zset3", 2, "two");
-                    jedis.zadd("zset4", 1, "one");
-                    jedis.zadd("zset4", 2, "two");
-                    jedis.zadd("zset4", 3, "three");
-                    //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
-                    ZParams zParams = new ZParams();
-                    zParams.weights(2, 3);
-                    zParams.aggregate(ZParams.Aggregate.SUM);
-                    jedis.zunionstore("out1", zParams, "zset3", "zset4");
-                    jedis.close();
+                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                        jedis.del("zset3");
+                        jedis.del("zset4");
+                        jedis.del("out1");
+                        jedis.zadd("zset3", 1, "one");
+                        jedis.zadd("zset3", 2, "two");
+                        jedis.zadd("zset4", 1, "one");
+                        jedis.zadd("zset4", 2, "two");
+                        jedis.zadd("zset4", 3, "three");
+                        //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
+                        ZParams zParams = new ZParams();
+                        zParams.weights(2, 3);
+                        zParams.aggregate(ZParams.Aggregate.SUM);
+                        jedis.zunionstore("out1", zParams, "zset3", "zset4");
+                    }
                 }
                 if (event instanceof ZUnionStoreCommand) {
                     ZUnionStoreCommand zInterStoreCommand = (ZUnionStoreCommand) event;
@@ -214,12 +215,12 @@ public class RedisSocketReplicatorTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("127.0.0.1", 6379);
-                    jedis.del("abc");
-                    jedis.zrem("zzlist", "member");
-                    jedis.set("abc", "bcd");
-                    jedis.zadd("zzlist", 1.5, "member", ZAddParams.zAddParams().nx());
-                    jedis.close();
+                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                        jedis.del("abc");
+                        jedis.zrem("zzlist", "member");
+                        jedis.set("abc", "bcd");
+                        jedis.zadd("zzlist", 1.5, "member", ZAddParams.zAddParams().nx());
+                    }
                 }
                 if (event instanceof SetCommand) {
                     SetCommand setCommand = (SetCommand) event;
@@ -253,11 +254,11 @@ public class RedisSocketReplicatorTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("127.0.0.1", 6380);
-                    jedis.auth("test");
-                    jedis.del("abc");
-                    jedis.set("abc", "bcd");
-                    jedis.close();
+                    try (Jedis jedis = new Jedis("127.0.0.1", 6380)) {
+                        jedis.auth("test");
+                        jedis.del("abc");
+                        jedis.set("abc", "bcd");
+                    }
                 }
                 if (event instanceof SetCommand) {
                     SetCommand setCommand = (SetCommand) event;
@@ -277,14 +278,14 @@ public class RedisSocketReplicatorTest {
 
     @Test
     public void testExpireV6() throws Exception {
-        Jedis jedis = new Jedis("127.0.0.1", 6379);
-        jedis.del("abc");
-        jedis.del("bbb");
-        jedis.set("abc", "bcd");
-        jedis.expire("abc", 500);
-        jedis.set("bbb", "bcd");
-        jedis.expireAt("bbb", System.currentTimeMillis() + 1000000);
-        jedis.close();
+        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+            jedis.del("abc");
+            jedis.del("bbb");
+            jedis.set("abc", "bcd");
+            jedis.expire("abc", 500L);
+            jedis.set("bbb", "bcd");
+            jedis.expireAt("bbb", System.currentTimeMillis() + 1000000);
+        }
 
         Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
         final List<KeyValuePair<?, ?>> list = new ArrayList<>();
@@ -314,12 +315,14 @@ public class RedisSocketReplicatorTest {
 
     @Test
     public void testCount() throws IOException {
-        Jedis jedis = new Jedis("127.0.0.1", 6379);
-        for (int i = 0; i < 8000; i++) {
-            jedis.del("test_" + i);
-            jedis.set("test_" + i, "value_" + i);
+        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+            Pipeline pipeline = jedis.pipelined();
+            for (int i = 0; i < 8000; i++) {
+                pipeline.del("test_" + i);
+                pipeline.set("test_" + i, "value_" + i);
+            }
+            pipeline.sync();
         }
-        jedis.close();
 
         Replicator redisReplicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
         final AtomicInteger acc = new AtomicInteger(0);
@@ -329,10 +332,6 @@ public class RedisSocketReplicatorTest {
                 if (event instanceof KeyValuePair) {
                     KeyValuePair<?, ?> kv = (KeyValuePair<?, ?>) event;
                     if (Strings.toString(kv.getKey()).startsWith("test_")) {
-                        try {
-                            Thread.sleep(1);
-                        } catch (InterruptedException e) {
-                        }
                         acc.incrementAndGet();
                     }
                 }
@@ -401,10 +400,10 @@ public class RedisSocketReplicatorTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    Jedis jedis = new Jedis("127.0.0.1", 6379);
-                    jedis.del("abca");
-                    jedis.set("abca", "bcd");
-                    jedis.close();
+                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                        jedis.del("abca");
+                        jedis.set("abca", "bcd");
+                    }
                 }
                 if (event instanceof SetCommand) {
                     SetCommand setCommand = (SetCommand) event;

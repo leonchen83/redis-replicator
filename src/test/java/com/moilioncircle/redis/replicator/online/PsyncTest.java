@@ -41,6 +41,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.util.Strings;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 
 /**
  * @author Leon Chen
@@ -129,16 +130,14 @@ public class PsyncTest {
 
         @Override
         public void run() {
-            Jedis jedis = new Jedis("127.0.0.1", 6380);
-            jedis.auth("test");
-            for (int i = 0; i < 1500; i++) {
-                jedis.set("psync " + i, "psync" + i);
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
+            try (Jedis jedis = new Jedis("127.0.0.1", 6380)) {
+                jedis.auth("test");
+                Pipeline pipeline = jedis.pipelined();
+                for (int i = 0; i < 1500; i++) {
+                    pipeline.set("psync " + i, "psync" + i);
                 }
+                pipeline.sync();
             }
-            jedis.close();
         }
     }
 

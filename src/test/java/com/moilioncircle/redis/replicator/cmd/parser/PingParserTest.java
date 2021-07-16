@@ -19,9 +19,10 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LFU;
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.LRU;
 import static com.moilioncircle.redis.replicator.rdb.datatype.EvictType.NONE;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
@@ -53,8 +54,6 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetNxCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SetRangeCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZInterStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ZUnionStoreCommand;
-
-import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -245,9 +244,9 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(2, cmd.getNumkeys());
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
-            TestCase.assertEquals(2, cmd.getWeights()[0], 0);
-            TestCase.assertEquals(3, cmd.getWeights()[1], 0);
-            TestCase.assertEquals(AggregateType.SUM, cmd.getAggregateType());
+            Assertions.assertEquals(2, cmd.getWeights()[0], 0);
+            Assertions.assertEquals(3, cmd.getWeights()[1], 0);
+            Assertions.assertEquals(AggregateType.SUM, cmd.getAggregateType());
         }
     
         {
@@ -257,9 +256,9 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(2, cmd.getNumkeys());
             assertEquals("k1", cmd.getKeys()[0]);
             assertEquals("k2", cmd.getKeys()[1]);
-            TestCase.assertEquals(2, cmd.getWeights()[0], 0);
-            TestCase.assertEquals(3, cmd.getWeights()[1], 0);
-            TestCase.assertEquals(AggregateType.MIN, cmd.getAggregateType());
+            Assertions.assertEquals(2, cmd.getWeights()[0], 0);
+            Assertions.assertEquals(3, cmd.getWeights()[1], 0);
+            Assertions.assertEquals(AggregateType.MIN, cmd.getAggregateType());
         }
     
         {
@@ -313,8 +312,8 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(0L, cmd.getTtl());
             assertEquals(false, cmd.isReplace());
             assertEquals(false, cmd.isAbsTtl());
-            TestCase.assertEquals(NONE, cmd.getEvictType());
-            TestCase.assertEquals(null, cmd.getEvictValue());
+            Assertions.assertEquals(NONE, cmd.getEvictType());
+            Assertions.assertEquals(null, cmd.getEvictValue());
         }
     
         {
@@ -334,7 +333,7 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(0L, cmd.getTtl());
             assertEquals(true, cmd.isReplace());
             assertEquals(true, cmd.isAbsTtl());
-            TestCase.assertEquals(LRU, cmd.getEvictType());
+            Assertions.assertEquals(LRU, cmd.getEvictType());
             assertEquals(100000L, cmd.getEvictValue().longValue());
         }
     
@@ -346,7 +345,7 @@ public class PingParserTest extends AbstractParserTest {
             assertEquals(0L, cmd.getTtl());
             assertEquals(false, cmd.isReplace());
             assertEquals(false, cmd.isAbsTtl());
-            TestCase.assertEquals(LFU, cmd.getEvictType());
+            Assertions.assertEquals(LFU, cmd.getEvictType());
             assertEquals(125L, cmd.getEvictValue().longValue());
         }
     }

@@ -16,12 +16,11 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.BLMoveCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.DirectionType;
-
-import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -35,8 +34,8 @@ public class BLMoveParserTest extends AbstractParserTest {
             BLMoveCommand cmd = parser.parse(toObjectArray("BLMOVE aaa bbb LEFT RIGHT".split(" ")));
             assertEquals("aaa", cmd.getSource());
             assertEquals("bbb", cmd.getDestination());
-            TestCase.assertEquals(DirectionType.LEFT, cmd.getFrom());
-            TestCase.assertEquals(DirectionType.RIGHT, cmd.getTo());
+            Assertions.assertEquals(DirectionType.LEFT, cmd.getFrom());
+            Assertions.assertEquals(DirectionType.RIGHT, cmd.getTo());
         }
         
         {
@@ -44,8 +43,8 @@ public class BLMoveParserTest extends AbstractParserTest {
             BLMoveCommand cmd = parser.parse(toObjectArray("BLMOVE aaa bbb RIGHT LEFT".split(" ")));
             assertEquals("aaa", cmd.getSource());
             assertEquals("bbb", cmd.getDestination());
-            TestCase.assertEquals(DirectionType.RIGHT, cmd.getFrom());
-            TestCase.assertEquals(DirectionType.LEFT, cmd.getTo());
+            Assertions.assertEquals(DirectionType.RIGHT, cmd.getFrom());
+            Assertions.assertEquals(DirectionType.LEFT, cmd.getTo());
         }
     }
 }

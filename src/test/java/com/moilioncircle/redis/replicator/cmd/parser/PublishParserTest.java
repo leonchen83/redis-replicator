@@ -16,7 +16,7 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.PublishCommand;
 

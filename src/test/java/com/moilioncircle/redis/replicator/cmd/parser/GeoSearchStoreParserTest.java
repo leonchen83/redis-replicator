@@ -16,15 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import static junit.framework.TestCase.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.GeoSearchStoreCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.OrderType;
 import com.moilioncircle.redis.replicator.cmd.impl.UnitType;
-
-import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -39,22 +38,22 @@ public class GeoSearchStoreParserTest extends AbstractParserTest {
             assertEquals("aaa", cmd.getDestination());
             assertEquals("bbb", cmd.getSource());
             assertEquals("ccc", cmd.getFromMember().getMember());
-            TestCase.assertEquals(100.32d, cmd.getFromLonLat().getLongitude());
-            TestCase.assertEquals(200.45d, cmd.getFromLonLat().getLatitude());
+            Assertions.assertEquals(100.32d, cmd.getFromLonLat().getLongitude());
+            Assertions.assertEquals(200.45d, cmd.getFromLonLat().getLatitude());
             
-            TestCase.assertEquals(123.5d, cmd.getByRadius().getRadius());
-            TestCase.assertEquals(UnitType.MI, cmd.getByRadius().getUnitType());
+            Assertions.assertEquals(123.5d, cmd.getByRadius().getRadius());
+            Assertions.assertEquals(UnitType.MI, cmd.getByRadius().getUnitType());
             
-            TestCase.assertEquals(100d, cmd.getByBox().getWidth());
-            TestCase.assertEquals(200d, cmd.getByBox().getHeight());
-            TestCase.assertEquals(UnitType.KM, cmd.getByBox().getUnitType());
+            Assertions.assertEquals(100d, cmd.getByBox().getWidth());
+            Assertions.assertEquals(200d, cmd.getByBox().getHeight());
+            Assertions.assertEquals(UnitType.KM, cmd.getByBox().getUnitType());
             
-            TestCase.assertEquals(OrderType.DESC, cmd.getOrderType());
-            TestCase.assertEquals(10, cmd.getCount().getCount());
-            TestCase.assertTrue(cmd.isStoreDist());
-            TestCase.assertTrue(cmd.isWithCoord());
-            TestCase.assertTrue(cmd.isWithDist());
-            TestCase.assertTrue(cmd.isWithHash());
+            Assertions.assertEquals(OrderType.DESC, cmd.getOrderType());
+            Assertions.assertEquals(10, cmd.getCount().getCount());
+            Assertions.assertTrue(cmd.isStoreDist());
+            Assertions.assertTrue(cmd.isWithCoord());
+            Assertions.assertTrue(cmd.isWithDist());
+            Assertions.assertTrue(cmd.isWithHash());
         }
         
         {
@@ -63,21 +62,21 @@ public class GeoSearchStoreParserTest extends AbstractParserTest {
             assertEquals("aaa", cmd.getDestination());
             assertEquals("bbb", cmd.getSource());
             assertNull(cmd.getFromMember());
-            TestCase.assertEquals(100.32d, cmd.getFromLonLat().getLongitude());
-            TestCase.assertEquals(200.45d, cmd.getFromLonLat().getLatitude());
+            Assertions.assertEquals(100.32d, cmd.getFromLonLat().getLongitude());
+            Assertions.assertEquals(200.45d, cmd.getFromLonLat().getLatitude());
             
             assertNull(cmd.getByRadius());
             
-            TestCase.assertEquals(100d, cmd.getByBox().getWidth());
-            TestCase.assertEquals(200d, cmd.getByBox().getHeight());
-            TestCase.assertEquals(UnitType.KM, cmd.getByBox().getUnitType());
+            Assertions.assertEquals(100d, cmd.getByBox().getWidth());
+            Assertions.assertEquals(200d, cmd.getByBox().getHeight());
+            Assertions.assertEquals(UnitType.KM, cmd.getByBox().getUnitType());
             
-            TestCase.assertEquals(OrderType.DESC, cmd.getOrderType());
-            TestCase.assertEquals(10, cmd.getCount().getCount());
-            TestCase.assertTrue(cmd.isStoreDist());
-            TestCase.assertFalse(cmd.isWithCoord());
-            TestCase.assertFalse(cmd.isWithDist());
-            TestCase.assertTrue(cmd.isWithHash());
+            Assertions.assertEquals(OrderType.DESC, cmd.getOrderType());
+            Assertions.assertEquals(10, cmd.getCount().getCount());
+            Assertions.assertTrue(cmd.isStoreDist());
+            Assertions.assertFalse(cmd.isWithCoord());
+            Assertions.assertFalse(cmd.isWithDist());
+            Assertions.assertTrue(cmd.isWithHash());
         }
         
         {
@@ -90,12 +89,12 @@ public class GeoSearchStoreParserTest extends AbstractParserTest {
             assertNull(cmd.getByRadius());
             assertNull(cmd.getByBox());
             
-            TestCase.assertEquals(OrderType.NONE, cmd.getOrderType());
+            Assertions.assertEquals(OrderType.NONE, cmd.getOrderType());
             assertNull(cmd.getCount());
-            TestCase.assertFalse(cmd.isStoreDist());
-            TestCase.assertFalse(cmd.isWithCoord());
-            TestCase.assertFalse(cmd.isWithDist());
-            TestCase.assertFalse(cmd.isWithHash());
+            Assertions.assertFalse(cmd.isStoreDist());
+            Assertions.assertFalse(cmd.isWithCoord());
+            Assertions.assertFalse(cmd.isWithDist());
+            Assertions.assertFalse(cmd.isWithHash());
         }
         
         {
@@ -108,12 +107,12 @@ public class GeoSearchStoreParserTest extends AbstractParserTest {
             assertNull(cmd.getByRadius());
             assertNull(cmd.getByBox());
             
-            TestCase.assertEquals(OrderType.ASC, cmd.getOrderType());
+            Assertions.assertEquals(OrderType.ASC, cmd.getOrderType());
             assertEquals(10, cmd.getCount().getCount());
-            TestCase.assertTrue(cmd.isStoreDist());
-            TestCase.assertFalse(cmd.isWithCoord());
-            TestCase.assertFalse(cmd.isWithDist());
-            TestCase.assertFalse(cmd.isWithHash());
+            Assertions.assertTrue(cmd.isStoreDist());
+            Assertions.assertFalse(cmd.isWithCoord());
+            Assertions.assertFalse(cmd.isWithDist());
+            Assertions.assertFalse(cmd.isWithHash());
         }
     }
 }

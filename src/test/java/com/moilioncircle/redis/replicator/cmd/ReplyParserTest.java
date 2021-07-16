@@ -16,11 +16,11 @@
 
 package com.moilioncircle.redis.replicator.cmd;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 

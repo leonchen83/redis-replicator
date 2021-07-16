@@ -16,11 +16,11 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
@@ -43,8 +44,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
 import com.moilioncircle.redis.replicator.util.Strings;
-
-import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -236,7 +235,7 @@ public class StreamTest {
             fail();
         }
 
-        TestCase.assertEquals(5, map.size());
+        Assertions.assertEquals(5, map.size());
         for (Map.Entry<byte[], byte[]> entry : map.entrySet()) {
             assertNotNull(String.valueOf(entry.getValue()));
         }

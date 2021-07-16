@@ -16,9 +16,9 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import static junit.framework.TestCase.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.LPopCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LPushCommand;

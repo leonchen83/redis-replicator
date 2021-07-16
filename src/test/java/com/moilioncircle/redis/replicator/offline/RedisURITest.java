@@ -16,7 +16,7 @@
 
 package com.moilioncircle.redis.replicator.offline;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.RedisURI;

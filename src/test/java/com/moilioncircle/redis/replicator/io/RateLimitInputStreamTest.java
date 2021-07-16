@@ -60,13 +60,13 @@ public class RateLimitInputStreamTest {
     public void read2() throws Exception {
         byte[] bytes = new byte[9000];
         Arrays.fill(bytes, (byte) 100);
-        RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(bytes)), 10);
+        RateLimitInputStream in = new RateLimitInputStream(new ByteArrayInputStream(new ByteArray(bytes)), 3000);
         long st = System.currentTimeMillis();
         assertEquals(9000, in.skip(bytes.length));
         assertEquals(0, in.skip(0));
         assertEquals(0, in.available());
         long ed = System.currentTimeMillis();
-        assertEquals(true, (ed - st) > 7900 && (ed - st) < 8100);
+        assertEquals(true, (ed - st) > 1900 && (ed - st) < 2100);
         in.close();
     }
 

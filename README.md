@@ -496,7 +496,7 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
     repl-backlog-ttl
     repl-ping-slave-periods
 ```
-`repl-ping-slave-period` **MUST** less than `Configuration.getReadTimeout()`, default `Configuration.getReadTimeout()` is 30 seconds
+`repl-ping-slave-period` **MUST** less than `Configuration.getReadTimeout()`, default `Configuration.getReadTimeout()` is 60 seconds
   
 ## 5.7. Lifecycle event  
   

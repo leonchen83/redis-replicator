@@ -504,7 +504,7 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
     repl-backlog-ttl
     repl-ping-slave-period
 ```
-`repl-ping-slave-period` **必须** 小于 `Configuration.getReadTimeout()`, 默认的 `Configuration.getReadTimeout()` 是30秒.
+`repl-ping-slave-period` **必须** 小于 `Configuration.getReadTimeout()`, 默认的 `Configuration.getReadTimeout()` 是60秒.
   
 ## 5.7. 生命周期事件  
   

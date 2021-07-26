@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.rdb.dump.parser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ import junit.framework.TestCase;
 public class DumpValueParserTest {
 
     @Test
-    public void test0() {
+    public void test0() throws UnsupportedEncodingException {
         List<KeyValuePair<?, ?>> kvs = new ArrayList<>();
         Replicator r = new RedisReplicator(DumpRdbVisitorTest.class.getClassLoader().getResourceAsStream("dump-huge-kv.rdb"), FileType.RDB, Configuration.defaultSetting());
 
@@ -91,7 +92,7 @@ public class DumpValueParserTest {
                 Set<byte[]> set = (Set<byte[]>) dkv.getValue();
                 assertEquals(10, set.size());
             } else if (Strings.toString(dkv.getKey()).equals("s")) {
-                assertEquals("中国银行全球门户网站", new String((byte[]) dkv.getValue()));
+                assertEquals("中国银行全球门户网站", new String((byte[]) dkv.getValue(), "UTF-8"));
             }
         }
     }

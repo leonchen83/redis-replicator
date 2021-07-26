@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 
 /**
  * @author Leon Chen
- * @since 3.6.0
+ * @since 3.5.6
  */
 public class Buffers {
     

@@ -177,9 +177,14 @@
                                     <goal>compile</goal>
                                 </goals>
                                 <configuration>
+                                    <jdkToolchain>
+                                        <version>[1.8, )</version>
+                                    </jdkToolchain>
                                     <excludes>
                                         <exclude>module-info.java</exclude>
                                     </excludes>
+                                    <source>${maven.compiler.source}</source>
+                                    <target>${maven.compiler.target}</target>
                                 </configuration>
                             </execution>
                             <execution>
@@ -193,11 +198,6 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <jdkToolchain>
-                                <version>[1.8, )</version>
-                            </jdkToolchain>
-                            <source>${maven.compiler.source}</source>
-                            <target>${maven.compiler.target}</target>
                             <encoding>${project.build.sourceEncoding}</encoding>
                         </configuration>
                     </plugin>
@@ -340,9 +340,14 @@
                                     <goal>compile</goal>
                                 </goals>
                                 <configuration>
+                                    <jdkToolchain>
+                                        <version>[1.8, )</version>
+                                    </jdkToolchain>
                                     <excludes>
                                         <exclude>module-info.java</exclude>
                                     </excludes>
+                                    <source>${maven.compiler.source}</source>
+                                    <target>${maven.compiler.target}</target>
                                 </configuration>
                             </execution>
                             <execution>
@@ -356,11 +361,6 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <jdkToolchain>
-                                <version>[1.8, )</version>
-                            </jdkToolchain>
-                            <source>${maven.compiler.source}</source>
-                            <target>${maven.compiler.target}</target>
                             <encoding>${project.build.sourceEncoding}</encoding>
                         </configuration>
                     </plugin>
@@ -462,9 +462,14 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
+                            <jdkToolchain>
+                                <version>[1.8, )</version>
+                            </jdkToolchain>
                             <excludes>
                                 <exclude>module-info.java</exclude>
                             </excludes>
+                            <source>${maven.compiler.source}</source>
+                            <target>${maven.compiler.target}</target>
                         </configuration>
                     </execution>
                     <execution>
@@ -478,11 +483,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <jdkToolchain>
-                        <version>[1.8, )</version>
-                    </jdkToolchain>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>

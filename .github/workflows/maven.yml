@@ -52,4 +52,4 @@ jobs:
       - name: Version
         run: java -version
       - name: Test
-        run: mvn test jacoco:report coveralls:report --batch-mode --quiet
+        run: mvn test jacoco:report coveralls:report --batch-mode --quiet --global-toolchains ./toolchains.xml

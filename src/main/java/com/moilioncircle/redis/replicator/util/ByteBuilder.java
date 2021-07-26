@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.util;
 
+import static com.moilioncircle.redis.replicator.util.Buffers.flip;
 import static java.nio.ByteBuffer.wrap;
 
 import java.nio.ByteBuffer;
@@ -49,7 +50,7 @@ public class ByteBuilder {
             byte[] temp = new byte[buffer.capacity()];
             System.arraycopy(buffer.array(), 0, temp, 0, buffer.capacity());
             list.add(wrap(temp));
-            buffer.clear();
+            Buffers.clear(buffer);
             buffer.put(b);
         }
     }
@@ -110,14 +111,14 @@ public class ByteBuilder {
     public List<ByteBuffer> buffers() {
         List<ByteBuffer> r = new ArrayList<>(list.size() + 1);
         for (ByteBuffer buf : list) r.add(buf.duplicate());
-        r.add((ByteBuffer) this.buffer.duplicate().flip());
+        r.add(flip(this.buffer.duplicate()));
         return r;
     }
     
     public void clear() {
         total = 0;
         list.clear();
-        buffer.clear();
+        Buffers.clear(buffer);
     }
 
     @Override

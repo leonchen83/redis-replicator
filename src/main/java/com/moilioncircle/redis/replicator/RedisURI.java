@@ -16,6 +16,9 @@
 
 package com.moilioncircle.redis.replicator;
 
+import static com.moilioncircle.redis.replicator.util.Buffers.clear;
+import static com.moilioncircle.redis.replicator.util.Buffers.flip;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -294,7 +297,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
                 c = s.charAt(i);
                 continue;
             }
-            bb.clear();
+            clear(bb);
             while (true) {
                 bb.put(decode(s.charAt(++i), s.charAt(++i)));
                 if (++i >= n)
@@ -303,7 +306,7 @@ public final class RedisURI implements Comparable<RedisURI>, Serializable {
                 if (c != '%')
                     break;
             }
-            bb.flip();
+            flip(bb);
             CharBuffer cb = Strings.decode(bb);
             sb.append(cb.toString());
         }

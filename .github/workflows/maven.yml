@@ -29,12 +29,6 @@ jobs:
         uses: shogo82148/actions-setup-redis@v1
         with:
           redis-version: '6.x'
-      - name: Setup JDK 8 for compile
-        uses: actions/setup-java@v2
-        with:
-          java-version: '8'
-          distribution: 'adopt'
-          check-latest: false
       - name: Setup JDK 11 for compile
         uses: actions/setup-java@v2
         with:
@@ -42,7 +36,7 @@ jobs:
           distribution: 'adopt'
           check-latest: false
       - name: Compile
-        run: mvn clean package -DskipTests -P CI --batch-mode --quiet --global-toolchains ./toolchains.xml
+        run: mvn clean package -DskipTests -P CI --batch-mode --quiet
       - name: Setup JDK ${{ matrix.java }} for running
         uses: actions/setup-java@v2
         with:
@@ -52,4 +46,4 @@ jobs:
       - name: Version
         run: java -version
       - name: Test
-        run: mvn test jacoco:report coveralls:report --batch-mode --quiet --global-toolchains ./toolchains.xml
+        run: mvn test jacoco:report coveralls:report --batch-mode --quiet

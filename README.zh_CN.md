@@ -100,12 +100,10 @@ redis 2.6 - 6.2
 ## 2.3. 安装源码到本地maven仓库  
   
 ```
-    step 1: 安装 jdk-1.8.x
-    step 2: 安装 jdk-9.0.x(或jdk-11.0.x)
-    step 3: git clone https://github.com/leonchen83/redis-replicator.git
-    step 4: cd ./redis-replicator 
-            替换toolchains.xml中相应的jdk路径并保存
-    step 5: $mvn clean install package -Dmaven.test.skip=true --global-toolchains ./toolchains.xml
+    step 1: 安装 jdk-9.0.x (或 jdk-11.0.x)
+    step 2: git clone https://github.com/leonchen83/redis-replicator.git
+    step 3: $cd ./redis-replicator 
+    step 4: $mvn clean install package -DskipTests
 ```  
 
 ## 2.4. 选择一个版本

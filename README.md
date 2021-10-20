@@ -95,9 +95,9 @@ redis 2.6 - 6.2
   
 ```
     step 1: install jdk-9.0.x for compile(or jdk-11.0.x)
-    step 3: git clone https://github.com/leonchen83/redis-replicator.git
-    step 4: $cd ./redis-replicator 
-    step 5: $mvn clean install package -DskipTests
+    step 2: git clone https://github.com/leonchen83/redis-replicator.git
+    step 3: $cd ./redis-replicator 
+    step 4: $mvn clean install package -DskipTests
 ```  
 
 ## 2.4. Select a version

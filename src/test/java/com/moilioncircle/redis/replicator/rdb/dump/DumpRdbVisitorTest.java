@@ -16,10 +16,14 @@
 
 package com.moilioncircle.redis.replicator.rdb.dump;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -27,6 +31,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Test;
@@ -37,6 +42,7 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueZSet;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
@@ -106,7 +112,7 @@ public class DumpRdbVisitorTest {
                 "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
                 "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
                 "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb",
-                "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "dump-stream.rdb", "dump-module-2.rdb"};
+                "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "dump-stream.rdb", "dump-module-2.rdb", "dumpV10.rdb"};
         for (String resource : resources) {
             template(resource);
         }
@@ -290,6 +296,462 @@ public class DumpRdbVisitorTest {
             replicator.open();
         } catch (Exception e) {
             fail();
+        }
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void test6() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<byte[]> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueList) {
+                    KeyStringValueList kv = (KeyStringValueList) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("quicklist_listpack_plain") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
+                        System.out.println(new String(kv.getKey()));
+                        for (byte[] element : kv.getValue()) {
+                            expected.add(element);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+        
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<byte[]> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator, 6));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("quicklist_listpack_plain") && kv.getValueRdbType() == RDB_TYPE_LIST) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueList kv = (KeyStringValueList) event;
+                            for (byte[] element : kv.getValue()) {
+                                actual.add(element);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertArrayEquals(expected.get(i), actual.get(i));
+        }
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void test7() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<byte[]> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueList) {
+                    KeyStringValueList kv = (KeyStringValueList) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("quicklist_listpack_pack") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
+                        System.out.println(new String(kv.getKey()));
+                        for (byte[] element : kv.getValue()) {
+                            expected.add(element);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+        
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<byte[]> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator, 6));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("quicklist_listpack_pack") && kv.getValueRdbType() == RDB_TYPE_LIST) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueList kv = (KeyStringValueList) event;
+                            for (byte[] element : kv.getValue()) {
+                                actual.add(element);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertArrayEquals(expected.get(i), actual.get(i));
+        }
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void test8() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<ZSetEntry> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueZSet) {
+                    KeyStringValueZSet kv = (KeyStringValueZSet) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("zset_listpack") && kv.getValueRdbType() == RDB_TYPE_ZSET_LISTPACK) {
+                        for (ZSetEntry zset : kv.getValue()) {
+                            expected.add(zset);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+        
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<ZSetEntry> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator, 6));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("zset_listpack") && kv.getValueRdbType() == RDB_TYPE_ZSET) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueZSet kv = (KeyStringValueZSet) event;
+                            for (ZSetEntry zset : kv.getValue()) {
+                                actual.add(zset);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertArrayEquals(expected.get(i).getElement(), actual.get(i).getElement());
+            assertEquals(expected.get(i).getScore(), actual.get(i).getScore(), 0.00001d);
+        }
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void test9() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<Map.Entry<byte[], byte[]>> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueHash) {
+                    KeyStringValueHash kv = (KeyStringValueHash) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("hash_listpack") && kv.getValueRdbType() == RDB_TYPE_HASH_LISTPACK) {
+                        for (Map.Entry<byte[], byte[]> entry: kv.getValue().entrySet()) {
+                            expected.add(entry);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+        
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<Map.Entry<byte[], byte[]>> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator, 6));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("hash_listpack") && kv.getValueRdbType() == RDB_TYPE_HASH) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueHash kv = (KeyStringValueHash) event;
+                            for (Map.Entry<byte[], byte[]> entry: kv.getValue().entrySet()) {
+                                actual.add(entry);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertArrayEquals(expected.get(i).getKey(), actual.get(i).getKey());
+            assertArrayEquals(expected.get(i).getValue(), actual.get(i).getValue());
+        }
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void test10() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<byte[]> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueList) {
+                    KeyStringValueList kv = (KeyStringValueList) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("quicklist_listpack_plain") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
+                        System.out.println(new String(kv.getKey()));
+                        for (byte[] element : kv.getValue()) {
+                            expected.add(element);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+        
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<byte[]> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("quicklist_listpack_plain") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueList kv = (KeyStringValueList) event;
+                            for (byte[] element : kv.getValue()) {
+                                actual.add(element);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertArrayEquals(expected.get(i), actual.get(i));
+        }
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void test11() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<byte[]> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueList) {
+                    KeyStringValueList kv = (KeyStringValueList) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("quicklist_listpack_pack") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
+                        System.out.println(new String(kv.getKey()));
+                        for (byte[] element : kv.getValue()) {
+                            expected.add(element);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+        
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<byte[]> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("quicklist_listpack_pack") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueList kv = (KeyStringValueList) event;
+                            for (byte[] element : kv.getValue()) {
+                                actual.add(element);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertArrayEquals(expected.get(i), actual.get(i));
+        }
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void test12() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<ZSetEntry> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueZSet) {
+                    KeyStringValueZSet kv = (KeyStringValueZSet) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("zset_listpack") && kv.getValueRdbType() == RDB_TYPE_ZSET_LISTPACK) {
+                        for (ZSetEntry zset : kv.getValue()) {
+                            expected.add(zset);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+        
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<ZSetEntry> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("zset_listpack") && kv.getValueRdbType() == RDB_TYPE_ZSET_LISTPACK) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueZSet kv = (KeyStringValueZSet) event;
+                            for (ZSetEntry zset : kv.getValue()) {
+                                actual.add(zset);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertArrayEquals(expected.get(i).getElement(), actual.get(i).getElement());
+            assertEquals(expected.get(i).getScore(), actual.get(i).getScore(), 0.00001d);
+        }
+    }
+    
+    @Test
+    @SuppressWarnings("resource")
+    public void test13() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<Map.Entry<byte[], byte[]>> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueHash) {
+                    KeyStringValueHash kv = (KeyStringValueHash) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("hash_listpack") && kv.getValueRdbType() == RDB_TYPE_HASH_LISTPACK) {
+                        for (Map.Entry<byte[], byte[]> entry: kv.getValue().entrySet()) {
+                            expected.add(entry);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+        
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dumpV10.rdb")
+                , FileType.RDB, Configuration.defaultSetting());
+        List<Map.Entry<byte[], byte[]>> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("hash_listpack") && kv.getValueRdbType() == RDB_TYPE_HASH_LISTPACK) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueHash kv = (KeyStringValueHash) event;
+                            for (Map.Entry<byte[], byte[]> entry: kv.getValue().entrySet()) {
+                                actual.add(entry);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            assertArrayEquals(expected.get(i).getKey(), actual.get(i).getKey());
+            assertArrayEquals(expected.get(i).getValue(), actual.get(i).getValue());
         }
     }
 }

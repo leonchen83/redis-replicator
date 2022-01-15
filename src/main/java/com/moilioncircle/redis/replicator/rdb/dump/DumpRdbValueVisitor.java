@@ -17,13 +17,17 @@
 package com.moilioncircle.redis.replicator.rdb.dump;
 
 import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
+import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAINER_PACKED;
+import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAINER_PLAIN;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
@@ -33,7 +37,9 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTP
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static com.moilioncircle.redis.replicator.rdb.BaseRdbParser.StringHelper.listPackEntry;
 import static com.moilioncircle.redis.replicator.util.CRC64.crc64;
 import static com.moilioncircle.redis.replicator.util.CRC64.longToByteArray;
 
@@ -54,6 +60,7 @@ import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
@@ -281,8 +288,42 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
     
     @Override
     public <T> T applyZSetListPack(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        if (this.version != -1 && this.version < 10 /* since redis rdb version 10 */) {
+            // downgrade to RDB_TYPE_ZSET
+            BaseRdbParser parser = new BaseRdbParser(in);
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET, version);
+            try (ByteBufferOutputStream out = new ByteBufferOutputStream(size)) {
+                RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+                listPack.skip(4); // total-bytes
+                int len = listPack.readInt(2);
+                listener.handle(encoder.rdbSaveLen(len / 2));
+                while (len > 0) {
+                    byte[] element = listPackEntry(listPack);
+                    encoder.rdbGenericSaveStringObject(new ByteArray(element), out);
+                    len--;
+                    double score = Double.valueOf(Strings.toString(listPackEntry(listPack)));
+                    encoder.rdbSaveDoubleValue(score, out);
+                    len--;
+                }
+                int lpend = listPack.read(); // lp-end
+                if (lpend != 255) {
+                    throw new AssertionError("listpack expect 255 but " + lpend);
+                }
+                listener.handle(out.toByteBuffer());
+                return (T) listener.getBytes();
+            }
+        } else {
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_ZSET_LISTPACK, version);
+            replicator.addRawByteListener(listener);
+            try {
+                SkipRdbParser skipParser = new SkipRdbParser(in);
+                skipParser.rdbLoadPlainStringObject();
+            } finally {
+                replicator.removeRawByteListener(listener);
+            }
+            return (T) listener.getBytes();
+        }
     }
 
     @Override
@@ -299,8 +340,42 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
     
     @Override
     public <T> T applyHashListPack(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        if (this.version != -1 && this.version < 10 /* since redis rdb version 10 */) {
+            // downgrade to RDB_TYPE_HASH
+            BaseRdbParser parser = new BaseRdbParser(in);
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH, version);
+            try (ByteBufferOutputStream out = new ByteBufferOutputStream(size)) {
+                RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+                listPack.skip(4); // total-bytes
+                int len = listPack.readInt(2);
+                listener.handle(encoder.rdbSaveLen(len / 2));
+                while (len > 0) {
+                    byte[] field = listPackEntry(listPack);
+                    encoder.rdbGenericSaveStringObject(new ByteArray(field), out);
+                    len--;
+                    byte[] value = listPackEntry(listPack);
+                    encoder.rdbGenericSaveStringObject(new ByteArray(value), out);
+                    len--;
+                }
+                int lpend = listPack.read(); // lp-end
+                if (lpend != 255) {
+                    throw new AssertionError("listpack expect 255 but " + lpend);
+                }
+                listener.handle(out.toByteBuffer());
+                return (T) listener.getBytes();
+            }
+        } else {
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_LISTPACK, version);
+            replicator.addRawByteListener(listener);
+            try {
+                SkipRdbParser skipParser = new SkipRdbParser(in);
+                skipParser.rdbLoadPlainStringObject();
+            } finally {
+                replicator.removeRawByteListener(listener);
+            }
+            return (T) listener.getBytes();
+        }
     }
 
     @Override
@@ -352,8 +427,57 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
     
     @Override
     public <T> T applyListQuickList2(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        if (this.version != -1 && this.version < 10 /* since redis rdb version 10 */) {
+            // downgrade to RDB_TYPE_LIST
+            BaseRdbParser parser = new BaseRdbParser(in);
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            try (ByteBufferOutputStream out = new ByteBufferOutputStream(size)) {
+                int total = 0;
+                long len = parser.rdbLoadLen().len;
+                for (long i = 0; i < len; i++) {
+                    long container = parser.rdbLoadLen().len;
+                    ByteArray bytes = parser.rdbLoadPlainStringObject();
+                    if (container == QUICKLIST_NODE_CONTAINER_PLAIN) {
+                        encoder.rdbGenericSaveStringObject(new ByteArray(bytes.first()), out);
+                        total++;
+                    } else if (container == QUICKLIST_NODE_CONTAINER_PACKED) {
+                        RedisInputStream listPack = new RedisInputStream(bytes);
+                        listPack.skip(4); // total-bytes
+                        int innerLen = listPack.readInt(2);
+                        for (int j = 0; j < innerLen; j++) {
+                            byte[] e = listPackEntry(listPack);
+                            encoder.rdbGenericSaveStringObject(new ByteArray(e), out);
+                            total++;
+                        }
+                        int lpend = listPack.read(); // lp-end
+                        if (lpend != 255) {
+                            throw new AssertionError("listpack expect 255 but " + lpend);
+                        }
+                    } else {
+                        throw new UnsupportedOperationException(String.valueOf(container));
+                    }
+                }
+            
+                DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST, version);
+                listener.handle(encoder.rdbSaveLen(total));
+                listener.handle(out.toByteBuffer());
+                return (T) listener.getBytes();
+            }
+        } else {
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_LIST_QUICKLIST_2, version);
+            replicator.addRawByteListener(listener);
+            try {
+                SkipRdbParser skipParser = new SkipRdbParser(in);
+                long len = skipParser.rdbLoadLen().len;
+                for (long i = 0; i < len; i++) {
+                    skipParser.rdbLoadLen();
+                    skipParser.rdbLoadPlainStringObject();
+                }
+            } finally {
+                replicator.removeRawByteListener(listener);
+            }
+            return (T) listener.getBytes();
+        }
     }
 
     @Override

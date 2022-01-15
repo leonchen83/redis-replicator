@@ -116,6 +116,12 @@ public class Constants {
     public static final int STREAM_ITEM_FLAG_NONE = 0; /* No special flags. */
     public static final int STREAM_ITEM_FLAG_DELETED = (1 << 0); /* Entry was deleted. Skip it. */
     public static final int STREAM_ITEM_FLAG_SAMEFIELDS = (1 << 1); /* Same fields as master entry. */
+    
+    /**
+     * quick list
+     */
+    public static final int QUICKLIST_NODE_CONTAINER_PLAIN = 1;
+    public static final int QUICKLIST_NODE_CONTAINER_PACKED = 2;
 
     /**
      * transfer protocol

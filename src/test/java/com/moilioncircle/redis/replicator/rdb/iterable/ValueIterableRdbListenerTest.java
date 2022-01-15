@@ -136,4 +136,46 @@ public class ValueIterableRdbListenerTest {
         }
         assertEquals(5, stream.get());
     }
+    
+    @Test
+    public void test3() {
+        final AtomicInteger list = new AtomicInteger(0);
+        Replicator r = new RedisReplicator(ValueIterableRdbListenerTest.class.getClassLoader().getResourceAsStream("dumpV10.rdb"), FileType.RDB, Configuration.defaultSetting());
+        r.setRdbVisitor(new ValueIterableRdbVisitor(r));
+        r.addEventListener(new ValueIterableEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof BatchedKeyStringValueList) {
+                    list.incrementAndGet();
+                }
+            }
+        }));
+        try {
+            r.open();
+        } catch (Exception e) {
+            fail();
+        }
+        assertEquals(14, list.get());
+    }
+    
+    @Test
+    public void test4() {
+        final AtomicInteger list = new AtomicInteger(0);
+        Replicator r = new RedisReplicator(ValueIterableRdbListenerTest.class.getClassLoader().getResourceAsStream("dumpV10.rdb"), FileType.RDB, Configuration.defaultSetting());
+        r.setRdbVisitor(new ValueIterableRdbVisitor(r));
+        r.addEventListener(new ValueIterableEventListener(1024, new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof BatchedKeyStringValueList) {
+                    list.incrementAndGet();
+                }
+            }
+        }));
+        try {
+            r.open();
+        } catch (Exception e) {
+            fail();
+        }
+        assertEquals(2, list.get());
+    }
 }

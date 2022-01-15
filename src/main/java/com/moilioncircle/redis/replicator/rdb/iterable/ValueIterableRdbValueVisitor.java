@@ -16,7 +16,10 @@
 
 package com.moilioncircle.redis.replicator.rdb.iterable;
 
+import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAINER_PACKED;
+import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAINER_PLAIN;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
+import static com.moilioncircle.redis.replicator.rdb.BaseRdbParser.StringHelper.listPackEntry;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,6 +32,7 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbValueVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
+import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
@@ -335,8 +339,40 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
     
     @Override
     public <T> T applyZSetListPack(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+    
+        RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        listPack.skip(4); // total-bytes
+        int len = listPack.readInt(2);
+        Iterator<ZSetEntry> val = new Iter<ZSetEntry>(len, null) {
+            @Override
+            public boolean hasNext() {
+                if (condition > 0) return true;
+                try {
+                    int lpend = listPack.read();
+                    if (lpend != 255) {
+                        throw new AssertionError("listpack expect 255 but " + lpend);
+                    }
+                    return false;
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        
+            @Override
+            public ZSetEntry next() {
+                try {
+                    byte[] element = listPackEntry(listPack);
+                    condition--;
+                    double score = Double.valueOf(Strings.toString(listPackEntry(listPack)));
+                    condition--;
+                    return new ZSetEntry(element, score);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        };
+        return (T) val;
     }
 
     @Override
@@ -384,8 +420,40 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
     
     @Override
     public <T> T applyHashListPack(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+
+        RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        listPack.skip(4); // total-bytes
+        int len = listPack.readInt(2);
+        Iterator<Map.Entry<byte[], byte[]>> val = new Iter<Map.Entry<byte[], byte[]>>(len, null) {
+            @Override
+            public boolean hasNext() {
+                if (condition > 0) return true;
+                try {
+                    int lpend = listPack.read();
+                    if (lpend != 255) {
+                        throw new AssertionError("listpack expect 255 but " + lpend);
+                    }
+                    return false;
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+
+            @Override
+            public Map.Entry<byte[], byte[]> next() {
+                try {
+                    byte[] field = listPackEntry(listPack);
+                    condition--;
+                    byte[] value = listPackEntry(listPack);
+                    condition--;
+                    return new AbstractMap.SimpleEntry<>(field, value);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        };
+        return (T) val;
     }
 
     @Override
@@ -399,8 +467,11 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
     
     @Override
     public <T> T applyListQuickList2(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+    
+        long len = parser.rdbLoadLen().len;
+        Iterator<byte[]> val = new QuickList2Iter(len, parser);
+        return (T) val;
     }
 
     private static abstract class Iter<T> implements Iterator<T> {
@@ -497,6 +568,66 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
                             throw new AssertionError("zlend expect 255 but " + zlend);
                         }
                         zllen = -1;
+                        condition--;
+                    }
+                    return e;
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+    }
+    
+    private static class QuickList2Iter extends Iter<byte[]> {
+        
+        protected int innerLen = -1;
+        protected RedisInputStream listPack;
+        
+        private QuickList2Iter(long condition, BaseRdbParser parser) {
+            super(condition, parser);
+        }
+        
+        @Override
+        public boolean hasNext() {
+            return innerLen > 0 || condition > 0;
+        }
+        
+        @Override
+        public byte[] next() {
+            try {
+                if (innerLen == -1 && condition > 0) {
+                    long container = parser.rdbLoadLen().len;
+                    ByteArray bytes = parser.rdbLoadPlainStringObject();
+                    if (container == QUICKLIST_NODE_CONTAINER_PLAIN) {
+                        innerLen = -1;
+                        condition--;
+                        return bytes.first();
+                    } else if (container == QUICKLIST_NODE_CONTAINER_PACKED) {
+                        this.listPack = new RedisInputStream(bytes);
+                        listPack.skip(4);
+                        this.innerLen = listPack.readInt(2);
+                        if (innerLen == 0) {
+                            int lpend = listPack.read();
+                            if (lpend != 255) {
+                                throw new AssertionError("listpack expect 255 but " + lpend);
+                            }
+                            innerLen = -1;
+                            condition--;
+                        }
+                        if (hasNext()) return next();
+                        throw new IllegalStateException("end of iterator");
+                    } else {
+                        throw new UnsupportedOperationException(String.valueOf(container));
+                    }
+                } else {
+                    byte[] e = listPackEntry(listPack);
+                    innerLen--;
+                    if (innerLen == 0) {
+                        int lpend = listPack.read();
+                        if (lpend != 255) {
+                            throw new AssertionError("listpack expect 255 but " + lpend);
+                        }
+                        innerLen = -1;
                         condition--;
                     }
                     return e;

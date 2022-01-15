@@ -16,6 +16,23 @@
 
 package com.moilioncircle.redis.replicator.rdb.iterable;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.hash;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.list;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.module;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.set;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.stream;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.string;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.zset;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
@@ -32,23 +49,6 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZS
 import com.moilioncircle.redis.replicator.util.ByteArrayList;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import com.moilioncircle.redis.replicator.util.ByteArraySet;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
-import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.hash;
-import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.list;
-import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.module;
-import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.set;
-import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.stream;
-import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.string;
-import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.zset;
 
 /**
  * @author Leon Chen
@@ -105,7 +105,7 @@ public class ValueIterableEventListener implements EventListener {
                     }
                 }
                 final boolean last = next.isEmpty();
-                listener.onEvent(replicator, set(skv, prev, batch++, last));
+                if (prev != null) listener.onEvent(replicator, set(skv, prev, batch++, last));
                 if (!last) listener.onEvent(replicator, set(skv, next, batch++, true));
             } else {
                 KeyStringValueByteArrayIterator lkv = (KeyStringValueByteArrayIterator) kv;
@@ -122,10 +122,11 @@ public class ValueIterableEventListener implements EventListener {
                         }
                     } catch (IllegalStateException ignore) {
                         // see ValueIterableRdbVisitor.QuickListIter.next().
+                        // see ValueIterableRdbVisitor.QuickList2Iter.next().
                     }
                 }
                 final boolean last = next.isEmpty();
-                listener.onEvent(replicator, list(lkv, prev, batch++, last));
+                if (prev != null) listener.onEvent(replicator, list(lkv, prev, batch++, last));
                 if (!last) listener.onEvent(replicator, list(lkv, next, batch++, true));
             }
         } else if (kv instanceof KeyStringValueMapEntryIterator) {
@@ -143,7 +144,7 @@ public class ValueIterableEventListener implements EventListener {
                 }
             }
             final boolean last = next.isEmpty();
-            listener.onEvent(replicator, hash(mkv, prev, batch++, last));
+            if (prev != null) listener.onEvent(replicator, hash(mkv, prev, batch++, last));
             if (!last) listener.onEvent(replicator, hash(mkv, next, batch++, true));
         } else if (kv instanceof KeyStringValueZSetEntryIterator) {
             KeyStringValueZSetEntryIterator zkv = (KeyStringValueZSetEntryIterator) kv;
@@ -159,7 +160,7 @@ public class ValueIterableEventListener implements EventListener {
                 }
             }
             final boolean last = next.isEmpty();
-            listener.onEvent(replicator, zset(zkv, prev, batch++, last));
+            if (prev != null) listener.onEvent(replicator, zset(zkv, prev, batch++, last));
             if (!last) listener.onEvent(replicator, zset(zkv, next, batch++, true));
         } else if (kv instanceof KeyStringValueModule) {
             listener.onEvent(replicator, module((KeyStringValueModule) kv, (Module) kv.getValue(), batch, true));

@@ -2,6 +2,8 @@
 package com.moilioncircle.redis.replicator.rdb;
 
 import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
+import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAINER_PACKED;
+import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAINER_PLAIN;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
 import static com.moilioncircle.redis.replicator.Constants.STREAM_ITEM_FLAG_DELETED;
@@ -28,6 +30,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
+import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.ByteArrayList;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import com.moilioncircle.redis.replicator.util.ByteArraySet;
@@ -270,8 +273,24 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
     
     @Override
     public <T> T applyZSetListPack(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+
+        RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        Set<ZSetEntry> zset = new LinkedHashSet<>();
+        listPack.skip(4); // total-bytes
+        int len = listPack.readInt(2);
+        while (len > 0) {
+            byte[] element = listPackEntry(listPack);
+            len--;
+            double score = Double.valueOf(Strings.toString(listPackEntry(listPack)));
+            len--;
+            zset.add(new ZSetEntry(element, score));
+        }
+        int lpend = listPack.read(); // lp-end
+        if (lpend != 255) {
+            throw new AssertionError("listpack expect 255 but " + lpend);
+        }
+        return (T) zset;
     }
 
     @Override
@@ -303,8 +322,24 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
     
     @Override
     public <T> T applyHashListPack(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+
+        RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        ByteArrayMap map = new ByteArrayMap();
+        listPack.skip(4); // total-bytes
+        int len = listPack.readInt(2);
+        while (len > 0) {
+            byte[] field = listPackEntry(listPack);
+            len--;
+            byte[] value = listPackEntry(listPack);
+            len--;
+            map.put(field, value);
+        }
+        int lpend = listPack.read(); // lp-end
+        if (lpend != 255) {
+            throw new AssertionError("listpack expect 255 but " + lpend);
+        }
+        return (T) map;
     }
 
     @Override
@@ -333,8 +368,32 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
     
     @Override
     public <T> T applyListQuickList2(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+
+        long len = parser.rdbLoadLen().len;
+        List<byte[]> list = new ByteArrayList();
+        for (long i = 0; i < len; i++) {
+            long container = parser.rdbLoadLen().len;
+            ByteArray bytes = parser.rdbLoadPlainStringObject();
+            if (container == QUICKLIST_NODE_CONTAINER_PLAIN) {
+                list.add(bytes.first());
+            } else if (container == QUICKLIST_NODE_CONTAINER_PACKED) {
+                RedisInputStream listPack = new RedisInputStream(bytes);
+                listPack.skip(4); // total-bytes
+                int innerLen = listPack.readInt(2);
+                for (int j = 0; j < innerLen; j++) {
+                    byte[] e = listPackEntry(listPack);
+                    list.add(e);
+                }
+                int lpend = listPack.read(); // lp-end
+                if (lpend != 255) {
+                    throw new AssertionError("listpack expect 255 but " + lpend);
+                }
+            } else {
+                throw new UnsupportedOperationException(String.valueOf(container));
+            }
+        }
+        return (T) list;
     }
 
     @Override

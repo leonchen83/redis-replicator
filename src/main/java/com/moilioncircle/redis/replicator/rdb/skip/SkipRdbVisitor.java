@@ -234,7 +234,9 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     
     @Override
     public Event applyZSetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
-        // TODO
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        parser.rdbLoadPlainStringObject();
         return null;
     }
 
@@ -248,7 +250,9 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     
     @Override
     public Event applyHashListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
-        // TODO
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        parser.rdbLoadPlainStringObject();
         return null;
     }
 
@@ -262,13 +266,19 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         }
         return null;
     }
-    
+
     @Override
     public Event applyListQuickList2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
-        // TODO
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        long len = parser.rdbLoadLen().len;
+        for (long i = 0; i < len; i++) {
+            parser.rdbLoadLen();
+            parser.rdbLoadPlainStringObject();
+        }
         return null;
     }
-
+    
     @Override
     public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);

@@ -23,5 +23,5 @@ import com.moilioncircle.redis.replicator.event.AbstractEvent;
  * @Since 3.6.0
  */
 public class Function extends AbstractEvent {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 }

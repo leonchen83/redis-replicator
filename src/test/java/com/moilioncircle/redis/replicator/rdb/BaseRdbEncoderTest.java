@@ -38,126 +38,126 @@ import com.moilioncircle.redis.replicator.util.ByteArray;
  * @since 3.5.3
  */
 public class BaseRdbEncoderTest {
-	
-	@Test
-	public void testRdbGenericSaveStringObject() throws IOException {
-		{
-			String s = "less than 20 bytes";
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbGenericSaveStringObject(new ByteArray(s.getBytes()), out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			byte[] bytes = parser.rdbGenericLoadStringObject(RDB_LOAD_ENC).first();
-			assertEquals(s, new String(bytes));
-		}
-		
-		{
-			String s = "use lz4 compress if length large than 20 bytes";
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbGenericSaveStringObject(new ByteArray(s.getBytes()), out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			byte[] bytes = parser.rdbGenericLoadStringObject(RDB_LOAD_ENC).first();
-			assertEquals(s, new String(bytes));
-		}
-	}
-	
-	@Test
-	public void testLzf() throws IOException {
-		for (int i = 0; i < 1000; i++) {
-			int length = ThreadLocalRandom.current().nextInt(50000) + 20;
-			byte[] value = new byte[length];
-			ThreadLocalRandom.current().nextBytes(value);
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbGenericSaveStringObject(new ByteArray(value), out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			byte[] bytes = parser.rdbGenericLoadStringObject(RDB_LOAD_ENC).first();
-			assertArrayEquals(value, bytes);
-		}
-	}
-	
-	@Test
-	public void testRdbSaveDoubleValue() throws IOException {
-		{
-			double value = 231231231231231d;
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbSaveDoubleValue(value, out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			double value1 = parser.rdbLoadDoubleValue();
-			assertEquals(value, value1, 0);
-		}
-		
-		{
-			double value = 2312312.31231231d;
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbSaveDoubleValue(value, out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			double value1 = parser.rdbLoadDoubleValue();
-			assertEquals(value, value1, 0.00000001d);
-		}
-		
-		{
-			double value = NEGATIVE_INFINITY;
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbSaveDoubleValue(value, out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			double value1 = parser.rdbLoadDoubleValue();
-			assertTrue(value1 == NEGATIVE_INFINITY);
-		}
-		
-		{
-			double value = POSITIVE_INFINITY;
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbSaveDoubleValue(value, out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			double value1 = parser.rdbLoadDoubleValue();
-			assertTrue(value1 == POSITIVE_INFINITY);
-		}
-		
-		{
-			double value = Double.NaN;
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbSaveDoubleValue(value, out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			double value1 = parser.rdbLoadDoubleValue();
-			assertTrue(Double.isNaN(value1));
-		}
-	}
-	
-	@Test
-	public void testRdbSaveLen() throws IOException {
-		long[] lens = new long[]{10, 256, 123123213L, 12309129310231231L};
-		for (long len : lens) {
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			encoder.rdbSaveLen(len, out);
-			ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			long len1 = parser.rdbLoadLen().len;
-			assertEquals(len, len1);
-		}
-		
-		for (long len : lens) {
-			BaseRdbEncoder encoder = new BaseRdbEncoder();
-			byte[] bytes = encoder.rdbSaveLen(len);
-			ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-			BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
-			long len1 = parser.rdbLoadLen().len;
-			assertEquals(len, len1);
-		}
-	}
+    
+    @Test
+    public void testRdbGenericSaveStringObject() throws IOException {
+        {
+            String s = "less than 20 bytes";
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbGenericSaveStringObject(new ByteArray(s.getBytes()), out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            byte[] bytes = parser.rdbGenericLoadStringObject(RDB_LOAD_ENC).first();
+            assertEquals(s, new String(bytes));
+        }
+        
+        {
+            String s = "use lz4 compress if length large than 20 bytes";
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbGenericSaveStringObject(new ByteArray(s.getBytes()), out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            byte[] bytes = parser.rdbGenericLoadStringObject(RDB_LOAD_ENC).first();
+            assertEquals(s, new String(bytes));
+        }
+    }
+    
+    @Test
+    public void testLzf() throws IOException {
+        for (int i = 0; i < 1000; i++) {
+            int length = ThreadLocalRandom.current().nextInt(50000) + 20;
+            byte[] value = new byte[length];
+            ThreadLocalRandom.current().nextBytes(value);
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbGenericSaveStringObject(new ByteArray(value), out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            byte[] bytes = parser.rdbGenericLoadStringObject(RDB_LOAD_ENC).first();
+            assertArrayEquals(value, bytes);
+        }
+    }
+    
+    @Test
+    public void testRdbSaveDoubleValue() throws IOException {
+        {
+            double value = 231231231231231d;
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbSaveDoubleValue(value, out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            double value1 = parser.rdbLoadDoubleValue();
+            assertEquals(value, value1, 0);
+        }
+        
+        {
+            double value = 2312312.31231231d;
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbSaveDoubleValue(value, out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            double value1 = parser.rdbLoadDoubleValue();
+            assertEquals(value, value1, 0.00000001d);
+        }
+        
+        {
+            double value = NEGATIVE_INFINITY;
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbSaveDoubleValue(value, out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            double value1 = parser.rdbLoadDoubleValue();
+            assertTrue(value1 == NEGATIVE_INFINITY);
+        }
+        
+        {
+            double value = POSITIVE_INFINITY;
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbSaveDoubleValue(value, out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            double value1 = parser.rdbLoadDoubleValue();
+            assertTrue(value1 == POSITIVE_INFINITY);
+        }
+        
+        {
+            double value = Double.NaN;
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbSaveDoubleValue(value, out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            double value1 = parser.rdbLoadDoubleValue();
+            assertTrue(Double.isNaN(value1));
+        }
+    }
+    
+    @Test
+    public void testRdbSaveLen() throws IOException {
+        long[] lens = new long[]{10, 256, 123123213L, 12309129310231231L};
+        for (long len : lens) {
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbSaveLen(len, out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            long len1 = parser.rdbLoadLen().len;
+            assertEquals(len, len1);
+        }
+        
+        for (long len : lens) {
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            byte[] bytes = encoder.rdbSaveLen(len);
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(in));
+            long len1 = parser.rdbLoadLen().len;
+            assertEquals(len, len1);
+        }
+    }
 }

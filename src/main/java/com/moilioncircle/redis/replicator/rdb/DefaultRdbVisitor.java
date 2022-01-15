@@ -16,6 +16,37 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static java.lang.Integer.parseInt;
+import static java.lang.Long.parseLong;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
@@ -24,6 +55,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
+import com.moilioncircle.redis.replicator.rdb.datatype.Function;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
@@ -39,33 +71,6 @@ import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import com.moilioncircle.redis.replicator.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
-import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
 
 /**
  * @author Leon Chen
@@ -99,7 +104,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
     @Override
     public int applyVersion(RedisInputStream in) throws IOException {
         int version = parseInt(BaseRdbParser.StringHelper.str(in, 4));
-        if (version < 2 || version > 9) {
+        if (version < 2 || version > 10) {
             throw new UnsupportedOperationException(String.valueOf("can't handle RDB format version " + version));
         }
         return version;
@@ -108,6 +113,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
     @Override
     public int applyType(RedisInputStream in) throws IOException {
         return in.read();
+    }
+    
+    @Override
+    public Function applyFunction(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
     }
 
     @Override
@@ -381,6 +392,19 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o12.setKey(key);
         return context.valueOf(o12);
     }
+    
+    @Override
+    public Event applyZSetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Set<ZSetEntry>> o17 = new KeyStringValueZSet();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+    
+        Set<ZSetEntry> zset = valueVisitor.applyZSetListPack(in, version);
+        o17.setValueRdbType(RDB_TYPE_ZSET_LISTPACK);
+        o17.setValue(zset);
+        o17.setKey(key);
+        return context.valueOf(o17);
+    }
 
     @Override
     public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
@@ -393,6 +417,19 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o13.setValue(map);
         o13.setKey(key);
         return context.valueOf(o13);
+    }
+    
+    @Override
+    public Event applyHashListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Map<byte[], byte[]>> o16 = new KeyStringValueHash();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        ByteArrayMap map = valueVisitor.applyHashListPack(in, version);
+        o16.setValueRdbType(RDB_TYPE_HASH_LISTPACK);
+        o16.setValue(map);
+        o16.setKey(key);
+        return context.valueOf(o16);
     }
 
     @Override
@@ -407,7 +444,20 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o14.setKey(key);
         return context.valueOf(o14);
     }
-
+    
+    @Override
+    public Event applyListQuickList2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], List<byte[]>> o18 = new KeyStringValueList();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        List<byte[]> list = valueVisitor.applyListQuickList2(in, version);
+        o18.setValueRdbType(RDB_TYPE_LIST_QUICKLIST_2);
+        o18.setValue(list);
+        o18.setKey(key);
+        return context.valueOf(o18);
+    }
+    
     @Override
     public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
@@ -482,10 +532,16 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?, ?>) applySetIntSet(in, version, context);
             case RDB_TYPE_ZSET_ZIPLIST:
                 return (KeyValuePair<?, ?>) applyZSetZipList(in, version, context);
+            case RDB_TYPE_ZSET_LISTPACK:
+                return (KeyValuePair<?, ?>) applyZSetListPack(in, version, context);
             case RDB_TYPE_HASH_ZIPLIST:
                 return (KeyValuePair<?, ?>) applyHashZipList(in, version, context);
+            case RDB_TYPE_HASH_LISTPACK:
+                return (KeyValuePair<?, ?>) applyHashListPack(in, version, context);
             case RDB_TYPE_LIST_QUICKLIST:
                 return (KeyValuePair<?, ?>) applyListQuickList(in, version, context);
+            case RDB_TYPE_LIST_QUICKLIST_2:
+                return (KeyValuePair<?, ?>) applyListQuickList2(in, version, context);
             case RDB_TYPE_MODULE:
                 return (KeyValuePair<?, ?>) applyModule(in, version, context);
             case RDB_TYPE_MODULE_2:

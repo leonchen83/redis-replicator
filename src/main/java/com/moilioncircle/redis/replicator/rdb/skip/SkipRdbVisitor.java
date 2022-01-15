@@ -16,22 +16,23 @@
 
 package com.moilioncircle.redis.replicator.rdb.skip;
 
+import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
+
+import java.io.IOException;
+import java.util.NoSuchElementException;
+
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.datatype.Function;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
-
-import java.io.IOException;
-import java.util.NoSuchElementException;
-
-import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
-import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
-import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 
 /**
  * @author Leon Chen
@@ -41,6 +42,12 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
 
     public SkipRdbVisitor(Replicator replicator) {
         super(replicator);
+    }
+    
+    @Override
+    public Function applyFunction(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
     }
 
     @Override
@@ -224,12 +231,24 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         parser.rdbLoadPlainStringObject();
         return null;
     }
+    
+    @Override
+    public Event applyZSetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        // TODO
+        return null;
+    }
 
     @Override
     public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         parser.rdbLoadPlainStringObject();
+        return null;
+    }
+    
+    @Override
+    public Event applyHashListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        // TODO
         return null;
     }
 
@@ -241,6 +260,12 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         for (long i = 0; i < len; i++) {
             parser.rdbGenericLoadStringObject();
         }
+        return null;
+    }
+    
+    @Override
+    public Event applyListQuickList2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        // TODO
         return null;
     }
 

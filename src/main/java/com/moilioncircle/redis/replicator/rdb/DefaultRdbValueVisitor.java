@@ -1,19 +1,12 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.datatype.Module;
-import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
-import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
-import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
-import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
-import com.moilioncircle.redis.replicator.util.ByteArrayList;
-import com.moilioncircle.redis.replicator.util.ByteArrayMap;
-import com.moilioncircle.redis.replicator.util.ByteArraySet;
-import com.moilioncircle.redis.replicator.util.Strings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
+import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
+import static com.moilioncircle.redis.replicator.Constants.STREAM_ITEM_FLAG_DELETED;
+import static com.moilioncircle.redis.replicator.Constants.STREAM_ITEM_FLAG_SAMEFIELDS;
+import static com.moilioncircle.redis.replicator.rdb.BaseRdbParser.StringHelper.listPackEntry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,12 +18,20 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
-import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
-import static com.moilioncircle.redis.replicator.Constants.STREAM_ITEM_FLAG_DELETED;
-import static com.moilioncircle.redis.replicator.Constants.STREAM_ITEM_FLAG_SAMEFIELDS;
-import static com.moilioncircle.redis.replicator.rdb.BaseRdbParser.StringHelper.listPackEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
+import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
+import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
+import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
+import com.moilioncircle.redis.replicator.util.ByteArrayList;
+import com.moilioncircle.redis.replicator.util.ByteArrayMap;
+import com.moilioncircle.redis.replicator.util.ByteArraySet;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
@@ -266,6 +267,12 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
         }
         return (T) zset;
     }
+    
+    @Override
+    public <T> T applyZSetListPack(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 
     @Override
     public <T> T applyHashZipList(RedisInputStream in, int version) throws IOException {
@@ -293,6 +300,12 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
         }
         return (T) map;
     }
+    
+    @Override
+    public <T> T applyHashListPack(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 
     @Override
     public <T> T applyListQuickList(RedisInputStream in, int version) throws IOException {
@@ -316,6 +329,12 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
             }
         }
         return (T) list;
+    }
+    
+    @Override
+    public <T> T applyListQuickList2(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
     }
 
     @Override

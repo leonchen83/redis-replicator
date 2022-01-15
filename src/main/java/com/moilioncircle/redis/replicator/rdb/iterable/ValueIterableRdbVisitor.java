@@ -16,6 +16,25 @@
 
 package com.moilioncircle.redis.replicator.rdb.iterable;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
@@ -28,22 +47,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
-import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
 
 /**
  * @author Leon Chen
@@ -166,6 +169,18 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         o12.setValue(valueVisitor.applyZSetZipList(in, version));
         return context.valueOf(o12);
     }
+    
+    @Override
+    public Event applyZSetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Iterator<ZSetEntry>> o17 = new KeyStringValueZSetEntryIterator();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+    
+        o17.setValueRdbType(RDB_TYPE_ZSET_LISTPACK);
+        o17.setKey(key);
+        o17.setValue(valueVisitor.applyZSetListPack(in, version));
+        return context.valueOf(o17);
+    }
 
     @Override
     public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
@@ -178,6 +193,18 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         o13.setValue(valueVisitor.applyHashZipList(in, version));
         return context.valueOf(o13);
     }
+    
+    @Override
+    public Event applyHashListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Iterator<Map.Entry<byte[], byte[]>>> o16 = new KeyStringValueMapEntryIterator();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+    
+        o16.setValueRdbType(RDB_TYPE_HASH_LISTPACK);
+        o16.setKey(key);
+        o16.setValue(valueVisitor.applyHashListPack(in, version));
+        return context.valueOf(o16);
+    }
 
     @Override
     public Event applyListQuickList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
@@ -189,5 +216,17 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         o14.setKey(key);
         o14.setValue(valueVisitor.applyListQuickList(in, version));
         return context.valueOf(o14);
+    }
+    
+    @Override
+    public Event applyListQuickList2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Iterator<byte[]>> o18 = new KeyStringValueByteArrayIterator();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+    
+        o18.setValueRdbType(RDB_TYPE_LIST_QUICKLIST_2);
+        o18.setKey(key);
+        o18.setValue(valueVisitor.applyListQuickList2(in, version));
+        return context.valueOf(o18);
     }
 }

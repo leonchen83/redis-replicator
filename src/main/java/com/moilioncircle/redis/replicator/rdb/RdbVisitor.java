@@ -16,12 +16,13 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import java.io.IOException;
+
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
-
-import java.io.IOException;
+import com.moilioncircle.redis.replicator.rdb.datatype.Function;
 
 /**
  * @author Leon Chen
@@ -41,6 +42,13 @@ public abstract class RdbVisitor {
     }
 
     public int applyType(RedisInputStream in) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+
+    /*
+     * Function
+     */
+    public Function applyFunction(RedisInputStream in, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
@@ -131,12 +139,24 @@ public abstract class RdbVisitor {
     public Event applyZSetZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
+    
+    public Event applyZSetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
 
     public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
+    
+    public Event applyHashListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
 
     public Event applyListQuickList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+    
+    public Event applyListQuickList2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 

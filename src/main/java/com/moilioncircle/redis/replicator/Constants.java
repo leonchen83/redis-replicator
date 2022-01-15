@@ -54,10 +54,11 @@ public class Constants {
     public static final int RDB_ENC_INT16 = 1;
     public static final int RDB_ENC_INT32 = 2;
     public static final int RDB_ENC_LZF = 3;
-
+    
     /**
      * rdb protocol
      */
+    public static final int RDB_OPCODE_FUNCTION = 246;
     public static final int RDB_OPCODE_MODULE_AUX = 247;
     public static final int RDB_OPCODE_IDLE = 248;
     public static final int RDB_OPCODE_FREQ = 249;
@@ -86,6 +87,9 @@ public class Constants {
     public static final int RDB_TYPE_HASH_ZIPLIST = 13;
     public static final int RDB_TYPE_LIST_QUICKLIST = 14;
     public static final int RDB_TYPE_STREAM_LISTPACKS = 15;
+    public static final int RDB_TYPE_HASH_LISTPACK = 16;
+    public static final int RDB_TYPE_ZSET_LISTPACK = 17;
+    public static final int RDB_TYPE_LIST_QUICKLIST_2 = 18;
 
     /**
      * Module serialized values sub opcodes

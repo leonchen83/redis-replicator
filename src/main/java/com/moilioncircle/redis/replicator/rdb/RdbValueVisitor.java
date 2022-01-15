@@ -16,9 +16,9 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-
 import java.io.IOException;
+
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
 
 /**
  * @author Leon Chen
@@ -65,12 +65,24 @@ public abstract class RdbValueVisitor {
     public <T> T applyZSetZipList(RedisInputStream in, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
+    
+    public <T> T applyZSetListPack(RedisInputStream in, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
 
     public <T> T applyHashZipList(RedisInputStream in, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
+    
+    public <T> T applyHashListPack(RedisInputStream in, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
 
     public <T> T applyListQuickList(RedisInputStream in, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+    
+    public <T> T applyListQuickList2(RedisInputStream in, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 

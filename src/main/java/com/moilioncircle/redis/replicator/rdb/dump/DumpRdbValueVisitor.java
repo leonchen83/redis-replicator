@@ -278,6 +278,12 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
         }
         return (T) listener.getBytes();
     }
+    
+    @Override
+    public <T> T applyZSetListPack(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 
     @Override
     public <T> T applyHashZipList(RedisInputStream in, int version) throws IOException {
@@ -289,6 +295,12 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             replicator.removeRawByteListener(listener);
         }
         return (T) listener.getBytes();
+    }
+    
+    @Override
+    public <T> T applyHashListPack(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
     }
 
     @Override
@@ -336,6 +348,12 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             }
             return (T) listener.getBytes();
         }
+    }
+    
+    @Override
+    public <T> T applyListQuickList2(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
     }
 
     @Override

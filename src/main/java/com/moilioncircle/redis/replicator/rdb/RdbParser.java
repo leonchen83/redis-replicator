@@ -16,33 +16,23 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.AbstractReplicator;
-import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
-import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
-import com.moilioncircle.redis.replicator.rdb.datatype.DB;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_AUX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME_MS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_MODULE_AUX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
@@ -52,9 +42,23 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTP
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.util.Tuples.of;
+
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.moilioncircle.redis.replicator.AbstractReplicator;
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
+import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 
 /**
  * Redis RDB format
@@ -178,6 +182,9 @@ public class RdbParser {
                 case RDB_OPCODE_MODULE_AUX:
                     event = rdbVisitor.applyModuleAux(in, version);
                     break;
+                case RDB_OPCODE_FUNCTION:
+                    event = rdbVisitor.applyFunction(in, version);
+                    break;
                 case RDB_OPCODE_RESIZEDB:
                     rdbVisitor.applyResizeDB(in, version, kv);
                     break;
@@ -220,11 +227,20 @@ public class RdbParser {
                 case RDB_TYPE_ZSET_ZIPLIST:
                     event = rdbVisitor.applyZSetZipList(in, version, kv);
                     break;
+                case RDB_TYPE_ZSET_LISTPACK:
+                    event = rdbVisitor.applyZSetListPack(in, version, kv);
+                    break;
                 case RDB_TYPE_HASH_ZIPLIST:
                     event = rdbVisitor.applyHashZipList(in, version, kv);
                     break;
+                case RDB_TYPE_HASH_LISTPACK:
+                    event = rdbVisitor.applyHashListPack(in, version, kv);
+                    break;
                 case RDB_TYPE_LIST_QUICKLIST:
                     event = rdbVisitor.applyListQuickList(in, version, kv);
+                    break;
+                case RDB_TYPE_LIST_QUICKLIST_2:
+                    event = rdbVisitor.applyListQuickList2(in, version, kv);
                     break;
                 case RDB_TYPE_MODULE:
                     event = rdbVisitor.applyModule(in, version, kv);

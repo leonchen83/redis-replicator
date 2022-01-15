@@ -16,12 +16,7 @@
 
 package com.moilioncircle.redis.replicator.rdb.iterable;
 
-import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
-import com.moilioncircle.redis.replicator.rdb.DefaultRdbValueVisitor;
-import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
-import com.moilioncircle.redis.replicator.util.Strings;
+import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,7 +24,12 @@ import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
+import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
+import com.moilioncircle.redis.replicator.rdb.DefaultRdbValueVisitor;
+import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
@@ -332,6 +332,12 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
         };
         return (T) val;
     }
+    
+    @Override
+    public <T> T applyZSetListPack(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 
     @Override
     public <T> T applyHashZipList(RedisInputStream in, int version) throws IOException {
@@ -375,6 +381,12 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
         };
         return (T) val;
     }
+    
+    @Override
+    public <T> T applyHashListPack(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 
     @Override
     public <T> T applyListQuickList(RedisInputStream in, int version) throws IOException {
@@ -383,6 +395,12 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
         long len = parser.rdbLoadLen().len;
         Iterator<byte[]> val = new QuickListIter(len, parser);
         return (T) val;
+    }
+    
+    @Override
+    public <T> T applyListQuickList2(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
     }
 
     private static abstract class Iter<T> implements Iterator<T> {

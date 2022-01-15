@@ -16,25 +16,13 @@
 
 package com.moilioncircle.redis.replicator.rdb.dump.parser;
 
-import com.moilioncircle.redis.replicator.Replicator;
-import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.DefaultRdbValueVisitor;
-import com.moilioncircle.redis.replicator.rdb.RdbValueVisitor;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs;
-import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
-import com.moilioncircle.redis.replicator.util.ByteArray;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Objects;
-
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLIST_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
@@ -44,7 +32,22 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTP
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Objects;
+
+import com.moilioncircle.redis.replicator.Replicator;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.DefaultRdbValueVisitor;
+import com.moilioncircle.redis.replicator.rdb.RdbValueVisitor;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
+import com.moilioncircle.redis.replicator.util.ByteArray;
 
 /**
  * @author Leon Chen
@@ -90,10 +93,16 @@ public class DefaultDumpValueParser implements DumpValueParser {
                     return KeyValuePairs.set(kv, valueVisitor.applySetIntSet(in, 0));
                 case RDB_TYPE_ZSET_ZIPLIST:
                     return KeyValuePairs.zset(kv, valueVisitor.applyZSetZipList(in, 0));
+                case RDB_TYPE_ZSET_LISTPACK:
+                    return KeyValuePairs.zset(kv, valueVisitor.applyZSetListPack(in, 0));
                 case RDB_TYPE_HASH_ZIPLIST:
                     return KeyValuePairs.hash(kv, valueVisitor.applyHashZipList(in, 0));
+                case RDB_TYPE_HASH_LISTPACK:
+                    return KeyValuePairs.hash(kv, valueVisitor.applyHashListPack(in, 0));
                 case RDB_TYPE_LIST_QUICKLIST:
                     return KeyValuePairs.list(kv, valueVisitor.applyListQuickList(in, 0));
+                case RDB_TYPE_LIST_QUICKLIST_2:
+                    return KeyValuePairs.list(kv, valueVisitor.applyListQuickList2(in, 0));
                 case RDB_TYPE_MODULE:
                     return KeyValuePairs.module(kv, valueVisitor.applyModule(in, 0));
                 case RDB_TYPE_MODULE_2:

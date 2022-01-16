@@ -1,5 +1,7 @@
 ### 3.6.0
 
+Jdk 17 support.  
+
 Redis 7.0 support.  
   
 1. Add support for Rdb event `RDB_OPCODE_FUNCTION`.

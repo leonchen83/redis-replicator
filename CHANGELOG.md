@@ -1,3 +1,16 @@
+### 3.6.0
+
+Redis 7.0 support.  
+  
+1. Add support for Rdb event `RDB_OPCODE_FUNCTION`.
+2. Add support for Rdb event `RDB_TYPE_HASH_LISTPACK`.
+3. Add support for Rdb event `RDB_TYPE_ZSET_LISTPACK`.
+4. Add support for Rdb event `RDB_TYPE_LIST_QUICKLIST_2`.
+
+Bug fix.  
+  
+Fix `ValueIterableEventListener` NPE bug.  
+
 ### 3.5.5
 
 Optimize `DumpRdbValueVisitor` memory usage.  

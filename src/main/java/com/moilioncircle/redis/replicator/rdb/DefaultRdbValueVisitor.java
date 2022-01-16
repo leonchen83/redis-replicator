@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.datatype.Function;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
@@ -49,6 +50,20 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
 
     public DefaultRdbValueVisitor(final Replicator replicator) {
         this.replicator = replicator;
+    }
+    
+    @Override
+    public <T> T applyFunction(RedisInputStream in, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        Function function = new Function();
+        function.setName(parser.rdbLoadPlainStringObject().first());
+        function.setEngineName(parser.rdbLoadPlainStringObject().first());
+        long hasDesc = parser.rdbLoadLen().len;
+        if (hasDesc == 1) {
+            function.setDescription(parser.rdbLoadPlainStringObject().first());
+        }
+        function.setCode(parser.rdbLoadPlainStringObject().first());
+        return (T) function;
     }
 
     @Override

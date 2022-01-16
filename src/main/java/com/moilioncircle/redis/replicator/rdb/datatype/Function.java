@@ -24,4 +24,41 @@ import com.moilioncircle.redis.replicator.event.AbstractEvent;
  */
 public class Function extends AbstractEvent {
     private static final long serialVersionUID = 1L;
+    
+    private byte[] name;
+    private byte[] engineName;
+    private byte[] description;
+    private byte[] code;
+    
+    public byte[] getName() {
+        return name;
+    }
+    
+    public void setName(byte[] name) {
+        this.name = name;
+    }
+    
+    public byte[] getEngineName() {
+        return engineName;
+    }
+    
+    public void setEngineName(byte[] engineName) {
+        this.engineName = engineName;
+    }
+    
+    public byte[] getDescription() {
+        return description;
+    }
+    
+    public void setDescription(byte[] description) {
+        this.description = description;
+    }
+    
+    public byte[] getCode() {
+        return code;
+    }
+    
+    public void setCode(byte[] code) {
+        this.code = code;
+    }
 }

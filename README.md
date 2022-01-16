@@ -46,6 +46,8 @@ Table of Contents([中文说明](./README.zh_CN.md))
       * [5.9. Redis6 support](#59-redis6-support)
          * [5.9.1. SSL support](#591-ssl-support)
          * [5.9.2. ACL support](#592-acl-support)
+      * [5.10. Redis7 support](#510-redis7-support)
+        * [5.10.1. Function](#5101-function)
    * [6. Contributors](#6-contributors)
    * [7. References](#7-references)
    * [8. Supported by](#8-supported-by)
@@ -87,7 +89,7 @@ redis 2.6 - 6.2
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.5.5</version>
+        <version>3.6.0</version>
     </dependency>
 ```
 
@@ -579,6 +581,51 @@ If you don't want to use `System.setProperty` you can programing as following
 
 ```
 
+## 5.10. Redis7 support
+
+### 5.10.1. Function
+
+Since redis 7.0 add `function` support. and `function` structure stored in rdb file. we can use following method to parse `function`.
+
+```java  
+
+    Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+    replicator.addEventListener(new EventListener() {
+        @Override
+        public void onEvent(Replicator replicator, Event event) {
+            if (event instanceof Function) {
+                Function function = (Function) event;
+                function.getName();
+                function.getEngineName();
+                function.getDescription(); // nullable
+                function.getCode();
+                    
+                // your code goes here
+            }
+        }
+    });
+    replicator.open();
+```
+
+you can also parse `function` to `serialized` data so that use `FUNCTION RESTORE` to restore `serialized` data to target redis
+
+```java  
+
+    Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+    replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+    replicator.addEventListener(new EventListener() {
+        @Override
+        public void onEvent(Replicator replicator, Event event) {
+            if (event instanceof DumpFunction) {
+                DumpFunction function = (DumpFunction) event;
+                byte[] serialized = function.getSerialized();
+                // your code goes here
+                // you can use FUNCTION RESTORE to restore above serialized data to target redis
+            }
+        }
+    });
+    replicator.open();
+```
 # 6. Contributors  
 * [Leon Chen](https://github.com/leonchen83)  
 * [Adrian Yao](https://github.com/adrianyao89)  

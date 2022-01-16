@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.rdb.dump.parser;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
@@ -43,8 +44,10 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.RdbValueVisitor;
+import com.moilioncircle.redis.replicator.rdb.datatype.Function;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpFunction;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbValueVisitor;
@@ -77,11 +80,34 @@ public class IterableDumpValueParser implements DumpValueParser {
         this.valueVisitor = new ValueIterableRdbValueVisitor(replicator);
     }
 
+    @Override
     public void parse(DumpKeyValuePair kv, EventListener listener) {
         Objects.requireNonNull(listener);
         new ValueIterableEventListener(order, batchSize, listener).onEvent(replicator, parse(kv));
     }
-
+    
+    @Override
+    public void parse(DumpFunction function, EventListener listener) {
+        Objects.requireNonNull(listener);
+        new ValueIterableEventListener(order, batchSize, listener).onEvent(replicator, parse(function));
+    }
+    
+    @Override
+    public Function parse(DumpFunction function) {
+        Objects.requireNonNull(function);
+        try (RedisInputStream in = new RedisInputStream(new ByteArray(function.getSerialized()))) {
+            int valueType = in.read();
+            if (valueType == RDB_OPCODE_FUNCTION) {
+                return valueVisitor.applyFunction(in, 0);
+            } else {
+                throw new AssertionError("unexpected value type:" + valueType);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+    
+    @Override
     public KeyValuePair<?, ?> parse(DumpKeyValuePair kv) {
         Objects.requireNonNull(kv);
         try (RedisInputStream in = new RedisInputStream(new ByteArray(kv.getValue()))) {

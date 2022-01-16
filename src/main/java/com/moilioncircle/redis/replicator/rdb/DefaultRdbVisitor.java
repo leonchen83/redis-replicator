@@ -55,7 +55,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
-import com.moilioncircle.redis.replicator.rdb.datatype.Function;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
@@ -116,9 +115,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
     
     @Override
-    public Function applyFunction(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+    public Event applyFunction(RedisInputStream in, int version) throws IOException {
+        return valueVisitor.applyFunction(in, version);
     }
 
     @Override

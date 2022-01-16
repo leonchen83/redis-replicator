@@ -47,6 +47,8 @@
       * [5.9. Redis6支持](#59-redis6支持)
          * [5.9.1. SSL支持](#591-ssl支持)
          * [5.9.2. ACL支持](#592-acl支持)
+      * [5.10. Redis7支持](#510-redis7支持)
+        * [5.10.1. Function](#5101-function)
    * [6. 贡献者](#6-贡献者)
    * [7. 相关引用](#7-相关引用)
    * [8. 致谢](#8-致谢)
@@ -93,7 +95,7 @@ redis 2.6 - 6.2
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.5.5</version>
+        <version>3.6.0</version>
     </dependency>
 ```
 
@@ -110,7 +112,8 @@ redis 2.6 - 6.2
 
 |     **redis 版本**        |**redis-replicator 版本**  |  
 | ------------------------- | ------------------------- |  
-|  \[2.6, 6.2.x\]           |       \[3.5.2, \]         |  
+|  \[2.6, 7.0.x\]           |       \[3.6.0, \]         |  
+|  \[2.6, 6.2.x\]           |       \[3.5.2, 3.5.5\]    |  
 |  \[2.6, 6.2.x-RC1\]       |       \[3.5.0, 3.5.1\]    |  
 |  \[2.6, 6.0.x\]           |       \[3.4.0, 3.4.4\]    |  
 |  \[2.6, 5.0.x\]           |       \[2.6.1, 3.3.3\]    |  
@@ -585,6 +588,52 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
 
     Replicator replicator = new RedisReplicator("redis://user:pass@127.0.0.1:6379");
 
+```
+
+## 5.10. Redis7支持
+
+### 5.10.1. Function
+
+Redis 7.0 添加了 `function` 的支持. `function` 的结构存储在rdb文件中. 因此我们能用如下方式解析`function`.
+
+```java  
+
+    Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+    replicator.addEventListener(new EventListener() {
+        @Override
+        public void onEvent(Replicator replicator, Event event) {
+            if (event instanceof Function) {
+                Function function = (Function) event;
+                function.getName();
+                function.getEngineName();
+                function.getDescription(); // nullable
+                function.getCode();
+                    
+                // your code goes here
+            }
+        }
+    });
+    replicator.open();
+```
+
+也可以把 `function` 解析成 `serialized` 格式. 这样接下来我们可以用 `FUNCTION RESTORE` 命令把 `serialized` 数据迁移到目标redis
+
+```java  
+
+    Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+    replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+    replicator.addEventListener(new EventListener() {
+        @Override
+        public void onEvent(Replicator replicator, Event event) {
+            if (event instanceof DumpFunction) {
+                DumpFunction function = (DumpFunction) event;
+                byte[] serialized = function.getSerialized();
+                // your code goes here
+                // you can use FUNCTION RESTORE to restore above serialized data to target redis
+            }
+        }
+    });
+    replicator.open();
 ```
 
 # 6. 贡献者  

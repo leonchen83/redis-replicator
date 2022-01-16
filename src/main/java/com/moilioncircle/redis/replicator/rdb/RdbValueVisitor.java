@@ -25,6 +25,10 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
  * @since 3.1.0
  */
 public abstract class RdbValueVisitor {
+    
+    public <T> T applyFunction(RedisInputStream in, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
 
     public <T> T applyString(RedisInputStream in, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");

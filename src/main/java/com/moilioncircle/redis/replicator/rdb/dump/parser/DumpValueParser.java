@@ -17,7 +17,9 @@
 package com.moilioncircle.redis.replicator.rdb.dump.parser;
 
 import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.Function;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpFunction;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 
 /**
@@ -25,8 +27,12 @@ import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
  * @since 3.1.0
  */
 public interface DumpValueParser {
+    
+    Function parse(DumpFunction function);
 
     KeyValuePair<?, ?> parse(DumpKeyValuePair kv);
-
+    
     void parse(DumpKeyValuePair kv, EventListener listener);
+    
+    void parse(DumpFunction function, EventListener listener);
 }

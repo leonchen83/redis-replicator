@@ -82,7 +82,7 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
     public DumpRdbVisitor(Replicator replicator, RdbValueVisitor valueVisitor) {
         super(replicator, valueVisitor);
     }
-
+    
     @Override
     public Event applyString(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);

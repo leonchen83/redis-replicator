@@ -16,6 +16,10 @@ PSYNC2 failover example.
 
 Read and Filter AOF, Mix, RDB from File or InputStream.  
 
+### function
+
+Redis7 function example.  
+
 ### huge
 
 Handle huge KV via Socket or File.  

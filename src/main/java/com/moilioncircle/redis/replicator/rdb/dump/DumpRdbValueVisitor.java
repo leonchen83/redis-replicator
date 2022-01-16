@@ -21,6 +21,7 @@ import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAI
 import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAINER_PLAIN;
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
@@ -56,6 +57,7 @@ import com.moilioncircle.redis.replicator.rdb.BaseRdbEncoder;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbValueVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpFunction;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteArray;
@@ -116,6 +118,27 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
         super(replicator);
         this.version = version;
         this.size = size;
+    }
+    
+    @Override
+    public <T> T applyFunction(RedisInputStream in, int version) throws IOException {
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_OPCODE_FUNCTION, version);
+        replicator.addRawByteListener(listener);
+        try {
+            SkipRdbParser parser = new SkipRdbParser(in);
+            parser.rdbGenericLoadStringObject(); // name
+            parser.rdbGenericLoadStringObject(); // engine name
+            long hasDesc = parser.rdbLoadLen().len;
+            if (hasDesc == 1) {
+                parser.rdbGenericLoadStringObject(); // description
+            }
+            parser.rdbGenericLoadStringObject(); // code
+        } finally {
+            replicator.removeRawByteListener(listener);
+        }
+        DumpFunction function = new DumpFunction();
+        function.setSerialized(listener.getBytes());
+        return (T) function;
     }
 
     @Override

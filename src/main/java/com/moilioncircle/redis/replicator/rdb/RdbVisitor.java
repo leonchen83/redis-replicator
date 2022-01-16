@@ -22,7 +22,6 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
-import com.moilioncircle.redis.replicator.rdb.datatype.Function;
 
 /**
  * @author Leon Chen
@@ -48,7 +47,7 @@ public abstract class RdbVisitor {
     /*
      * Function
      */
-    public Function applyFunction(RedisInputStream in, int version) throws IOException {
+    public Event applyFunction(RedisInputStream in, int version) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 

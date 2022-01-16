@@ -16,6 +16,10 @@ PSYNC2 故障转移示例.
 
 解析AOF, RDB文件, 合并分割AOF, RDB文件, 过滤RDB文件.  
 
+### function
+
+Redis7 function 解析示例.  
+
 ### huge
 
 通过socket或文件处理大KV.  

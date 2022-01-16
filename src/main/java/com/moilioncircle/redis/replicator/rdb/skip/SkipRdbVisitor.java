@@ -46,7 +46,14 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     
     @Override
     public Function applyFunction(RedisInputStream in, int version) throws IOException {
-        // TODO
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbGenericLoadStringObject(); // name
+        parser.rdbGenericLoadStringObject(); // engine name
+        long hasDesc = parser.rdbLoadLen().len;
+        if (hasDesc == 1) {
+            parser.rdbGenericLoadStringObject(); // description
+        }
+        parser.rdbGenericLoadStringObject(); // code
         return null;
     }
 

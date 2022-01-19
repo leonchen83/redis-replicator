@@ -175,7 +175,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
         });
         String reply = Strings.toString(rawReply);
-        if ("OK".equals(reply)) return;
+        if (Objects.equals(reply, "OK")) return;
         throw new IOException("SYNC failed. reason : [" + reply + "]");
     }
     
@@ -202,7 +202,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             }
             final String reply = Strings.toString(reply());
             logger.info(reply);
-            if ("OK".equals(reply)) return;
+            if (Objects.equals(reply, "OK")) return;
             if (reply.contains("no password")) {
                 if (user == null) {
                     logger.warn("[AUTH {}] failed. {}", mask, reply);
@@ -236,7 +236,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         send("REPLCONF".getBytes(), "listening-port".getBytes(), String.valueOf(socket.getLocalPort()).getBytes());
         final String reply = Strings.toString(reply());
         logger.info(reply);
-        if ("OK".equals(reply)) return;
+        if (Objects.equals(reply, "OK")) return;
         logger.warn("[REPLCONF listening-port {}] failed. {}", socket.getLocalPort(), reply);
     }
     
@@ -246,7 +246,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         send("REPLCONF".getBytes(), "ip-address".getBytes(), socket.getLocalAddress().getHostAddress().getBytes());
         final String reply = Strings.toString(reply());
         logger.info(reply);
-        if ("OK".equals(reply)) return;
+        if (Objects.equals(reply, "OK")) return;
         //redis 3.2+
         logger.warn("[REPLCONF ip-address {}] failed. {}", socket.getLocalAddress().getHostAddress(), reply);
     }
@@ -257,7 +257,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         send("REPLCONF".getBytes(), "capa".getBytes(), cmd.getBytes());
         final String reply = Strings.toString(reply());
         logger.info(reply);
-        if ("OK".equals(reply)) return;
+        if (Objects.equals(reply, "OK")) return;
         logger.warn("[REPLCONF capa {}] failed. {}", cmd, reply);
     }
     

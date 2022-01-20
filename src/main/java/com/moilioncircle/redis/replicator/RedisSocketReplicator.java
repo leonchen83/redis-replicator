@@ -197,8 +197,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
         sendSlaveIp();
         sendSlaveCapa("eof");
         sendSlaveCapa("psync2");
-        // sendSlaveRdbOnly();
-        // sendSlaveFilter("functions");
+//        sendSlaveRdbOnly();
+//        sendSlaveFilter("functions");
     }
     
     protected void auth(String user, String password) throws IOException {
@@ -295,7 +295,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.info(reply);
         if (Objects.equals(reply, "OK")) {
             this.removeEventListener(rdbListener);
-            this.addEventListener(rdbListener);
+            if (!Strings.isEquals("", filter)) {
+                this.addEventListener(rdbListener);
+            }
             return;
         }
         logger.warn("[REPLCONF rdb-filter-only {}] failed. {}", filter, reply);

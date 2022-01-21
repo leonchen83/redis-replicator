@@ -173,9 +173,9 @@ public class Configuration {
     /**
      * @since 3.6.0
      * 
-     * filter since redis-7.0
+     * replication filter since redis-7.0
      */
-    private ReplConfFilter replConfFilter = null;
+    private ReplFilter replFilter = null;
     
     /**
      * @since 3.5.0
@@ -404,12 +404,12 @@ public class Configuration {
         return this;
     }
     
-    public ReplConfFilter getReplConfFilter() {
-        return replConfFilter;
+    public ReplFilter getReplFilter() {
+        return replFilter;
     }
     
-    public Configuration setReplConfFilter(ReplConfFilter replConfFilter) {
-        this.replConfFilter = replConfFilter;
+    public Configuration setReplFilter(ReplFilter replFilter) {
+        this.replFilter = replFilter;
         return this;
     }
     
@@ -552,7 +552,7 @@ public class Configuration {
                 ", replId='" + replId + '\'' +
                 ", replStreamDB=" + replStreamDB +
                 ", replOffset=" + replOffset +
-                ", replConfFilter=" + replConfFilter +
+                ", replFilter=" + replFilter +
                 '}';
     }
 }

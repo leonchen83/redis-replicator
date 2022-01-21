@@ -22,9 +22,9 @@ import com.moilioncircle.redis.replicator.event.EventListener;
  * @author Leon Chen
  * @since 3.6.0
  */
-public interface ReplConfFilter {
-	
-	String[] command();
-	
-	EventListener listener(Replicator replicator);
+public interface ReplFilter {
+    
+    String[] command();
+    
+    EventListener listener(Replicator replicator);
 }

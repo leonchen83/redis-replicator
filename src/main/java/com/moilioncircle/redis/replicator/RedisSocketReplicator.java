@@ -71,15 +71,15 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected int db = -1;
     protected Socket socket;
     protected ReplyParser replyParser;
+    protected EventListener replListener;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
-    protected EventListener replConfListener;
     protected XScheduledExecutorService executor;
     
     //
     protected final int port;
     protected final String host;
-    protected final ReplConfFilter replConfFilter;
+    protected final ReplFilter replFilter;
     protected final RedisSocketFactory socketFactory;
     protected final AtomicBoolean manual = new AtomicBoolean(false);
     
@@ -94,8 +94,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
         builtInCommandParserRegister();
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
-        this.replConfFilter = configuration.getReplConfFilter();
-        if (replConfFilter != null) this.replConfListener = replConfFilter.listener(this);
+        this.replFilter = configuration.getReplFilter();
+        if (replFilter != null) this.replListener = replFilter.listener(this);
     }
 
     public String getHost() {
@@ -192,8 +192,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
         sendSlaveIp();
         sendSlaveCapa("eof");
         sendSlaveCapa("psync2");
-        if (this.replConfFilter != null) {
-            sendSlaveFilter(replConfFilter);
+        if (this.replFilter != null) {
+            sendSlaveFilter(replFilter);
         }
     }
     
@@ -269,7 +269,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.warn("[REPLCONF capa {}] failed. {}", cmd, reply);
     }
     
-    protected void sendSlaveFilter(ReplConfFilter filter) throws IOException {
+    protected void sendSlaveFilter(ReplFilter filter) throws IOException {
         String[] command = filter.command();
         String info = String.join(" ", command);
         logger.info(info);
@@ -281,9 +281,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
         final String reply = Strings.toString(reply());
         logger.info(reply);
         if (Objects.equals(reply, "OK")) {
-            if (replConfListener != null) {
-                this.removeEventListener(replConfListener);
-                this.addEventListener(replConfListener);
+            if (replListener != null) {
+                this.removeEventListener(replListener);
+                this.addEventListener(replListener);
             }
             return;
         }

@@ -552,6 +552,7 @@ public class Configuration {
                 ", replId='" + replId + '\'' +
                 ", replStreamDB=" + replStreamDB +
                 ", replOffset=" + replOffset +
+                ", replConfFilter=" + replConfFilter +
                 '}';
     }
 }

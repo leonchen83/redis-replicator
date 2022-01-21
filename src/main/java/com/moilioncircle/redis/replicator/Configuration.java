@@ -171,6 +171,13 @@ public class Configuration {
     private final AtomicLong replOffset = new AtomicLong(-1);
     
     /**
+     * @since 3.6.0
+     * 
+     * filter since redis-7.0
+     */
+    private ReplConfFilter replConfFilter = null;
+    
+    /**
      * @since 3.5.0
      * heartbeat scheduled executor
      */
@@ -394,6 +401,15 @@ public class Configuration {
     
     public Configuration setScheduledExecutor(ScheduledExecutorService scheduledExecutor) {
         this.scheduledExecutor = scheduledExecutor;
+        return this;
+    }
+    
+    public ReplConfFilter getReplConfFilter() {
+        return replConfFilter;
+    }
+    
+    public Configuration setReplConfFilter(ReplConfFilter replConfFilter) {
+        this.replConfFilter = replConfFilter;
         return this;
     }
     

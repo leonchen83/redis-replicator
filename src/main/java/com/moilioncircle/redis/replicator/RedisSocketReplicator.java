@@ -48,10 +48,8 @@ import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
 import com.moilioncircle.redis.replicator.cmd.impl.SelectCommand;
-import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
-import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
 import com.moilioncircle.redis.replicator.io.AsyncBufferedInputStream;
 import com.moilioncircle.redis.replicator.io.RateLimitInputStream;
@@ -75,20 +73,15 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected ReplyParser replyParser;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
+    protected EventListener replConfListener;
     protected XScheduledExecutorService executor;
     
     //
     protected final int port;
     protected final String host;
+    protected final ReplConfFilter replConfFilter;
     protected final RedisSocketFactory socketFactory;
     protected final AtomicBoolean manual = new AtomicBoolean(false);
-    
-    protected final EventListener rdbListener = new EventListener() {
-        @Override
-        public void onEvent(Replicator replicator, Event event) {
-            if (event instanceof PostRdbSyncEvent) Replicators.closeQuietly(replicator);
-        }
-    };
     
     public RedisSocketReplicator(String host, int port, Configuration configuration) {
         Objects.requireNonNull(host);
@@ -101,6 +94,8 @@ public class RedisSocketReplicator extends AbstractReplicator {
         builtInCommandParserRegister();
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
+        this.replConfFilter = configuration.getReplConfFilter();
+        if (replConfFilter != null) this.replConfListener = replConfFilter.listener(this);
     }
 
     public String getHost() {
@@ -197,8 +192,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
         sendSlaveIp();
         sendSlaveCapa("eof");
         sendSlaveCapa("psync2");
-//        sendSlaveRdbOnly();
-//        sendSlaveFilter("functions");
+        if (this.replConfFilter != null) {
+            sendSlaveFilter(replConfFilter);
+        }
     }
     
     protected void auth(String user, String password) throws IOException {
@@ -273,34 +269,25 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.warn("[REPLCONF capa {}] failed. {}", cmd, reply);
     }
     
-    protected void sendSlaveRdbOnly() throws IOException {
-        // REPLCONF rdb-only 1
-        logger.info("REPLCONF rdb-only 1");
-        send("REPLCONF".getBytes(), "rdb-only".getBytes(), "1".getBytes());
-        final String reply = Strings.toString(reply());
-        logger.info(reply);
-        if (Objects.equals(reply, "OK")) {
-            this.removeEventListener(rdbListener);
-            this.addEventListener(rdbListener);
-            return;
+    protected void sendSlaveFilter(ReplConfFilter filter) throws IOException {
+        String[] command = filter.command();
+        String info = String.join(" ", command);
+        logger.info(info);
+        byte[][] args = new byte[command.length - 1][];
+        for (int i = 1, j = 0; i < command.length; i++) {
+            args[j++] = command[i].getBytes();
         }
-        logger.warn("[REPLCONF rdb-only 1] failed. {}", reply);
-    }
-    
-    protected void sendSlaveFilter(String filter) throws IOException {
-        // REPLCONF rdb-filter-only ${filter}
-        logger.info("REPLCONF rdb-filter-only {}", filter);
-        send("REPLCONF".getBytes(), "rdb-filter-only".getBytes(), filter.getBytes());
+        send(command[0].getBytes(), args);
         final String reply = Strings.toString(reply());
         logger.info(reply);
         if (Objects.equals(reply, "OK")) {
-            this.removeEventListener(rdbListener);
-            if (!Strings.isEquals("", filter)) {
-                this.addEventListener(rdbListener);
+            if (replConfListener != null) {
+                this.removeEventListener(replConfListener);
+                this.addEventListener(replConfListener);
             }
             return;
         }
-        logger.warn("[REPLCONF rdb-filter-only {}] failed. {}", filter, reply);
+        logger.warn("[{}] failed. {}", info, reply);
     }
     
     protected void heartbeat() {

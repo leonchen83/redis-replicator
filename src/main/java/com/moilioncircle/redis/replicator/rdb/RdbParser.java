@@ -147,7 +147,8 @@ public class RdbParser {
          * ----------------------------
          */
         long offset = 0L;
-        this.replicator.submitEvent(new PreRdbSyncEvent(), of(0L, 0L));
+        boolean discard = this.replicator.getConfiguration().isDiscardRdbEvent();
+        if (!discard) this.replicator.submitEvent(new PreRdbSyncEvent(), of(0L, 0L));
         in.mark();
         rdbVisitor.applyMagic(in);
         int version = rdbVisitor.applyVersion(in);
@@ -195,7 +196,7 @@ public class RdbParser {
                     long checksum = rdbVisitor.applyEof(in, version);
                     long start = offset;
                     offset += in.unmark();
-                    this.replicator.submitEvent(new PostRdbSyncEvent(checksum), of(start, offset));
+                    if (!discard) this.replicator.submitEvent(new PostRdbSyncEvent(checksum), of(start, offset));
                     break loop;
                 case RDB_TYPE_STRING:
                     event = rdbVisitor.applyString(in, version, kv);
@@ -258,7 +259,7 @@ public class RdbParser {
             offset += in.unmark();
             if (event == null) continue;
             if (replicator.verbose() && logger.isDebugEnabled()) logger.debug("{}", event);
-            this.replicator.submitEvent(event, of(start, offset));
+            if (!discard) this.replicator.submitEvent(event, of(start, offset));
         }
         return offset;
     }

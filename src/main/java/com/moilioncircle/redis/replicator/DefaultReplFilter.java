@@ -25,6 +25,20 @@ import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
  * @since 3.6.0
  */
 public enum DefaultReplFilter implements ReplFilter {
+    
+    AOF {
+        @Override
+        public String[] command() {
+            return new String[]{"REPLCONF", "rdb-filter-only", ""};
+        }
+        
+        @Override
+        public EventListener listener(Replicator replicator) {
+            replicator.getConfiguration().setDiscardRdbEvent(true);
+            return null;
+        }
+    },
+    
     RDB {
         @Override
         public String[] command() {
@@ -41,6 +55,7 @@ public enum DefaultReplFilter implements ReplFilter {
             };
         }
     },
+    
     FUNCTION {
         @Override
         public String[] command() {
@@ -55,18 +70,6 @@ public enum DefaultReplFilter implements ReplFilter {
                     if (event instanceof PostRdbSyncEvent) Replicators.closeQuietly(replicator);
                 }
             };
-        }
-    },
-    AOF {
-        @Override
-        public String[] command() {
-            return new String[]{"REPLCONF", "rdb-filter-only", ""};
-        }
-        
-        @Override
-        public EventListener listener(Replicator replicator) {
-            replicator.getConfiguration().setDiscardRdbEvent(true);
-            return null;
         }
     };
 }

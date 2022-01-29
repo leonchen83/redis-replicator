@@ -71,7 +71,6 @@ public class RedisSocketReplicator extends AbstractReplicator {
     protected int db = -1;
     protected Socket socket;
     protected ReplyParser replyParser;
-    protected EventListener replListener;
     protected ScheduledFuture<?> heartbeat;
     protected RedisOutputStream outputStream;
     protected XScheduledExecutorService executor;
@@ -79,7 +78,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
     //
     protected final int port;
     protected final String host;
-    protected final ReplFilter replFilter;
+    protected final ReplFilter[] replFilters;
     protected final RedisSocketFactory socketFactory;
     protected final AtomicBoolean manual = new AtomicBoolean(false);
     
@@ -94,8 +93,12 @@ public class RedisSocketReplicator extends AbstractReplicator {
         builtInCommandParserRegister();
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
-        this.replFilter = configuration.getReplFilter();
-        if (replFilter != null) this.replListener = replFilter.listener(this);
+        this.replFilters = configuration.getReplFilters();
+        if (this.replFilters != null) {
+            for (int i = 0; i < replFilters.length; i++) {
+                replFilters[i] = new InitializedReplFilter(replFilters[i], this);
+            }
+        }
     }
 
     public String getHost() {
@@ -192,8 +195,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         sendSlaveIp();
         sendSlaveCapa("eof");
         sendSlaveCapa("psync2");
-        if (this.replFilter != null) {
-            sendSlaveFilter(replFilter);
+        if (this.replFilters != null) {
+            for (ReplFilter filter : this.replFilters) {
+                sendSlaveFilter(filter);
+            }
         }
     }
     
@@ -281,9 +286,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
         final String reply = Strings.toString(reply());
         logger.info(reply);
         if (Objects.equals(reply, "OK")) {
-            if (replListener != null) {
-                this.removeEventListener(replListener);
-                this.addEventListener(replListener);
+            EventListener listener = filter.listener(this);
+            if (listener != null) {
+                this.removeEventListener(listener);
+                this.addEventListener(listener);
             }
             return;
         }

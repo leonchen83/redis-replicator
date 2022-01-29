@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
@@ -175,7 +176,7 @@ public class Configuration {
      * 
      * replication filter since redis-7.0
      */
-    private ReplFilter replFilter = null;
+    private ReplFilter[] replFilters = new ReplFilter[0];
     
     /**
      * @since 3.5.0
@@ -404,12 +405,12 @@ public class Configuration {
         return this;
     }
     
-    public ReplFilter getReplFilter() {
-        return replFilter;
+    public ReplFilter[] getReplFilters() {
+        return replFilters;
     }
     
-    public Configuration setReplFilter(ReplFilter replFilter) {
-        this.replFilter = replFilter;
+    public Configuration setReplFilters(ReplFilter... replFilters) {
+        this.replFilters = replFilters;
         return this;
     }
     
@@ -552,7 +553,7 @@ public class Configuration {
                 ", replId='" + replId + '\'' +
                 ", replStreamDB=" + replStreamDB +
                 ", replOffset=" + replOffset +
-                ", replFilter=" + replFilter +
+                ", replFilters=" + Arrays.toString(replFilters) +
                 '}';
     }
 }

@@ -22,11 +22,22 @@ import com.moilioncircle.redis.replicator.event.EventListener;
  * @author Leon Chen
  * @since 3.6.0
  */
-public interface ReplFilter {
+class InitializedReplFilter implements ReplFilter {
+    private final String[] command;
+    private final EventListener listener;
     
-    String[] command();
+    public InitializedReplFilter(ReplFilter filter, Replicator replicator) {
+        this.command = filter.command();
+        this.listener = filter.listener(replicator);
+    }
     
-    default EventListener listener(Replicator replicator) {
-        return null;
+    @Override
+    public String[] command() {
+        return command;
+    }
+    
+    @Override
+    public EventListener listener(Replicator replicator) {
+        return listener;
     }
 }

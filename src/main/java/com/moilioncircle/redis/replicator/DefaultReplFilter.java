@@ -31,7 +31,7 @@ public enum DefaultReplFilter implements ReplFilter {
         public String[] command() {
             return new String[]{"REPLCONF", "rdb-filter-only", ""};
         }
-        
+    
         @Override
         public EventListener listener(Replicator replicator) {
             replicator.getConfiguration().setDiscardRdbEvent(true);
@@ -39,27 +39,17 @@ public enum DefaultReplFilter implements ReplFilter {
         }
     },
     
-    RDB {
-        @Override
-        public String[] command() {
-            return new String[]{"REPLCONF", "rdb-only", "1"};
-        }
-        
-        @Override
-        public EventListener listener(Replicator replicator) {
-            return new EventListener() {
-                @Override
-                public void onEvent(Replicator replicator, Event event) {
-                    if (event instanceof PostRdbSyncEvent) Replicators.closeQuietly(replicator);
-                }
-            };
-        }
-    },
-    
     FUNCTION {
         @Override
         public String[] command() {
             return new String[]{"REPLCONF", "rdb-filter-only", "functions"};
+        }
+    },
+    
+    RDB {
+        @Override
+        public String[] command() {
+            return new String[]{"REPLCONF", "rdb-only", "1"};
         }
         
         @Override

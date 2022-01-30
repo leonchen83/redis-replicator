@@ -44,6 +44,16 @@ public enum DefaultReplFilter implements ReplFilter {
         public String[] command() {
             return new String[]{"REPLCONF", "rdb-filter-only", "functions"};
         }
+    
+        @Override
+        public EventListener listener(Replicator replicator) {
+            return new EventListener() {
+                @Override
+                public void onEvent(Replicator replicator, Event event) {
+                    if (event instanceof PostRdbSyncEvent) Replicators.closeQuietly(replicator);
+                }
+            };
+        }
     },
     
     RDB {

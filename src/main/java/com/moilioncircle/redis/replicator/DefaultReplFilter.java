@@ -31,12 +31,6 @@ public enum DefaultReplFilter implements ReplFilter {
         public String[] command() {
             return new String[]{"REPLCONF", "rdb-filter-only", ""};
         }
-    
-        @Override
-        public EventListener listener(Replicator replicator) {
-            replicator.getConfiguration().setDiscardRdbEvent(true);
-            return null;
-        }
     },
     
     FUNCTION {

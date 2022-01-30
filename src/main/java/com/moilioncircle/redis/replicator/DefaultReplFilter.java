@@ -33,12 +33,12 @@ public enum DefaultReplFilter implements ReplFilter {
         }
     },
     
-    FUNCTION {
+    RDB {
         @Override
         public String[] command() {
-            return new String[]{"REPLCONF", "rdb-filter-only", "functions"};
+            return new String[]{"REPLCONF", "rdb-only", "1"};
         }
-    
+        
         @Override
         public EventListener listener(Replicator replicator) {
             return new EventListener() {
@@ -50,12 +50,12 @@ public enum DefaultReplFilter implements ReplFilter {
         }
     },
     
-    RDB {
+    FUNCTION {
         @Override
         public String[] command() {
-            return new String[]{"REPLCONF", "rdb-only", "1"};
+            return new String[]{"REPLCONF", "rdb-filter-only", "functions"};
         }
-        
+    
         @Override
         public EventListener listener(Replicator replicator) {
             return new EventListener() {

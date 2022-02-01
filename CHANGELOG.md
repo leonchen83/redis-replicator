@@ -4,11 +4,19 @@ Jdk 17 support.
 
 Redis 7.0 support.  
   
+RDB  
 1. Add support for Rdb event `RDB_OPCODE_FUNCTION`.
 2. Add support for Rdb event `RDB_TYPE_HASH_LISTPACK`.
 3. Add support for Rdb event `RDB_TYPE_ZSET_LISTPACK`.
 4. Add support for Rdb event `RDB_TYPE_LIST_QUICKLIST_2`.
-
+  
+AOF  
+1. Add support for `SPUBLISH` command.  
+2. Add support for `FUNCTION LOAD` command.  
+3. Add support for `FUNCTION FLUSH` command.  
+4. Add support for `FUNCTION DELETE` command.  
+5. Add support for `FUNCTION RESTORE` command.  
+  
 Bug fix.  
   
 Fix `ValueIterableEventListener` NPE bug.  

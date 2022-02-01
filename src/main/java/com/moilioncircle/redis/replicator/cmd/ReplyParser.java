@@ -16,16 +16,19 @@
 
 package com.moilioncircle.redis.replicator.cmd;
 
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.util.ByteBuilder;
-
-import java.io.IOException;
-
 import static com.moilioncircle.redis.replicator.Constants.COLON;
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
+import static com.moilioncircle.redis.replicator.Constants.HASHTAG;
 import static com.moilioncircle.redis.replicator.Constants.MINUS;
 import static com.moilioncircle.redis.replicator.Constants.PLUS;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
+
+import java.io.IOException;
+import java.util.Arrays;
+
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.util.ByteBuilder;
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
@@ -161,6 +164,21 @@ public class ReplyParser {
                             builder.put((byte) c);
                         }
                     }
+                case HASHTAG:
+                    // #TS:${timestamp}\r\n
+                    builder = ByteBuilder.allocate(128);
+                    while (true) {
+                        while ((c = in.read()) != '\r') {
+                            builder.put((byte) c);
+                        }
+                        if ((c = in.read()) == '\n') {
+                            byte[] bytes = builder.array();
+                            bytes = Arrays.copyOfRange(bytes, 3, bytes.length); // skip TS:
+                            return new TimestampEvent(Long.parseLong(Strings.toString(bytes)));
+                        } else {
+                            builder.put((byte) c);
+                        }
+                    }
                 case '\n':
                     // skip +CONTINUE\r\n[\n]
                     // skip +FULLRESYNC 8de1787ba490483314a4d30f1c628bc5025eb761 2443808505[\n]$2443808505\r\nxxxxxxxxxxxxxxxx\r\n
@@ -171,7 +189,7 @@ public class ReplyParser {
                     }
                     break;
                 default:
-                    throw new AssertionError("expect [$,:,*,+,-] but: " + (char) c);
+                    throw new AssertionError("expect [$,:,*,+,-,#] but: " + (char) c);
 
             }
         }

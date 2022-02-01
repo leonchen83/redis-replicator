@@ -11,7 +11,7 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisURI;
 
 /**
- * @author Baoyi Chen
+ * @author Leon Chen
  */
 public class ConfigurationTest {
     

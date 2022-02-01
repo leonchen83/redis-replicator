@@ -131,5 +131,6 @@ public class Constants {
     public static final byte PLUS = '+';
     public static final byte MINUS = '-';
     public static final byte COLON = ':';
+    public static final byte HASHTAG = '#'; // since redis 7.0 TS timestamp
 
 }

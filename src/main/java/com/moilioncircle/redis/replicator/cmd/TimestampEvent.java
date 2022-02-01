@@ -16,20 +16,29 @@
 
 package com.moilioncircle.redis.replicator.cmd;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.moilioncircle.redis.replicator.event.AbstractEvent;
 
 /**
  * @author Leon Chen
  * @since 3.6.0
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface CommandSpec {
-	String command();
-	String subCommand() default "";
+public class TimestampEvent extends AbstractEvent {
+    private static final long serialVersionUID = 1L;
+    
+    private long timestamp;
+    
+    public TimestampEvent() {
+    }
+    
+    public TimestampEvent(long timestamp) {
+        this.timestamp = timestamp;
+    }
+    
+    public long getTimestamp() {
+        return timestamp;
+    }
+    
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 }

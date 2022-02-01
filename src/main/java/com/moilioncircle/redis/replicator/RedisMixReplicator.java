@@ -38,6 +38,7 @@ import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.RedisCodec;
 import com.moilioncircle.redis.replicator.cmd.ReplyParser;
+import com.moilioncircle.redis.replicator.cmd.TimestampEvent;
 import com.moilioncircle.redis.replicator.event.PostCommandSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreCommandSyncEvent;
 import com.moilioncircle.redis.replicator.io.PeekableInputStream;
@@ -103,6 +104,10 @@ public class RedisMixReplicator extends AbstractReplicator {
                     final long st = configuration.getReplOffset();
                     final long ed = st + offset[0];
                     submitEvent(parser.parse(raw), of(st, ed));
+                } else if (obj instanceof TimestampEvent){
+                    final long st = configuration.getReplOffset();
+                    final long ed = st + offset[0];
+                    submitEvent((TimestampEvent)obj, of(st, ed));
                 } else {
                     logger.warn("unexpected redis reply:{}", obj);
                 }

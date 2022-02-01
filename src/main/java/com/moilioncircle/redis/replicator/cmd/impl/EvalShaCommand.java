@@ -16,10 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 2.4.7
  */
+@CommandSpec(command = "EVALSHA")
 public class EvalShaCommand extends AbstractCommand {
 
     private static final long serialVersionUID = 1L;

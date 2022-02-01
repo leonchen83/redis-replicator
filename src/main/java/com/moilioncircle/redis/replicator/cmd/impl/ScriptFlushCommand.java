@@ -16,10 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
+@CommandSpec(command = "SCRIPT", subCommand = "FLUSH")
 public class ScriptFlushCommand extends ScriptCommand {
 
     private static final long serialVersionUID = 1L;

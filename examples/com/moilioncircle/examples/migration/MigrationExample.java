@@ -33,7 +33,6 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.DefaultCommandParser;
-import com.moilioncircle.redis.replicator.cmd.parser.GeoSearchStoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.PingParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ReplConfParser;
 import com.moilioncircle.redis.replicator.event.Event;
@@ -216,7 +215,10 @@ public class MigrationExample {
         r.addCommandParser(CommandName.name("LMOVE"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("BLMOVE"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("ZDIFFSTORE"), new DefaultCommandParser());
-        r.addCommandParser(CommandName.name("GEOSEARCHSTORE"), new GeoSearchStoreParser());
+        r.addCommandParser(CommandName.name("GEOSEARCHSTORE"), new DefaultCommandParser());
+        // since redis 7.0
+        r.addCommandParser(CommandName.name("SPUBLISH"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("FUNCTION"), new DefaultCommandParser());
         return r;
     }
 

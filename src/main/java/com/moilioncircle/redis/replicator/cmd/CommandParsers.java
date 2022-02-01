@@ -16,9 +16,9 @@
 
 package com.moilioncircle.redis.replicator.cmd;
 
-import com.moilioncircle.redis.replicator.util.Strings;
-
 import java.math.BigDecimal;
+
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
@@ -45,5 +45,15 @@ public class CommandParsers {
     public static long toLong(Object object) {
         return new BigDecimal(toRune(object)).longValueExact();
     }
-
+    
+    public static CommandSpec commandSpec(Command command) {
+        if (command == null) return null;
+        return commandSpec(command.getClass());
+    }
+    
+    public static CommandSpec commandSpec(Class<? extends Command> clazz) {
+        if (clazz == null) return null;
+        if (!clazz.isAnnotationPresent(CommandSpec.class)) return null;
+        return clazz.getAnnotation(CommandSpec.class);
+    }
 }

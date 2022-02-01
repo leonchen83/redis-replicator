@@ -16,10 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
+@CommandSpec(command = "PEXPIREAT")
 public class PExpireAtCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;

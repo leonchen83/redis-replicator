@@ -16,10 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 2.6.0
  */
+@CommandSpec(command = "XDEL")
 public class XDelCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;

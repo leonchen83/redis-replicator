@@ -14,35 +14,26 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd.impl;
+package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.SPublishCommand;
 
 /**
  * @author Leon Chen
- * @version 2.1.1
- * @since 2.1.0
+ * @since 3.6.0
  */
-@CommandSpec(command = "LPUSHX")
-public class LPushXCommand extends GenericKeyCommand {
-
-    private static final long serialVersionUID = 1L;
-
-    private byte[][] values;
-
-    public LPushXCommand() {
+public class SPublishParser implements CommandParser<SPublishCommand> {
+    @Override
+    public SPublishCommand parse(Object[] command) {
+        int idx = 1;
+        byte[] channel = toBytes(command[idx]);
+        idx++;
+        byte[] message = toBytes(command[idx]);
+        idx++;
+        return new SPublishCommand(channel, message);
     }
 
-    public LPushXCommand(byte[] key, byte[][] values) {
-        super(key);
-        this.values = values;
-    }
-
-    public byte[][] getValues() {
-        return values;
-    }
-
-    public void setValues(byte[][] values) {
-        this.values = values;
-    }
 }

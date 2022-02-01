@@ -18,10 +18,13 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import java.util.List;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
+@CommandSpec(command = "BITFIELD")
 public class BitFieldCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;

@@ -20,29 +20,27 @@ import com.moilioncircle.redis.replicator.cmd.CommandSpec;
 
 /**
  * @author Leon Chen
- * @version 2.1.1
- * @since 2.1.0
+ * @since 3.6.0
  */
-@CommandSpec(command = "LPUSHX")
-public class LPushXCommand extends GenericKeyCommand {
+@CommandSpec(command = "FUNCTION", subCommand = "DELETE")
+public class FunctionDeleteCommand extends FunctionCommand {
 
     private static final long serialVersionUID = 1L;
-
-    private byte[][] values;
-
-    public LPushXCommand() {
+    
+    private byte[] libraryName;
+    
+    public FunctionDeleteCommand() {
     }
-
-    public LPushXCommand(byte[] key, byte[][] values) {
-        super(key);
-        this.values = values;
+    
+    public FunctionDeleteCommand(byte[] libraryName) {
+        this.libraryName = libraryName;
     }
-
-    public byte[][] getValues() {
-        return values;
+    
+    public byte[] getLibraryName() {
+        return libraryName;
     }
-
-    public void setValues(byte[][] values) {
-        this.values = values;
+    
+    public void setLibraryName(byte[] libraryName) {
+        this.libraryName = libraryName;
     }
 }

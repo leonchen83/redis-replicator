@@ -18,12 +18,14 @@ package com.moilioncircle.redis.replicator.cmd.impl;
 
 import java.util.Map;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
+@CommandSpec(command = "HSET")
 public class HSetCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;

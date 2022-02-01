@@ -1,9 +1,12 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 2.6.1
  */
+@CommandSpec(command = "XSETID")
 public class XSetIdCommand extends GenericKeyCommand {
     
     private static final long serialVersionUID = 1L;

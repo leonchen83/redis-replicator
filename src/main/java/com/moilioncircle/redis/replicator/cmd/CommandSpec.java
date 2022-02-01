@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Leon Chen
+ * Copyright 2016-2017 Leon Chen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd.impl;
+package com.moilioncircle.redis.replicator.cmd;
 
-import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @author Leon Chen
- * @since 2.1.0
+ * @author Baoyi Chen
+ * @since 3.6.0
  */
-@CommandSpec(command = "DECR")
-public class DecrCommand extends GenericKeyCommand {
-
-    private static final long serialVersionUID = 1L;
-
-    public DecrCommand() {
-    }
-
-    public DecrCommand(byte[] key) {
-        super(key);
-    }
-
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface CommandSpec {
+	String command();
+	String subCommand() default "";
 }

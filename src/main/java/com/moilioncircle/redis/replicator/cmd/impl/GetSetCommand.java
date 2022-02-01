@@ -16,10 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
+@CommandSpec(command = "GETSET")
 public class GetSetCommand extends GenericKeyValueCommand {
 
     public GetSetCommand() {

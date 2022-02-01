@@ -16,11 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @version 2.1.1
  * @since 2.1.0
  */
+@CommandSpec(command = "RPUSHX")
 public class RPushXCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;

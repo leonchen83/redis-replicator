@@ -47,6 +47,7 @@ import com.moilioncircle.redis.replicator.cmd.parser.ExpireAtParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ExpireParser;
 import com.moilioncircle.redis.replicator.cmd.parser.FlushAllParser;
 import com.moilioncircle.redis.replicator.cmd.parser.FlushDBParser;
+import com.moilioncircle.redis.replicator.cmd.parser.FunctionParser;
 import com.moilioncircle.redis.replicator.cmd.parser.GeoAddParser;
 import com.moilioncircle.redis.replicator.cmd.parser.GeoSearchStoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.GetSetParser;
@@ -90,6 +91,7 @@ import com.moilioncircle.redis.replicator.cmd.parser.SAddParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SDiffStoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SInterStoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SMoveParser;
+import com.moilioncircle.redis.replicator.cmd.parser.SPublishParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SRemParser;
 import com.moilioncircle.redis.replicator.cmd.parser.SUnionStoreParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ScriptParser;
@@ -324,6 +326,9 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("BLMOVE"), new BLMoveParser());
         addCommandParser(CommandName.name("ZDIFFSTORE"), new ZDiffStoreParser());
         addCommandParser(CommandName.name("GEOSEARCHSTORE"), new GeoSearchStoreParser());
+        // since redis 7.0
+        addCommandParser(CommandName.name("SPUBLISH"), new SPublishParser());
+        addCommandParser(CommandName.name("FUNCTION"), new FunctionParser());
     }
     
     @Override

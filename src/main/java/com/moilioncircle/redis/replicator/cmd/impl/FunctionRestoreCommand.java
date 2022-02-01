@@ -17,82 +17,60 @@
 package com.moilioncircle.redis.replicator.cmd.impl;
 
 import com.moilioncircle.redis.replicator.cmd.CommandSpec;
-import com.moilioncircle.redis.replicator.rdb.datatype.EvictType;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.6.0
  */
-@CommandSpec(command = "RESTORE")
-public class RestoreCommand extends GenericKeyCommand {
+@CommandSpec(command = "FUNCTION", subCommand = "RESTORE")
+public class FunctionRestoreCommand extends FunctionCommand {
 
     private static final long serialVersionUID = 1L;
-
-    private long ttl;
+    
     private byte[] serializedValue;
     private boolean replace;
-    private boolean absTtl;
-    protected EvictType evictType = EvictType.NONE;
-    protected Long evictValue;
-
-    public RestoreCommand() {
+    private boolean flush;
+    private boolean append;
+    
+    public FunctionRestoreCommand() {
     }
     
-    public RestoreCommand(byte[] key, long ttl, byte[] serializedValue, boolean replace, boolean absTtl, EvictType evictType, Long evictValue) {
-        super(key);
-        this.ttl = ttl;
+    public FunctionRestoreCommand(byte[] serializedValue, boolean replace, boolean flush, boolean append) {
         this.serializedValue = serializedValue;
         this.replace = replace;
-        this.absTtl = absTtl;
-        this.evictType = evictType;
-        this.evictValue = evictValue;
+        this.flush = flush;
+        this.append = append;
     }
-
-    public long getTtl() {
-        return ttl;
-    }
-
-    public void setTtl(long ttl) {
-        this.ttl = ttl;
-    }
-
+    
     public byte[] getSerializedValue() {
         return serializedValue;
     }
-
+    
     public void setSerializedValue(byte[] serializedValue) {
         this.serializedValue = serializedValue;
     }
-
+    
     public boolean isReplace() {
         return replace;
     }
-
+    
     public void setReplace(boolean replace) {
         this.replace = replace;
     }
-
-    public boolean isAbsTtl() {
-        return absTtl;
-    }
-
-    public void setAbsTtl(boolean absTtl) {
-        this.absTtl = absTtl;
+    
+    public boolean isFlush() {
+        return flush;
     }
     
-    public EvictType getEvictType() {
-        return evictType;
+    public void setFlush(boolean flush) {
+        this.flush = flush;
     }
     
-    public void setEvictType(EvictType evictType) {
-        this.evictType = evictType;
+    public boolean isAppend() {
+        return append;
     }
     
-    public Long getEvictValue() {
-        return evictValue;
-    }
-    
-    public void setEvictValue(Long evictValue) {
-        this.evictValue = evictValue;
+    public void setAppend(boolean append) {
+        this.append = append;
     }
 }

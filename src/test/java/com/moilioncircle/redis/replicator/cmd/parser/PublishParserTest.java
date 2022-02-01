@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.PublishCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.SPublishCommand;
 
 /**
  * @author Leon Chen
@@ -29,6 +30,14 @@ public class PublishParserTest extends AbstractParserTest {
     public void parse() {
         PublishParser parser = new PublishParser();
         PublishCommand cmd = parser.parse(toObjectArray("publish channel msg".split(" ")));
+        assertEquals("channel", cmd.getChannel());
+        assertEquals("msg", cmd.getMessage());
+    }
+    
+    @Test
+    public void parse1() {
+        SPublishParser parser = new SPublishParser();
+        SPublishCommand cmd = parser.parse(toObjectArray("spublish channel msg".split(" ")));
         assertEquals("channel", cmd.getChannel());
         assertEquals("msg", cmd.getMessage());
     }

@@ -20,29 +20,37 @@ import com.moilioncircle.redis.replicator.cmd.CommandSpec;
 
 /**
  * @author Leon Chen
- * @version 2.1.1
- * @since 2.1.0
+ * @since 3.6.0
  */
-@CommandSpec(command = "LPUSHX")
-public class LPushXCommand extends GenericKeyCommand {
+@CommandSpec(command = "FUNCTION", subCommand = "FLUSH")
+public class FunctionFlushCommand extends FunctionCommand {
 
     private static final long serialVersionUID = 1L;
-
-    private byte[][] values;
-
-    public LPushXCommand() {
+    
+    private boolean async;
+    private boolean sync;
+    
+    public FunctionFlushCommand() {
     }
-
-    public LPushXCommand(byte[] key, byte[][] values) {
-        super(key);
-        this.values = values;
+    
+    public FunctionFlushCommand(boolean async, boolean sync) {
+        this.async = async;
+        this.sync = sync;
     }
-
-    public byte[][] getValues() {
-        return values;
+    
+    public boolean isAsync() {
+        return async;
     }
-
-    public void setValues(byte[][] values) {
-        this.values = values;
+    
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+    
+    public boolean isSync() {
+        return sync;
+    }
+    
+    public void setSync(boolean sync) {
+        this.sync = sync;
     }
 }

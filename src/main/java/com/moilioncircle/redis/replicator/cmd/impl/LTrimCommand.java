@@ -16,10 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 2.3.1
  */
+@CommandSpec(command = "LTRIM")
 public class LTrimCommand extends GenericKeyCommand {
 
     private static final long serialVersionUID = 1L;

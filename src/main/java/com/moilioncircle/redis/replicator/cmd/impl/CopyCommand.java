@@ -16,10 +16,13 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
+
 /**
  * @author Leon Chen
  * @since 3.5.0
  */
+@CommandSpec(command = "COPY")
 public class CopyCommand extends AbstractCommand {
     private static final long serialVersionUID = 1L;
     

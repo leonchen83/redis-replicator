@@ -16,12 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.impl;
 
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpiredType;
 
 /**
  * @author Leon Chen
  * @since 2.1.0
  */
+@CommandSpec(command = "SET")
 public class SetCommand extends GenericKeyValueCommand {
 
     private static final long serialVersionUID = 1L;

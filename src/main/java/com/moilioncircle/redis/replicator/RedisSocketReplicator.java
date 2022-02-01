@@ -239,6 +239,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.info(reply);
         if ("PONG".equalsIgnoreCase(reply)) return;
         if (reply.contains("NOAUTH")) throw new AssertionError(reply);
+        if (reply.contains("NOPERM")) throw new AssertionError(reply);
         if (reply.contains("operation not permitted")) throw new AssertionError("-NOAUTH Authentication required.");
         logger.warn("[PING] failed. {}", reply);
     }

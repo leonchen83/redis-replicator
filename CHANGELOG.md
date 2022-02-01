@@ -16,6 +16,7 @@ AOF
 3. Add support for `FUNCTION FLUSH` command.  
 4. Add support for `FUNCTION DELETE` command.  
 5. Add support for `FUNCTION RESTORE` command.  
+6. Add support for Timestamp annotations parser.  
   
 Bug fix.  
   

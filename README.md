@@ -82,7 +82,7 @@ Redis Replicator implement Redis Replication protocol written in java. It can pa
 compile minimal jdk 9+  
 runtime minimal jdk 8+  
 maven-3.3.1+  
-redis 2.6 - 6.2  
+redis 2.6 - 7.0  
 
 ## 2.2. Maven dependency  
 ```xml  
@@ -106,7 +106,8 @@ redis 2.6 - 6.2
 
 |     **redis version**        |**redis-replicator version**  |  
 | ---------------------------- | ---------------------------- |  
-|  \[2.6, 6.2.x\]              |       \[3.5.2, \]            |  
+|  \[2.6, 7.0.x\]              |       \[3.6.0, \]            |  
+|  \[2.6, 6.2.x\]              |       \[3.5.2, 3.5.5\]       |  
 |  \[2.6, 6.2.x-RC1\]          |       \[3.5.0, 3.5.1\]       |  
 |  \[2.6, 6.0.x\]              |       \[3.4.0, 3.4.4\]       |  
 |  \[2.6, 5.0.x\]              |       \[2.6.1, 3.3.3\]       |  
@@ -412,23 +413,23 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
   
 ## 5.1. Built-in command parser  
 
-|**commands**|**commands**    |  **commands**       |**commands**|**commands**  | **commands**       |
-| ---------- | -------------- | --------------------| ---------- | ------------ | ------------------ |    
-|  **PING**  |  **APPEND**    |  **SET**            |  **SETEX** |  **MSET**    |  **DEL**           |  
-|  **SADD**  |  **HMSET**     |  **HSET**           |  **LSET**  |  **EXPIRE**  |  **EXPIREAT**      |  
-| **GETSET** | **HSETNX**     |  **MSETNX**         | **PSETEX** | **SETNX**    |  **SETRANGE**      |  
-| **HDEL**   | **UNLINK**     |  **SREM**           | **LPOP**   |  **LPUSH**   | **LPUSHX**         |  
-| **LRem**   | **RPOP**       |  **RPUSH**          | **RPUSHX** |  **ZREM**    |  **ZINTERSTORE**   |  
-| **INCR**   |  **DECR**      |  **INCRBY**         |**PERSIST** |  **SELECT**  | **FLUSHALL**       |  
-|**FLUSHDB** |  **HINCRBY**   | **ZINCRBY**         | **MOVE**   |  **SMOVE**   |**BRPOPLPUSH**      |  
-|**PFCOUNT** |  **PFMERGE**   | **SDIFFSTORE**      |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE**     |  
-|**ZADD**    | **BITFIELD**   |**SUNIONSTORE**      |**RESTORE** | **LINSERT**  |**ZREMRANGEBYLEX**  |  
-|**GEOADD**  | **PEXPIRE**    |**ZUNIONSTORE**      |**EVAL**    |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
-|**PUBLISH** |  **BITOP**     |**SETBIT**           | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
-|**RENAME**  |  **MULTI**     |  **EXEC**           | **LTRIM**  |**RPOPLPUSH** |     **SORT**       |  
-|**EVALSHA** | **ZPOPMAX**    | **ZPOPMIN**         | **XACK**   | **XADD**     |  **XCLAIM**        |  
-|**XDEL**    | **XGROUP**     | **XTRIM**           | **XSETID** | **COPY**     |  **LMOVE**         |  
-|**BLMOVE**  | **ZDIFFSTORE** | **GEOSEARCHSTORE**  |            |              |                    |  
+|**commands**|**commands**    |  **commands**       |**commands**  |**commands**  | **commands**       |
+| ---------- | -------------- | --------------------| ------------ | ------------ | ------------------ |    
+|  **PING**  |  **APPEND**    |  **SET**            |  **SETEX**   |  **MSET**    |  **DEL**           |  
+|  **SADD**  |  **HMSET**     |  **HSET**           |  **LSET**    |  **EXPIRE**  |  **EXPIREAT**      |  
+| **GETSET** | **HSETNX**     |  **MSETNX**         | **PSETEX**   | **SETNX**    |  **SETRANGE**      |  
+| **HDEL**   | **UNLINK**     |  **SREM**           | **LPOP**     |  **LPUSH**   | **LPUSHX**         |  
+| **LRem**   | **RPOP**       |  **RPUSH**          | **RPUSHX**   |  **ZREM**    |  **ZINTERSTORE**   |  
+| **INCR**   |  **DECR**      |  **INCRBY**         |**PERSIST**   |  **SELECT**  | **FLUSHALL**       |  
+|**FLUSHDB** |  **HINCRBY**   | **ZINCRBY**         | **MOVE**     |  **SMOVE**   |**BRPOPLPUSH**      |  
+|**PFCOUNT** |  **PFMERGE**   | **SDIFFSTORE**      |**RENAMENX**  | **PEXPIREAT**|**SINTERSTORE**     |  
+|**ZADD**    | **BITFIELD**   |**SUNIONSTORE**      |**RESTORE**   | **LINSERT**  |**ZREMRANGEBYLEX**  |  
+|**GEOADD**  | **PEXPIRE**    |**ZUNIONSTORE**      |**EVAL**      |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
+|**PUBLISH** |  **BITOP**     |**SETBIT**           | **SWAPDB**   | **PFADD**    |**ZREMRANGEBYSCORE**|  
+|**RENAME**  |  **MULTI**     |  **EXEC**           | **LTRIM**    |**RPOPLPUSH** |     **SORT**       |  
+|**EVALSHA** | **ZPOPMAX**    | **ZPOPMIN**         | **XACK**     | **XADD**     |  **XCLAIM**        |  
+|**XDEL**    | **XGROUP**     | **XTRIM**           | **XSETID**   | **COPY**     |  **LMOVE**         |  
+|**BLMOVE**  | **ZDIFFSTORE** | **GEOSEARCHSTORE**  | **FUNCTION** | **SPUBLISH** |                    |  
   
 ## 5.2. EOFException
   

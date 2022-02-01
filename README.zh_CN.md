@@ -88,7 +88,7 @@ Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实�
 编译最低jdk版本 jdk9+  
 运行最低jdk版本 jdk8+  
 maven-3.3.1+  
-redis 2.6 - 6.2  
+redis 2.6 - 7.0  
 
 ## 2.2. Maven依赖  
 ```xml  
@@ -421,23 +421,23 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
   
 ## 5.1. 内置的Command Parser  
 
-|  **命令**   |**命令**        |  **命令**            |**命令**     |**命令**      | **命令**            |  
-| ---------- | -------------- | --------------------| ---------- | ------------ | ------------------ |  
-|  **PING**  |  **APPEND**    |  **SET**            |  **SETEX** |  **MSET**    |  **DEL**           |  
-|  **SADD**  |  **HMSET**     |  **HSET**           |  **LSET**  |  **EXPIRE**  |  **EXPIREAT**      |  
-| **GETSET** | **HSETNX**     |  **MSETNX**         | **PSETEX** | **SETNX**    |  **SETRANGE**      |  
-| **HDEL**   | **UNLINK**     |  **SREM**           | **LPOP**   |  **LPUSH**   | **LPUSHX**         |  
-| **LRem**   | **RPOP**       |  **RPUSH**          | **RPUSHX** |  **ZREM**    |  **ZINTERSTORE**   |  
-| **INCR**   |  **DECR**      |  **INCRBY**         |**PERSIST** |  **SELECT**  | **FLUSHALL**       |  
-|**FLUSHDB** |  **HINCRBY**   | **ZINCRBY**         | **MOVE**   |  **SMOVE**   |**BRPOPLPUSH**      |  
-|**PFCOUNT** |  **PFMERGE**   | **SDIFFSTORE**      |**RENAMENX**| **PEXPIREAT**|**SINTERSTORE**     |  
-|**ZADD**    | **BITFIELD**   |**SUNIONSTORE**      |**RESTORE** | **LINSERT**  |**ZREMRANGEBYLEX**  |  
-|**GEOADD**  | **PEXPIRE**    |**ZUNIONSTORE**      |**EVAL**    |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
-|**PUBLISH** |  **BITOP**     |**SETBIT**           | **SWAPDB** | **PFADD**    |**ZREMRANGEBYSCORE**|  
-|**RENAME**  |  **MULTI**     |  **EXEC**           | **LTRIM**  |**RPOPLPUSH** |     **SORT**       |  
-|**EVALSHA** | **ZPOPMAX**    | **ZPOPMIN**         | **XACK**   | **XADD**     |  **XCLAIM**        |  
-|**XDEL**    | **XGROUP**     | **XTRIM**           | **XSETID** | **COPY**     |  **LMOVE**         |  
-|**BLMOVE**  | **ZDIFFSTORE** | **GEOSEARCHSTORE**  |            |              |                    |  
+|  **命令**   |**命令**        |  **命令**            |**命令**       |**命令**      | **命令**            |  
+| ---------- | -------------- | --------------------| ------------ | ------------ | ------------------ |  
+|  **PING**  |  **APPEND**    |  **SET**            |  **SETEX**   |  **MSET**    |  **DEL**           |  
+|  **SADD**  |  **HMSET**     |  **HSET**           |  **LSET**    |  **EXPIRE**  |  **EXPIREAT**      |  
+| **GETSET** | **HSETNX**     |  **MSETNX**         | **PSETEX**   | **SETNX**    |  **SETRANGE**      |  
+| **HDEL**   | **UNLINK**     |  **SREM**           | **LPOP**     |  **LPUSH**   | **LPUSHX**         |  
+| **LRem**   | **RPOP**       |  **RPUSH**          | **RPUSHX**   |  **ZREM**    |  **ZINTERSTORE**   |  
+| **INCR**   |  **DECR**      |  **INCRBY**         |**PERSIST**   |  **SELECT**  | **FLUSHALL**       |  
+|**FLUSHDB** |  **HINCRBY**   | **ZINCRBY**         | **MOVE**     |  **SMOVE**   |**BRPOPLPUSH**      |  
+|**PFCOUNT** |  **PFMERGE**   | **SDIFFSTORE**      |**RENAMENX**  | **PEXPIREAT**|**SINTERSTORE**     |  
+|**ZADD**    | **BITFIELD**   |**SUNIONSTORE**      |**RESTORE**   | **LINSERT**  |**ZREMRANGEBYLEX**  |  
+|**GEOADD**  | **PEXPIRE**    |**ZUNIONSTORE**      |**EVAL**      |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
+|**PUBLISH** |  **BITOP**     |**SETBIT**           | **SWAPDB**   | **PFADD**    |**ZREMRANGEBYSCORE**|  
+|**RENAME**  |  **MULTI**     |  **EXEC**           | **LTRIM**    |**RPOPLPUSH** |     **SORT**       |  
+|**EVALSHA** | **ZPOPMAX**    | **ZPOPMIN**         | **XACK**     | **XADD**     |  **XCLAIM**        |  
+|**XDEL**    | **XGROUP**     | **XTRIM**           | **XSETID**   | **COPY**     |  **LMOVE**         |  
+|**BLMOVE**  | **ZDIFFSTORE** | **GEOSEARCHSTORE**  | **FUNCTION** | **SPUBLISH** |                    |  
   
 ## 5.2. 当出现EOFException
   

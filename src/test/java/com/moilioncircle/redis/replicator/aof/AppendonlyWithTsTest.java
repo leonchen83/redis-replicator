@@ -62,7 +62,7 @@ public class AppendonlyWithTsTest {
     public void test1() throws IOException {
         AtomicInteger acc1 = new AtomicInteger();
         Replicator replicator = new RedisReplicator(AppendonlyWithTsTest.class.getClassLoader().getResourceAsStream("appendonly-with-ts.aof"), FileType.AOF, Configuration.defaultSetting());
-        replicator.addEventListener(new TimestampEventListener(ts -> ts >= 1643689192L && ts <= 1643691222L, new EventListener() {
+        replicator.addEventListener(new TimestampEventListener(ts -> ts >= 1643689192000L && ts <= 1643691222000L, new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof Command) {

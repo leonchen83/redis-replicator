@@ -174,7 +174,7 @@ public class ReplyParser {
                         if ((c = in.read()) == '\n') {
                             byte[] bytes = builder.array();
                             bytes = Arrays.copyOfRange(bytes, 3, bytes.length); // skip TS:
-                            return new TimestampEvent(Long.parseLong(Strings.toString(bytes)));
+                            return new TimestampEvent(Long.parseLong(Strings.toString(bytes)) * 1000); // convert to unix timestamp
                         } else {
                             builder.put((byte) c);
                         }

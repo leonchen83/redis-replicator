@@ -1,3 +1,7 @@
+### 3.6.1
+
+Convert Timestamp annotations to `unix timestamp`.  
+
 ### 3.6.0
 
 Jdk 17 support.  

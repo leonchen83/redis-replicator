@@ -75,7 +75,7 @@ public class ReplyParser {
             switch (c) {
                 case DOLLAR:
                     // RESP Bulk Strings
-                    ByteBuilder builder = ByteBuilder.allocate(128);
+                    ByteBuilder builder = ByteBuilder.allocate(32);
                     while (true) {
                         while ((c = in.read()) != '\r') {
                             builder.put((byte) c);
@@ -104,7 +104,7 @@ public class ReplyParser {
                     throw new AssertionError("Callback is null");
                 case COLON:
                     // RESP Integers
-                    builder = ByteBuilder.allocate(128);
+                    builder = ByteBuilder.allocate(32);
                     while (true) {
                         while ((c = in.read()) != '\r') {
                             builder.put((byte) c);
@@ -119,7 +119,7 @@ public class ReplyParser {
                     return Long.parseLong(builder.toString());
                 case STAR:
                     // RESP Arrays
-                    builder = ByteBuilder.allocate(128);
+                    builder = ByteBuilder.allocate(32);
                     while (true) {
                         while ((c = in.read()) != '\r') {
                             builder.put((byte) c);
@@ -140,7 +140,7 @@ public class ReplyParser {
                     return ary;
                 case PLUS:
                     // RESP Simple Strings
-                    builder = ByteBuilder.allocate(128);
+                    builder = ByteBuilder.allocate(64);
                     while (true) {
                         while ((c = in.read()) != '\r') {
                             builder.put((byte) c);
@@ -153,7 +153,7 @@ public class ReplyParser {
                     }
                 case MINUS:
                     // RESP Errors
-                    builder = ByteBuilder.allocate(128);
+                    builder = ByteBuilder.allocate(64);
                     while (true) {
                         while ((c = in.read()) != '\r') {
                             builder.put((byte) c);
@@ -166,7 +166,7 @@ public class ReplyParser {
                     }
                 case HASHTAG:
                     // #TS:${timestamp}\r\n
-                    builder = ByteBuilder.allocate(128);
+                    builder = ByteBuilder.allocate(32);
                     while (true) {
                         while ((c = in.read()) != '\r') {
                             builder.put((byte) c);

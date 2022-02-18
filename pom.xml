@@ -22,7 +22,7 @@
 
     <groupId>com.moilioncircle</groupId>
     <artifactId>redis-replicator</artifactId>
-    <version>3.6.1</version>
+    <version>3.6.2</version>
 
     <name>redis-replicator</name>
     <description>

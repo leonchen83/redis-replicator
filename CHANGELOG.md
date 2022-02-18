@@ -1,3 +1,7 @@
+### 3.6.2
+
+Fix `BaseRdbEncoder.rdbSaveLen` bug.  
+
 ### 3.6.1
 
 Convert Timestamp annotations to `unix timestamp`.  

@@ -29,6 +29,7 @@ import static java.nio.ByteOrder.LITTLE_ENDIAN;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
 import com.moilioncircle.redis.replicator.util.ByteArray;
@@ -71,7 +72,14 @@ public class BaseRdbEncoder {
      * @see BaseRdbParser#rdbLoadLen()
      */
     public int rdbSaveLen(long len, OutputStream out) throws IOException {
-        if (len < (1 << 6)) {
+        byte[] ary = toUnsigned(len);
+        BigInteger value = new BigInteger(1, ary);
+        if (value.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
+            /* Save a 64 bit len */
+            out.write(RDB_64BITLEN);
+            out.write(ByteBuffer.allocate(Long.BYTES).order(BIG_ENDIAN).put(ary).array());
+            return 9;
+        } else if (len < (1 << 6)) {
             out.write((byte) ((len & 0xFF) | (RDB_6BITLEN << 6)));
             return 1;
         } else if (len < (1 << 14)) {
@@ -100,7 +108,12 @@ public class BaseRdbEncoder {
      * @see BaseRdbParser#rdbLoadLen()
      */
     public byte[] rdbSaveLen(long len) throws IOException {
-        if (len < (1 << 6)) {
+        byte[] ary = toUnsigned(len);
+        BigInteger value = new BigInteger(1, ary);
+        if (value.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
+            /* Save a 64 bit len */
+            return ByteBuffer.allocate(9).order(BIG_ENDIAN).put((byte) RDB_64BITLEN).put(ary).array();
+        } else if (len < (1 << 6)) {
             return new byte[]{(byte) ((len & 0xFF) | (RDB_6BITLEN << 6))};
         } else if (len < (1 << 14)) {
             /* Save a 14 bit len */
@@ -209,5 +222,13 @@ public class BaseRdbEncoder {
     public void rdbSavePlainStringObject(ByteArray bytes, OutputStream out) throws IOException {
         rdbSaveLen(bytes.length(), out);
         out.write(bytes.first());
+    }
+    
+    private byte[] toUnsigned(long value) {
+        byte[] ary = new byte[8];
+        for (int i = 0; i < 8; i++) {
+            ary[7 - i] = (byte) ((value >>> (i << 3)) & 0xFF);
+        }
+        return ary;
     }
 }

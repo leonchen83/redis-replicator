@@ -320,8 +320,11 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], byte[]> o19 = new DumpKeyValuePair();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-    
-        o19.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS_2);
+        if (this.version != -1 && this.version < 10 /* since redis rdb version 10 */) {
+            o19.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
+        } else {
+            o19.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS_2);
+        }
         o19.setKey(key);
         o19.setValue(valueVisitor.applyStreamListPacks2(in, version));
         return context.valueOf(o19);

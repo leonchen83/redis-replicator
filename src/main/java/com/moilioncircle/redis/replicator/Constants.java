@@ -125,11 +125,6 @@ public class Constants {
     public static final int QUICKLIST_NODE_CONTAINER_PACKED = 2;
     
     /**
-     * stream
-     */
-    public static final long STREAM_CONSUMER_GROUP_INVALID_ENTRIES_READ = -1;
-    
-    /**
      * transfer protocol
      */
     public static final byte DOLLAR = '$';

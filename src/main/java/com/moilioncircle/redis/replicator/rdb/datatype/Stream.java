@@ -16,8 +16,6 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
-import static com.moilioncircle.redis.replicator.Constants.STREAM_CONSUMER_GROUP_INVALID_ENTRIES_READ;
-
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
@@ -39,7 +37,7 @@ public class Stream implements Serializable {
     // since redis 7.0-RC2
     private ID maxDeletedEntryId;
     // since redis 7.0-RC2
-    private long entriesAdded;
+    private Long entriesAdded;
     private NavigableMap<ID, Entry> entries;
     private long length;
     private List<Group> groups;
@@ -55,7 +53,7 @@ public class Stream implements Serializable {
         this.groups = groups;
     }
     
-    public Stream(ID lastId, NavigableMap<ID, Entry> entries, long length, List<Group> groups, ID firstId, ID maxDeletedEntryId, long entriesAdded) {
+    public Stream(ID lastId, NavigableMap<ID, Entry> entries, long length, List<Group> groups, ID firstId, ID maxDeletedEntryId, Long entriesAdded) {
         this(lastId, entries, length, groups);
         this.firstId = firstId;
         this.maxDeletedEntryId = maxDeletedEntryId;
@@ -86,11 +84,11 @@ public class Stream implements Serializable {
         this.maxDeletedEntryId = maxDeletedEntryId;
     }
     
-    public long getEntriesAdded() {
+    public Long getEntriesAdded() {
         return entriesAdded;
     }
     
-    public void setEntriesAdded(long entriesAdded) {
+    public void setEntriesAdded(Long entriesAdded) {
         this.entriesAdded = entriesAdded;
     }
     
@@ -182,7 +180,7 @@ public class Stream implements Serializable {
         private byte[] name;
         private ID lastId;
         // since redis 7.0-RC2
-        private long entriesRead = STREAM_CONSUMER_GROUP_INVALID_ENTRIES_READ;
+        private Long entriesRead;
         private NavigableMap<ID, Nack> pendingEntries;
         private List<Consumer> consumers;
 
@@ -197,7 +195,7 @@ public class Stream implements Serializable {
             this.consumers = consumers;
         }
     
-        public Group(byte[] name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers, long entriesRead) {
+        public Group(byte[] name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers, Long entriesRead) {
             this(name, lastId, pendingEntries, consumers);
             this.entriesRead = entriesRead;
         }
@@ -218,11 +216,11 @@ public class Stream implements Serializable {
             this.lastId = lastId;
         }
     
-        public long getEntriesRead() {
+        public Long getEntriesRead() {
             return entriesRead;
         }
     
-        public void setEntriesRead(long entriesRead) {
+        public void setEntriesRead(Long entriesRead) {
             this.entriesRead = entriesRead;
         }
     

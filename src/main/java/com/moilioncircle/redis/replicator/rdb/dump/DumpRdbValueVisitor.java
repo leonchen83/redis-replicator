@@ -599,4 +599,11 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
         }
         return (T) listener.getBytes();
     }
+    
+    @Override
+    @SuppressWarnings("resource")
+    public <T> T applyStreamListPacks2(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 }

@@ -317,12 +317,55 @@ public class StreamParserTest extends AbstractParserTest {
     
         {
             XGroupParser parser = new XGroupParser();
+            XGroupCommand cmd = parser.parse(toObjectArray("XGROUP CREATE key group 1528524899760-0 ENTRIESREAD 10".split(" ")));
+            if (cmd instanceof XGroupCreateCommand) {
+                XGroupCreateCommand ccmd = (XGroupCreateCommand) cmd;
+                assertEquals("key", ccmd.getKey());
+                assertEquals("group", ccmd.getGroup());
+                assertEquals("1528524899760-0", ccmd.getId());
+                assertEquals(10, ccmd.getEntriesRead());
+            } else if (cmd instanceof XGroupDelConsumerCommand) {
+                fail();
+            }
+        }
+    
+        {
+            XGroupParser parser = new XGroupParser();
+            XGroupCommand cmd = parser.parse(toObjectArray("XGROUP CREATE key group 1528524899760-0 ENTRIESREAD 10 MKSTREAM".split(" ")));
+            if (cmd instanceof XGroupCreateCommand) {
+                XGroupCreateCommand ccmd = (XGroupCreateCommand) cmd;
+                assertEquals("key", ccmd.getKey());
+                assertEquals("group", ccmd.getGroup());
+                assertEquals("1528524899760-0", ccmd.getId());
+                assertEquals(10, ccmd.getEntriesRead());
+                assertTrue(ccmd.isMkStream());
+            } else if (cmd instanceof XGroupDelConsumerCommand) {
+                fail();
+            }
+        }
+    
+        {
+            XGroupParser parser = new XGroupParser();
             XGroupCommand cmd = parser.parse(toObjectArray("XGROUP setid key group 1528524899760-0".split(" ")));
             if (cmd instanceof XGroupSetIdCommand) {
                 XGroupSetIdCommand ccmd = (XGroupSetIdCommand) cmd;
                 assertEquals("key", ccmd.getKey());
                 assertEquals("group", ccmd.getGroup());
                 assertEquals("1528524899760-0", ccmd.getId());
+            } else if (cmd instanceof XGroupDelConsumerCommand) {
+                fail();
+            }
+        }
+    
+        {
+            XGroupParser parser = new XGroupParser();
+            XGroupCommand cmd = parser.parse(toObjectArray("XGROUP setid key group 1528524899760-0 ENTRIESREAD 10".split(" ")));
+            if (cmd instanceof XGroupSetIdCommand) {
+                XGroupSetIdCommand ccmd = (XGroupSetIdCommand) cmd;
+                assertEquals("key", ccmd.getKey());
+                assertEquals("group", ccmd.getGroup());
+                assertEquals("1528524899760-0", ccmd.getId());
+                assertEquals(10, ccmd.getEntriesRead());
             } else if (cmd instanceof XGroupDelConsumerCommand) {
                 fail();
             }
@@ -413,6 +456,31 @@ public class StreamParserTest extends AbstractParserTest {
             XSetIdCommand cmd = parser.parse(toObjectArray("XSETID key $".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("$", cmd.getId());
+        }
+    
+        {
+            XSetIdParser parser = new XSetIdParser();
+            XSetIdCommand cmd = parser.parse(toObjectArray("XSETID key $ ENTRIESADDED 10".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("$", cmd.getId());
+            assertEquals(10, cmd.getEntriesAdded());
+        }
+    
+        {
+            XSetIdParser parser = new XSetIdParser();
+            XSetIdCommand cmd = parser.parse(toObjectArray("XSETID key $ MAXDELETEDID 1528524899760-0".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("$", cmd.getId());
+            assertEquals("1528524899760-0", cmd.getMaxDeletedEntryId());
+        }
+    
+        {
+            XSetIdParser parser = new XSetIdParser();
+            XSetIdCommand cmd = parser.parse(toObjectArray("XSETID key $ MAXDELETEDID 1528524899760-0 ENTRIESADDED 10".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("$", cmd.getId());
+            assertEquals(10, cmd.getEntriesAdded());
+            assertEquals("1528524899760-0", cmd.getMaxDeletedEntryId());
         }
         
     }

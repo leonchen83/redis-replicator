@@ -365,4 +365,10 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         }
         return null;
     }
+    
+    @Override
+    public Event applyStreamListPacks2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        // TODO
+        return null;
+    }
 }

@@ -603,4 +603,11 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
 
         return (T) stream;
     }
+    
+    @Override
+    @SuppressWarnings("resource")
+    public <T> T applyStreamListPacks2(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 }

@@ -1,9 +1,12 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.XSetIdCommand;
-
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 
 /**
  * @author Leon Chen
@@ -18,6 +21,18 @@ public class XSetIdParser implements CommandParser<XSetIdCommand> {
         idx++;
         byte[] id = toBytes(command[idx]);
         idx++;
-        return new XSetIdCommand(key, id);
+        Long entriesAdded = null;
+        byte[] maxDeletedEntryId = null;
+        while (idx < command.length) {
+            String next = toRune(command[idx++]);
+            if (isEquals(next, "ENTRIESADDED")) {
+                entriesAdded = toLong(command[idx++]);
+            } else if (isEquals(next, "MAXDELETEDID")) {
+                maxDeletedEntryId = toBytes(command[idx++]);
+            } else {
+                throw new UnsupportedOperationException(next);
+            }
+        }
+        return new XSetIdCommand(key, id, entriesAdded, maxDeletedEntryId);
     }
 }

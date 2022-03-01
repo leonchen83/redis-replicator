@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
@@ -44,16 +45,19 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             idx++;
             byte[] id = toBytes(command[idx]);
             idx++;
-            if (idx >= command.length) {
-                return new XGroupCreateCommand(key, group, id, false);
-            } else {
+            boolean mkStream = false;
+            Long entriesRead = null;
+            while (idx < command.length) {
                 next = toRune(command[idx++]);
                 if (isEquals(next, "MKSTREAM")) {
-                    return new XGroupCreateCommand(key, group, id, true);
+                    mkStream = true;
+                } else if (isEquals(next, "ENTRIESREAD")) {
+                    entriesRead = toLong(command[idx++]);
                 } else {
                     throw new UnsupportedOperationException(next);
                 }
             }
+            return new XGroupCreateCommand(key, group, id, mkStream, entriesRead);
         } else if (isEquals(next, "SETID")) {
             byte[] key = toBytes(command[idx]);
             idx++;
@@ -61,7 +65,16 @@ public class XGroupParser implements CommandParser<XGroupCommand> {
             idx++;
             byte[] id = toBytes(command[idx]);
             idx++;
-            return new XGroupSetIdCommand(key, group, id);
+            Long entriesRead = null;
+            while (idx < command.length) {
+                next = toRune(command[idx++]);
+                if (isEquals(next, "ENTRIESREAD")) {
+                    entriesRead = toLong(command[idx++]);
+                } else {
+                    throw new UnsupportedOperationException(next);
+                }
+            }
+            return new XGroupSetIdCommand(key, group, id, entriesRead);
         } else if (isEquals(next, "DESTROY")) {
             byte[] key = toBytes(command[idx]);
             idx++;

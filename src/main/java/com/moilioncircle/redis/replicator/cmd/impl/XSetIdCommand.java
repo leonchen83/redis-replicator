@@ -12,6 +12,8 @@ public class XSetIdCommand extends GenericKeyCommand {
     private static final long serialVersionUID = 1L;
     
     private byte[] id;
+    private Long entriesAdded;
+    private byte[] maxDeletedEntryId;
     
     public XSetIdCommand() {
     }
@@ -20,6 +22,12 @@ public class XSetIdCommand extends GenericKeyCommand {
         super(key);
         this.id = id;
     }
+    
+    public XSetIdCommand(byte[] key, byte[] id, Long entriesAdded, byte[] maxDeletedEntryId) {
+        this(key, id);
+        this.entriesAdded = entriesAdded;
+        this.maxDeletedEntryId = maxDeletedEntryId;
+    }
 
     public byte[] getId() {
         return id;
@@ -27,5 +35,21 @@ public class XSetIdCommand extends GenericKeyCommand {
     
     public void setId(byte[] id) {
         this.id = id;
+    }
+    
+    public Long getEntriesAdded() {
+        return entriesAdded;
+    }
+    
+    public void setEntriesAdded(Long entriesAdded) {
+        this.entriesAdded = entriesAdded;
+    }
+    
+    public byte[] getMaxDeletedEntryId() {
+        return maxDeletedEntryId;
+    }
+    
+    public void setMaxDeletedEntryId(byte[] maxDeletedEntryId) {
+        this.maxDeletedEntryId = maxDeletedEntryId;
     }
 }

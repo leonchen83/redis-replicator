@@ -16,7 +16,7 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
-import com.moilioncircle.redis.replicator.util.Strings;
+import static com.moilioncircle.redis.replicator.Constants.STREAM_CONSUMER_GROUP_INVALID_ENTRIES_READ;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Objects;
 
+import com.moilioncircle.redis.replicator.util.Strings;
+
 /**
  * @author Leon Chen
  * @since 2.6.0
@@ -32,6 +34,12 @@ import java.util.Objects;
 public class Stream implements Serializable {
     private static final long serialVersionUID = 1L;
     private ID lastId;
+    // since redis 7.0-RC2
+    private ID firstId;
+    // since redis 7.0-RC2
+    private ID maxDeletedEntryId;
+    // since redis 7.0-RC2
+    private long entriesAdded;
     private NavigableMap<ID, Entry> entries;
     private long length;
     private List<Group> groups;
@@ -46,6 +54,13 @@ public class Stream implements Serializable {
         this.length = length;
         this.groups = groups;
     }
+    
+    public Stream(ID lastId, NavigableMap<ID, Entry> entries, long length, List<Group> groups, ID firstId, ID maxDeletedEntryId, long entriesAdded) {
+        this(lastId, entries, length, groups);
+        this.firstId = firstId;
+        this.maxDeletedEntryId = maxDeletedEntryId;
+        this.entriesAdded = entriesAdded;
+    }
 
     public ID getLastId() {
         return lastId;
@@ -54,7 +69,31 @@ public class Stream implements Serializable {
     public void setLastId(ID lastId) {
         this.lastId = lastId;
     }
-
+    
+    public ID getFirstId() {
+        return firstId;
+    }
+    
+    public void setFirstId(ID firstId) {
+        this.firstId = firstId;
+    }
+    
+    public ID getMaxDeletedEntryId() {
+        return maxDeletedEntryId;
+    }
+    
+    public void setMaxDeletedEntryId(ID maxDeletedEntryId) {
+        this.maxDeletedEntryId = maxDeletedEntryId;
+    }
+    
+    public long getEntriesAdded() {
+        return entriesAdded;
+    }
+    
+    public void setEntriesAdded(long entriesAdded) {
+        this.entriesAdded = entriesAdded;
+    }
+    
     public NavigableMap<ID, Entry> getEntries() {
         return entries;
     }
@@ -82,6 +121,7 @@ public class Stream implements Serializable {
     @Override
     public String toString() {
         String r = "Stream{" + "lastId=" + lastId + ", length=" + length;
+        r += ", firstId=" + firstId + ", maxDeletedEntryId=" + maxDeletedEntryId + ", entriesAdded=" + entriesAdded;
         if (groups != null && !groups.isEmpty()) r += ", groups=" + groups;
         if (entries != null && !entries.isEmpty()) r += ", entries=" + entries.size();
         return r + '}';
@@ -141,6 +181,8 @@ public class Stream implements Serializable {
         private static final long serialVersionUID = 1L;
         private byte[] name;
         private ID lastId;
+        // since redis 7.0-RC2
+        private long entriesRead = STREAM_CONSUMER_GROUP_INVALID_ENTRIES_READ;
         private NavigableMap<ID, Nack> pendingEntries;
         private List<Consumer> consumers;
 
@@ -153,6 +195,11 @@ public class Stream implements Serializable {
             this.lastId = lastId;
             this.pendingEntries = pendingEntries;
             this.consumers = consumers;
+        }
+    
+        public Group(byte[] name, ID lastId, NavigableMap<ID, Nack> pendingEntries, List<Consumer> consumers, long entriesRead) {
+            this(name, lastId, pendingEntries, consumers);
+            this.entriesRead = entriesRead;
         }
 
         public byte[] getName() {
@@ -170,7 +217,15 @@ public class Stream implements Serializable {
         public void setLastId(ID lastId) {
             this.lastId = lastId;
         }
-
+    
+        public long getEntriesRead() {
+            return entriesRead;
+        }
+    
+        public void setEntriesRead(long entriesRead) {
+            this.entriesRead = entriesRead;
+        }
+    
         public NavigableMap<ID, Nack> getPendingEntries() {
             return pendingEntries;
         }
@@ -189,7 +244,7 @@ public class Stream implements Serializable {
 
         @Override
         public String toString() {
-            String r = "Group{" + "name='" + Strings.toString(name) + '\'' + ", lastId=" + lastId;
+            String r = "Group{" + "name='" + Strings.toString(name) + '\'' + ", lastId=" + lastId + ", entriesRead=" + entriesRead;
             if (consumers != null && !consumers.isEmpty()) r += ", consumers=" + consumers;
             if (pendingEntries != null && !pendingEntries.isEmpty()) r += ", gpel=" + pendingEntries.size();
             return r + '}';

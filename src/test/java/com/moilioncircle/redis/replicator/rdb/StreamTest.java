@@ -245,7 +245,6 @@ public class StreamTest {
                 {
                     int i = 0;
                     for (Stream.Entry entry : map.values()) {
-                        System.out.println(entry);
                         if (i < 7) {
                             assertTrue(entry.isDeleted());
                         } else {
@@ -348,7 +347,6 @@ public class StreamTest {
         NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
         int i = 0;
         for (Stream.Entry entry : map.values()) {
-            System.out.println(entry);
             if (i < 7) {
                 assertTrue(entry.isDeleted());
             } else {
@@ -399,7 +397,6 @@ public class StreamTest {
         NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
         int i = 0;
         for (Stream.Entry entry : map.values()) {
-            System.out.println(entry);
             if (i < 7) {
                 assertTrue(entry.isDeleted());
             } else {

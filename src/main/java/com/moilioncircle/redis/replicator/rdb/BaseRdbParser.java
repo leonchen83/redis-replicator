@@ -16,12 +16,6 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.util.ByteArray;
-import com.moilioncircle.redis.replicator.util.Lzf;
-
-import java.io.IOException;
-
 import static com.moilioncircle.redis.replicator.Constants.RDB_14BITLEN;
 import static com.moilioncircle.redis.replicator.Constants.RDB_32BITLEN;
 import static com.moilioncircle.redis.replicator.Constants.RDB_64BITLEN;
@@ -38,6 +32,12 @@ import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_24B;
 import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_32B;
 import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_64B;
 import static com.moilioncircle.redis.replicator.Constants.ZIP_INT_8B;
+
+import java.io.IOException;
+
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.util.ByteArray;
+import com.moilioncircle.redis.replicator.util.Lzf;
 
 /**
  * @author Leon Chen
@@ -102,9 +102,10 @@ public class BaseRdbParser {
         } else if (type == RDB_14BITLEN) {
             value = ((rawByte & 0x3F) << 8) | in.read();
         } else if (rawByte == RDB_32BITLEN) {
-            value = in.readInt(4, false);
+            value = in.readUInt(4, false);
         } else if (rawByte == RDB_64BITLEN) {
-            value = in.readLong(8, false);
+            // readULong(8, false)
+            value = in.readLong(8, false); 
         } else {
             throw new AssertionError("unexpected len-type:" + type);
         }

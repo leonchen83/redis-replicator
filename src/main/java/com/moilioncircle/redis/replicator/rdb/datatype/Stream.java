@@ -33,10 +33,13 @@ public class Stream implements Serializable {
     private static final long serialVersionUID = 1L;
     private ID lastId;
     // since redis 7.0-RC2
+    // nullable
     private ID firstId;
     // since redis 7.0-RC2
+    // nullable
     private ID maxDeletedEntryId;
     // since redis 7.0-RC2
+    // nullable
     private Long entriesAdded;
     private NavigableMap<ID, Entry> entries;
     private long length;
@@ -180,6 +183,7 @@ public class Stream implements Serializable {
         private byte[] name;
         private ID lastId;
         // since redis 7.0-RC2
+        // nullable
         private Long entriesRead;
         private NavigableMap<ID, Nack> pendingEntries;
         private List<Consumer> consumers;

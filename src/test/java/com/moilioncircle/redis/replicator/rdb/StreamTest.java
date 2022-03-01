@@ -16,9 +16,12 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -41,6 +44,9 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.dump.parser.DefaultDumpValueParser;
+import com.moilioncircle.redis.replicator.rdb.dump.parser.DumpValueParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbVisitor;
 import com.moilioncircle.redis.replicator.util.Strings;
 
@@ -203,10 +209,69 @@ public class StreamTest {
             }
         }
     }
+    
+    @Test
+    public void testStream2() throws IOException {
+        @SuppressWarnings("resource") final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("stream2.rdb"), FileType.RDB, Configuration.defaultSetting());
+        final Map<String, Stream> kvs = new HashMap<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueStream) {
+                    KeyStringValueStream kv = (KeyStringValueStream) event;
+                    kvs.put(Strings.toString(kv.getKey()), kv.getValue());
+                }
+            }
+        });
+        replicator.open();
+        for (Map.Entry<String, Stream> e : kvs.entrySet()) {
+            String key = e.getKey();
+            Stream stream = e.getValue();
+            assertEquals(Stream.ID.valueOf("1646121872530", "0"), stream.getFirstId());
+            assertEquals(Stream.ID.valueOf("1646121870418", "0"), stream.getMaxDeletedEntryId());
+            assertEquals(16L, stream.getEntriesAdded().longValue());
+            List<Stream.Group> groups = stream.getGroups();
+            for (Stream.Group group : groups) {
+                if (new String(group.getName()).equals("g4")) {
+                    assertEquals(4L, group.getEntriesRead().longValue());
+                }
+                if (new String(group.getName()).equals("g3")) {
+                    assertEquals(3L, group.getEntriesRead().longValue());
+                }
+            }
+            if (key.equals("mystream")) {
+                assertEquals(9L, stream.getLength());
+                NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
+                {
+                    int i = 0;
+                    for (Stream.Entry entry : map.values()) {
+                        System.out.println(entry);
+                        if (i < 7) {
+                            assertTrue(entry.isDeleted());
+                        } else {
+                            assertFalse(entry.isDeleted());
+                        }
+                        i++;
+                    }
+                }
+            }
+        }
+    }
 
     @Test
     public void testSkip() {
         final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dump-stream.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
+        try {
+            replicator.open();
+        } catch (Throwable e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testSkip2() {
+        final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("stream2.rdb"), FileType.RDB, Configuration.defaultSetting());
         replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
         try {
             replicator.open();
@@ -239,6 +304,108 @@ public class StreamTest {
         TestCase.assertEquals(5, map.size());
         for (Map.Entry<byte[], byte[]> entry : map.entrySet()) {
             assertNotNull(String.valueOf(entry.getValue()));
+        }
+    }
+    
+    @Test
+    public void testDump2() {
+        final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("stream2.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        final List<DumpKeyValuePair> list = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof DumpKeyValuePair) {
+                    list.add((DumpKeyValuePair) event);
+                }
+            }
+        });
+        try {
+            replicator.open();
+        } catch (Throwable e) {
+            fail();
+        }
+        
+        TestCase.assertEquals(1, list.size());
+        DumpKeyValuePair dkv = list.get(0);
+        assertEquals(RDB_TYPE_STREAM_LISTPACKS_2, dkv.getValueRdbType());
+        DumpValueParser parser = new DefaultDumpValueParser(replicator);
+        KeyStringValueStream kv = (KeyStringValueStream)parser.parse(dkv);
+        Stream stream = kv.getValue();
+        assertEquals(Stream.ID.valueOf("1646121872530", "0"), stream.getFirstId());
+        assertEquals(Stream.ID.valueOf("1646121870418", "0"), stream.getMaxDeletedEntryId());
+        assertEquals(16L, stream.getEntriesAdded().longValue());
+        List<Stream.Group> groups = stream.getGroups();
+        for (Stream.Group group : groups) {
+            if (new String(group.getName()).equals("g4")) {
+                assertEquals(4L, group.getEntriesRead().longValue());
+            }
+            if (new String(group.getName()).equals("g3")) {
+                assertEquals(3L, group.getEntriesRead().longValue());
+            }
+        }
+        assertEquals(9L, stream.getLength());
+        NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
+        int i = 0;
+        for (Stream.Entry entry : map.values()) {
+            System.out.println(entry);
+            if (i < 7) {
+                assertTrue(entry.isDeleted());
+            } else {
+                assertFalse(entry.isDeleted());
+            }
+            i++;
+        }
+    }
+    
+    @Test
+    public void testDump3() {
+        final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("stream2.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator, 9));
+        final List<DumpKeyValuePair> list = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof DumpKeyValuePair) {
+                    list.add((DumpKeyValuePair) event);
+                }
+            }
+        });
+        try {
+            replicator.open();
+        } catch (Throwable e) {
+            fail();
+        }
+        
+        TestCase.assertEquals(1, list.size());
+        DumpKeyValuePair dkv = list.get(0);
+        assertEquals(RDB_TYPE_STREAM_LISTPACKS, dkv.getValueRdbType());
+        DumpValueParser parser = new DefaultDumpValueParser(replicator);
+        KeyStringValueStream kv = (KeyStringValueStream)parser.parse(dkv);
+        Stream stream = kv.getValue();
+        assertNull(stream.getFirstId());
+        assertNull(stream.getMaxDeletedEntryId());
+        assertNull(stream.getEntriesAdded());
+        List<Stream.Group> groups = stream.getGroups();
+        for (Stream.Group group : groups) {
+            if (new String(group.getName()).equals("g4")) {
+                assertNull(group.getEntriesRead());
+            }
+            if (new String(group.getName()).equals("g3")) {
+                assertNull(group.getEntriesRead());
+            }
+        }
+        assertEquals(9L, stream.getLength());
+        NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
+        int i = 0;
+        for (Stream.Entry entry : map.values()) {
+            System.out.println(entry);
+            if (i < 7) {
+                assertTrue(entry.isDeleted());
+            } else {
+                assertFalse(entry.isDeleted());
+            }
+            i++;
         }
     }
 }

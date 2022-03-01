@@ -339,14 +339,56 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
             parser.rdbLoadPlainStringObject();
             parser.rdbLoadPlainStringObject();
         }
-        parser.rdbLoadLen();
-        parser.rdbLoadLen();
-        parser.rdbLoadLen();
+        parser.rdbLoadLen(); // length
+        parser.rdbLoadLen(); // lastId
+        parser.rdbLoadLen(); // lastId
         long groupCount = parser.rdbLoadLen().len;
         while (groupCount-- > 0) {
             parser.rdbLoadPlainStringObject();
             parser.rdbLoadLen();
             parser.rdbLoadLen();
+            long groupPel = parser.rdbLoadLen().len;
+            while (groupPel-- > 0) {
+                in.skip(16);
+                parser.rdbLoadMillisecondTime();
+                parser.rdbLoadLen();
+            }
+            long consumerCount = parser.rdbLoadLen().len;
+            while (consumerCount-- > 0) {
+                parser.rdbLoadPlainStringObject();
+                parser.rdbLoadMillisecondTime();
+                long consumerPel = parser.rdbLoadLen().len;
+                while (consumerPel-- > 0) {
+                    in.skip(16);
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public Event applyStreamListPacks2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        long listPacks = parser.rdbLoadLen().len;
+        while (listPacks-- > 0) {
+            parser.rdbLoadPlainStringObject();
+            parser.rdbLoadPlainStringObject();
+        }
+        parser.rdbLoadLen(); // length
+        parser.rdbLoadLen(); // lastId
+        parser.rdbLoadLen(); // lastId
+        parser.rdbLoadLen(); // firstId
+        parser.rdbLoadLen(); // firstId
+        parser.rdbLoadLen(); // maxDeletedEntryId
+        parser.rdbLoadLen(); // maxDeletedEntryId
+        parser.rdbLoadLen(); // entriesAdded
+        long groupCount = parser.rdbLoadLen().len;
+        while (groupCount-- > 0) {
+            parser.rdbLoadPlainStringObject();
+            parser.rdbLoadLen();
+            parser.rdbLoadLen();
+            parser.rdbLoadLen(); // entriesRead
             long groupPel = parser.rdbLoadLen().len;
             while (groupPel-- > 0) {
                 in.skip(16);

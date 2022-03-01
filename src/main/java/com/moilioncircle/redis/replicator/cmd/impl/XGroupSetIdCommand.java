@@ -29,6 +29,7 @@ public class XGroupSetIdCommand extends XGroupCommand {
 
     private byte[] group;
     private byte[] id;
+    private Long entriesRead;
 
     public XGroupSetIdCommand() {
     }
@@ -38,7 +39,20 @@ public class XGroupSetIdCommand extends XGroupCommand {
         this.group = group;
         this.id = id;
     }
-
+    
+    public XGroupSetIdCommand(byte[] key, byte[] group, byte[] id, Long entriesRead) {
+        this(key, group, id);
+        this.entriesRead = entriesRead;
+    }
+    
+    public Long getEntriesRead() {
+        return entriesRead;
+    }
+    
+    public void setEntriesRead(Long entriesRead) {
+        this.entriesRead = entriesRead;
+    }
+    
     public byte[] getGroup() {
         return group;
     }

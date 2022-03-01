@@ -131,7 +131,6 @@ public class DumpRdbVisitorTest {
                 if (event instanceof KeyStringValueList) {
                     KeyStringValueList kv = (KeyStringValueList) event;
                     if (kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST) {
-                        System.out.println(new String(kv.getKey()));
                         for (byte[] element : kv.getValue()) {
                             expected.add(element);
                         }
@@ -313,7 +312,6 @@ public class DumpRdbVisitorTest {
                     KeyStringValueList kv = (KeyStringValueList) event;
                     String key = new String(kv.getKey());
                     if (key.equals("quicklist_listpack_plain") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
-                        System.out.println(new String(kv.getKey()));
                         for (byte[] element : kv.getValue()) {
                             expected.add(element);
                         }
@@ -370,7 +368,6 @@ public class DumpRdbVisitorTest {
                     KeyStringValueList kv = (KeyStringValueList) event;
                     String key = new String(kv.getKey());
                     if (key.equals("quicklist_listpack_pack") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
-                        System.out.println(new String(kv.getKey()));
                         for (byte[] element : kv.getValue()) {
                             expected.add(element);
                         }
@@ -541,7 +538,6 @@ public class DumpRdbVisitorTest {
                     KeyStringValueList kv = (KeyStringValueList) event;
                     String key = new String(kv.getKey());
                     if (key.equals("quicklist_listpack_plain") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
-                        System.out.println(new String(kv.getKey()));
                         for (byte[] element : kv.getValue()) {
                             expected.add(element);
                         }
@@ -598,7 +594,6 @@ public class DumpRdbVisitorTest {
                     KeyStringValueList kv = (KeyStringValueList) event;
                     String key = new String(kv.getKey());
                     if (key.equals("quicklist_listpack_pack") && kv.getValueRdbType() == RDB_TYPE_LIST_QUICKLIST_2) {
-                        System.out.println(new String(kv.getKey()));
                         for (byte[] element : kv.getValue()) {
                             expected.add(element);
                         }

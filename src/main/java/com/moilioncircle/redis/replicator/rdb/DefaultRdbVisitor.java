@@ -31,6 +31,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -495,6 +496,20 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o15.setKey(key);
         return context.valueOf(o15);
     }
+    
+    @Override
+    @SuppressWarnings("resource")
+    public Event applyStreamListPacks2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Stream> o19 = new KeyStringValueStream();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        Stream stream = valueVisitor.applyStreamListPacks2(in, version);
+        o19.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS_2);
+        o19.setValue(stream);
+        o19.setKey(key);
+        return context.valueOf(o19);
+    }
 
     protected ModuleParser<? extends Module> lookupModuleParser(String moduleName, int moduleVersion) {
         return replicator.getModuleParser(moduleName, moduleVersion);
@@ -546,6 +561,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?, ?>) applyModule2(in, version, context);
             case RDB_TYPE_STREAM_LISTPACKS:
                 return (KeyValuePair<?, ?>) applyStreamListPacks(in, version, context);
+            case RDB_TYPE_STREAM_LISTPACKS_2:
+                return (KeyValuePair<?, ?>) applyStreamListPacks2(in, version, context);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
         }

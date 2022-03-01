@@ -30,6 +30,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -134,6 +135,8 @@ public class DefaultDumpValueParser implements DumpValueParser {
                     return KeyValuePairs.module(kv, valueVisitor.applyModule2(in, 0));
                 case RDB_TYPE_STREAM_LISTPACKS:
                     return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks(in, 0));
+                case RDB_TYPE_STREAM_LISTPACKS_2:
+                    return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks2(in, 0));
                 default:
                     throw new AssertionError("unexpected value type:" + valueType);
             }

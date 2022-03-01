@@ -35,6 +35,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -598,5 +599,104 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             replicator.removeRawByteListener(listener);
         }
         return (T) listener.getBytes();
+    }
+    
+    @Override
+    @SuppressWarnings("resource")
+    public <T> T applyStreamListPacks2(RedisInputStream in, int version) throws IOException {
+        if (this.version != -1 && this.version < 10 /* since redis rdb version 10 */) {
+            // downgrade to RDB_TYPE_STREAM_LISTPACKS
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_STREAM_LISTPACKS, version);
+            replicator.addRawByteListener(listener);
+            try {
+                SkipRdbParser skipParser = new SkipRdbParser(in);
+                long listPacks = skipParser.rdbLoadLen().len;
+                while (listPacks-- > 0) {
+                    skipParser.rdbLoadPlainStringObject();
+                    skipParser.rdbLoadPlainStringObject();
+                }
+                skipParser.rdbLoadLen(); // length
+                skipParser.rdbLoadLen(); // lastId
+                skipParser.rdbLoadLen(); // lastId
+                replicator.removeRawByteListener(listener);
+                skipParser.rdbLoadLen(); // firstId
+                skipParser.rdbLoadLen(); // firstId
+                skipParser.rdbLoadLen(); // maxDeletedEntryId
+                skipParser.rdbLoadLen(); // maxDeletedEntryId
+                skipParser.rdbLoadLen(); // entriesAdded
+                replicator.addRawByteListener(listener);
+                long groupCount = skipParser.rdbLoadLen().len;
+                while (groupCount-- > 0) {
+                    skipParser.rdbLoadPlainStringObject();
+                    skipParser.rdbLoadLen();
+                    skipParser.rdbLoadLen();
+                    replicator.removeRawByteListener(listener);
+                    skipParser.rdbLoadLen(); // entriesRead
+                    replicator.addRawByteListener(listener);
+                    long groupPel = skipParser.rdbLoadLen().len;
+                    while (groupPel-- > 0) {
+                        in.skip(16);
+                        skipParser.rdbLoadMillisecondTime();
+                        skipParser.rdbLoadLen();
+                    }
+                    long consumerCount = skipParser.rdbLoadLen().len;
+                    while (consumerCount-- > 0) {
+                        skipParser.rdbLoadPlainStringObject();
+                        skipParser.rdbLoadMillisecondTime();
+                        long consumerPel = skipParser.rdbLoadLen().len;
+                        while (consumerPel-- > 0) {
+                            in.skip(16);
+                        }
+                    }
+                }
+            } finally {
+                replicator.removeRawByteListener(listener);
+            }
+            return (T) listener.getBytes();
+        } else {
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_STREAM_LISTPACKS_2, version);
+            replicator.addRawByteListener(listener);
+            try {
+                SkipRdbParser skipParser = new SkipRdbParser(in);
+                long listPacks = skipParser.rdbLoadLen().len;
+                while (listPacks-- > 0) {
+                    skipParser.rdbLoadPlainStringObject();
+                    skipParser.rdbLoadPlainStringObject();
+                }
+                skipParser.rdbLoadLen(); // length
+                skipParser.rdbLoadLen(); // lastId
+                skipParser.rdbLoadLen(); // lastId
+                skipParser.rdbLoadLen(); // firstId
+                skipParser.rdbLoadLen(); // firstId
+                skipParser.rdbLoadLen(); // maxDeletedEntryId
+                skipParser.rdbLoadLen(); // maxDeletedEntryId
+                skipParser.rdbLoadLen(); // entriesAdded
+                long groupCount = skipParser.rdbLoadLen().len;
+                while (groupCount-- > 0) {
+                    skipParser.rdbLoadPlainStringObject();
+                    skipParser.rdbLoadLen();
+                    skipParser.rdbLoadLen();
+                    skipParser.rdbLoadLen(); // entriesRead
+                    long groupPel = skipParser.rdbLoadLen().len;
+                    while (groupPel-- > 0) {
+                        in.skip(16);
+                        skipParser.rdbLoadMillisecondTime();
+                        skipParser.rdbLoadLen();
+                    }
+                    long consumerCount = skipParser.rdbLoadLen().len;
+                    while (consumerCount-- > 0) {
+                        skipParser.rdbLoadPlainStringObject();
+                        skipParser.rdbLoadMillisecondTime();
+                        long consumerPel = skipParser.rdbLoadLen().len;
+                        while (consumerPel-- > 0) {
+                            in.skip(16);
+                        }
+                    }
+                }
+            } finally {
+                replicator.removeRawByteListener(listener);
+            }
+            return (T) listener.getBytes();
+        }
     }
 }

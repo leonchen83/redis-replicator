@@ -90,6 +90,7 @@ public class Constants {
     public static final int RDB_TYPE_HASH_LISTPACK = 16;
     public static final int RDB_TYPE_ZSET_LISTPACK = 17;
     public static final int RDB_TYPE_LIST_QUICKLIST_2 = 18;
+    public static final int RDB_TYPE_STREAM_LISTPACKS_2 = 19;
 
     /**
      * Module serialized values sub opcodes
@@ -122,7 +123,7 @@ public class Constants {
      */
     public static final int QUICKLIST_NODE_CONTAINER_PLAIN = 1;
     public static final int QUICKLIST_NODE_CONTAINER_PACKED = 2;
-
+    
     /**
      * transfer protocol
      */

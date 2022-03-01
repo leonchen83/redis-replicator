@@ -39,6 +39,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -143,7 +144,8 @@ public class RdbParser {
      * <p>
      * | $listquicklist2);       (*Introduced in rdb version 10*)
      * <p>
-     *
+     * | $streamlistpacks2);      (*Introduced in rdb version 10*)
+     * <p>
      * @return read bytes
      * @throws IOException when read timeout
      */
@@ -259,6 +261,9 @@ public class RdbParser {
                     break;
                 case RDB_TYPE_STREAM_LISTPACKS:
                     event = rdbVisitor.applyStreamListPacks(in, version, kv);
+                    break;
+                case RDB_TYPE_STREAM_LISTPACKS_2:
+                    event = rdbVisitor.applyStreamListPacks2(in, version, kv);
                     break;
                 default:
                     throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");

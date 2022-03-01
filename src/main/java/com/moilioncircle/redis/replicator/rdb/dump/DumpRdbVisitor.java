@@ -29,6 +29,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -312,5 +313,20 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o15.setKey(key);
         o15.setValue(valueVisitor.applyStreamListPacks(in, version));
         return context.valueOf(o15);
+    }
+    
+    @Override
+    public Event applyStreamListPacks2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], byte[]> o19 = new DumpKeyValuePair();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        if (this.version != -1 && this.version < 10 /* since redis rdb version 10 */) {
+            o19.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
+        } else {
+            o19.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS_2);
+        }
+        o19.setKey(key);
+        o19.setValue(valueVisitor.applyStreamListPacks2(in, version));
+        return context.valueOf(o19);
     }
 }

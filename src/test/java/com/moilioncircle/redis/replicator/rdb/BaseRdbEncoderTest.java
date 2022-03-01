@@ -140,7 +140,7 @@ public class BaseRdbEncoderTest {
     
     @Test
     public void testRdbSaveLen() throws IOException {
-        long[] lens = new long[]{10, 256, 123123213L, 12309129310231231L};
+        long[] lens = new long[]{10, 256, 123123213L, 12309129310231231L, 4294967295L, 3294967295L};
         for (long len : lens) {
             BaseRdbEncoder encoder = new BaseRdbEncoder();
             ByteArrayOutputStream out = new ByteArrayOutputStream();

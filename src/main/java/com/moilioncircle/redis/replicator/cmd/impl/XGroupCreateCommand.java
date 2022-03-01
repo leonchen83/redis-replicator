@@ -30,6 +30,7 @@ public class XGroupCreateCommand extends XGroupCommand {
     private byte[] group;
     private byte[] id;
     private boolean mkStream;
+    private Long entriesRead;
 
     public XGroupCreateCommand() {
     }
@@ -40,7 +41,20 @@ public class XGroupCreateCommand extends XGroupCommand {
         this.id = id;
         this.mkStream = mkStream;
     }
-
+    
+    public XGroupCreateCommand(byte[] key, byte[] group, byte[] id, boolean mkStream, Long entriesRead) {
+        this(key, group, id, mkStream);
+        this.entriesRead = entriesRead;
+    }
+    
+    public Long getEntriesRead() {
+        return entriesRead;
+    }
+    
+    public void setEntriesRead(Long entriesRead) {
+        this.entriesRead = entriesRead;
+    }
+    
     public byte[] getGroup() {
         return group;
     }

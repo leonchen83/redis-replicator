@@ -1,6 +1,15 @@
 ### 3.6.2
 
 Fix `BaseRdbEncoder.rdbSaveLen` bug.  
+Redis 7.0-RC2 support.  
+  
+RDB
+1. Add support for Rdb event `RDB_TYPE_STREAM_LISTPACKS_2`.  
+2. `DumpRdbValueVisitor` support downgrade `RDB_TYPE_STREAM_LISTPACKS_2` to `RDB_TYPE_STREAM_LISTPACKS`.
+
+AOF
+1. `XGROUP CREATE` and `SETID`: new `ENTRIESREAD` optional argument.  
+2. `XSETID` new `ENTRIESADDED` and `MAXDELETEDID` optional arguments.  
 
 ### 3.6.1
 

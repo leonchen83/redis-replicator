@@ -127,10 +127,6 @@ public class BaseRdbEncoder {
         }
     }
     
-    public static void main(String[] args) {
-        System.out.println(((int)0xffffffffL) & 0xffffffffL);
-    }
-    
     /**
      * @since 3.5.3
      * @param value value

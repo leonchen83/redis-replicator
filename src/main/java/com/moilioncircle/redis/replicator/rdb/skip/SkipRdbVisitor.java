@@ -16,23 +16,19 @@
 
 package com.moilioncircle.redis.replicator.rdb.skip;
 
-import static com.moilioncircle.redis.replicator.Constants.MODULE_SET;
-import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 
 import java.io.IOException;
-import java.util.NoSuchElementException;
 
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.RdbValueVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.datatype.Function;
-import com.moilioncircle.redis.replicator.rdb.datatype.Module;
-import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 
 /**
  * @author Leon Chen
@@ -44,16 +40,13 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         super(replicator);
     }
     
+    public SkipRdbVisitor(Replicator replicator, RdbValueVisitor valueVisitor) {
+        super(replicator, valueVisitor);
+    }
+    
     @Override
     public Function applyFunction(RedisInputStream in, int version) throws IOException {
-        SkipRdbParser parser = new SkipRdbParser(in);
-        parser.rdbGenericLoadStringObject(); // name
-        parser.rdbGenericLoadStringObject(); // engine name
-        long hasDesc = parser.rdbLoadLen().len;
-        if (hasDesc == 1) {
-            parser.rdbGenericLoadStringObject(); // description
-        }
-        parser.rdbGenericLoadStringObject(); // code
+        valueVisitor.applyFunction(in, version);
         return null;
     }
 
@@ -140,7 +133,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyString(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        parser.rdbLoadEncodedStringObject();
+        valueVisitor.applyString(in, version);
         return null;
     }
 
@@ -148,11 +141,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long len = parser.rdbLoadLen().len;
-        while (len > 0) {
-            parser.rdbLoadEncodedStringObject();
-            len--;
-        }
+        valueVisitor.applyList(in, version);
         return null;
     }
 
@@ -160,11 +149,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applySet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long len = parser.rdbLoadLen().len;
-        while (len > 0) {
-            parser.rdbLoadEncodedStringObject();
-            len--;
-        }
+        valueVisitor.applySet(in, version);
         return null;
     }
 
@@ -172,12 +157,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyZSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long len = parser.rdbLoadLen().len;
-        while (len > 0) {
-            parser.rdbLoadEncodedStringObject();
-            parser.rdbLoadDoubleValue();
-            len--;
-        }
+        valueVisitor.applyZSet(in, version);
         return null;
     }
 
@@ -185,12 +165,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyZSet2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long len = parser.rdbLoadLen().len;
-        while (len > 0) {
-            parser.rdbLoadEncodedStringObject();
-            parser.rdbLoadBinaryDoubleValue();
-            len--;
-        }
+        valueVisitor.applyZSet2(in, version);
         return null;
     }
 
@@ -198,12 +173,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyHash(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long len = parser.rdbLoadLen().len;
-        while (len > 0) {
-            parser.rdbLoadEncodedStringObject();
-            parser.rdbLoadEncodedStringObject();
-            len--;
-        }
+        valueVisitor.applyHash(in, version);
         return null;
     }
 
@@ -211,7 +181,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyHashZipMap(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        parser.rdbLoadPlainStringObject();
+        valueVisitor.applyHashZipMap(in, version);
         return null;
     }
 
@@ -219,7 +189,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyListZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        parser.rdbLoadPlainStringObject();
+        valueVisitor.applyListZipList(in, version);
         return null;
     }
 
@@ -227,7 +197,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applySetIntSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        parser.rdbLoadPlainStringObject();
+        valueVisitor.applySetIntSet(in, version);
         return null;
     }
 
@@ -235,7 +205,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyZSetZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        parser.rdbLoadPlainStringObject();
+        valueVisitor.applyZSetZipList(in, version);
         return null;
     }
     
@@ -243,7 +213,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyZSetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        parser.rdbLoadPlainStringObject();
+        valueVisitor.applyZSetListPack(in, version);
         return null;
     }
 
@@ -251,7 +221,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyHashZipList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        parser.rdbLoadPlainStringObject();
+        valueVisitor.applyHashZipList(in, version);
         return null;
     }
     
@@ -259,7 +229,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyHashListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        parser.rdbLoadPlainStringObject();
+        valueVisitor.applyHashListPack(in, version);
         return null;
     }
 
@@ -267,10 +237,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyListQuickList(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long len = parser.rdbLoadLen().len;
-        for (long i = 0; i < len; i++) {
-            parser.rdbGenericLoadStringObject();
-        }
+        valueVisitor.applyListQuickList(in, version);
         return null;
     }
 
@@ -278,11 +245,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyListQuickList2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long len = parser.rdbLoadLen().len;
-        for (long i = 0; i < len; i++) {
-            parser.rdbLoadLen();
-            parser.rdbLoadPlainStringObject();
-        }
+        valueVisitor.applyListQuickList2(in, version);
         return null;
     }
     
@@ -290,18 +253,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        char[] c = new char[9];
-        long moduleid = parser.rdbLoadLen().len;
-        for (int i = 0; i < c.length; i++) {
-            c[i] = MODULE_SET[(int) (moduleid >>> (10 + (c.length - 1 - i) * 6) & 63)];
-        }
-        String moduleName = new String(c);
-        int moduleVersion = (int) (moduleid & 1023);
-        ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
-        if (moduleParser == null) {
-            throw new NoSuchElementException("module parser[" + moduleName + ", " + moduleVersion + "] not register. rdb type: [RDB_TYPE_MODULE]");
-        }
-        moduleParser.parse(in, 1);
+        valueVisitor.applyModule(in, version);
         return null;
     }
 
@@ -309,24 +261,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyModule2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        char[] c = new char[9];
-        long moduleid = parser.rdbLoadLen().len;
-        for (int i = 0; i < c.length; i++) {
-            c[i] = MODULE_SET[(int) (moduleid >>> (10 + (c.length - 1 - i) * 6) & 63)];
-        }
-        String moduleName = new String(c);
-        int moduleVersion = (int) (moduleid & 1023);
-        ModuleParser<? extends Module> moduleParser = lookupModuleParser(moduleName, moduleVersion);
-        if (moduleParser == null) {
-            SkipRdbParser skipRdbParser = new SkipRdbParser(in);
-            skipRdbParser.rdbLoadCheckModuleValue();
-        } else {
-            moduleParser.parse(in, 2);
-            long eof = parser.rdbLoadLen().len;
-            if (eof != RDB_MODULE_OPCODE_EOF) {
-                throw new UnsupportedOperationException("The RDB file contains module data for the module '" + moduleName + "' that is not terminated by the proper module value EOF marker");
-            }
-        }
+        valueVisitor.applyModule2(in, version);
         return null;
     }
 
@@ -334,35 +269,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyStreamListPacks(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long listPacks = parser.rdbLoadLen().len;
-        while (listPacks-- > 0) {
-            parser.rdbLoadPlainStringObject();
-            parser.rdbLoadPlainStringObject();
-        }
-        parser.rdbLoadLen(); // length
-        parser.rdbLoadLen(); // lastId
-        parser.rdbLoadLen(); // lastId
-        long groupCount = parser.rdbLoadLen().len;
-        while (groupCount-- > 0) {
-            parser.rdbLoadPlainStringObject();
-            parser.rdbLoadLen();
-            parser.rdbLoadLen();
-            long groupPel = parser.rdbLoadLen().len;
-            while (groupPel-- > 0) {
-                in.skip(16);
-                parser.rdbLoadMillisecondTime();
-                parser.rdbLoadLen();
-            }
-            long consumerCount = parser.rdbLoadLen().len;
-            while (consumerCount-- > 0) {
-                parser.rdbLoadPlainStringObject();
-                parser.rdbLoadMillisecondTime();
-                long consumerPel = parser.rdbLoadLen().len;
-                while (consumerPel-- > 0) {
-                    in.skip(16);
-                }
-            }
-        }
+        valueVisitor.applyStreamListPacks(in, version);
         return null;
     }
     
@@ -370,41 +277,7 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     public Event applyStreamListPacks2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
-        long listPacks = parser.rdbLoadLen().len;
-        while (listPacks-- > 0) {
-            parser.rdbLoadPlainStringObject();
-            parser.rdbLoadPlainStringObject();
-        }
-        parser.rdbLoadLen(); // length
-        parser.rdbLoadLen(); // lastId
-        parser.rdbLoadLen(); // lastId
-        parser.rdbLoadLen(); // firstId
-        parser.rdbLoadLen(); // firstId
-        parser.rdbLoadLen(); // maxDeletedEntryId
-        parser.rdbLoadLen(); // maxDeletedEntryId
-        parser.rdbLoadLen(); // entriesAdded
-        long groupCount = parser.rdbLoadLen().len;
-        while (groupCount-- > 0) {
-            parser.rdbLoadPlainStringObject();
-            parser.rdbLoadLen();
-            parser.rdbLoadLen();
-            parser.rdbLoadLen(); // entriesRead
-            long groupPel = parser.rdbLoadLen().len;
-            while (groupPel-- > 0) {
-                in.skip(16);
-                parser.rdbLoadMillisecondTime();
-                parser.rdbLoadLen();
-            }
-            long consumerCount = parser.rdbLoadLen().len;
-            while (consumerCount-- > 0) {
-                parser.rdbLoadPlainStringObject();
-                parser.rdbLoadMillisecondTime();
-                long consumerPel = parser.rdbLoadLen().len;
-                while (consumerPel-- > 0) {
-                    in.skip(16);
-                }
-            }
-        }
+        valueVisitor.applyStreamListPacks2(in, version);
         return null;
     }
 }

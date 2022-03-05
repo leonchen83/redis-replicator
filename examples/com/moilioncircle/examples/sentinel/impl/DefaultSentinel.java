@@ -41,8 +41,10 @@ import org.slf4j.LoggerFactory;
 
 import com.moilioncircle.redis.replicator.Configuration;
 
+import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisException;
 
@@ -57,17 +59,29 @@ public class DefaultSentinel implements Sentinel {
     
     protected volatile Jedis jedis;
     protected final String masterName;
-    protected final List<HostAndPort> hosts;
+    protected final RedisSentinelURI uri;
+    protected final JedisClientConfig config;
     protected final Configuration configuration;
     protected final String channel = "+switch-master";
     protected AtomicBoolean running = new AtomicBoolean(true);
     protected final List<SentinelListener> listeners = new CopyOnWriteArrayList<>();
     protected final ScheduledExecutorService schedule = newSingleThreadScheduledExecutor();
 
-    public DefaultSentinel(List<HostAndPort> hosts, String masterName, Configuration configuration) {
-        this.hosts = hosts;
+    public DefaultSentinel(RedisSentinelURI uri, String masterName, Configuration configuration) {
+        this.uri = uri;
         this.masterName = masterName;
         this.configuration = configuration;
+        DefaultJedisClientConfig.Builder builder = DefaultJedisClientConfig.builder();
+        if (uri.isSsl()) {
+            builder.ssl(true);
+        }
+        if (configuration.getSslParameters() != null) {
+            builder.sslParameters(configuration.getSslParameters());
+        }
+        if (configuration.getSslContextFactory() != null) {
+            builder.sslSocketFactory(configuration.getSslContextFactory().create().getSocketFactory());
+        }
+        this.config = builder.build();
     }
 
     @Override
@@ -106,9 +120,16 @@ public class DefaultSentinel implements Sentinel {
     }
 
     protected void pulse() {
-        for (HostAndPort sentinel : hosts) {
+        for (HostAndPort sentinel : uri.getHosts()) {
             if (!this.running.get()) continue;
-            try (final Jedis jedis = new Jedis(sentinel)) {
+            try (final Jedis jedis = new Jedis(sentinel, config)) {
+                if (uri.getPassword() != null) {
+                    if (uri.getUser() != null) {
+                        jedis.auth(uri.getUser(), uri.getPassword());
+                    } else {
+                        jedis.auth(uri.getPassword());
+                    }
+                }
                 List<String> list = jedis.sentinelGetMasterAddrByName(masterName);
                 if (list == null || list.size() != 2) {
                     throw new JedisException("host: " + list);

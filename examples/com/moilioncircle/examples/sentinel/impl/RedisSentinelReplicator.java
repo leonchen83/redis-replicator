@@ -21,7 +21,6 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
@@ -61,11 +60,12 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
     private final RedisSocketReplicator replicator;
     protected final ExecutorService executors = newSingleThreadExecutor();
 
-    public RedisSentinelReplicator(List<HostAndPort> hosts, String name, Configuration configuration) {
-        Objects.requireNonNull(hosts);
+    public RedisSentinelReplicator(RedisSentinelURI uri, Configuration configuration) {
+        Objects.requireNonNull(uri);
         Objects.requireNonNull(configuration);
+        String name = Objects.requireNonNull(uri.getParameters().get("master"));
         this.replicator = new RedisSocketReplicator("", 1, configuration);
-        this.sentinel = new DefaultSentinel(hosts, name, configuration);
+        this.sentinel = new DefaultSentinel(uri, name, configuration);
         this.sentinel.addSentinelListener(this);
     }
 

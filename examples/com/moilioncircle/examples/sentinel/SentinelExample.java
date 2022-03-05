@@ -16,16 +16,12 @@
 
 package com.moilioncircle.examples.sentinel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.moilioncircle.examples.sentinel.impl.RedisSentinelReplicator;
+import com.moilioncircle.examples.sentinel.impl.RedisSentinelURI;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-
-import redis.clients.jedis.HostAndPort;
 
 /**
  * @author Leon Chen
@@ -34,10 +30,9 @@ import redis.clients.jedis.HostAndPort;
 public class SentinelExample {
     
     public static void main(String[] args) throws Exception {
-        List<HostAndPort> hosts = new ArrayList<>();
         // sentinel hosts
-        hosts.add(new HostAndPort("127.0.0.1", 26379));
-        Replicator replicator = new RedisSentinelReplicator(hosts, "mymaster", Configuration.defaultSetting());
+        String uri = "redis-sentinel://sntiusr:sntipwd@127.0.0.1:26379,127.0.0.1:26380?master=mymaster";
+        Replicator replicator = new RedisSentinelReplicator(new RedisSentinelURI(uri), Configuration.defaultSetting().setAuthPassword("masterpwd"));
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {

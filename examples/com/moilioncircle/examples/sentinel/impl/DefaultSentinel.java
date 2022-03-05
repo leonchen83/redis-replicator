@@ -26,6 +26,7 @@ import static redis.clients.jedis.Protocol.Command.UNSUBSCRIBE;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -67,9 +68,9 @@ public class DefaultSentinel implements Sentinel {
     protected final List<SentinelListener> listeners = new CopyOnWriteArrayList<>();
     protected final ScheduledExecutorService schedule = newSingleThreadScheduledExecutor();
 
-    public DefaultSentinel(RedisSentinelURI uri, String masterName, Configuration configuration) {
+    public DefaultSentinel(RedisSentinelURI uri, Configuration configuration) {
         this.uri = uri;
-        this.masterName = masterName;
+        this.masterName = Objects.requireNonNull(uri.getParameters().get("master"));;
         this.configuration = configuration;
         DefaultJedisClientConfig.Builder builder = DefaultJedisClientConfig.builder();
         if (uri.isSsl()) {

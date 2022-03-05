@@ -70,8 +70,8 @@ public class DefaultSentinel implements Sentinel {
 
     public DefaultSentinel(RedisSentinelURI uri, Configuration configuration) {
         this.uri = uri;
-        this.masterName = Objects.requireNonNull(uri.getParameters().get("master"));;
         this.configuration = configuration;
+        this.masterName = Objects.requireNonNull(uri.getParameters().get("master"));;
         DefaultJedisClientConfig.Builder builder = DefaultJedisClientConfig.builder();
         if (uri.isSsl()) {
             builder.ssl(true);

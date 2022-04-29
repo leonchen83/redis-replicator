@@ -41,6 +41,7 @@ import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpFunction;
  * @author Leon Chen
  * @since 3.6.0
  */
+@SuppressWarnings("deprecation")
 public class FunctionTest {
     
     @Test
@@ -99,5 +100,54 @@ public class FunctionTest {
         replicator.open();
         assertEquals("\\xf6\\x04lib2\\x03LUA\\x00\\xc3@D@K\\x1flocal\\x20function\\x20test2()\\x20return\\x202\\x20\\x02end\\x20\\x0c\\x0cdis.register_\\xc0,\\x01('`-\\x01',`5\\x012)\\n\\x00\\x827\\x9e\\x84$\\x91\\x84\\x19", results.get(0));
         assertEquals("\\xf6\\x04lib1\\x03LUA\\x01\\x14description\\x20function\\xc3@D@K\\x1flocal\\x20function\\x20test1()\\x20return\\x201\\x20\\x02end\\x20\\x0c\\x0cdis.register_\\xc0,\\x01('`-\\x01',`5\\x011)\\n\\x007\\xb7q\\xdb\\xb1i\\x18\\xd2", results.get(1));
+    }
+    
+    @Test
+    public void test2() throws IOException {
+        @SuppressWarnings("resource")
+        Replicator replicator = new RedisReplicator(FunctionTest.class.getClassLoader().getResourceAsStream("function2.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        List<Function> functions = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof Function) {
+                    functions.add((Function) event);
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(1, functions.size());
+        {
+            Function fn = functions.get(0);
+            assertNull(fn.getName());
+            assertNull(fn.getEngineName());
+            assertNull(fn.getDescription());
+            assertArrayEquals("#!lua name=mylib \n redis.register_function('myfunc', function(keys, args) return args[1] end)".getBytes(), fn.getCode());
+        }
+    }
+    
+    @Test
+    public void test3() throws IOException {
+        @SuppressWarnings("resource")
+        Replicator replicator = new RedisReplicator(FunctionTest.class.getClassLoader().getResourceAsStream("function2.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        List<String> results = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof DumpFunction) {
+                    DumpFunction function = (DumpFunction) event;
+                    byte[] bytes = function.getSerialized();
+                    RedisCodec codec = new RedisCodec();
+                    byte[] encoded = codec.encode(bytes);
+                    results.add(new String(encoded));
+                }
+            }
+        });
+        replicator.open();
+        assertEquals("\\xf5\\xc3@X@]\\x1f#!lua\\x20name=mylib\\x20\\n\\x20redis.registe\\rr_function('my@\\x0b\\x02',\\x20@\\x06`\\x12\\nkeys,\\x20args)\\x206\\x03turn`\\x0c\\a[1]\\x20end)\\n\\x00q\\xee\\xf6b\\xe9$\\xbaN", results.get(0));
     }
 }

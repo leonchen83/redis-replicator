@@ -49,6 +49,12 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         valueVisitor.applyFunction(in, version);
         return null;
     }
+    
+    @Override
+    public Function applyFunction2(RedisInputStream in, int version) throws IOException {
+        valueVisitor.applyFunction2(in, version);
+        return null;
+    }
 
     @Override
     public DB applySelectDB(RedisInputStream in, int version) throws IOException {

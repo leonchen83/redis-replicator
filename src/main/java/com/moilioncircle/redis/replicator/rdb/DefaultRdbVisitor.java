@@ -119,6 +119,11 @@ public class DefaultRdbVisitor extends RdbVisitor {
     public Event applyFunction(RedisInputStream in, int version) throws IOException {
         return valueVisitor.applyFunction(in, version);
     }
+    
+    @Override
+    public Event applyFunction2(RedisInputStream in, int version) throws IOException {
+        return valueVisitor.applyFunction2(in, version);
+    }
 
     @Override
     public DB applySelectDB(RedisInputStream in, int version) throws IOException {

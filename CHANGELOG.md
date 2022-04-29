@@ -1,3 +1,10 @@
+### 3.6.3
+
+Redis 7.0-GA `RDB_OPCODE_FUNCTION2` support.  
+
+1. Deprecate `name`, `engineName`, `description` properties in `Function` class.
+2. Deprecate `libraryName`, `engineName`, `description` properties in `FunctionLoadCommand` class.
+
 ### 3.6.2
 
 Fix `BaseRdbEncoder.rdbSaveLen` bug.  

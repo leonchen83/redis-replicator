@@ -89,7 +89,7 @@ redis 2.6 - 7.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.6.2</version>
+        <version>3.6.3</version>
     </dependency>
 ```
 
@@ -597,9 +597,6 @@ Since redis 7.0 add `function` support. and `function` structure stored in rdb f
         public void onEvent(Replicator replicator, Event event) {
             if (event instanceof Function) {
                 Function function = (Function) event;
-                function.getName();
-                function.getEngineName();
-                function.getDescription(); // nullable
                 function.getCode();
                     
                 // your code goes here

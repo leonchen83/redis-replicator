@@ -95,7 +95,7 @@ redis 2.6 - 7.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.6.2</version>
+        <version>3.6.3</version>
     </dependency>
 ```
 
@@ -605,9 +605,6 @@ Redis 7.0 添加了 `function` 的支持. `function` 的结构存储在rdb文件
         public void onEvent(Replicator replicator, Event event) {
             if (event instanceof Function) {
                 Function function = (Function) event;
-                function.getName();
-                function.getEngineName();
-                function.getDescription(); // nullable
                 function.getCode();
                     
                 // your code goes here

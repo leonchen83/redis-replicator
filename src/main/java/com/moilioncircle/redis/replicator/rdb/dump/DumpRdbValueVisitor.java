@@ -22,6 +22,7 @@ import static com.moilioncircle.redis.replicator.Constants.QUICKLIST_NODE_CONTAI
 import static com.moilioncircle.redis.replicator.Constants.RDB_LOAD_NONE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
@@ -133,6 +134,21 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             if (hasDesc == 1) {
                 parser.rdbGenericLoadStringObject(); // description
             }
+            parser.rdbGenericLoadStringObject(); // code
+        } finally {
+            replicator.removeRawByteListener(listener);
+        }
+        DumpFunction function = new DumpFunction();
+        function.setSerialized(listener.getBytes());
+        return (T) function;
+    }
+    
+    @Override
+    public <T> T applyFunction2(RedisInputStream in, int version) throws IOException {
+        DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_OPCODE_FUNCTION2, version);
+        replicator.addRawByteListener(listener);
+        try {
+            SkipRdbParser parser = new SkipRdbParser(in);
             parser.rdbGenericLoadStringObject(); // code
         } finally {
             replicator.removeRawByteListener(listener);

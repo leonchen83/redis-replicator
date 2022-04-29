@@ -37,22 +37,37 @@ public class FunctionParser implements CommandParser<FunctionCommand> {
         int idx = 1;
         String keyword = toRune(command[idx++]);
         if (isEquals(keyword, "LOAD")) {
+            // redis-7.0-RC2
             boolean replace = false;
+            byte[] engineName = null;
             byte[] description = null;
+            byte[] libraryName = null;
             byte[] functionCode = null;
-            byte[] engineName = toBytes(command[idx]);
-            idx++;
-            byte[] libraryName = toBytes(command[idx]);
-            idx++;
-            for (int i = idx; i < command.length; i++) {
-                String token = toRune(command[i]);
-                if (isEquals(token, "REPLACE")) {
-                    replace = true;
-                } else if (isEquals(token, "DESCRIPTION")) {
-                    i++;
-                    description = toBytes(command[i]);
-                } else {
-                    functionCode = toBytes(command[i]);
+            if (command.length > 4) {
+                engineName = toBytes(command[idx]);
+                idx++;
+                libraryName = toBytes(command[idx]);
+                idx++;
+                for (int i = idx; i < command.length; i++) {
+                    String token = toRune(command[i]);
+                    if (isEquals(token, "REPLACE")) {
+                        replace = true;
+                    } else if (isEquals(token, "DESCRIPTION")) {
+                        i++;
+                        description = toBytes(command[i]);
+                    } else {
+                        functionCode = toBytes(command[i]);
+                    }
+                }
+            } else {
+                // redis-7.0
+                for (int i = idx; i < command.length; i++) {
+                    String token = toRune(command[i]);
+                    if (isEquals(token, "REPLACE")) {
+                        replace = true;
+                    } else {
+                        functionCode = toBytes(command[i]);
+                    }
                 }
             }
             return new FunctionLoadCommand(engineName, libraryName, replace, description, functionCode);

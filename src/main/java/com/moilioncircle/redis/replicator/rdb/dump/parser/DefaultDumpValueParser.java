@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.rdb.dump.parser;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
@@ -85,6 +86,8 @@ public class DefaultDumpValueParser implements DumpValueParser {
             int valueType = in.read();
             if (valueType == RDB_OPCODE_FUNCTION) {
                 return valueVisitor.applyFunction(in, 0);
+            } else if (valueType == RDB_OPCODE_FUNCTION2) {
+                return valueVisitor.applyFunction2(in, 0);
             } else {
                 throw new AssertionError("unexpected value type:" + valueType);
             }

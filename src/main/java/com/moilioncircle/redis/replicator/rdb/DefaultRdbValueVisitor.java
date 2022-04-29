@@ -41,7 +41,7 @@ import com.moilioncircle.redis.replicator.util.Strings;
  * @author Leon Chen
  * @since 3.1.0
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "deprecation"})
 public class DefaultRdbValueVisitor extends RdbValueVisitor {
 
     protected static final Logger logger = LoggerFactory.getLogger(DefaultRdbValueVisitor.class);
@@ -62,6 +62,14 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
         if (hasDesc == 1) {
             function.setDescription(parser.rdbLoadPlainStringObject().first());
         }
+        function.setCode(parser.rdbLoadPlainStringObject().first());
+        return (T) function;
+    }
+    
+    @Override
+    public <T> T applyFunction2(RedisInputStream in, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        Function function = new Function();
         function.setCode(parser.rdbLoadPlainStringObject().first());
         return (T) function;
     }

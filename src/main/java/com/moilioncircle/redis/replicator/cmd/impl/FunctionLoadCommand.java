@@ -27,10 +27,17 @@ public class FunctionLoadCommand extends FunctionCommand {
 
     private static final long serialVersionUID = 1L;
 
+    @Deprecated
     private byte[] engineName;
+    
+    @Deprecated
     private byte[] libraryName;
+    
     private boolean replace;
+    
+    @Deprecated
     private byte[] description;
+    
     private byte[] functionCode;
     
     public FunctionLoadCommand() {
@@ -44,18 +51,38 @@ public class FunctionLoadCommand extends FunctionCommand {
         this.functionCode = functionCode;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @return engine name
+     */
+    @Deprecated
     public byte[] getEngineName() {
         return engineName;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @param engineName engine name
+     */
+    @Deprecated
     public void setEngineName(byte[] engineName) {
         this.engineName = engineName;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @return library name
+     */
+    @Deprecated
     public byte[] getLibraryName() {
         return libraryName;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @param libraryName library name
+     */
+    @Deprecated
     public void setLibraryName(byte[] libraryName) {
         this.libraryName = libraryName;
     }
@@ -68,10 +95,20 @@ public class FunctionLoadCommand extends FunctionCommand {
         this.replace = replace;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @return description
+     */
+    @Deprecated
     public byte[] getDescription() {
         return description;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @param description description
+     */
+    @Deprecated
     public void setDescription(byte[] description) {
         this.description = description;
     }

@@ -51,6 +51,13 @@ public class SkipRdbValueVisitor extends DefaultRdbValueVisitor {
 	}
 	
 	@Override
+	public <T> T applyFunction2(RedisInputStream in, int version) throws IOException {
+		SkipRdbParser parser = new SkipRdbParser(in);
+		parser.rdbGenericLoadStringObject(); // code
+		return null;
+	}
+	
+	@Override
 	public <T> T applyString(RedisInputStream in, int version) throws IOException {
 		SkipRdbParser parser = new SkipRdbParser(in);
 		parser.rdbLoadEncodedStringObject();

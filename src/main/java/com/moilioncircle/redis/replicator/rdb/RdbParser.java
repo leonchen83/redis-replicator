@@ -22,6 +22,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME_MS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_MODULE_AUX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
@@ -195,6 +196,9 @@ public class RdbParser {
                     break;
                 case RDB_OPCODE_FUNCTION:
                     event = rdbVisitor.applyFunction(in, version);
+                    break;
+                case RDB_OPCODE_FUNCTION2:
+                    event = rdbVisitor.applyFunction2(in, version);
                     break;
                 case RDB_OPCODE_RESIZEDB:
                     rdbVisitor.applyResizeDB(in, version, kv);

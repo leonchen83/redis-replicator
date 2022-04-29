@@ -25,31 +25,67 @@ import com.moilioncircle.redis.replicator.event.AbstractEvent;
 public class Function extends AbstractEvent {
     private static final long serialVersionUID = 1L;
     
+    @Deprecated
     private byte[] name;
+    
+    @Deprecated
     private byte[] engineName;
+    
+    @Deprecated
     private byte[] description;
+    
     private byte[] code;
     
+    /**
+     * @deprecated since redis-7.0
+     * @return name
+     */
+    @Deprecated
     public byte[] getName() {
         return name;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @param name name
+     */
+    @Deprecated
     public void setName(byte[] name) {
         this.name = name;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @return engine name
+     */
+    @Deprecated
     public byte[] getEngineName() {
         return engineName;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @param engineName engine name
+     */
+    @Deprecated
     public void setEngineName(byte[] engineName) {
         this.engineName = engineName;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @return description
+     */
+    @Deprecated
     public byte[] getDescription() {
         return description;
     }
     
+    /**
+     * @deprecated since redis-7.0
+     * @param description description
+     */
+    @Deprecated
     public void setDescription(byte[] description) {
         this.description = description;
     }

@@ -29,6 +29,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.FunctionRestoreCommand;
  * @author Leon Chen
  * @since 3.6.0
  */
+@SuppressWarnings("deprecation")
 public class FunctionParserTest extends AbstractParserTest {
     @Test
     public void test() {
@@ -133,6 +134,36 @@ public class FunctionParserTest extends AbstractParserTest {
             assertEquals("redis.register_function('myfunc', function(keys, args) return args[1] end)", cmd.getFunctionCode());
             assertEquals(true, cmd.isReplace());
             assertEquals("desc", cmd.getDescription());
+        }
+    
+        {
+            FunctionParser parser = new FunctionParser();
+            FunctionLoadCommand cmd = (FunctionLoadCommand)parser.parse(toObjectArray(new Object[]{"function", "load", "redis.register_function('myfunc', function(keys, args) return args[1] end)", "replace"}));
+            assertNull(cmd.getEngineName());
+            assertNull(cmd.getLibraryName());
+            assertEquals("redis.register_function('myfunc', function(keys, args) return args[1] end)", cmd.getFunctionCode());
+            assertEquals(true, cmd.isReplace());
+            assertNull(cmd.getDescription());
+        }
+    
+        {
+            FunctionParser parser = new FunctionParser();
+            FunctionLoadCommand cmd = (FunctionLoadCommand)parser.parse(toObjectArray(new Object[]{"function", "load", "replace", "redis.register_function('myfunc', function(keys, args) return args[1] end)"}));
+            assertNull(cmd.getEngineName());
+            assertNull(cmd.getLibraryName());
+            assertEquals("redis.register_function('myfunc', function(keys, args) return args[1] end)", cmd.getFunctionCode());
+            assertEquals(true, cmd.isReplace());
+            assertNull(cmd.getDescription());
+        }
+    
+        {
+            FunctionParser parser = new FunctionParser();
+            FunctionLoadCommand cmd = (FunctionLoadCommand)parser.parse(toObjectArray(new Object[]{"function", "load", "redis.register_function('myfunc', function(keys, args) return args[1] end)"}));
+            assertNull(cmd.getEngineName());
+            assertNull(cmd.getLibraryName());
+            assertEquals("redis.register_function('myfunc', function(keys, args) return args[1] end)", cmd.getFunctionCode());
+            assertEquals(false, cmd.isReplace());
+            assertNull(cmd.getDescription());
         }
     }
 }

@@ -59,6 +59,7 @@ public class Constants {
      * rdb protocol
      */
     public static final int RDB_OPCODE_FUNCTION = 246;
+    public static final int RDB_OPCODE_FUNCTION2 = 245;
     public static final int RDB_OPCODE_MODULE_AUX = 247;
     public static final int RDB_OPCODE_IDLE = 248;
     public static final int RDB_OPCODE_FREQ = 249;

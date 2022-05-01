@@ -1,3 +1,7 @@
+### 3.6.4
+
+Fix `listpack` decoding bug.  
+
 ### 3.6.3
 
 Redis 7.0-GA `RDB_OPCODE_FUNCTION2` support.  

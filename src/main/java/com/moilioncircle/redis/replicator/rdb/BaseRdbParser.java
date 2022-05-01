@@ -405,8 +405,8 @@ public class BaseRdbParser {
                 int len = ((special & 0x0F) << 8) | in.read();
                 skip = 2 + len;
                 value = bytes(in, len);
-            } else if ((special & 0xFF) == 0xf0) {
-                int len = in.readInt(4, false);
+            } else if ((special & 0xFF) == 0xF0) {
+                int len = in.readInt(4);
                 skip = 5 + len;
                 value = bytes(in, len);
             } else {

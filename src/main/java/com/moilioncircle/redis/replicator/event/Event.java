@@ -27,7 +27,28 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
 public interface Event extends Serializable {
 
     interface Context extends Serializable {
+
         Tuple2<Long, Long> getOffsets();
+        
         void setOffsets(Tuple2<Long, Long> offset);
+
+        /**
+         * @since 3.6.5
+         * @param key key
+         * @return cookie value
+         */
+        default Object getCookie(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @since 3.6.5
+         * @param key cookie key 
+         * @param value cookie value
+         * @return previous cookie value
+         */
+        default Object setCookie(Object key, Object value) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

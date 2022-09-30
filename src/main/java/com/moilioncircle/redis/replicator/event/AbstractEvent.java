@@ -16,6 +16,9 @@
 
 package com.moilioncircle.redis.replicator.event;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 /**
@@ -37,6 +40,8 @@ public abstract class AbstractEvent implements Event {
         private static final long serialVersionUID = 1L;
 
         private Tuple2<Long, Long> offsets;
+        
+        private ConcurrentMap<Object, Object> cookies = new ConcurrentHashMap<>(4);
 
         /**
          * Fetch offset behavior:
@@ -79,6 +84,16 @@ public abstract class AbstractEvent implements Event {
         @Override
         public void setOffsets(Tuple2<Long, Long> offset) {
             this.offsets = offset;
+        }
+
+        @Override
+        public Object getCookie(Object key) {
+            return cookies.get(key);
+        }
+
+        @Override
+        public Object setCookie(Object key, Object value) {
+            return cookies.put(key, value);
         }
     }
 }

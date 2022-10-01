@@ -16,14 +16,16 @@
 
 package com.moilioncircle.redis.replicator.rdb.iterable.datatype;
 
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-
 import java.util.Iterator;
 import java.util.Map;
+
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 /**
  * @author Leon Chen
  * @since 2.3.0
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
 public class KeyStringValueMapEntryIterator extends KeyValuePair<byte[], Iterator<Map.Entry<byte[], byte[]>>> {
     private static final long serialVersionUID = 1L;

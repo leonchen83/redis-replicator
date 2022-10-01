@@ -21,6 +21,8 @@ import java.util.List;
 /**
  * @author Leon Chen
  * @since 3.0.0
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
 public class BatchedKeyStringValueList extends BatchedKeyValuePair<byte[], List<byte[]>> {
     private static final long serialVersionUID = 1L;

@@ -16,13 +16,15 @@
 
 package com.moilioncircle.redis.replicator.rdb.iterable.datatype;
 
-import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
-
 import java.util.Set;
+
+import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 
 /**
  * @author Leon Chen
  * @since 3.0.0
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
 public class BatchedKeyStringValueZSet extends BatchedKeyValuePair<byte[], Set<ZSetEntry>> {
     private static final long serialVersionUID = 1L;

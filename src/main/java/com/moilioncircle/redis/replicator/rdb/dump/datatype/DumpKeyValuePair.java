@@ -21,6 +21,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 /**
  * @author Leon Chen
  * @since 2.5.0
+ * @see com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor
  */
 public class DumpKeyValuePair extends KeyValuePair<byte[], byte[]> {
     private static final long serialVersionUID = 1L;

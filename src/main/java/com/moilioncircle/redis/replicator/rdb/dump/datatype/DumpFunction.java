@@ -21,6 +21,7 @@ import com.moilioncircle.redis.replicator.event.AbstractEvent;
 /**
  * @author Leon Chen
  * @since 3.6.0
+ * @see com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor
  * use FUNCTION RESTORE command can restore this serialized data to target redis
  */
 public class DumpFunction extends AbstractEvent {

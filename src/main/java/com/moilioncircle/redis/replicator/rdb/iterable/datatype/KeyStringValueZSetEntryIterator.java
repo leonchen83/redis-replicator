@@ -16,14 +16,16 @@
 
 package com.moilioncircle.redis.replicator.rdb.iterable.datatype;
 
+import java.util.Iterator;
+
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
-
-import java.util.Iterator;
 
 /**
  * @author Leon Chen
  * @since 2.3.0
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
 public class KeyStringValueZSetEntryIterator extends KeyValuePair<byte[], Iterator<ZSetEntry>> {
     private static final long serialVersionUID = 1L;

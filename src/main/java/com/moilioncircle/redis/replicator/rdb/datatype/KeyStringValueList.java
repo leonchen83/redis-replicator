@@ -21,6 +21,7 @@ import java.util.List;
 /**
  * @author Leon Chen
  * @since 2.1.0
+ * @see com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor
  */
 public class KeyStringValueList extends KeyValuePair<byte[], List<byte[]>> {
     private static final long serialVersionUID = 1L;

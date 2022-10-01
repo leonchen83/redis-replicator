@@ -21,6 +21,8 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 /**
  * @author Leon Chen
  * @since 3.0.0
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
 public class BatchedKeyValuePair<K, V> extends KeyValuePair<K, V> {
     

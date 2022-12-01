@@ -168,6 +168,9 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <compilerArgs>
+                                <arg>-parameters</arg>
+                            </compilerArgs>
                             <encoding>${project.build.sourceEncoding}</encoding>
                         </configuration>
                     </plugin>
@@ -298,6 +301,9 @@
                             </execution>
                         </executions>
                         <configuration>
+                            <compilerArgs>
+                                <arg>-parameters</arg>
+                            </compilerArgs>
                             <encoding>${project.build.sourceEncoding}</encoding>
                         </configuration>
                     </plugin>
@@ -387,6 +393,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>

@@ -60,8 +60,8 @@ import com.moilioncircle.redis.replicator.util.XScheduledExecutorService;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.ZParams;
 import redis.clients.jedis.params.ZAddParams;
+import redis.clients.jedis.params.ZParams;
 
 /**
  * @author Leon Chen

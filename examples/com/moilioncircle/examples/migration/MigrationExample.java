@@ -21,6 +21,7 @@ import static redis.clients.jedis.Protocol.Command.RESTORE;
 import static redis.clients.jedis.Protocol.Command.SELECT;
 import static redis.clients.jedis.Protocol.toByteArray;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -42,7 +43,10 @@ import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
 
-import redis.clients.jedis.Client;
+import redis.clients.jedis.DefaultJedisClientConfig;
+import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
 
 /**
@@ -227,21 +231,24 @@ public class MigrationExample {
      * For simplicity we use Jedis to show this example.
      * In production you need to replace following code to yours.
      */
-    public static class ExampleClient extends Client {
+    public static class ExampleClient implements Closeable {
+    
+        private JedisPool pool;
 
         public ExampleClient(final String host, final int port) {
-            super(host, port);
-            setConnectionTimeout(10000);
-            setSoTimeout(10000);
+            DefaultJedisClientConfig.Builder config = DefaultJedisClientConfig.builder();
+            config.timeoutMillis(10000);
+            this.pool = new JedisPool(new HostAndPort(host, port), config.build());
         }
 
         public Object send(Protocol.Command cmd, final byte[]... args) {
-            sendCommand(cmd, args);
-            Object r = getOne();
-            if (r instanceof byte[]) {
-                return Strings.toString(r);
-            } else {
-                return r;
+            try(Jedis jedis = pool.getResource()) {
+                Object r = jedis.sendCommand(cmd, args);
+                if (r instanceof byte[]) {
+                    return Strings.toString(r);
+                } else {
+                    return r;
+                }
             }
         }
 
@@ -254,6 +261,13 @@ public class MigrationExample {
                 return send(RESTORE, key, toByteArray(expired), dumped);
             } else {
                 return send(RESTORE, key, toByteArray(expired), dumped, "REPLACE".getBytes());
+            }
+        }
+    
+        @Override
+        public void close() {
+            if (pool != null) {
+                pool.close();
             }
         }
     }

@@ -1,3 +1,10 @@
+### 3.6.5
+
+Upgrade `slf4j-api` to `2.0.6`.  
+Upgrade test dependency `jedis` to `4.3.1`.  
+Upgrade example `MigrationExample`.  
+Add cookie to `Event.Context` class.  
+
 ### 3.6.4
 
 Fix `listpack` decoding bug.  

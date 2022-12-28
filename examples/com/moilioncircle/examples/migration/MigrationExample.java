@@ -46,7 +46,6 @@ import com.moilioncircle.redis.replicator.util.Strings;
 import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Protocol;
 
 /**
@@ -233,22 +232,20 @@ public class MigrationExample {
      */
     public static class ExampleClient implements Closeable {
     
-        private JedisPool pool;
+        private Jedis jedis;
 
         public ExampleClient(final String host, final int port) {
             DefaultJedisClientConfig.Builder config = DefaultJedisClientConfig.builder();
             config.timeoutMillis(10000);
-            this.pool = new JedisPool(new HostAndPort(host, port), config.build());
+            this.jedis = new Jedis(new HostAndPort(host, port), config.build());
         }
-
+    
         public Object send(Protocol.Command cmd, final byte[]... args) {
-            try(Jedis jedis = pool.getResource()) {
-                Object r = jedis.sendCommand(cmd, args);
-                if (r instanceof byte[]) {
-                    return Strings.toString(r);
-                } else {
-                    return r;
-                }
+            Object r = jedis.sendCommand(cmd, args);
+            if (r instanceof byte[]) {
+                return Strings.toString(r);
+            } else {
+                return r;
             }
         }
 
@@ -266,8 +263,8 @@ public class MigrationExample {
     
         @Override
         public void close() {
-            if (pool != null) {
-                pool.close();
+            if (jedis != null) {
+                jedis.close();
             }
         }
     }

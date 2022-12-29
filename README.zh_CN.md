@@ -190,6 +190,7 @@ redis 2.6 - 7.0
   
 ### 4.1.1. 首先写一个command类  
 ```java  
+    @CommandSpec(command = "APPEND")
     public static class YourAppendCommand extends AbstractCommand {
         private final String key;
         private final String value;
@@ -210,8 +211,7 @@ redis 2.6 - 7.0
 ```
 
 ### 4.1.2. 然后写一个command parser  
-```java  
-
+```java
     public class YourAppendParser implements CommandParser<YourAppendCommand> {
 
         @Override
@@ -295,7 +295,8 @@ redis 2.6 - 7.0
             return new HelloTypeCommand(key, value);
         }
     }
-
+    
+    @CommandSpec(command = "hellotype.insert")
     public class HelloTypeCommand extends AbstractCommand {
         private final String key;
         private final long value;

@@ -190,6 +190,7 @@ See [examples](./examples/com/moilioncircle/examples/README.md)
   
 ### 4.1.1. Write a command  
 ```java  
+    @CommandSpec(command = "APPEND")
     public static class YourAppendCommand extends AbstractCommand {
         private final String key;
         private final String value;
@@ -287,6 +288,7 @@ See [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extensi
 ```
 ### 4.2.4. Write a command parser  
 ```java  
+
     public class HelloTypeParser implements CommandParser<HelloTypeCommand> {
         @Override
         public HelloTypeCommand parse(Object[] command) {
@@ -295,7 +297,8 @@ See [CommandExtensionExample.java](./examples/com/moilioncircle/examples/extensi
             return new HelloTypeCommand(key, value);
         }
     }
-
+    
+    @CommandSpec(command = "hellotype.insert")
     public class HelloTypeCommand extends AbstractCommand {
         private final String key;
         private final long value;

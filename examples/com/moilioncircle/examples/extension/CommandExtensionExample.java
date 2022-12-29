@@ -22,6 +22,7 @@ import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.CommandSpec;
 import com.moilioncircle.redis.replicator.cmd.impl.AbstractCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
@@ -56,7 +57,8 @@ public class CommandExtensionExample {
         public YourAppendCommand parse(Object[] command) {
             return new YourAppendCommand(toRune(command[1]), toRune(command[2]));
         }
-
+    
+        @CommandSpec(command = "APPEND")
         public static class YourAppendCommand extends AbstractCommand {
             /**
              *

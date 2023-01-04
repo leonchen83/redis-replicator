@@ -20,10 +20,15 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.Test;
+
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.BaseRdbEncoder;
+import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 
 /**
  * @author Leon Chen
@@ -124,6 +129,22 @@ public class LzfTest {
             byte[] out1 = compress1(value);
             assertEquals(out.length, out1.length);
             assertArrayEquals(out, out1);
+        }
+    }
+    
+    @Test
+    public void test2() throws Exception {
+        BaseRdbEncoder encoder = new BaseRdbEncoder();
+        for (int i = 0; i < 100; i++) {
+            int length = ThreadLocalRandom.current().nextInt(10000000) + 20;
+            byte[] value = new byte[length];
+            ThreadLocalRandom.current().nextBytes(value);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbGenericSaveStringObject(new ByteArray(value), out);
+            byte[] encoded = out.toByteArray();
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(new ByteArray(encoded)));
+            byte[] decoded = parser.rdbLoadEncodedStringObject().first();
+            assertArrayEquals(decoded, value);
         }
     }
 

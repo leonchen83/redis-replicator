@@ -147,6 +147,22 @@ public class LzfTest {
             assertArrayEquals(decoded, value);
         }
     }
+    
+    @Test
+    public void test3() throws Exception {
+        BaseRdbEncoder encoder = new BaseRdbEncoder();
+        for (int i = 0; i < 1000000; i++) {
+            int length = ThreadLocalRandom.current().nextInt(10) + 20;
+            byte[] value = new byte[length];
+            ThreadLocalRandom.current().nextBytes(value);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            encoder.rdbGenericSaveStringObject(new ByteArray(value), out);
+            byte[] encoded = out.toByteArray();
+            BaseRdbParser parser = new BaseRdbParser(new RedisInputStream(new ByteArray(encoded)));
+            byte[] decoded = parser.rdbLoadEncodedStringObject().first();
+            assertArrayEquals(decoded, value);
+        }
+    }
 
     private byte[] compress(byte[] in) {
         CompressLZF c = new CompressLZF();

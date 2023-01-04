@@ -248,7 +248,7 @@ public class Lzf {
     
     public static ByteArray encode(ByteArray bytes) {
         long len = bytes.length();
-        ByteArray out = new ByteArray(len - 4);
+        ByteArray out = new ByteArray(len - 3);
         len = encode(bytes, len, out, 0);
         if (len <= 0) {
             return bytes;
@@ -260,113 +260,118 @@ public class Lzf {
     }
     
     public static long encode(ByteArray in, long inLen, ByteArray out, long outPos) {
-        int inPos = 0;
-        long[] hashTab = BUFFER.get();
-        java.util.Arrays.fill(hashTab, 0);
-        int literals = 0;
-        outPos++;
-        int future = first(in, 0);
-        while (inPos < inLen - 4) {
-            byte p2 = in.get(inPos + 2);
-            // next
-            future = (future << 8) + (p2 & 255);
-            int off = hash(future);
-            long ref = hashTab[off];
-            hashTab[off] = inPos;
-            // if (ref < inPos
-            //       && ref > 0
-            //       && (off = inPos - ref - 1) < MAX_OFF
-            //       && in[ref + 2] == p2
-            //       && (((in[ref] & 255) << 8) | (in[ref + 1] & 255)) ==
-            //           ((future >> 8) & 0xffff)) {
-            if (ref < inPos
-                    && ref > 0
-                    && (off = (int)(inPos - ref - 1)) < MAX_OFF
-                    && in.get(ref + 2) == p2
-                    && in.get(ref + 1) == (byte) (future >> 8)
-                    && in.get(ref) == (byte) (future >> 16)) {
-                // match
-                long maxLen = inLen - inPos - 2;
-                if (maxLen > MAX_REF) {
-                    maxLen = MAX_REF;
-                }
-                if (outPos + 3 + 1 >= out.length()) {
-                    int c = literals == 0 ? 1 : 0;
-                    if (outPos - c + 3 + 1 >= out.length())
+        try {
+            int inPos = 0;
+            long outLen = outPos + out.length() - 1;
+            long[] hashTab = BUFFER.get();
+            java.util.Arrays.fill(hashTab, 0);
+            int literals = 0;
+            outPos++;
+            int future = first(in, 0);
+            while (inPos < inLen - 4) {
+                byte p2 = in.get(inPos + 2);
+                // next
+                future = (future << 8) + (p2 & 255);
+                int off = hash(future);
+                long ref = hashTab[off];
+                hashTab[off] = inPos;
+                // if (ref < inPos
+                //       && ref > 0
+                //       && (off = inPos - ref - 1) < MAX_OFF
+                //       && in[ref + 2] == p2
+                //       && (((in[ref] & 255) << 8) | (in[ref + 1] & 255)) ==
+                //           ((future >> 8) & 0xffff)) {
+                if (ref < inPos
+                        && ref > 0
+                        && (off = (int)(inPos - ref - 1)) < MAX_OFF
+                        && in.get(ref + 2) == p2
+                        && in.get(ref + 1) == (byte) (future >> 8)
+                        && in.get(ref) == (byte) (future >> 16)) {
+                    // match
+                    long maxLen = inLen - inPos - 2;
+                    if (maxLen > MAX_REF) {
+                        maxLen = MAX_REF;
+                    }
+                    if (outPos + 3 + 1 >= outLen) {
+                        int c = literals == 0 ? 1 : 0;
+                        if (outPos - c + 3 + 1 >= outLen)
+                            return 0;
+                    }
+                    if (literals == 0) {
+                        // multiple back-references,
+                        // so there is no literal run control byte
+                        outPos--;
+                    } else {
+                        // set the control byte at the start of the literal run
+                        // to store the number of literals
+                        out.set(outPos - literals - 1, (byte) (literals - 1));
+                        literals = 0;
+                    }
+                    int len = 3;
+                    while (len < maxLen && in.get(ref + len) == in.get(inPos + len)) {
+                        len++;
+                    }
+                    len -= 2;
+                    if (len < 7) {
+                        out.set(outPos++, (byte) ((off >> 8) + (len << 5)));
+                    } else {
+                        out.set(outPos++, (byte) ((off >> 8) + (7 << 5)));
+                        out.set(outPos++, (byte) (len - 7));
+                    }
+                    out.set(outPos++, (byte) off);
+                    // move one byte forward to allow for a literal run control byte
+                    outPos++;
+                    inPos += len;
+                    // rebuild the future, and store the last bytes to the hashtable.
+                    // Storing hashes of the last bytes in back-reference improves
+                    // the compression ratio and only reduces speed slightly.
+                    future = first(in, inPos);
+                    future = next(future, in, inPos);
+                    hashTab[hash(future)] = inPos++;
+                    future = next(future, in, inPos);
+                    hashTab[hash(future)] = inPos++;
+                } else {
+                    // copy one byte from input to output as part of literal
+                    if (outPos >= outLen) {
                         return 0;
+                    }
+                    out.set(outPos++, in.get(inPos++));
+                    literals++;
+                    // at the end of this literal chunk, write the length
+                    // to the control byte and start a new chunk
+                    if (literals == MAX_LITERAL) {
+                        out.set(outPos - literals - 1, (byte) (literals - 1));
+                        literals = 0;
+                        // move ahead one byte to allow for the
+                        // literal run control byte
+                        outPos++;
+                    }
                 }
-                if (literals == 0) {
-                    // multiple back-references,
-                    // so there is no literal run control byte
-                    outPos--;
-                } else {
-                    // set the control byte at the start of the literal run
-                    // to store the number of literals
-                    out.set(outPos - literals - 1, (byte) (literals - 1));
-                    literals = 0;
-                }
-                int len = 3;
-                while (len < maxLen && in.get(ref + len) == in.get(inPos + len)) {
-                    len++;
-                }
-                len -= 2;
-                if (len < 7) {
-                    out.set(outPos++, (byte) ((off >> 8) + (len << 5)));
-                } else {
-                    out.set(outPos++, (byte) ((off >> 8) + (7 << 5)));
-                    out.set(outPos++, (byte) (len - 7));
-                }
-                out.set(outPos++, (byte) off);
-                // move one byte forward to allow for a literal run control byte
-                outPos++;
-                inPos += len;
-                // rebuild the future, and store the last bytes to the hashtable.
-                // Storing hashes of the last bytes in back-reference improves
-                // the compression ratio and only reduces speed slightly.
-                future = first(in, inPos);
-                future = next(future, in, inPos);
-                hashTab[hash(future)] = inPos++;
-                future = next(future, in, inPos);
-                hashTab[hash(future)] = inPos++;
-            } else {
-                // copy one byte from input to output as part of literal
-                if (outPos >= out.length()) {
-                    return 0;
-                }
+            }
+    
+            if (outPos + 3 > outLen) {
+                return 0;
+            }
+    
+            // write the remaining few bytes as literals
+            while (inPos < inLen) {
                 out.set(outPos++, in.get(inPos++));
                 literals++;
-                // at the end of this literal chunk, write the length
-                // to the control byte and start a new chunk
                 if (literals == MAX_LITERAL) {
                     out.set(outPos - literals - 1, (byte) (literals - 1));
                     literals = 0;
-                    // move ahead one byte to allow for the
-                    // literal run control byte
                     outPos++;
                 }
             }
-        }
-        
-        if (outPos + 3 > out.length()) {
+            // writes the final literal run length to the control byte
+            out.set(outPos - literals - 1, (byte) (literals - 1));
+            if (literals == 0) {
+                outPos--;
+            }
+            return outPos;
+        } catch (ArrayIndexOutOfBoundsException e) {
             return 0;
         }
-        
-        // write the remaining few bytes as literals
-        while (inPos < inLen) {
-            out.set(outPos++, in.get(inPos++));
-            literals++;
-            if (literals == MAX_LITERAL) {
-                out.set(outPos - literals - 1, (byte) (literals - 1));
-                literals = 0;
-                outPos++;
-            }
-        }
-        // writes the final literal run length to the control byte
-        out.set(outPos - literals - 1, (byte) (literals - 1));
-        if (literals == 0) {
-            outPos--;
-        }
-        return outPos;
     }
     
     private static int first(ByteArray in, long inPos) {

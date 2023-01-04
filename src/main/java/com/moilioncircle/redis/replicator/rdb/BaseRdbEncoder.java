@@ -183,8 +183,7 @@ public class BaseRdbEncoder {
      * @see BaseRdbParser#rdbLoadEncodedStringObject()
      */
     public void rdbSaveEncodedStringObject(ByteArray bytes, OutputStream out) throws IOException {
-        // at least compress 4 bytes
-        ByteArray compressed = new ByteArray(bytes.length() - 4);
+        ByteArray compressed = new ByteArray(bytes.length() - 3);
         long length = Lzf.encode(bytes, bytes.length(), compressed, 0);
         if (length <= 0) {
             rdbSavePlainStringObject(bytes, out);

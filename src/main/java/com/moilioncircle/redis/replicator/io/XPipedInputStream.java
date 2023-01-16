@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.moilioncircle.redis.replicator.io;
 
 /**
  * @author Leon Chen
- * @since 3.6.0
+ * @since 3.7.0
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface CommandSpec {
-    String command();
-    String subCommand() default "";
+public class XPipedInputStream extends AbstractAsyncInputStream {
+    
+    public XPipedInputStream(XPipedOutputStream os) {
+        this(os, DEFAULT_CAPACITY);
+    }
+    
+    public XPipedInputStream(XPipedOutputStream os, int size) {
+        super(os, size);
+        os.connect(this);
+    }
 }

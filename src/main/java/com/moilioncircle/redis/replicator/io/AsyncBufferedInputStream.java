@@ -17,75 +17,54 @@
 
 package com.moilioncircle.redis.replicator.io;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Jingqi Xu
  * @author andyqzb
  * @since 2.1.0
  */
-public final class AsyncBufferedInputStream extends InputStream implements Runnable {
-    //
-    private static final Logger logger = LoggerFactory.getLogger(AsyncBufferedInputStream.class);
-
-    //
-    private static final int DEFAULT_CAPACITY = 2 * 1024 * 1024;
-
-    //
-    private final Thread worker;
-    private final InputStream is;
-    private volatile IOException exception;
-    private final ByteRingBuffer ringBuffer;
-    private final ThreadFactory threadFactory;
-    private final ReentrantLock lock = new ReentrantLock(false);
-    private final AtomicBoolean closed = new AtomicBoolean(false);
-    private final Condition bufferNotFull = this.lock.newCondition();
-    private final Condition bufferNotEmpty = this.lock.newCondition();
-
-
+public final class AsyncBufferedInputStream extends AbstractAsyncInputStream implements Runnable {
+    
+    protected final Thread worker;
+    protected final ThreadFactory threadFactory;
+    
     /*
      *
      */
     public AsyncBufferedInputStream(InputStream is) {
         this(is, DEFAULT_CAPACITY);
     }
-
+    
     public AsyncBufferedInputStream(InputStream is, int size) {
         this(is, size, Executors.defaultThreadFactory());
     }
-
+    
     public AsyncBufferedInputStream(InputStream is, int size, ThreadFactory tf) {
-        //
-        this.is = is;
+        super(is, size);
         this.threadFactory = tf;
-        this.ringBuffer = new ByteRingBuffer(size);
-
+        
         //
         this.worker = this.threadFactory.newThread(this);
         this.worker.start();
     }
-
+    
     /*
      *
      */
+    @Override
     public void run() {
         try {
             final byte[] buffer = new byte[512 * 1024];
             while (!this.closed.get()) {
                 //
-                int r = this.is.read(buffer, 0, buffer.length);
+                int r = ((InputStream) this.resource).read(buffer, 0, buffer.length);
                 if (r < 0) throw new EOFException();
-
+                
                 //
                 int offset = 0;
                 while (r > 0) {
@@ -106,171 +85,6 @@ public final class AsyncBufferedInputStream extends InputStream implements Runna
                     logger.error("failed to close is", e);
                 }
             }
-        }
-    }
-
-    /*
-     *
-     */
-    @Override
-    public int available() throws IOException {
-        return this.ringBuffer.size();
-    }
-
-    @Override
-    public void close() throws IOException {
-        //
-        if (!this.closed.compareAndSet(false, true)) return;
-
-        //
-        try {
-            this.is.close();
-        } finally {
-            this.lock.lock();
-            try {
-                this.bufferNotFull.signalAll();
-                this.bufferNotEmpty.signalAll();
-            } finally {
-                this.lock.unlock();
-            }
-        }
-    }
-
-    @Override
-    public int read() throws IOException {
-        this.lock.lock();
-        try {
-            //
-            while (this.ringBuffer.isEmpty()) {
-                if (this.exception != null) throw this.exception;
-                this.bufferNotEmpty.awaitUninterruptibly();
-                if (this.closed.get()) throw new EOFException();
-            }
-
-            //
-            final int r = this.ringBuffer.read();
-            this.bufferNotFull.signal();
-            return r;
-        } finally {
-            this.lock.unlock();
-        }
-    }
-
-    @Override
-    public int read(byte b[], int off, int len) throws IOException {
-        this.lock.lock();
-        try {
-            //
-            while (this.ringBuffer.isEmpty()) {
-                if (this.exception != null) throw this.exception;
-                this.bufferNotEmpty.awaitUninterruptibly();
-                if (this.closed.get()) throw new EOFException();
-            }
-
-            //
-            final int r = this.ringBuffer.read(b, off, len);
-            this.bufferNotFull.signal();
-            return r;
-        } finally {
-            this.lock.unlock();
-        }
-    }
-
-    public int write(byte b[], int off, int len) throws IOException {
-        this.lock.lock();
-        try {
-            //
-            while (this.ringBuffer.isFull()) {
-                this.bufferNotFull.awaitUninterruptibly();
-                if (this.closed.get()) throw new EOFException();
-            }
-
-            //
-            final int w = this.ringBuffer.write(b, off, len);
-            this.bufferNotEmpty.signal();
-            return w;
-        } finally {
-            this.lock.unlock();
-        }
-    }
-
-    /*
-     *
-     */
-    private final class ByteRingBuffer {
-        //
-        private int size;
-        private int head; // Write
-        private int tail; // Read
-        private final byte[] buffer;
-
-        /*
-         *
-         */
-        public ByteRingBuffer(int capacity) {
-            this.buffer = new byte[capacity];
-        }
-
-        /*
-         *
-         */
-        public int size() {
-            return this.size;
-        }
-
-        public boolean isEmpty() {
-            return this.size == 0;
-        }
-
-        public boolean isFull() {
-            return this.size == this.buffer.length;
-        }
-
-        /*
-         *
-         */
-        public int read() {
-            //
-            final int r = this.buffer[this.tail] & 0xFF;
-
-            //
-            this.tail = (this.tail + 1) % this.buffer.length;
-            this.size -= 1;
-            return r;
-        }
-
-        public int read(byte b[], int off, int len) {
-            //
-            final int r = Math.min(this.size, len);
-            if (this.head > this.tail) {
-                System.arraycopy(this.buffer, this.tail, b, off, r);
-            } else {
-                final int r1 = Math.min(this.buffer.length - this.tail, r);
-                System.arraycopy(this.buffer, this.tail, b, off, r1);
-                if (r1 < r) System.arraycopy(this.buffer, 0, b, off + r1, r - r1);
-            }
-
-            //
-            this.tail = (this.tail + r) % this.buffer.length;
-            this.size -= r;
-            return r;
-        }
-
-        public int write(byte b[], int off, int len) {
-            //
-            final int w = Math.min(this.buffer.length - this.size, len);
-            if (this.head < this.tail) {
-                System.arraycopy(b, off, this.buffer, this.head, w);
-            } else {
-                final int w1 = Math.min(this.buffer.length - this.head, w);
-                System.arraycopy(b, off, this.buffer, this.head, w1);
-                if (w1 < w) System.arraycopy(b, off + w1, this.buffer, 0, w - w1);
-            }
-
-            //
-            this.head = (this.head + w) % this.buffer.length;
-            this.size += w;
-            return w;
         }
     }
 }

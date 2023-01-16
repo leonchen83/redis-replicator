@@ -36,22 +36,22 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
  * @author Leon Chen
  */
 public class ListPackBugTest {
-	@Test
-	public void test() throws IOException {
-		@SuppressWarnings("resource")
-		Replicator replicator = new RedisReplicator(FunctionTest.class.getClassLoader().getResourceAsStream("listpack-bug.rdb"), FileType.RDB,
-				Configuration.defaultSetting());
-		List<KeyValuePair<?, ?>> kvs = new ArrayList<>();
-		replicator.addEventListener(new EventListener() {
-			@Override
-			public void onEvent(Replicator replicator, Event event) {
-				if (event instanceof KeyValuePair<?, ?>) {
-					kvs.add((KeyValuePair<?, ?>) event);
-				}
-			}
-		});
-		replicator.open();
-		
-		assertEquals(237, kvs.size());
-	}
+    @Test
+    public void test() throws IOException {
+        @SuppressWarnings("resource")
+        Replicator replicator = new RedisReplicator(FunctionTest.class.getClassLoader().getResourceAsStream("listpack-bug.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        List<KeyValuePair<?, ?>> kvs = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    kvs.add((KeyValuePair<?, ?>) event);
+                }
+            }
+        });
+        replicator.open();
+        
+        assertEquals(237, kvs.size());
+    }
 }

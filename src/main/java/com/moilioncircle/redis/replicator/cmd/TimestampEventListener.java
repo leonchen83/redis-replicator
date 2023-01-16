@@ -27,23 +27,23 @@ import com.moilioncircle.redis.replicator.event.EventListener;
  * @since 3.6.0
  */
 public class TimestampEventListener implements EventListener {
-	
-	private boolean guard;
-	private final EventListener listener;
-	private final Predicate<Long> condition;
-	
-	public TimestampEventListener(Predicate<Long> condition, EventListener listener) {
-		this.condition = condition;
-		this.listener = listener;
-	}
-	
-	@Override
-	public void onEvent(Replicator replicator, Event event) {
-		if (event instanceof TimestampEvent) {
-			TimestampEvent te = (TimestampEvent) event;
-			guard = condition.test(te.getTimestamp());
-		} else {
-			if (guard) listener.onEvent(replicator, event);
-		}
-	}
+    
+    private boolean guard;
+    private final EventListener listener;
+    private final Predicate<Long> condition;
+    
+    public TimestampEventListener(Predicate<Long> condition, EventListener listener) {
+        this.condition = condition;
+        this.listener = listener;
+    }
+    
+    @Override
+    public void onEvent(Replicator replicator, Event event) {
+        if (event instanceof TimestampEvent) {
+            TimestampEvent te = (TimestampEvent) event;
+            guard = condition.test(te.getTimestamp());
+        } else {
+            if (guard) listener.onEvent(replicator, event);
+        }
+    }
 }

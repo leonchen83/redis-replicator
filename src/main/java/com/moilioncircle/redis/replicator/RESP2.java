@@ -24,6 +24,8 @@ import static com.moilioncircle.redis.replicator.Constants.STAR;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.Socket;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.BiConsumer;
@@ -31,7 +33,10 @@ import java.util.function.Consumer;
 
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
+import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
+import com.moilioncircle.redis.replicator.util.Tuples;
+import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 /**
  * @author Leon Chen
@@ -47,7 +52,7 @@ public class RESP2 {
         this.out = out;
     }
     
-    public void emit(byte[]... command) throws IOException {
+    private void emit(byte[]... command) throws IOException {
         out.write(STAR);
         out.write(String.valueOf(command.length).getBytes());
         out.writeCrLf();
@@ -61,26 +66,11 @@ public class RESP2 {
         out.flush();
     }
     
-    public void emit(String... command) throws IOException {
-        out.write(STAR);
-        out.write(String.valueOf(command.length).getBytes());
-        out.writeCrLf();
-        for (final String element : command) {
-            out.write(DOLLAR);
-            byte[] bytes = element.getBytes();
-            out.write(String.valueOf(bytes.length).getBytes());
-            out.writeCrLf();
-            out.write(bytes);
-            out.writeCrLf();
-        }
-        out.flush();
-    }
-    
-    public Node parse() throws IOException {
+    private Node parse() throws IOException {
         return parse(null);
     }
     
-    public Node parse(BulkConsumer consumer) throws IOException {
+    private Node parse(BulkConsumer consumer) throws IOException {
         while (true) {
             int c = in.read();
             switch (c) {
@@ -194,79 +184,125 @@ public class RESP2 {
     
     public static class Client implements Closeable {
         
-        private RESP2 resp2;
-        private Configuration configuration;
+        private Socket socket;
+        private RedisInputStream is;
+        private RedisOutputStream os;
         
-        public Client(RedisURI uri, Configuration configuration) {
+        private final RESP2 resp2;
+        private final String host;
+        private final int port;
+        private final Configuration configuration;
+        
+        public Client(String host, int port, Configuration configuration) throws IOException {
+            this.host = host;
+            this.port = port;
             this.configuration = configuration;
+            RedisSocketFactory socketFactory = new RedisSocketFactory(configuration);
+            this.socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
+            this.os = new RedisOutputStream(socket.getOutputStream());
+            this.is = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
+            this.resp2 = new RESP2(is, os);
+        }
+        
+        public static Client valueOf(Client other) throws IOException {
+            other.close();
+            return new Client(other.host, other.port, other.configuration);
         }
         
         public RESP2.Response newCommand() {
-            return new RESP2.Response(resp2, configuration);
+            return new RESP2.Response(resp2);
         }
         
         @Override
         public void close() throws IOException {
-            
+            try {
+                if (is != null) {
+                    is.setRawByteListeners(null);
+                    is.close();
+                }
+            } catch (IOException e) {
+                // NOP
+            }
+            try {
+                if (os != null) os.close();
+            } catch (IOException e) {
+                // NOP
+            }
+            try {
+                if (socket != null && !socket.isClosed()) socket.close();
+            } catch (IOException e) {
+                // NOP
+            }
         }
+    }
+    
+    public static interface Function<T, R> {
+        R apply(T t) throws IOException;
     }
     
     public static class Response {
         private RESP2 resp2;
-        private Queue<Handler> responses;
-        private Configuration configuration;
+        private Queue<Tuple2<Context, byte[][]>> responses;
         
-        public Response(RESP2 resp2, Configuration configuration) {
+        public Response(RESP2 resp2) {
             this.resp2 = resp2;
-            this.configuration = configuration;
             this.responses = new LinkedList<>();
         }
         
         public RESP2.Response send(NodeConsumer handler, byte[]... command) throws IOException {
             this.resp2.emit(command);
-            this.responses.offer(handler);
+            this.responses.offer(Tuples.of(handler, command));
             return this;
         }
         
         public RESP2.Response send(BulkConsumer handler, byte[]... command) throws IOException {
             this.resp2.emit(command);
-            this.responses.offer(handler);
+            this.responses.offer(Tuples.of(handler, command));
             return this;
         }
     
         public RESP2.Response send(NodeConsumer handler, String... command) throws IOException {
-            this.resp2.emit(command);
-            this.responses.offer(handler);
+            byte[][] bc = Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new);
+            this.resp2.emit(bc);
+            this.responses.offer(Tuples.of(handler, bc));
             return this;
         }
     
         public RESP2.Response send(BulkConsumer handler, String... command) throws IOException {
-            this.resp2.emit(command);
-            this.responses.offer(handler);
+            byte[][] bc = Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new);
+            this.resp2.emit(bc);
+            this.responses.offer(Tuples.of(handler, bc));
             return this;
         }
         
         public void get() throws IOException {
             while (!responses.isEmpty()) {
-                Handler handler = responses.poll();
-                if (handler instanceof NodeConsumer) {
-                    ((NodeConsumer) handler).accept(resp2.parse());
-                } else if (handler instanceof BulkConsumer) {
-                    resp2.parse((BulkConsumer)handler);
+                Context context = responses.peek().getV1();
+                if (context instanceof NodeConsumer) {
+                    ((NodeConsumer) context).accept(resp2.parse());
+                } else if (context instanceof BulkConsumer) {
+                    resp2.parse((BulkConsumer)context);
                 } else {
-                    throw new AssertionError(handler);
+                    throw new AssertionError(context);
                 }
+                
+                // poll after consume
+                responses.poll();
             }
+        }
+        
+        public Queue<Tuple2<Context, byte[][]>> responses() {
+            return this.responses;
         }
     }
     
-    public static interface Handler {
+    public static interface Context {
     }
     
-    public static interface NodeConsumer extends Consumer<Node>, Handler {
+    public static interface NodeConsumer extends Consumer<Node>, Context {
     }
     
-    public static interface BulkConsumer extends BiConsumer<Long, RedisInputStream>, Handler {
+    public static interface BulkConsumer extends BiConsumer<Long, RedisInputStream>, Context {
     }
 }
 

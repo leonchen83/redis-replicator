@@ -28,7 +28,6 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
@@ -67,10 +66,6 @@ public class RESP2 {
     }
     
     private Node parse() throws IOException {
-        return parse(null);
-    }
-    
-    private Node parse(BulkConsumer consumer) throws IOException {
         while (true) {
             int c = in.read();
             switch (c) {
@@ -89,12 +84,7 @@ public class RESP2 {
                     }
                     long len = Long.parseLong(builder.toString());
                     if (len == -1) return new Node(RESP2.Type.NULL, null);
-                    Node r = null;
-                    if (consumer != null) {
-                        consumer.accept(len, in);
-                    } else {
-                        r = new Node(RESP2.Type.STRING, in.readBytes(len).first());
-                    }
+                    Node r = new Node(RESP2.Type.STRING, in.readBytes(len).first());
                     
                     if ((c = in.read()) != '\r') throw new RuntimeException("expect '\\r' but :" + (char) c);
                     if ((c = in.read()) != '\n') throw new RuntimeException("expect '\\n' but :" + (char) c);
@@ -131,7 +121,7 @@ public class RESP2 {
                     if (len == -1) return new Node(RESP2.Type.NULL, null);
                     Node[] ary = new Node[(int) len];
                     for (int i = 0; i < len; i++) {
-                        Node obj = parse(null);
+                        Node obj = parse();
                         ary[i] = obj;
                     }
                     return new Node(RESP2.Type.ARRAY, ary);
@@ -242,33 +232,29 @@ public class RESP2 {
     
     public static class Response {
         private RESP2 resp2;
-        private Queue<Tuple2<Context, byte[][]>> responses;
+        private Queue<Tuple2<NodeConsumer, byte[][]>> responses;
         
         public Response(RESP2 resp2) {
             this.resp2 = resp2;
             this.responses = new LinkedList<>();
         }
         
-        public RESP2.Response send(NodeConsumer handler, byte[]... command) throws IOException {
+        public RESP2.Node invoke(byte[]...command) throws IOException {
+            this.resp2.emit(command);
+            return this.resp2.parse();
+        }
+        
+        public RESP2.Node invoke(String...command) throws IOException {
+            return invoke(Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
+        }
+        
+        public RESP2.Response post(NodeConsumer handler, byte[]... command) throws IOException {
             this.resp2.emit(command);
             this.responses.offer(Tuples.of(handler, command));
             return this;
         }
         
-        public RESP2.Response send(BulkConsumer handler, byte[]... command) throws IOException {
-            this.resp2.emit(command);
-            this.responses.offer(Tuples.of(handler, command));
-            return this;
-        }
-    
-        public RESP2.Response send(NodeConsumer handler, String... command) throws IOException {
-            byte[][] bc = Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new);
-            this.resp2.emit(bc);
-            this.responses.offer(Tuples.of(handler, bc));
-            return this;
-        }
-    
-        public RESP2.Response send(BulkConsumer handler, String... command) throws IOException {
+        public RESP2.Response post(NodeConsumer handler, String... command) throws IOException {
             byte[][] bc = Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new);
             this.resp2.emit(bc);
             this.responses.offer(Tuples.of(handler, bc));
@@ -277,32 +263,18 @@ public class RESP2 {
         
         public void get() throws IOException {
             while (!responses.isEmpty()) {
-                Context context = responses.peek().getV1();
-                if (context instanceof NodeConsumer) {
-                    ((NodeConsumer) context).accept(resp2.parse());
-                } else if (context instanceof BulkConsumer) {
-                    resp2.parse((BulkConsumer)context);
-                } else {
-                    throw new AssertionError(context);
-                }
-                
-                // poll after consume
+                NodeConsumer consumer = responses.peek().getV1();
+                consumer.accept(resp2.parse());
                 responses.poll();
             }
         }
         
-        public Queue<Tuple2<Context, byte[][]>> responses() {
-            return this.responses;
+        public Queue<Tuple2<NodeConsumer, byte[][]>> responses() {
+            return new LinkedList<>(this.responses);
         }
     }
     
-    public static interface Context {
-    }
-    
-    public static interface NodeConsumer extends Consumer<Node>, Context {
-    }
-    
-    public static interface BulkConsumer extends BiConsumer<Long, RedisInputStream>, Context {
+    public static interface NodeConsumer extends Consumer<Node> {
     }
 }
 

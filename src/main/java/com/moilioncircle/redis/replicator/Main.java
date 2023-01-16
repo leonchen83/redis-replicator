@@ -26,7 +26,6 @@ import com.moilioncircle.redis.replicator.io.CRCOutputStream;
 import com.moilioncircle.redis.replicator.io.XPipedInputStream;
 import com.moilioncircle.redis.replicator.io.XPipedOutputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.Function;
-import com.moilioncircle.redis.replicator.util.ByteArray;
 
 /**
  * @author Baoyi Chen
@@ -38,23 +37,20 @@ public class Main {
         Thread thread = new Thread(() -> {
             try(RESP2.Client client = new RESP2.Client("127.0.0.1", 6379, Configuration.defaultSetting())) {
                 RESP2.Response response = client.newCommand();
-                response.send(node -> {
+                response.post(node -> {
                     try {
                         crc.write("REDIS0010".getBytes());
                     } catch (IOException e) {
                     }
                 }, "info", "server");
-                response.send((len, in) -> {
+                response.post(node -> {
+                    byte[] bytes = (byte[])node.value;
                     try {
-                        if (len > 10) {
-                            ByteArray bytes = in.readBytes(len - 10);
-                            crc.write(bytes.first());
-                        }
-                        in.skip(10);
+                        crc.write(bytes, 0, bytes.length - 10);
                     } catch (IOException e) {
                     }
                 }, "function", "dump");
-                response.send(node -> {
+                response.post(node -> {
                     byte[] bytes = (byte[]) node.value;
                     System.out.println(new String(bytes));
                 }, "info", "keyspace");

@@ -62,18 +62,15 @@ public class ScanRdbWriter {
             } catch (IOException e) {
                 exception = e;
                 try {
-                    this.client = RESP2.Client.valueOf(this.client);
-                    Queue<Tuple2<RESP2.Context, byte[][]>> responses = prev.responses();
-                    RESP2.Response next = this.client.newCommand();
-                    while (!responses.isEmpty()) {
-                        Tuple2<RESP2.Context, byte[][]> tuple2 = responses.poll();
-                        RESP2.Context context = tuple2.getV1();
-                        if (context instanceof RESP2.NodeConsumer) {
-                            next.send((RESP2.NodeConsumer) context , tuple2.getV2());
-                        } else if (context instanceof RESP2.BulkConsumer) {
-                            next.send((RESP2.BulkConsumer) context , tuple2.getV2());
+                    RESP2.Response next = retry(client -> {
+                        Queue<Tuple2<RESP2.NodeConsumer, byte[][]>> responses = prev.responses();
+                        RESP2.Response r = client.newCommand();
+                        while (!responses.isEmpty()) {
+                            Tuple2<RESP2.NodeConsumer, byte[][]> tuple2 = responses.poll();
+                            r.post(tuple2.getV1(), tuple2.getV2());
                         }
-                    }
+                        return r;
+                    });
                     retry(next);
                 } catch (IOException ex) {
                 }

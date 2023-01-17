@@ -184,7 +184,6 @@ public class ScanRdbWriter implements Closeable {
             RESP2.Response response = retry(client -> {
                 RESP2.Response r = client.newCommand();
                 RESP2.Node[] nodes = (RESP2.Node[]) ary[1].value;
-                System.out.println(nodes.length);
                 for (int i = 0; i < nodes.length; i++) {
                     byte[] key = (byte[]) nodes[i].value;
                     if (version >= 10) {

@@ -25,28 +25,29 @@ import com.moilioncircle.redis.replicator.io.XPipedOutputStream;
 import com.moilioncircle.redis.replicator.rdb.ScanRdbWriter;
 
 /**
- * @author Baoyi Chen
+ * @author Leon Chen
+ * @since 3.7.0
  */
-public class Main {
-	public static void main(String[] args) throws Exception {
-		XPipedOutputStream out = new XPipedOutputStream();
-		new Thread(() -> {
-			try {
-				ScanRdbWriter writer = new ScanRdbWriter("127.0.0.1", 6379, Configuration.defaultSetting(), out);
-				writer.generate();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}).start();
-		
-		XPipedInputStream in = new XPipedInputStream(out);
-		RedisRdbReplicator r = new RedisRdbReplicator(in, Configuration.defaultSetting());
-		r.addEventListener(new EventListener() {
-			@Override
-			public void onEvent(Replicator replicator, Event event) {
-				System.out.println(event);
-			}
-		});
-		r.open();
-	}
+public class RedisScanReplicator {
+    public static void main(String[] args) throws Exception {
+        XPipedOutputStream out = new XPipedOutputStream();
+        new Thread(() -> {
+            try {
+                ScanRdbWriter writer = new ScanRdbWriter("127.0.0.1", 6379, Configuration.defaultSetting(), out);
+                writer.generate();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+        
+        XPipedInputStream in = new XPipedInputStream(out);
+        RedisRdbReplicator r = new RedisRdbReplicator(in, Configuration.defaultSetting());
+        r.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
+            }
+        });
+        r.open();
+    }
 }

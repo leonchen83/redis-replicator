@@ -184,6 +184,20 @@ public class Configuration {
      */
     private ScheduledExecutorService scheduledExecutor;
     
+    /**
+     * @since 3.7.0
+     * 
+     * use SCAN command instead of SYNC and PSYNC
+     */
+    private boolean enableScan = false;
+    
+    /**
+     * @since 3.7.0
+     * 
+     * set SCAN COUNT if enableScan = true
+     */
+    private int scanCount = 256;
+    
     public int getConnectionTimeout() {
         return connectionTimeout;
     }
@@ -414,6 +428,24 @@ public class Configuration {
         return this;
     }
     
+    public boolean isEnableScan() {
+        return enableScan;
+    }
+    
+    public Configuration setEnableScan(boolean enableScan) {
+        this.enableScan = enableScan;
+        return this;
+    }
+    
+    public int getScanCount() {
+        return scanCount;
+    }
+    
+    public Configuration setScanCount(int scanCount) {
+        this.scanCount = scanCount;
+        return this;
+    }
+    
     public Configuration merge(SslConfiguration sslConfiguration) {
         if (sslConfiguration == null) return this;
         this.setSslParameters(sslConfiguration.getSslParameters());
@@ -469,7 +501,7 @@ public class Configuration {
             configuration.setHeartbeatPeriod(getInt(parameters.get("heartbeatPeriod"), 1000));
         }
         if (parameters.containsKey("useDefaultExceptionListener")) {
-            configuration.setUseDefaultExceptionListener(getBool(parameters.get("useDefaultExceptionListener"), false));
+            configuration.setUseDefaultExceptionListener(getBool(parameters.get("useDefaultExceptionListener"), true));
         }
         if (parameters.containsKey("ssl")) {
             configuration.setSsl(getBool(parameters.get("ssl"), false));
@@ -483,6 +515,15 @@ public class Configuration {
         if (parameters.containsKey("replOffset")) {
             configuration.setReplOffset(getLong(parameters.get("replOffset"), -1L));
         }
+    
+        // scan
+        if (parameters.containsKey("enableScan")) {
+            configuration.setEnableScan(getBool(parameters.get("enableScan"), false));
+        }
+        if (parameters.containsKey("scanCount")) {
+            configuration.setScanCount(getInt(parameters.get("scanCount"), 256));
+        }
+        
         // redis 6
         if (uri.isSsl()) {
             configuration.setSsl(true);
@@ -545,6 +586,8 @@ public class Configuration {
                 ", heartbeatPeriod=" + heartbeatPeriod +
                 ", scheduledExecutor=" + scheduledExecutor +
                 ", useDefaultExceptionListener=" + useDefaultExceptionListener +
+                ", enableScan=" + enableScan +
+                ", scanCount=" + scanCount +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +
                 ", sslContextFactory=" + sslContextFactory +

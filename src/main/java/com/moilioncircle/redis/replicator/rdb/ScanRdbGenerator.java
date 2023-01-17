@@ -183,7 +183,7 @@ public class ScanRdbGenerator {
          * scan
          */
         String cursor = "0";
-        String count = "3";
+        String count = String.valueOf(configuration.getScanCount());
         do {
             String temp = cursor;
             RESP2.Node scan = retry(client -> {

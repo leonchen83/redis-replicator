@@ -73,7 +73,11 @@ public class RedisReplicator implements Replicator {
     }
 
     public RedisReplicator(String host, int port, Configuration configuration) {
-        this.replicator = new RedisSocketReplicator(host, port, configuration);
+        if (configuration.isEnableScan()) {
+            this.replicator = new RedisScanReplicator(host, port, configuration);
+        } else {
+            this.replicator = new RedisSocketReplicator(host, port, configuration);
+        }
     }
 
     /**
@@ -146,7 +150,7 @@ public class RedisReplicator implements Replicator {
                     throw new UnsupportedOperationException(uri.getFileType().toString());
             }
         } else {
-            this.replicator = new RedisSocketReplicator(uri.getHost(), uri.getPort(), configuration);
+            this.replicator = new RedisReplicator(uri.getHost(), uri.getPort(), configuration);
         }
     }
 

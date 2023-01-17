@@ -60,10 +60,6 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
         
         if (configuration.isUseDefaultExceptionListener())
             addExceptionListener(new DefaultExceptionListener());
-        
-        this.outputStream = new XPipedOutputStream();
-        this.inputStream = new RedisInputStream(new XPipedInputStream(outputStream), this.configuration.getBufferSize());
-        this.inputStream.setRawByteListeners(this.rawByteListeners);
     }
     
     public String getHost() {
@@ -87,6 +83,10 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
     
     @Override
     protected void doOpen() throws IOException {
+        this.outputStream = new XPipedOutputStream();
+        this.inputStream = new RedisInputStream(new XPipedInputStream(outputStream), this.configuration.getBufferSize());
+        this.inputStream.setRawByteListeners(this.rawByteListeners);
+        
         Thread worker = this.threadFactory.newThread(this);
         worker.start();
         try {

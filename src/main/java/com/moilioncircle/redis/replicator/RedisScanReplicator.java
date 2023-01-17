@@ -48,7 +48,6 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
     protected volatile IOException exception;
     protected XPipedOutputStream outputStream;
     
-    protected final Thread worker;
     protected final ThreadFactory threadFactory = Executors.defaultThreadFactory();
     
     public RedisScanReplicator(String host, int port, Configuration configuration) {
@@ -65,8 +64,6 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
         this.outputStream = new XPipedOutputStream();
         this.inputStream = new RedisInputStream(new XPipedInputStream(outputStream), this.configuration.getBufferSize());
         this.inputStream.setRawByteListeners(this.rawByteListeners);
-        
-        this.worker = this.threadFactory.newThread(this);
     }
     
     public String getHost() {
@@ -90,7 +87,8 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
     
     @Override
     protected void doOpen() throws IOException {
-        this.worker.start();
+        Thread worker = this.threadFactory.newThread(this);
+        worker.start();
         try {
             new RdbParser(inputStream, this).parse();
         } catch (EOFException ignore) {

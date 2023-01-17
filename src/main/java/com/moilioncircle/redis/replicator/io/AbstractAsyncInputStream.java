@@ -97,6 +97,7 @@ public abstract class AbstractAsyncInputStream extends InputStream {
             //
             while (this.ringBuffer.isEmpty()) {
                 if (this.exception != null) throw this.exception;
+                if (this.closed.get()) throw new EOFException();
                 this.bufferNotEmpty.awaitUninterruptibly();
                 if (this.closed.get()) throw new EOFException();
             }
@@ -117,6 +118,7 @@ public abstract class AbstractAsyncInputStream extends InputStream {
             //
             while (this.ringBuffer.isEmpty()) {
                 if (this.exception != null) throw this.exception;
+                if (this.closed.get()) throw new EOFException();
                 this.bufferNotEmpty.awaitUninterruptibly();
                 if (this.closed.get()) throw new EOFException();
             }
@@ -135,6 +137,7 @@ public abstract class AbstractAsyncInputStream extends InputStream {
         try {
             //
             while (this.ringBuffer.isFull()) {
+                if (this.closed.get()) throw new EOFException();
                 this.bufferNotFull.awaitUninterruptibly();
                 if (this.closed.get()) throw new EOFException();
             }
@@ -153,6 +156,7 @@ public abstract class AbstractAsyncInputStream extends InputStream {
         try {
             //
             while (this.ringBuffer.isFull()) {
+                if (this.closed.get()) throw new EOFException();
                 this.bufferNotFull.awaitUninterruptibly();
                 if (this.closed.get()) throw new EOFException();
             }

@@ -33,6 +33,7 @@ import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
+import com.moilioncircle.redis.replicator.util.Strings;
 import com.moilioncircle.redis.replicator.util.Tuples;
 import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
@@ -191,11 +192,36 @@ public class RESP2 {
             this.os = new RedisOutputStream(socket.getOutputStream());
             this.is = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
             this.resp2 = new RESP2(is, os);
+    
+            final String user = configuration.getAuthUser();
+            final String pswd = configuration.getAuthPassword();
+            
+            if (pswd != null) {
+                RESP2.Node auth = null;
+                if (user != null) {
+                    auth = newCommand().invoke("auth", user, pswd);
+                } else {
+                    auth = newCommand().invoke("auth", pswd);
+                }
+                if (auth.type == Type.ERROR) {
+                    throw new IOException(Strings.toString(auth.value));
+                }
+            } else {
+                RESP2.Node ping = newCommand().invoke("ping");
+                if (ping.type == Type.ERROR) {
+                    throw new IOException(Strings.toString(ping.value));
+                }
+            }
         }
         
-        public static Client valueOf(Client other) throws IOException {
-            other.close();
-            return new Client(other.host, other.port, other.configuration);
+        public static Client valueOf(Client prev, int db) throws IOException {
+            prev.close();
+            Client next = new Client(prev.host, prev.port, prev.configuration);
+            RESP2.Node select = next.newCommand().invoke("select", String.valueOf(db));
+            if (select.type == Type.ERROR) {
+                throw new IOException(Strings.toString(select.value));
+            }
+            return next;
         }
         
         public RESP2.Response newCommand() {

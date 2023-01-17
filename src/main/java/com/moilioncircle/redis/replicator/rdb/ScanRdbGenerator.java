@@ -47,6 +47,7 @@ public class ScanRdbGenerator {
     protected final int port;
     protected final String host;
     
+    protected int db = 0;
     private CRCOutputStream out;
     private RESP2.Client client;
     private Configuration configuration;
@@ -171,6 +172,8 @@ public class ScanRdbGenerator {
         
         if (select.type == RESP2.Type.ERROR) {
             throw new IOException(Strings.toString(select.value));
+        } else {
+            this.db = (int) db.getDbNumber();
         }
         
         /*
@@ -301,7 +304,7 @@ public class ScanRdbGenerator {
             } catch (IOException e) {
                 exception = e;
                 try {
-                    this.client = RESP2.Client.valueOf(this.client);
+                    this.client = RESP2.Client.valueOf(this.client, this.db);
                 } catch (IOException ex) {
                 }
             }

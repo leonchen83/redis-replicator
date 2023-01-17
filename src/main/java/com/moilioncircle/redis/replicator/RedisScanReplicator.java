@@ -29,6 +29,9 @@ import java.util.concurrent.ThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.moilioncircle.redis.replicator.event.Event;
+import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.io.PeekableInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.XPipedInputStream;
 import com.moilioncircle.redis.replicator.io.XPipedOutputStream;
@@ -84,12 +87,14 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
     @Override
     protected void doOpen() throws IOException {
         this.outputStream = new XPipedOutputStream();
-        this.inputStream = new RedisInputStream(new XPipedInputStream(outputStream), this.configuration.getBufferSize());
+        PeekableInputStream in = new PeekableInputStream(new XPipedInputStream(outputStream));
+        this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
         this.inputStream.setRawByteListeners(this.rawByteListeners);
         
         Thread worker = this.threadFactory.newThread(this);
         worker.start();
         try {
+            assert in.peek() == 'R';
             new RdbParser(inputStream, this).parse();
         } catch (EOFException ignore) {
         }
@@ -109,5 +114,16 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
         } finally {
             setStatus(DISCONNECTED);
         }
+    }
+    
+    public static void main(String[] args) throws Exception {
+        Replicator r = new RedisScanReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        r.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
+            }
+        });
+        r.open();
     }
 }

@@ -16,13 +16,14 @@
 
 package com.moilioncircle.redis.replicator.rdb;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_AUX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EXPIRETIME_MS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
 import static com.moilioncircle.redis.replicator.util.Strings.lappend;
 
-import java.io.Closeable;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
  * @author Leon Chen
  * @since 3.7.0
  */
-public class ScanRdbWriter implements Closeable {
+public class ScanRdbGenerator {
     
     private CRCOutputStream out;
     private RESP2.Client client;
@@ -61,7 +62,7 @@ public class ScanRdbWriter implements Closeable {
         VERSIONS.put("7.0", 10);
     }
     
-    public ScanRdbWriter(String host, int port, Configuration configuration, OutputStream out) throws IOException {
+    public ScanRdbGenerator(String host, int port, Configuration configuration, OutputStream out) throws IOException {
         this.configuration = configuration;
         this.out = new CRCOutputStream(out);
         this.client = new RESP2.Client(host, port, configuration);
@@ -73,6 +74,7 @@ public class ScanRdbWriter implements Closeable {
              * rdb version
              */
             int version = 0;
+            String ver = null;
     
             RESP2.Node server = retry(client -> {
                 RESP2.Response r = client.newCommand();
@@ -84,7 +86,7 @@ public class ScanRdbWriter implements Closeable {
             } else {
                 String value = Strings.toString(server.value);
                 String[] line = value.split("\n");
-                String ver = line[1].split(":")[1];
+                ver = line[1].split(":")[1];
                 ver = ver.substring(0, ver.lastIndexOf('.'));
                 if (!VERSIONS.containsKey(ver)) {
                     throw new UnsupportedOperationException("unsupported redis version :" + ver);
@@ -94,6 +96,14 @@ public class ScanRdbWriter implements Closeable {
         
                 out.write("REDIS".getBytes());
                 out.write(lappend(version, 4, '0').getBytes());
+            }
+    
+            /*
+             * aux
+             */
+            if (version >= 7) {
+                generateAux("redis-ver", ver);
+                generateAux("ctime", String.valueOf(System.currentTimeMillis() / 1000L));
             }
     
             if (version >= 10) {
@@ -123,7 +133,7 @@ public class ScanRdbWriter implements Closeable {
     
             String[] line = Strings.toString(keyspace.value).split("\n");
             for (int i = 1; i < line.length; i++) {
-                // db0:keys=1003,expires=0,avg_ttl=0
+                // db0:keys={dbsize},expires={expires},avg_ttl=0
                 String[] ary = line[i].split(":");
                 Integer dbnum = Integer.parseInt(ary[0].substring(2));
                 ary = ary[1].split(",");
@@ -140,6 +150,13 @@ public class ScanRdbWriter implements Closeable {
         }
     }
     
+    private void generateAux(String key, String val) throws IOException {
+        BaseRdbEncoder encoder = new BaseRdbEncoder();
+        out.write(RDB_OPCODE_AUX);
+        encoder.rdbGenericSaveStringObject(new ByteArray(key.getBytes()), out);
+        encoder.rdbGenericSaveStringObject(new ByteArray(val.getBytes()), out);
+    }
+    
     private void generateDB(DB db, int version) throws IOException {
         BaseRdbEncoder encoder = new BaseRdbEncoder();
         RESP2.Node select = retry(client -> {
@@ -150,7 +167,7 @@ public class ScanRdbWriter implements Closeable {
         if (select.type == RESP2.Type.ERROR) {
             throw new IOException(Strings.toString(select.value));
         }
-    
+        
         /*
          * db 
          */
@@ -166,7 +183,7 @@ public class ScanRdbWriter implements Closeable {
          * scan
          */
         String cursor = "0";
-        String count = "1024";
+        String count = "3";
         do {
             String temp = cursor;
             RESP2.Node scan = retry(client -> {
@@ -269,11 +286,13 @@ public class ScanRdbWriter implements Closeable {
         }
     }
     
-    public <T> T retry(RESP2.Function<RESP2.Client, T> function) throws IOException {
+    private  <T> T retry(RESP2.Function<RESP2.Client, T> function) throws IOException {
         IOException exception = null;
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
                 return function.apply(client);
+            } catch (EOFException e) {
+                throw e;
             } catch (IOException e) {
                 exception = e;
                 try {
@@ -285,12 +304,14 @@ public class ScanRdbWriter implements Closeable {
         throw exception;
     }
     
-    public void retry(RESP2.Response prev) throws IOException {
+    private void retry(RESP2.Response prev) throws IOException {
         IOException exception = null;
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
                 prev.get();
                 return;
+            } catch (EOFException e) {
+                throw e;
             } catch (IOException e) {
                 exception = e;
                 try {
@@ -311,8 +332,7 @@ public class ScanRdbWriter implements Closeable {
         throw exception;
     }
     
-    @Override
-    public void close() {
+    private void close() {
         if (out != null) {
             try {
                 out.flush();

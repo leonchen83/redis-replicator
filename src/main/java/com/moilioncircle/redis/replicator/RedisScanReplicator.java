@@ -16,38 +16,100 @@
 
 package com.moilioncircle.redis.replicator;
 
-import java.io.IOException;
+import static com.moilioncircle.redis.replicator.Status.CONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
+import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 
-import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.event.EventListener;
+import java.io.EOFException;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.XPipedInputStream;
 import com.moilioncircle.redis.replicator.io.XPipedOutputStream;
-import com.moilioncircle.redis.replicator.rdb.ScanRdbWriter;
+import com.moilioncircle.redis.replicator.rdb.RdbParser;
+import com.moilioncircle.redis.replicator.rdb.ScanRdbGenerator;
 
 /**
  * @author Leon Chen
  * @since 3.7.0
  */
-public class RedisScanReplicator {
-    public static void main(String[] args) throws Exception {
-        XPipedOutputStream out = new XPipedOutputStream();
-        new Thread(() -> {
-            try {
-                ScanRdbWriter writer = new ScanRdbWriter("127.0.0.1", 6379, Configuration.defaultSetting(), out);
-                writer.generate();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }).start();
+public class RedisScanReplicator extends AbstractReplicator implements Runnable {
+    
+    protected static final Logger logger = LoggerFactory.getLogger(RedisScanReplicator.class);
+    
+    protected final int port;
+    protected final String host;
+    protected volatile IOException exception;
+    protected XPipedOutputStream outputStream;
+    
+    protected final Thread worker;
+    protected final ThreadFactory threadFactory = Executors.defaultThreadFactory();
+    
+    public RedisScanReplicator(String host, int port, Configuration configuration) {
+        Objects.requireNonNull(host);
+        if (port <= 0 || port > 65535) throw new IllegalArgumentException("illegal argument port: " + port);
+        Objects.requireNonNull(configuration);
+        this.host = host;
+        this.port = port;
+        this.configuration = configuration;
         
-        XPipedInputStream in = new XPipedInputStream(out);
-        RedisRdbReplicator r = new RedisRdbReplicator(in, Configuration.defaultSetting());
-        r.addEventListener(new EventListener() {
-            @Override
-            public void onEvent(Replicator replicator, Event event) {
-                System.out.println(event);
+        if (configuration.isUseDefaultExceptionListener())
+            addExceptionListener(new DefaultExceptionListener());
+        
+        this.outputStream = new XPipedOutputStream();
+        this.inputStream = new RedisInputStream(new XPipedInputStream(outputStream), this.configuration.getBufferSize());
+        this.inputStream.setRawByteListeners(this.rawByteListeners);
+    
+        this.worker = this.threadFactory.newThread(this);
+    }
+    
+    public String getHost() {
+        return this.host;
+    }
+    
+    public int getPort() {
+        return this.port;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            ScanRdbGenerator generator = new ScanRdbGenerator(host, port, configuration, outputStream);
+            generator.generate();
+        } catch (EOFException ignore) {
+        } catch (IOException e) {
+            this.exception = e;
+        }
+    }
+    
+    @Override
+    protected void doOpen() throws IOException {
+        this.worker.start();
+        try {
+            new RdbParser(inputStream, this).parse();
+        } catch (EOFException ignore) {
+        }
+        if (this.exception != null) throw this.exception;
+    }
+    
+    @Override
+    protected void doClose() throws IOException {
+        compareAndSet(CONNECTED, DISCONNECTING);
+        try {
+            if (inputStream != null) {
+                this.inputStream.setRawByteListeners(null);
+                inputStream.close();
             }
-        });
-        r.open();
+        } catch (IOException ignore) {
+            /*NOP*/
+        } finally {
+            setStatus(DISCONNECTED);
+        }
     }
 }

@@ -32,6 +32,10 @@ Migrate data between two Redis.
 
 Broadcast event, TimerTask example.  
 
+### scan
+
+Use scan command instead of SYNC and PSYNC command.  
+
 ### sentinel
 
 Redis sentinel example.  

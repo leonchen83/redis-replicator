@@ -32,6 +32,10 @@ Redis7 function 解析示例.
 
 广播事件与定时同步.  
 
+### scan
+
+在SYNC与PSYNC受限的情况下，用SCAN命令扫描全库.  
+
 ### sentinel
 
 Redis哨兵用例.  

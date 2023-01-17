@@ -16,62 +16,37 @@
 
 package com.moilioncircle.redis.replicator;
 
-import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
-
 import java.io.IOException;
 
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-import com.moilioncircle.redis.replicator.io.CRCOutputStream;
 import com.moilioncircle.redis.replicator.io.XPipedInputStream;
 import com.moilioncircle.redis.replicator.io.XPipedOutputStream;
-import com.moilioncircle.redis.replicator.rdb.datatype.Function;
+import com.moilioncircle.redis.replicator.rdb.ScanRdbWriter;
 
 /**
  * @author Baoyi Chen
  */
 public class Main {
-    public static void main(String[] args) throws Exception {
-        XPipedOutputStream out = new XPipedOutputStream();
-        CRCOutputStream crc = new CRCOutputStream(out);
-        Thread thread = new Thread(() -> {
-            try(RESP2.Client client = new RESP2.Client("127.0.0.1", 6379, Configuration.defaultSetting())) {
-                RESP2.Response response = client.newCommand();
-                response.post(node -> {
-                    try {
-                        crc.write("REDIS0010".getBytes());
-                    } catch (IOException e) {
-                    }
-                }, "info", "server");
-                response.post(node -> {
-                    byte[] bytes = (byte[])node.value;
-                    try {
-                        crc.write(bytes, 0, bytes.length - 10);
-                    } catch (IOException e) {
-                    }
-                }, "function", "dump");
-                response.post(node -> {
-                    byte[] bytes = (byte[]) node.value;
-                    System.out.println(new String(bytes));
-                }, "info", "keyspace");
-                response.get();
-                crc.write(RDB_OPCODE_EOF);
-                crc.write(crc.getCRC64());
-            } catch (IOException e) {
-                
-            }
-        });
-        thread.start();
-        RedisRdbReplicator replicator = new RedisRdbReplicator(new XPipedInputStream(out), Configuration.defaultSetting());
-        replicator.addEventListener(new EventListener() {
-            @Override
-            public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof Function) {
-                    Function function = (Function) event;
-                    System.out.println(new String(function.getCode()));
-                }
-            }
-        });
-        replicator.open();
-    }
+	public static void main(String[] args) throws Exception {
+		XPipedOutputStream out = new XPipedOutputStream();
+		new Thread(() -> {
+			try {
+				ScanRdbWriter writer = new ScanRdbWriter("127.0.0.1", 6379, Configuration.defaultSetting(), out);
+				writer.generate();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}).start();
+		
+		XPipedInputStream in = new XPipedInputStream(out);
+		RedisRdbReplicator r = new RedisRdbReplicator(in, Configuration.defaultSetting());
+		r.addEventListener(new EventListener() {
+			@Override
+			public void onEvent(Replicator replicator, Event event) {
+				System.out.println(event);
+			}
+		});
+		r.open();
+	}
 }

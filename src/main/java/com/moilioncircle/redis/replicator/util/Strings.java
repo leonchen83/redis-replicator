@@ -55,6 +55,25 @@ public class Strings {
     public static String format(Object[] command) {
         return Arrays.deepToString(command, "[", "]", " ");
     }
+    
+    public static final String lappend(int src, int length, char padding) {
+        return lappend(String.valueOf(src), length, padding);
+    }
+    
+    public static final String lappend(long src, int length, char padding) {
+        return lappend(String.valueOf(src), length, padding);
+    }
+    
+    public static final String lappend(String s, int length, char padding) {
+        if (s != null && s.length() >= length) {
+            return s;
+        }
+        s = s == null ? "" : s;
+        StringBuilder r = new StringBuilder(length);
+        for (int i = s.length(); i < length; i++) r.append(padding);
+        r.append(s);
+        return r.toString();
+    }
 
     public static ByteBuffer encode(CharBuffer buffer) {
         return encode(UTF_8, buffer);

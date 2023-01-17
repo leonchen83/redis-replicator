@@ -28,7 +28,6 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.function.Consumer;
 
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
@@ -274,7 +273,8 @@ public class RESP2 {
         }
     }
     
-    public static interface NodeConsumer extends Consumer<Node> {
+    public static interface NodeConsumer {
+        void accept(Node node) throws IOException;
     }
 }
 

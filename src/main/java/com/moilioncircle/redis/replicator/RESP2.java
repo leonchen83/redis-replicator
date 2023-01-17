@@ -85,8 +85,8 @@ public class RESP2 {
                     if (len == -1) return new Node(RESP2.Type.NULL, null);
                     Node r = new Node(RESP2.Type.STRING, in.readBytes(len).first());
                     
-                    if ((c = in.read()) != '\r') throw new RuntimeException("expect '\\r' but :" + (char) c);
-                    if ((c = in.read()) != '\n') throw new RuntimeException("expect '\\n' but :" + (char) c);
+                    if ((c = in.read()) != '\r') throw new AssertionError("expect '\\r' but :" + (char) c);
+                    if ((c = in.read()) != '\n') throw new AssertionError("expect '\\n' but :" + (char) c);
                     return r;
                 case COLON:
                     // RESP Integers
@@ -206,27 +206,26 @@ public class RESP2 {
         public void close() throws IOException {
             try {
                 if (is != null) {
-                    is.setRawByteListeners(null);
                     is.close();
                 }
             } catch (IOException e) {
                 // NOP
             }
             try {
-                if (os != null) os.close();
+                if (os != null) {
+                    os.close();
+                }
             } catch (IOException e) {
                 // NOP
             }
             try {
-                if (socket != null && !socket.isClosed()) socket.close();
+                if (socket != null && !socket.isClosed()) {
+                    socket.close();
+                }
             } catch (IOException e) {
                 // NOP
             }
         }
-    }
-    
-    public static interface Function<T, R> {
-        R apply(T t) throws IOException;
     }
     
     public static class Response {
@@ -271,6 +270,10 @@ public class RESP2 {
         public Queue<Tuple2<NodeConsumer, byte[][]>> responses() {
             return new LinkedList<>(this.responses);
         }
+    }
+    
+    public static interface Function<T, R> {
+        R apply(T t) throws IOException;
     }
     
     public static interface NodeConsumer {

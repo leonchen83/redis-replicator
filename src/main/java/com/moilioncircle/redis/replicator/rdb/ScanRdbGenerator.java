@@ -95,7 +95,7 @@ public class ScanRdbGenerator {
                 ver = line[1].split(":")[1];
                 ver = ver.substring(0, ver.lastIndexOf('.'));
                 if (!VERSIONS.containsKey(ver)) {
-                    throw new UnsupportedOperationException("unsupported redis version :" + ver);
+                    throw new AssertionError("unsupported redis version :" + ver);
                 }
                 
                 version = VERSIONS.get(ver);
@@ -170,6 +170,9 @@ public class ScanRdbGenerator {
             return r.invoke("select", String.valueOf(db.getDbNumber()));
         });
         
+        /*
+         * select
+         */
         if (select.type == RESP2.Type.ERROR) {
             throw new IOException(Strings.toString(select.value));
         } else {
@@ -205,7 +208,7 @@ public class ScanRdbGenerator {
             RESP2.Node[] ary = (RESP2.Node[]) scan.value;
             cursor = Strings.toString(ary[0].value);
             
-            // pipeline
+            // key value pipeline
             RESP2.Response response = retry(client -> {
                 RESP2.Response r = client.newCommand();
                 RESP2.Node[] nodes = (RESP2.Node[]) ary[1].value;

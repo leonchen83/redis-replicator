@@ -22,6 +22,7 @@ import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -29,8 +30,6 @@ import java.util.concurrent.ThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.moilioncircle.redis.replicator.event.Event;
-import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.io.PeekableInputStream;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.XPipedInputStream;
@@ -48,7 +47,7 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
     
     protected final int port;
     protected final String host;
-    protected volatile IOException exception;
+    protected volatile Throwable exception;
     protected XPipedOutputStream outputStream;
     
     protected final ThreadFactory threadFactory = Executors.defaultThreadFactory();
@@ -79,7 +78,7 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
             ScanRdbGenerator generator = new ScanRdbGenerator(host, port, configuration, outputStream);
             generator.generate();
         } catch (EOFException ignore) {
-        } catch (IOException e) {
+        } catch (Throwable e) {
             this.exception = e;
         }
     }
@@ -94,11 +93,28 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
         Thread worker = this.threadFactory.newThread(this);
         worker.start();
         try {
-            assert in.peek() == 'R';
-            new RdbParser(inputStream, this).parse();
+            if (in.peek() == 'R') {
+                new RdbParser(inputStream, this).parse();
+            }
         } catch (EOFException ignore) {
         }
-        if (this.exception != null) throw this.exception;
+        translate(this.exception);
+    }
+    
+    private void translate(Throwable exception) throws IOException {
+        if (exception != null) {
+            if (exception instanceof IOException) {
+                throw (IOException) exception;
+            } else if (exception instanceof UncheckedIOException) {
+                throw ((UncheckedIOException) exception).getCause();
+            } else if (exception instanceof Error) {
+                throw (Error) exception;
+            } else if (exception instanceof RuntimeException) {
+                throw (RuntimeException) exception;
+            } else {
+                throw new AssertionError(exception);
+            }
+        }
     }
     
     @Override
@@ -114,16 +130,5 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
         } finally {
             setStatus(DISCONNECTED);
         }
-    }
-    
-    public static void main(String[] args) throws Exception {
-        Replicator r = new RedisScanReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
-        r.addEventListener(new EventListener() {
-            @Override
-            public void onEvent(Replicator replicator, Event event) {
-                System.out.println(event);
-            }
-        });
-        r.open();
     }
 }

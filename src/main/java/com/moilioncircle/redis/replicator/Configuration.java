@@ -196,7 +196,7 @@ public class Configuration {
      * 
      * set SCAN COUNT if enableScan = true
      */
-    private int scanCount = 256;
+    private int scanStep = 256;
     
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -437,12 +437,12 @@ public class Configuration {
         return this;
     }
     
-    public int getScanCount() {
-        return scanCount;
+    public int getScanStep() {
+        return scanStep;
     }
     
-    public Configuration setScanCount(int scanCount) {
-        this.scanCount = scanCount;
+    public Configuration setScanStep(int scanStep) {
+        this.scanStep = scanStep;
         return this;
     }
     
@@ -520,8 +520,8 @@ public class Configuration {
         if (parameters.containsKey("enableScan")) {
             configuration.setEnableScan(getBool(parameters.get("enableScan"), false));
         }
-        if (parameters.containsKey("scanCount")) {
-            configuration.setScanCount(getInt(parameters.get("scanCount"), 256));
+        if (parameters.containsKey("scanStep")) {
+            configuration.setScanStep(getInt(parameters.get("scanStep"), 256));
         }
         
         // redis 6
@@ -587,7 +587,7 @@ public class Configuration {
                 ", scheduledExecutor=" + scheduledExecutor +
                 ", useDefaultExceptionListener=" + useDefaultExceptionListener +
                 ", enableScan=" + enableScan +
-                ", scanCount=" + scanCount +
+                ", scanStep=" + scanStep +
                 ", ssl=" + ssl +
                 ", sslSocketFactory=" + sslSocketFactory +
                 ", sslContextFactory=" + sslContextFactory +

@@ -28,7 +28,7 @@ import com.moilioncircle.redis.replicator.event.EventListener;
 @SuppressWarnings("resource")
 public class ScanExample {
     public static void main(String[] args) throws Exception {
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanCount=256");
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=128");
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {

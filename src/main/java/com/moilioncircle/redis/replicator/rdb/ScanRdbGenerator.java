@@ -188,12 +188,12 @@ public class ScanRdbGenerator {
          * scan
          */
         String cursor = "0";
-        String count = String.valueOf(configuration.getScanCount());
+        String step = String.valueOf(configuration.getScanStep());
         do {
             String temp = cursor;
             RESP2.Node scan = retry(client -> {
                 RESP2.Response r = client.newCommand();
-                return r.invoke("scan", temp, "count", count);
+                return r.invoke("scan", temp, "count", step);
             });
             if (scan.type == RESP2.Type.ERROR) {
                 throw new IOException(Strings.toString(scan.value));

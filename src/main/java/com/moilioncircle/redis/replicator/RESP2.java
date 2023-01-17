@@ -151,7 +151,7 @@ public class RESP2 {
                         }
                     }
                 default:
-                    throw new ProtocolException("expect [$,:,*,+,-] but: " + (char) c);
+                    throw new AssertionError("expect [$,:,*,+,-] but: " + (char) c);
                 
             }
         }
@@ -238,12 +238,12 @@ public class RESP2 {
             this.responses = new LinkedList<>();
         }
         
-        public RESP2.Node invoke(byte[]...command) throws IOException {
+        public RESP2.Node invoke(byte[]... command) throws IOException {
             this.resp2.emit(command);
             return this.resp2.parse();
         }
         
-        public RESP2.Node invoke(String...command) throws IOException {
+        public RESP2.Node invoke(String... command) throws IOException {
             return invoke(Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
         }
         

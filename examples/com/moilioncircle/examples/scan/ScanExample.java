@@ -35,7 +35,7 @@ public class ScanExample {
                 System.out.println(event);
             }
         });
-    
+        
         replicator.open();
     }
 }

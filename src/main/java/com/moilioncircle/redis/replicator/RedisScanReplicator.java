@@ -65,7 +65,7 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
         this.outputStream = new XPipedOutputStream();
         this.inputStream = new RedisInputStream(new XPipedInputStream(outputStream), this.configuration.getBufferSize());
         this.inputStream.setRawByteListeners(this.rawByteListeners);
-    
+        
         this.worker = this.threadFactory.newThread(this);
     }
     

@@ -75,12 +75,12 @@ public class ScanRdbGenerator {
              */
             int version = 0;
             String ver = null;
-    
+            
             RESP2.Node server = retry(client -> {
                 RESP2.Response r = client.newCommand();
                 return r.invoke("info", "server");
             });
-    
+            
             if (server.type == RESP2.Type.ERROR) {
                 throw new IOException(Strings.toString(server.value));
             } else {
@@ -91,13 +91,13 @@ public class ScanRdbGenerator {
                 if (!VERSIONS.containsKey(ver)) {
                     throw new UnsupportedOperationException("unsupported redis version :" + ver);
                 }
-        
+                
                 version = VERSIONS.get(ver);
-        
+                
                 out.write("REDIS".getBytes());
                 out.write(lappend(version, 4, '0').getBytes());
             }
-    
+            
             /*
              * aux
              */
@@ -105,7 +105,7 @@ public class ScanRdbGenerator {
                 generateAux("redis-ver", ver);
                 generateAux("ctime", String.valueOf(System.currentTimeMillis() / 1000L));
             }
-    
+            
             if (version >= 10) {
                 /*
                  * rdb function
@@ -114,7 +114,7 @@ public class ScanRdbGenerator {
                     RESP2.Response r = client.newCommand();
                     return r.invoke("function", "dump");
                 });
-        
+                
                 if (functions.type == RESP2.Type.ERROR) {
                     throw new IOException(Strings.toString(functions.value));
                 } else {
@@ -122,7 +122,7 @@ public class ScanRdbGenerator {
                     out.write(funcs, 0, funcs.length - 10);
                 }
             }
-    
+            
             /*
              * rdb db info
              */
@@ -130,7 +130,7 @@ public class ScanRdbGenerator {
                 RESP2.Response r = client.newCommand();
                 return r.invoke("info", "keyspace");
             });
-    
+            
             String[] line = Strings.toString(keyspace.value).split("\n");
             for (int i = 1; i < line.length; i++) {
                 // db0:keys={dbsize},expires={expires},avg_ttl=0
@@ -142,7 +142,7 @@ public class ScanRdbGenerator {
                 DB db = new DB(dbnum, dbsize, expires);
                 generateDB(db, version);
             }
-    
+            
             out.write(RDB_OPCODE_EOF);
             out.write(out.getCRC64());
         } finally {
@@ -163,13 +163,13 @@ public class ScanRdbGenerator {
             RESP2.Response r = client.newCommand();
             return r.invoke("select", String.valueOf(db.getDbNumber()));
         });
-    
+        
         if (select.type == RESP2.Type.ERROR) {
             throw new IOException(Strings.toString(select.value));
         }
         
         /*
-         * db 
+         * db
          */
         out.write(RDB_OPCODE_SELECTDB);
         encoder.rdbSaveLen(db.getDbNumber(), out);
@@ -178,7 +178,7 @@ public class ScanRdbGenerator {
             encoder.rdbSaveLen(db.getDbsize(), out);
             encoder.rdbSaveLen(db.getExpires(), out);
         }
-    
+        
         /*
          * scan
          */
@@ -193,10 +193,10 @@ public class ScanRdbGenerator {
             if (scan.type == RESP2.Type.ERROR) {
                 throw new IOException(Strings.toString(scan.value));
             }
-    
+            
             RESP2.Node[] ary = (RESP2.Node[]) scan.value;
             cursor = Strings.toString(ary[0].value);
-    
+            
             // pipeline
             RESP2.Response response = retry(client -> {
                 RESP2.Response r = client.newCommand();
@@ -224,13 +224,13 @@ public class ScanRdbGenerator {
         public TTLNodeConsumer(OutputStream out) {
             this.out = out;
         }
-    
+        
         @Override
         public void accept(RESP2.Node node) throws IOException {
             if (node.type == RESP2.Type.ERROR) {
                 throw new IOException(Strings.toString(node.value));
             }
-            Long ttl = (Long)node.value;
+            Long ttl = (Long) node.value;
             if (ttl >= 0) {
                 ttl = System.currentTimeMillis() + ttl;
                 out.write(RDB_OPCODE_EXPIRETIME_MS);
@@ -253,7 +253,7 @@ public class ScanRdbGenerator {
             if (node.type == RESP2.Type.ERROR) {
                 throw new IOException(Strings.toString(node.value));
             }
-            Long ttl = (Long)node.value;
+            Long ttl = (Long) node.value;
             if (ttl >= 0) {
                 out.write(RDB_OPCODE_EXPIRETIME_MS);
                 encoder.rdbSaveMillisecondTime(ttl, out);
@@ -262,23 +262,23 @@ public class ScanRdbGenerator {
     }
     
     private static class DumpNodeConsumer implements RESP2.NodeConsumer {
-    
+        
         private byte[] key;
         private OutputStream out;
         private BaseRdbEncoder encoder = new BaseRdbEncoder();
-    
+        
         public DumpNodeConsumer(byte[] key, OutputStream out) {
             this.key = key;
             this.out = out;
         }
-    
+        
         @Override
         public void accept(RESP2.Node node) throws IOException {
             if (node.type == RESP2.Type.ERROR) {
                 throw new IOException(Strings.toString(node.value));
             }
             
-            byte[] value = (byte[])node.value;
+            byte[] value = (byte[]) node.value;
             byte type = value[0];
             out.write(type);
             encoder.rdbGenericSaveStringObject(new ByteArray(key), out);
@@ -286,7 +286,7 @@ public class ScanRdbGenerator {
         }
     }
     
-    private  <T> T retry(RESP2.Function<RESP2.Client, T> function) throws IOException {
+    private <T> T retry(RESP2.Function<RESP2.Client, T> function) throws IOException {
         IOException exception = null;
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {

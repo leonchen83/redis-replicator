@@ -209,7 +209,7 @@ public class RESP2 {
             } else {
                 RESP2.Node ping = newCommand().invoke("ping");
                 if (ping.type == Type.ERROR) {
-                    throw new AssertionError(Strings.toString(ping.value));
+                    throw new IOException(Strings.toString(ping.value));
                 }
             }
         }
@@ -219,7 +219,7 @@ public class RESP2 {
             Client next = new Client(prev.host, prev.port, prev.configuration);
             RESP2.Node select = next.newCommand().invoke("select", String.valueOf(db));
             if (select.type == Type.ERROR) {
-                throw new AssertionError(Strings.toString(select.value));
+                throw new IOException(Strings.toString(select.value));
             }
             return next;
         }

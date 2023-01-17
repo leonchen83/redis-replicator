@@ -297,6 +297,18 @@ public class ScanRdbGenerator {
         }
     }
     
+    private RESP2.Client recreate(RESP2.Client prev, int db) throws IOException {
+        IOException exception = null;
+        for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
+            try {
+                return RESP2.Client.valueOf(prev, db);
+            } catch (IOException e) {
+                exception = e;
+            }
+        }
+        throw exception;
+    }
+    
     private <T> T retry(RESP2.Function<RESP2.Client, T> function) throws IOException {
         IOException exception = null;
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
@@ -306,10 +318,7 @@ public class ScanRdbGenerator {
                 throw e;
             } catch (IOException e) {
                 exception = e;
-                try {
-                    this.client = RESP2.Client.valueOf(this.client, this.db);
-                } catch (IOException ex) {
-                }
+                this.client = recreate(this.client, this.db);
             }
         }
         throw exception;
@@ -325,19 +334,16 @@ public class ScanRdbGenerator {
                 throw e;
             } catch (IOException e) {
                 exception = e;
-                try {
-                    Queue<Tuple2<RESP2.NodeConsumer, byte[][]>> responses = prev.responses();
-                    RESP2.Response next = retry(client -> {
-                        RESP2.Response r = client.newCommand();
-                        while (!responses.isEmpty()) {
-                            Tuple2<RESP2.NodeConsumer, byte[][]> tuple2 = responses.poll();
-                            r.post(tuple2.getV1(), tuple2.getV2());
-                        }
-                        return r;
-                    });
-                    prev = next;
-                } catch (IOException ex) {
-                }
+                Queue<Tuple2<RESP2.NodeConsumer, byte[][]>> responses = prev.responses();
+                RESP2.Response next = retry(client -> {
+                    RESP2.Response r = client.newCommand();
+                    while (!responses.isEmpty()) {
+                        Tuple2<RESP2.NodeConsumer, byte[][]> tuple2 = responses.poll();
+                        r.post(tuple2.getV1(), tuple2.getV2());
+                    }
+                    return r;
+                });
+                prev = next;
             }
         }
         throw exception;

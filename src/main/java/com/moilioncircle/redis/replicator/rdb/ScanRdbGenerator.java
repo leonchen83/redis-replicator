@@ -44,6 +44,9 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
  */
 public class ScanRdbGenerator {
     
+    protected final int port;
+    protected final String host;
+    
     private CRCOutputStream out;
     private RESP2.Client client;
     private Configuration configuration;
@@ -62,14 +65,16 @@ public class ScanRdbGenerator {
         VERSIONS.put("7.0", 10);
     }
     
-    public ScanRdbGenerator(String host, int port, Configuration configuration, OutputStream out) throws IOException {
+    public ScanRdbGenerator(String host, int port, Configuration configuration, OutputStream out) {
+        this.host = host;
+        this.port = port;
         this.configuration = configuration;
         this.out = new CRCOutputStream(out);
-        this.client = new RESP2.Client(host, port, configuration);
     }
     
     public void generate() throws IOException {
         try {
+            this.client = new RESP2.Client(host, port, configuration);
             /*
              * rdb version
              */

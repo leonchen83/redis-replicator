@@ -23,6 +23,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
 import static com.moilioncircle.redis.replicator.util.Strings.lappend;
 
+import java.io.BufferedOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -69,7 +70,7 @@ public class ScanRdbGenerator {
         this.host = host;
         this.port = port;
         this.configuration = configuration;
-        this.out = new CRCOutputStream(out);
+        this.out = new CRCOutputStream(new BufferedOutputStream(out, this.configuration.getBufferSize()));
     }
     
     public void generate() throws IOException {

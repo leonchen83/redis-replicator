@@ -27,7 +27,7 @@ import java.util.Arrays;
  */
 public class ByteBufferOutputStream extends OutputStream {
     
-    protected byte buf[];
+    protected byte[] buf;
     protected int count;
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
     
@@ -47,7 +47,7 @@ public class ByteBufferOutputStream extends OutputStream {
     }
     
     @Override
-    public void write(byte b[], int off, int len) {
+    public void write(byte[] b, int off, int len) {
         ensureCapacity(count + len);
         System.arraycopy(b, off, buf, count, len);
         count += len;

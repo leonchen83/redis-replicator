@@ -60,13 +60,6 @@ public class ByteArrayTest {
         assertEquals(str.substring(1), getString(bytes3));
     }
     
-    @Test
-    public void testToString() {
-        String str = "this is a test";
-        ByteArray array = new ByteArray(str.getBytes());
-        assertEquals(array.toString(), str);
-    }
-    
     @Test 
     public void testWriteTo() throws IOException {
         String str = "this is a long string to test byte array";

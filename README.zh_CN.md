@@ -16,7 +16,8 @@
       * [3.3. 备份远程redis的实时命令](#33-备份远程redis的实时命令)
       * [3.4. 将rdb转换成dump格式](#34-将rdb转换成dump格式)
       * [3.5. 检查Rdb的正确性](#35-检查rdb的正确性)
-      * [3.6. 其他示例](#36-其他示例)
+      * [3.6. Scan与PSYNC](#36-scan与psync)
+      * [3.7. 其他示例](#37-其他示例)
    * [4. 高级主题](#4-高级主题)
       * [4.1. 命令扩展](#41-命令扩展)
          * [4.1.1. 首先写一个command类](#411-首先写一个command类)
@@ -89,7 +90,7 @@ redis 2.6 - 7.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.6.5</version>
+        <version>3.7.0</version>
     </dependency>
 ```
 
@@ -180,7 +181,38 @@ redis 2.6 - 7.0
 
 ```
 
-## 3.6. 其他示例  
+## 3.6. Scan与PSYNC
+
+默认情况下, redis-replicator 使用 PSYNC 命令伪装成slave接收命令, 如下所示
+```java
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
+            }
+        });
+        
+        replicator.open();
+
+```
+
+然而, 在某些云服务中, PSYNC 是被禁止使用的, 因此我们使用 Scan 命令来替换PSYNC命令扫描全库, 如下所示
+```java
+
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=256");
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
+            }
+        });
+        
+        replicator.open();
+
+```
+
+## 3.7. 其他示例  
 
 参阅 [examples](./examples/com/moilioncircle/examples/README.md)  
 

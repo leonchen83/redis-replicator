@@ -16,7 +16,8 @@ Table of Contents([中文说明](./README.zh_CN.md))
       * [3.3. Backup remote commands](#33-backup-remote-commands)
       * [3.4. Convert rdb to dump format](#34-convert-rdb-to-dump-format)
       * [3.5. Rdb check](#35-rdb-check)
-      * [3.6. Other examples](#36-other-examples)
+      * [3.6. Scan and PSYNC](#36-scan-and-psync)
+      * [3.7. Other examples](#37-other-examples)
    * [4. Advanced topics](#4-advanced-topics)
       * [4.1. Command extension](#41-command-extension)
          * [4.1.1. Write a command](#411-write-a-command)
@@ -89,7 +90,7 @@ redis 2.6 - 7.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.6.5</version>
+        <version>3.7.0</version>
     </dependency>
 ```
 
@@ -180,7 +181,38 @@ We can use `SkipRdbVisitor` to check rdb's correctness.
 
 ```
 
-## 3.6. Other examples  
+## 3.6. Scan and PSYNC
+
+By default, redis-replicator uses PSYNC to pretend as slave to receives commands. examples like following
+```java
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
+            }
+        });
+        
+        replicator.open();
+
+```
+
+However, under some cloud services, the PSYNC command is prohibited, so we use the Scan command instead of the PSYNC command
+```java
+
+        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=256");
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                System.out.println(event);
+            }
+        });
+        
+        replicator.open();
+
+```
+
+## 3.7. Other examples  
 
 See [examples](./examples/com/moilioncircle/examples/README.md)  
 

@@ -1,3 +1,7 @@
+### 3.7.0
+
+Add support `SCAN` mode to instead of `PSYNC` command.  
+
 ### 3.6.5
 
 Upgrade `slf4j-api` to `2.0.6`.  

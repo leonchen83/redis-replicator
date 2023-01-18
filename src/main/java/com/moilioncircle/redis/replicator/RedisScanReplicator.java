@@ -98,10 +98,10 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
             }
         } catch (EOFException ignore) {
         }
-        translate(this.exception);
+        throwException(this.exception);
     }
     
-    private void translate(Throwable exception) throws IOException {
+    private void throwException(Throwable exception) throws IOException {
         if (exception != null) {
             if (exception instanceof IOException) {
                 throw (IOException) exception;

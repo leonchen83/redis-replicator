@@ -196,7 +196,7 @@ public class Configuration {
      * 
      * set SCAN COUNT if enableScan = true
      */
-    private int scanStep = 256;
+    private int scanStep = 512;
     
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -521,7 +521,7 @@ public class Configuration {
             configuration.setEnableScan(getBool(parameters.get("enableScan"), false));
         }
         if (parameters.containsKey("scanStep")) {
-            configuration.setScanStep(getInt(parameters.get("scanStep"), 256));
+            configuration.setScanStep(getInt(parameters.get("scanStep"), 512));
         }
         
         // redis 6

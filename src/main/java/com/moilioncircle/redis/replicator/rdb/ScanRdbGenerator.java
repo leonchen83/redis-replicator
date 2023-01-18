@@ -215,9 +215,9 @@ public class ScanRdbGenerator {
                 for (int i = 0; i < nodes.length; i++) {
                     byte[] key = (byte[]) nodes[i].value;
                     if (version >= 10) {
-                        ExpireNodeConsumer consumer = new ExpireNodeConsumer();
-                        r.post(consumer, "pexpiretime".getBytes(), key);
-                        r.post(new DumpNodeConsumer(key, out, consumer), "dump".getBytes(), key);
+                        ExpireNodeConsumer context = new ExpireNodeConsumer();
+                        r.post(context, "pexpiretime".getBytes(), key);
+                        r.post(new DumpNodeConsumer(key, out, context), "dump".getBytes(), key);
                     } else {
                         TTLNodeConsumer context = new TTLNodeConsumer();
                         r.post(context, "pttl".getBytes(), key);

@@ -215,11 +215,14 @@ public class ScanRdbGenerator {
                 for (int i = 0; i < nodes.length; i++) {
                     byte[] key = (byte[]) nodes[i].value;
                     if (version >= 10) {
-                        r.post(new ExpireNodeConsumer(out), "pexpiretime".getBytes(), key);
+                        ExpireNodeConsumer consumer = new ExpireNodeConsumer();
+                        r.post(consumer, "pexpiretime".getBytes(), key);
+                        r.post(new DumpNodeConsumer(key, out, consumer), "dump".getBytes(), key);
                     } else {
-                        r.post(new TTLNodeConsumer(out), "pttl".getBytes(), key);
+                        TTLNodeConsumer context = new TTLNodeConsumer();
+                        r.post(context, "pttl".getBytes(), key);
+                        r.post(new DumpNodeConsumer(key, out, context), "dump".getBytes(), key);
                     }
-                    r.post(new DumpNodeConsumer(key, out), "dump".getBytes(), key);
                 }
                 return r;
             });
@@ -227,13 +230,13 @@ public class ScanRdbGenerator {
         } while (!cursor.equals("0"));
     }
     
-    private static class TTLNodeConsumer implements RESP2.NodeConsumer {
-        
-        private OutputStream out;
-        private BaseRdbEncoder encoder = new BaseRdbEncoder();
-        
-        public TTLNodeConsumer(OutputStream out) {
-            this.out = out;
+    private static class TTLNodeConsumer implements RESP2.NodeConsumer, TTLContext {
+    
+        private Long ttl;
+    
+        @Override
+        public Long getTTL() {
+            return this.ttl;
         }
         
         @Override
@@ -243,20 +246,22 @@ public class ScanRdbGenerator {
             }
             Long ttl = (Long) node.value;
             if (ttl >= 0) {
-                ttl = System.currentTimeMillis() + ttl;
-                out.write(RDB_OPCODE_EXPIRETIME_MS);
-                encoder.rdbSaveMillisecondTime(ttl, out);
+                this.ttl = System.currentTimeMillis() + ttl;
             }
         }
     }
     
-    private static class ExpireNodeConsumer implements RESP2.NodeConsumer {
-        
-        private OutputStream out;
-        private BaseRdbEncoder encoder = new BaseRdbEncoder();
-        
-        public ExpireNodeConsumer(OutputStream out) {
-            this.out = out;
+    private static interface TTLContext {
+        Long getTTL();
+    }
+    
+    private static class ExpireNodeConsumer implements RESP2.NodeConsumer, TTLContext {
+    
+        private Long ttl;
+    
+        @Override
+        public Long getTTL() {
+            return this.ttl;
         }
         
         @Override
@@ -266,8 +271,7 @@ public class ScanRdbGenerator {
             }
             Long ttl = (Long) node.value;
             if (ttl >= 0) {
-                out.write(RDB_OPCODE_EXPIRETIME_MS);
-                encoder.rdbSaveMillisecondTime(ttl, out);
+                this.ttl = ttl;
             }
         }
     }
@@ -276,11 +280,13 @@ public class ScanRdbGenerator {
         
         private byte[] key;
         private OutputStream out;
+        private TTLContext context;
         private BaseRdbEncoder encoder = new BaseRdbEncoder();
         
-        public DumpNodeConsumer(byte[] key, OutputStream out) {
+        public DumpNodeConsumer(byte[] key, OutputStream out, TTLContext context) {
             this.key = key;
             this.out = out;
+            this.context = context;
         }
         
         @Override
@@ -289,11 +295,15 @@ public class ScanRdbGenerator {
                 throw new IOException(Strings.toString(node.value));
             }
             
-            byte[] value = (byte[]) node.value;
-            byte type = value[0];
-            out.write(type);
-            encoder.rdbGenericSaveStringObject(new ByteArray(key), out);
-            out.write(value, 1, value.length - 11);
+            if (node.value != null) {
+                out.write(RDB_OPCODE_EXPIRETIME_MS);
+                encoder.rdbSaveMillisecondTime(context.getTTL(), out);
+                byte[] value = (byte[]) node.value;
+                byte type = value[0];
+                out.write(type);
+                encoder.rdbGenericSaveStringObject(new ByteArray(key), out);
+                out.write(value, 1, value.length - 11);
+            }
         }
     }
     

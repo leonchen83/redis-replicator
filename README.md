@@ -185,30 +185,30 @@ We can use `SkipRdbVisitor` to check rdb's correctness.
 
 By default, redis-replicator uses PSYNC to pretend as slave to receives commands. examples like following
 ```java
-        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addEventListener(new EventListener() {
+        final Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
+        r.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 System.out.println(event);
             }
         });
         
-        replicator.open();
+        r.open();
 
 ```
 
 However, under some cloud services, the PSYNC command is prohibited, so we use the Scan command instead of the PSYNC command
 ```java
 
-        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=256");
-        replicator.addEventListener(new EventListener() {
+        final Replicator r = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=256");
+        r.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 System.out.println(event);
             }
         });
         
-        replicator.open();
+        r.open();
 
 ```
 

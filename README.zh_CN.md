@@ -185,30 +185,30 @@ redis 2.6 - 7.0
 
 默认情况下, redis-replicator 使用 PSYNC 命令伪装成slave接收命令, 如下所示
 ```java
-        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
-        replicator.addEventListener(new EventListener() {
+        final Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
+        r.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 System.out.println(event);
             }
         });
         
-        replicator.open();
+        r.open();
 
 ```
 
 然而, 在某些云服务中, PSYNC 是被禁止使用的, 因此我们使用 Scan 命令来替换PSYNC命令扫描全库, 如下所示
 ```java
 
-        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=256");
-        replicator.addEventListener(new EventListener() {
+        final Replicator r = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=256");
+        r.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 System.out.println(event);
             }
         });
         
-        replicator.open();
+        r.open();
 
 ```
 

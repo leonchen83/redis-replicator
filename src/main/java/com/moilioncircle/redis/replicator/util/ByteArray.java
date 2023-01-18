@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator.util;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 
 /**
@@ -94,10 +96,30 @@ public class ByteArray implements Iterable<byte[]> {
         Iterator<byte[]> it = this.iterator();
         return it.hasNext() ? it.next() : null;
     }
-
+    
     @Override
     public Iterator<byte[]> iterator() {
         return new Iter();
+    }
+    
+    public void writeTo(OutputStream out, long off, long length) throws IOException {
+        if (off + length > this.length) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (off + length <= this.cap) {
+            out.write(this.smallBytes, (int) off, (int) length);
+            return;
+        }
+        while (length > 0) {
+            int x1 = (int) (off >> BITS);
+            int y1 = (int) (off & MASK);
+            int min = MAGIC - y1;
+            if (length <= MAGIC) min = Math.min(min, (int) length);
+            out.write(largeBytes[x1], y1, min);
+            off += min;
+            length -= min;
+        }
+        assert length == 0;
     }
 
     public static void arraycopy(ByteArray src, long srcPos, ByteArray dest, long destPos, long length) {

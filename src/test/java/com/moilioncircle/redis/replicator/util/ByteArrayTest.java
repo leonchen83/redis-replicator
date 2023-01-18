@@ -59,6 +59,39 @@ public class ByteArrayTest {
         ByteArray.arraycopy(bytes2, 1, bytes3, 0, bytes2.length() - 1);
         assertEquals(str.substring(1), getString(bytes3));
     }
+    
+    @Test
+    public void testToString() {
+        String str = "this is a test";
+        ByteArray array = new ByteArray(str.getBytes());
+        assertEquals(array.toString(), str);
+    }
+    
+    @Test 
+    public void testWriteTo() throws IOException {
+        String str = "this is a long string to test byte array";
+        byte[] bytes = str.getBytes();
+        {
+            ByteArray ary = new ByteArray(bytes);
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                ary.writeTo(out, 1, str.length() - 11);
+                String actual = new String(out.toByteArray());
+                assertEquals("his is a long string to test ", actual);
+            }
+        }
+    
+        {
+            ByteArray ary = new ByteArray(bytes.length, 10);
+            for (int i = 0; i < bytes.length; i++) {
+                ary.set(i, bytes[i]);
+            }
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                ary.writeTo(out, 1, str.length() - 11);
+                String actual = new String(out.toByteArray());
+                assertEquals("his is a long string to test ", actual);
+            }
+        }
+    }
 
     private String getString(ByteArray ary) {
         ByteArrayOutputStream o = new ByteArrayOutputStream();

@@ -32,6 +32,7 @@ import java.util.Queue;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
+import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
 import com.moilioncircle.redis.replicator.util.Strings;
 import com.moilioncircle.redis.replicator.util.Tuples;
@@ -84,7 +85,7 @@ public class RESP2 {
                     }
                     long len = Long.parseLong(builder.toString());
                     if (len == -1) return new Node(RESP2.Type.NULL, null);
-                    Node r = new Node(RESP2.Type.STRING, in.readBytes(len).first());
+                    Node r = new Node(RESP2.Type.STRING, in.readBytes(len));
                     
                     if ((c = in.read()) != '\r') throw new AssertionError("expect '\\r' but :" + (char) c);
                     if ((c = in.read()) != '\n') throw new AssertionError("expect '\\n' but :" + (char) c);
@@ -133,7 +134,7 @@ public class RESP2 {
                             builder.put((byte) c);
                         }
                         if ((c = in.read()) == '\n') {
-                            return new Node(RESP2.Type.STRING, builder.array());
+                            return new Node(RESP2.Type.STRING, new ByteArray(builder.array()));
                         } else {
                             builder.put((byte) c);
                         }
@@ -146,7 +147,7 @@ public class RESP2 {
                             builder.put((byte) c);
                         }
                         if ((c = in.read()) == '\n') {
-                            return new Node(RESP2.Type.ERROR, builder.array());
+                            return new Node(RESP2.Type.ERROR, new ByteArray(builder.array()));
                         } else {
                             builder.put((byte) c);
                         }
@@ -165,6 +166,26 @@ public class RESP2 {
         public Node(RESP2.Type type, Object value) {
             this.type = type;
             this.value = value;
+        }
+    
+        public Long getNumber() {
+            return type == Type.NUMBER ? (Long) value : null;
+        }
+    
+        public Node[] getArray() {
+            return type == Type.ARRAY ? (Node[]) value : null;
+        }
+    
+        public ByteArray getBytes() {
+            return type == Type.STRING ? (ByteArray) value : null;
+        }
+    
+        public String getError() {
+            return type == Type.ERROR ? Strings.toString(((ByteArray) value).first()) : null;
+        }
+    
+        public String getString() {
+            return type == Type.STRING ? Strings.toString(((ByteArray) value).first()) : null;
         }
     }
     

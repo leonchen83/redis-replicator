@@ -35,7 +35,6 @@ import com.moilioncircle.redis.replicator.RESP2;
 import com.moilioncircle.redis.replicator.io.CRCOutputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.util.ByteArray;
-import com.moilioncircle.redis.replicator.util.Strings;
 import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 /**
@@ -88,9 +87,9 @@ public class ScanRdbGenerator {
             });
             
             if (server.type == RESP2.Type.ERROR) {
-                throw new IOException(Strings.toString(server.value));
+                throw new IOException(server.getError());
             } else {
-                String value = Strings.toString(server.value);
+                String value = server.getString();
                 String[] line = value.split("\n");
                 ver = line[1].split(":")[1];
                 ver = ver.substring(0, ver.lastIndexOf('.'));
@@ -122,10 +121,10 @@ public class ScanRdbGenerator {
                 });
                 
                 if (functions.type == RESP2.Type.ERROR) {
-                    throw new IOException(Strings.toString(functions.value));
+                    throw new IOException(functions.getError());
                 } else {
-                    byte[] funcs = (byte[]) functions.value;
-                    out.write(funcs, 0, funcs.length - 10);
+                    ByteArray funcs = functions.getBytes();
+                    funcs.writeTo(out, 0, funcs.length() - 10);
                 }
             }
             
@@ -137,7 +136,7 @@ public class ScanRdbGenerator {
                 return r.invoke("info", "keyspace");
             });
             
-            String[] line = Strings.toString(keyspace.value).split("\n");
+            String[] line = keyspace.getString().split("\n");
             for (int i = 1; i < line.length; i++) {
                 // db0:keys={dbsize},expires={expires},avg_ttl=0
                 String[] ary = line[i].split(":");
@@ -174,7 +173,7 @@ public class ScanRdbGenerator {
          * select
          */
         if (select.type == RESP2.Type.ERROR) {
-            throw new IOException(Strings.toString(select.value));
+            throw new IOException(select.getError());
         } else {
             this.db = (int) db.getDbNumber();
         }
@@ -202,18 +201,18 @@ public class ScanRdbGenerator {
                 return r.invoke("scan", temp, "count", step);
             });
             if (scan.type == RESP2.Type.ERROR) {
-                throw new IOException(Strings.toString(scan.value));
+                throw new IOException(scan.getError());
             }
             
-            RESP2.Node[] ary = (RESP2.Node[]) scan.value;
-            cursor = Strings.toString(ary[0].value);
+            RESP2.Node[] ary = scan.getArray();
+            cursor = ary[0].getString();
             
             // key value pipeline
             RESP2.Response response = retry(client -> {
                 RESP2.Response r = client.newCommand();
-                RESP2.Node[] nodes = (RESP2.Node[]) ary[1].value;
+                RESP2.Node[] nodes = ary[1].getArray();
                 for (int i = 0; i < nodes.length; i++) {
-                    byte[] key = (byte[]) nodes[i].value;
+                    byte[] key = nodes[i].getBytes().first();
                     if (version >= 10) {
                         ExpireNodeConsumer context = new ExpireNodeConsumer();
                         r.post(context, "pexpiretime".getBytes(), key);
@@ -242,9 +241,9 @@ public class ScanRdbGenerator {
         @Override
         public void accept(RESP2.Node node) throws IOException {
             if (node.type == RESP2.Type.ERROR) {
-                throw new IOException(Strings.toString(node.value));
+                throw new IOException(node.getError());
             }
-            Long ttl = (Long) node.value;
+            Long ttl = node.getNumber();
             if (ttl >= 0) {
                 this.ttl = System.currentTimeMillis() + ttl;
             }
@@ -267,9 +266,9 @@ public class ScanRdbGenerator {
         @Override
         public void accept(RESP2.Node node) throws IOException {
             if (node.type == RESP2.Type.ERROR) {
-                throw new IOException(Strings.toString(node.value));
+                throw new IOException(node.getError());
             }
-            Long ttl = (Long) node.value;
+            Long ttl = node.getNumber();
             if (ttl >= 0) {
                 this.ttl = ttl;
             }
@@ -292,7 +291,7 @@ public class ScanRdbGenerator {
         @Override
         public void accept(RESP2.Node node) throws IOException {
             if (node.type == RESP2.Type.ERROR) {
-                throw new IOException(Strings.toString(node.value));
+                throw new IOException(node.getError());
             }
             
             if (node.value != null) {
@@ -301,11 +300,11 @@ public class ScanRdbGenerator {
                     out.write(RDB_OPCODE_EXPIRETIME_MS);
                     encoder.rdbSaveMillisecondTime(context.getTTL(), out);
                 }
-                byte[] value = (byte[]) node.value;
-                byte type = value[0];
+                ByteArray value = node.getBytes();
+                byte type = value.get(0);
                 out.write(type);
                 encoder.rdbGenericSaveStringObject(new ByteArray(key), out);
-                out.write(value, 1, value.length - 11);
+                value.writeTo(out, 1, value.length() - 11);
             }
         }
     }

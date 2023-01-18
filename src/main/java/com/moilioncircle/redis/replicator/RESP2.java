@@ -225,12 +225,12 @@ public class RESP2 {
                     auth = newCommand().invoke("auth", pswd);
                 }
                 if (auth.type == Type.ERROR) {
-                    throw new AssertionError(Strings.toString(auth.value));
+                    throw new AssertionError(auth.getError());
                 }
             } else {
                 RESP2.Node ping = newCommand().invoke("ping");
                 if (ping.type == Type.ERROR) {
-                    throw new IOException(Strings.toString(ping.value));
+                    throw new IOException(ping.getError());
                 }
             }
         }
@@ -240,7 +240,7 @@ public class RESP2 {
             Client next = new Client(prev.host, prev.port, prev.configuration);
             RESP2.Node select = next.newCommand().invoke("select", String.valueOf(db));
             if (select.type == Type.ERROR) {
-                throw new IOException(Strings.toString(select.value));
+                throw new IOException(select.getError());
             }
             return next;
         }

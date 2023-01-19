@@ -349,13 +349,14 @@ public class ScanRdbGenerator {
         }
     }
     
-    private RESP2.Client recreate(RESP2.Client prev, int db) throws IOException {
+    private RESP2.Client recreate(RESP2.Client prev, int db, IOException reason) throws IOException {
         IOException exception = null;
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
-                return RESP2.Client.valueOf(prev, db);
+                return RESP2.Client.valueOf(prev, db, reason, i + 1);
             } catch (IOException e) {
                 exception = e;
+                reason = e;
             }
         }
         throw exception;
@@ -370,7 +371,7 @@ public class ScanRdbGenerator {
                 throw e;
             } catch (IOException e) {
                 exception = e;
-                this.client = recreate(this.client, this.db);
+                this.client = recreate(this.client, this.db, e);
             }
         }
         throw exception;

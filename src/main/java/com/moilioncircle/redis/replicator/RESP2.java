@@ -29,6 +29,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
@@ -43,6 +46,8 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
  * @since 3.7.0
  */
 public class RESP2 {
+    
+    private static final Logger logger = LoggerFactory.getLogger(RESP2.class);
     
     private RedisInputStream in;
     private RedisOutputStream out;
@@ -233,10 +238,17 @@ public class RESP2 {
                     throw new IOException(ping.getError());
                 }
             }
+            logger.info("connected to redis-server[{}:{}]", host, port);
         }
         
-        public static Client valueOf(Client prev, int db) throws IOException {
+        public static Client valueOf(Client prev, int db, IOException reason, int attempt) throws IOException {
+            if (reason != null) {
+                logger.error("[redis-replicator] socket error. redis-server[{}:{}]", prev.host, prev.port, reason);
+            }
             prev.close();
+            if (reason != null) {
+                logger.info("reconnecting to redis-server[{}:{}]. retry times:{}", prev.host, prev.port, attempt);
+            }
             Client next = new Client(prev.host, prev.port, prev.configuration);
             RESP2.Node select = next.newCommand().invoke("select", String.valueOf(db));
             if (select.type == Type.ERROR) {
@@ -272,6 +284,7 @@ public class RESP2 {
             } catch (IOException e) {
                 // NOP
             }
+            logger.info("socket closed. redis-server[{}:{}]", host, port);
         }
     }
     

@@ -364,7 +364,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             this.inputStream = new RedisInputStream(inputStream, configuration.getBufferSize());
             this.inputStream.setRawByteListeners(this.rawByteListeners);
             replyParser = new ReplyParser(this.inputStream, new RedisCodec());
-            logger.info("Connected to redis-server[{}:{}]", host, port);
+            logger.info("connected to redis-server[{}:{}]", host, port);
         } finally {
             setStatus(CONNECTED);
         }

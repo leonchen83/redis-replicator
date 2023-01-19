@@ -82,7 +82,6 @@ public class ScanRdbGenerator {
             int version = 0;
             String ver = null;
             String bits = null;
-            String usedmem = null;
             
             RESP2.Node server = retry(client -> {
                 RESP2.Response r = client.newCommand();
@@ -114,27 +113,6 @@ public class ScanRdbGenerator {
                 }
             }
             
-            RESP2.Node memory = retry(client -> {
-                RESP2.Response r = client.newCommand();
-                return r.invoke("info", "memory");
-            });
-    
-            if (memory.type == RESP2.Type.ERROR) {
-                throw new IOException(memory.getError());
-            } else {
-                String value = memory.getString();
-                String[] lines = value.split("\r\n");
-                for (int i = 1; i < lines.length; i++) {
-                    String[] kv = lines[i].split(":");
-                    String key = kv[0];
-                    String val = kv[1];
-            
-                    if (key.equals("used_memory")) {
-                        usedmem = val;
-                    }
-                }
-            }
-            
             /*
              * version
              */
@@ -148,7 +126,28 @@ public class ScanRdbGenerator {
                 generateAux("redis-ver", ver);
                 generateAux("redis-bits", bits);
                 generateAux("ctime", String.valueOf(System.currentTimeMillis() / 1000L));
-                generateAux("used-mem", usedmem);
+    
+                // used-memory
+                RESP2.Node memory = retry(client -> {
+                    RESP2.Response r = client.newCommand();
+                    return r.invoke("info", "memory");
+                });
+    
+                if (memory.type == RESP2.Type.ERROR) {
+                    throw new IOException(memory.getError());
+                } else {
+                    String value = memory.getString();
+                    String[] lines = value.split("\r\n");
+                    for (int i = 1; i < lines.length; i++) {
+                        String[] kv = lines[i].split(":");
+                        String key = kv[0];
+                        String val = kv[1];
+            
+                        if (key.equals("used_memory")) {
+                            generateAux("used-mem", val);
+                        }
+                    }
+                }
             }
             
             if (version >= 10) {

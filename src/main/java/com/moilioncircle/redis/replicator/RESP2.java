@@ -241,13 +241,13 @@ public class RESP2 {
             logger.info("connected to redis-server[{}:{}]", host, port);
         }
         
-        public static Client valueOf(Client prev, int db, IOException reason, int attempt) throws IOException {
+        public static Client valueOf(Client prev, int db, IOException reason, int attempts) throws IOException {
             if (reason != null) {
                 logger.error("[redis-replicator] socket error. redis-server[{}:{}]", prev.host, prev.port, reason);
             }
             prev.close();
             if (reason != null) {
-                logger.info("reconnecting to redis-server[{}:{}]. retry times:{}", prev.host, prev.port, attempt);
+                logger.info("reconnecting to redis-server[{}:{}]. retry times:{}", prev.host, prev.port, attempts);
             }
             Client next = new Client(prev.host, prev.port, prev.configuration);
             RESP2.Node select = next.newCommand().invoke("select", String.valueOf(db));

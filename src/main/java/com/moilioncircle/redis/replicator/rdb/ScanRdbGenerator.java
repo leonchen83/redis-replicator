@@ -133,16 +133,14 @@ public class ScanRdbGenerator {
                     return r.invoke("info", "memory");
                 });
     
-                if (memory.type == RESP2.Type.ERROR) {
-                    throw new IOException(memory.getError());
-                } else {
+                if (memory.type == RESP2.Type.STRING) {
                     String value = memory.getString();
                     String[] lines = value.split("\r\n");
                     for (int i = 1; i < lines.length; i++) {
                         String[] kv = lines[i].split(":");
                         String key = kv[0];
                         String val = kv[1];
-            
+        
                         if (key.equals("used_memory")) {
                             generateAux("used-mem", val);
                         }
@@ -163,7 +161,9 @@ public class ScanRdbGenerator {
                     throw new IOException(functions.getError());
                 } else {
                     ByteArray funcs = functions.getBytes();
-                    funcs.writeTo(out, 0, funcs.length() - 10);
+                    if (funcs != null) {
+                        funcs.writeTo(out, 0, funcs.length() - 10);
+                    }
                 }
             }
             

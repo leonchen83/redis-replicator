@@ -350,13 +350,12 @@ public class ScanRdbGenerator {
     }
     
     private RESP2.Client recreate(RESP2.Client prev, int db, IOException reason) throws IOException {
-        IOException exception = null;
+        IOException exception = reason;
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
-                return RESP2.Client.valueOf(prev, db, reason, i + 1);
+                return RESP2.Client.valueOf(prev, db, exception, i + 1);
             } catch (IOException e) {
                 exception = e;
-                reason = e;
             }
         }
         throw exception;

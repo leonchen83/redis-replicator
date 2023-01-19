@@ -338,7 +338,7 @@ public class ScanRdbGenerator {
                 Long ttl = context.getTTL();
                 if (ttl != null) {
                     out.write(RDB_OPCODE_EXPIRETIME_MS);
-                    encoder.rdbSaveMillisecondTime(context.getTTL(), out);
+                    encoder.rdbSaveMillisecondTime(ttl, out);
                 }
                 ByteArray value = node.getBytes();
                 byte type = value.get(0);

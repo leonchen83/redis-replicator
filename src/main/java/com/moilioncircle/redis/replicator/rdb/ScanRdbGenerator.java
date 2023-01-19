@@ -81,6 +81,8 @@ public class ScanRdbGenerator {
              */
             int version = 0;
             String ver = null;
+            String bits = null;
+            String usedmem = null;
             
             RESP2.Node server = retry(client -> {
                 RESP2.Response r = client.newCommand();
@@ -91,25 +93,62 @@ public class ScanRdbGenerator {
                 throw new IOException(server.getError());
             } else {
                 String value = server.getString();
-                String[] line = value.split("\n");
-                ver = line[1].split(":")[1];
-                ver = ver.substring(0, ver.lastIndexOf('.'));
-                if (!VERSIONS.containsKey(ver)) {
-                    throw new AssertionError("unsupported redis version :" + ver);
+                String[] lines = value.split("\r\n");
+                for (int i = 1; i < lines.length; i++) {
+                    String[] kv = lines[i].split(":");
+                    String key = kv[0];
+                    String val = kv[1];
+                    
+                    if (key.equals("redis_version")) {
+                        ver = val;
+                        
+                        val = val.substring(0, val.lastIndexOf('.'));
+                        if (!VERSIONS.containsKey(val)) {
+                            throw new AssertionError("unsupported redis version :" + val);
+                        }
+    
+                        version = VERSIONS.get(val);
+                    } else if (key.equals("arch_bits")) {
+                        bits = val;
+                    }
                 }
-                
-                version = VERSIONS.get(ver);
-                
-                out.write("REDIS".getBytes());
-                out.write(lappend(version, 4, '0').getBytes());
             }
+            
+            RESP2.Node memory = retry(client -> {
+                RESP2.Response r = client.newCommand();
+                return r.invoke("info", "memory");
+            });
+    
+            if (memory.type == RESP2.Type.ERROR) {
+                throw new IOException(memory.getError());
+            } else {
+                String value = memory.getString();
+                String[] lines = value.split("\r\n");
+                for (int i = 1; i < lines.length; i++) {
+                    String[] kv = lines[i].split(":");
+                    String key = kv[0];
+                    String val = kv[1];
+            
+                    if (key.equals("used_memory")) {
+                        usedmem = val;
+                    }
+                }
+            }
+            
+            /*
+             * version
+             */
+            out.write("REDIS".getBytes());
+            out.write(lappend(version, 4, '0').getBytes());
             
             /*
              * aux
              */
             if (version >= 7) {
                 generateAux("redis-ver", ver);
+                generateAux("redis-bits", bits);
                 generateAux("ctime", String.valueOf(System.currentTimeMillis() / 1000L));
+                generateAux("used-mem", usedmem);
             }
             
             if (version >= 10) {
@@ -137,9 +176,9 @@ public class ScanRdbGenerator {
                 return r.invoke("info", "keyspace");
             });
             
-            String[] line = keyspace.getString().split("\n");
+            String[] line = keyspace.getString().split("\r\n");
             for (int i = 1; i < line.length; i++) {
-                // db0:keys={dbsize},expires={expires},avg_ttl=0
+                // db{dbnum}:keys={dbsize},expires={expires},avg_ttl=0
                 String[] ary = line[i].split(":");
                 Integer dbnum = Integer.parseInt(ary[0].substring(2));
                 ary = ary[1].split(",");
@@ -157,6 +196,7 @@ public class ScanRdbGenerator {
     }
     
     private void generateAux(String key, String val) throws IOException {
+        if (val == null) return;
         BaseRdbEncoder encoder = new BaseRdbEncoder();
         out.write(RDB_OPCODE_AUX);
         encoder.rdbGenericSaveStringObject(new ByteArray(key.getBytes()), out);

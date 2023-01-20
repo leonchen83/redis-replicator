@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator;
+package com.moilioncircle.redis.replicator.client;
 
 import static com.moilioncircle.redis.replicator.Constants.COLON;
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
@@ -22,32 +22,19 @@ import static com.moilioncircle.redis.replicator.Constants.MINUS;
 import static com.moilioncircle.redis.replicator.Constants.PLUS;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
 
-import java.io.Closeable;
 import java.io.IOException;
-import java.net.Socket;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
-import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
 import com.moilioncircle.redis.replicator.util.Strings;
-import com.moilioncircle.redis.replicator.util.Tuples;
-import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
 /**
  * @author Leon Chen
  * @since 3.7.0
  */
 public class RESP2 {
-    
-    private static final Logger logger = LoggerFactory.getLogger(RESP2.class);
     
     private RedisInputStream in;
     private RedisOutputStream out;
@@ -57,7 +44,7 @@ public class RESP2 {
         this.out = out;
     }
     
-    private void emit(byte[]... command) throws IOException {
+    public void emit(byte[]... command) throws IOException {
         out.write(STAR);
         out.write(String.valueOf(command.length).getBytes());
         out.writeCrLf();
@@ -71,7 +58,7 @@ public class RESP2 {
         out.flush();
     }
     
-    private Node parse() throws IOException {
+    public Node parse() throws IOException {
         while (true) {
             int c = in.read();
             switch (c) {
@@ -196,148 +183,6 @@ public class RESP2 {
     
     public static enum Type {
         ARRAY, NUMBER, STRING, ERROR, NULL;
-    }
-    
-    public static class Client implements Closeable {
-        
-        private Socket socket;
-        private RedisInputStream is;
-        private RedisOutputStream os;
-        
-        private final RESP2 resp2;
-        private final String host;
-        private final int port;
-        private final Configuration configuration;
-        
-        public Client(String host, int port, Configuration configuration) throws IOException {
-            this.host = host;
-            this.port = port;
-            this.configuration = configuration;
-            RedisSocketFactory socketFactory = new RedisSocketFactory(configuration);
-            this.socket = socketFactory.createSocket(host, port, configuration.getConnectionTimeout());
-            this.os = new RedisOutputStream(socket.getOutputStream());
-            this.is = new RedisInputStream(socket.getInputStream(), configuration.getBufferSize());
-            this.resp2 = new RESP2(is, os);
-    
-            final String user = configuration.getAuthUser();
-            final String pswd = configuration.getAuthPassword();
-            
-            if (pswd != null) {
-                RESP2.Node auth = null;
-                if (user != null) {
-                    auth = newCommand().invoke("auth", user, pswd);
-                } else {
-                    auth = newCommand().invoke("auth", pswd);
-                }
-                if (auth.type == Type.ERROR) {
-                    throw new AssertionError(auth.getError());
-                }
-            } else {
-                RESP2.Node ping = newCommand().invoke("ping");
-                if (ping.type == Type.ERROR) {
-                    throw new IOException(ping.getError());
-                }
-            }
-            logger.info("connected to redis-server[{}:{}]", host, port);
-        }
-        
-        public static Client valueOf(Client prev, int db, IOException reason, int attempts) throws IOException {
-            if (reason != null) {
-                logger.error("[redis-replicator] socket error. redis-server[{}:{}]", prev.host, prev.port, reason);
-            }
-            prev.close();
-            if (reason != null) {
-                logger.info("reconnecting to redis-server[{}:{}]. retry times:{}", prev.host, prev.port, attempts);
-            }
-            Client next = new Client(prev.host, prev.port, prev.configuration);
-            RESP2.Node select = next.newCommand().invoke("select", String.valueOf(db));
-            if (select.type == Type.ERROR) {
-                throw new IOException(select.getError());
-            }
-            return next;
-        }
-        
-        public RESP2.Response newCommand() {
-            return new RESP2.Response(resp2);
-        }
-        
-        @Override
-        public void close() throws IOException {
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                // NOP
-            }
-            try {
-                if (os != null) {
-                    os.close();
-                }
-            } catch (IOException e) {
-                // NOP
-            }
-            try {
-                if (socket != null && !socket.isClosed()) {
-                    socket.close();
-                }
-            } catch (IOException e) {
-                // NOP
-            }
-            logger.info("socket closed. redis-server[{}:{}]", host, port);
-        }
-    }
-    
-    public static class Response {
-        private RESP2 resp2;
-        private Queue<Tuple2<NodeConsumer, byte[][]>> responses;
-        
-        public Response(RESP2 resp2) {
-            this.resp2 = resp2;
-            this.responses = new LinkedList<>();
-        }
-        
-        public RESP2.Node invoke(byte[]... command) throws IOException {
-            this.resp2.emit(command);
-            return this.resp2.parse();
-        }
-        
-        public RESP2.Node invoke(String... command) throws IOException {
-            return invoke(Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
-        }
-        
-        public RESP2.Response post(NodeConsumer handler, byte[]... command) throws IOException {
-            this.resp2.emit(command);
-            this.responses.offer(Tuples.of(handler, command));
-            return this;
-        }
-        
-        public RESP2.Response post(NodeConsumer handler, String... command) throws IOException {
-            byte[][] bc = Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new);
-            this.resp2.emit(bc);
-            this.responses.offer(Tuples.of(handler, bc));
-            return this;
-        }
-        
-        public void get() throws IOException {
-            while (!responses.isEmpty()) {
-                NodeConsumer consumer = responses.peek().getV1();
-                consumer.accept(resp2.parse());
-                responses.poll();
-            }
-        }
-        
-        public Queue<Tuple2<NodeConsumer, byte[][]>> responses() {
-            return new LinkedList<>(this.responses);
-        }
-    }
-    
-    public static interface Function<T, R> {
-        R apply(T t) throws IOException;
-    }
-    
-    public static interface NodeConsumer {
-        void accept(Node node) throws IOException;
     }
 }
 

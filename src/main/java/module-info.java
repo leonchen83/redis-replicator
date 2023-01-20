@@ -4,6 +4,7 @@
  */
 module com.moilioncircle.redis.replicator {
     exports com.moilioncircle.redis.replicator;
+    exports com.moilioncircle.redis.replicator.client;
     exports com.moilioncircle.redis.replicator.cmd;
     exports com.moilioncircle.redis.replicator.cmd.impl;
     exports com.moilioncircle.redis.replicator.cmd.parser;

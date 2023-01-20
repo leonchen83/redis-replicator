@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -168,10 +167,10 @@ public class RESP2AsyncClient implements Closeable {
     }
     
     private class Reader implements Runnable, Closeable {
-        
+    
+        private XFuture<Void> close = new XFuture<>();
         private AtomicBoolean closed = new AtomicBoolean(false);
         private ThreadFactory tf = Executors.defaultThreadFactory();
-        private CompletableFuture<Void> close = new CompletableFuture<>();
         
         public void open() {
             tf.newThread(this).start();

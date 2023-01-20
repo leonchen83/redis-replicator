@@ -118,7 +118,6 @@ public class RESP2AsyncClient implements Closeable {
             future.setCookie("$consumer", consumer);
             future.whenComplete(consumer);
         }
-        if (consumer != null) future.whenComplete(consumer);
         queue.offer(future);
         return future;
     }

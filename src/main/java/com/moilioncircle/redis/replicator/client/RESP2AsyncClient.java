@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,9 +76,9 @@ public class RESP2AsyncClient implements Closeable {
             RESP2.Node auth = null;
             try {
                 if (user != null) {
-                    auth = invoke("auth", user, pswd).get();
+                    auth = invoke(null, "auth", user, pswd).get();
                 } else {
-                    auth = invoke("auth", pswd).get();
+                    auth = invoke(null, "auth", pswd).get();
                 }
                 if (auth.type == RESP2.Type.ERROR) {
                     throw new AssertionError(auth.getError());
@@ -87,7 +88,7 @@ public class RESP2AsyncClient implements Closeable {
             }
         } else {
             try {
-                RESP2.Node ping = invoke("ping").get();
+                RESP2.Node ping = invoke(null, "ping").get();
                 if (ping.type == RESP2.Type.ERROR) {
                     throw new IOException(ping.getError());
                 }
@@ -98,19 +99,35 @@ public class RESP2AsyncClient implements Closeable {
         logger.info("connected to redis-server[{}:{}]", host, port);
     }
     
-    public XFuture<RESP2.Node> invoke(byte[]... command) {
+    public XFuture<RESP2.Node> invoke(BiConsumer<RESP2.Node, Throwable> consumer, byte[]... command) {
         XFuture<RESP2.Node> future = new XFuture<>();
         future.setCookie("$command", command);
+        if (consumer != null) {
+            future.setCookie("$consumer", consumer);
+            future.whenComplete(consumer);
+        }
         queue.offer(future);
         return future;
     }
     
-    public XFuture<RESP2.Node> invoke(String... command) {
+    public XFuture<RESP2.Node> invoke(BiConsumer<RESP2.Node, Throwable> consumer, String... command) {
         XFuture<RESP2.Node> future = new XFuture<>();
         byte[][] bc = Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new);
         future.setCookie("$command", bc);
+        if (consumer != null) {
+            future.setCookie("$consumer", consumer);
+            future.whenComplete(consumer);
+        }
+        if (consumer != null) future.whenComplete(consumer);
         queue.offer(future);
         return future;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public XFuture<RESP2.Node> retry(XFuture<RESP2.Node> prev) {
+        byte[][] command = (byte[][]) prev.getCookie("$command");
+        BiConsumer<RESP2.Node, Throwable> consumer = (BiConsumer<RESP2.Node, Throwable>) prev.getCookie("$consumer");
+        return invoke(consumer, command);
     }
     
     public static RESP2AsyncClient valueOf(RESP2AsyncClient prev, int db, IOException reason, int attempts) throws IOException {
@@ -123,7 +140,7 @@ public class RESP2AsyncClient implements Closeable {
         }
         RESP2AsyncClient next = new RESP2AsyncClient(prev.host, prev.port, prev.configuration);
         try {
-            RESP2.Node select = next.invoke("select", String.valueOf(db)).get();
+            RESP2.Node select = next.invoke(null, "select", String.valueOf(db)).get();
             if (select.type == RESP2.Type.ERROR) {
                 throw new IOException(select.getError());
             }

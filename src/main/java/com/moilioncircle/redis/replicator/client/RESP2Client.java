@@ -16,10 +16,11 @@
 
 package com.moilioncircle.redis.replicator.client;
 
+import static java.util.Arrays.stream;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -142,7 +143,7 @@ public class RESP2Client implements Closeable {
         }
         
         public RESP2.Node invoke(String... command) throws IOException {
-            return invoke(Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
+            return invoke(stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
         }
         
         public Response post(NodeConsumer handler, byte[]... command) throws IOException {
@@ -152,7 +153,7 @@ public class RESP2Client implements Closeable {
         }
         
         public Response post(NodeConsumer handler, String... command) throws IOException {
-            return post(handler, Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
+            return post(handler, stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
         }
         
         public void get() throws IOException {

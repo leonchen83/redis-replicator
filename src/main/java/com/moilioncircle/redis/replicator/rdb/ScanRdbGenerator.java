@@ -255,11 +255,11 @@ public class ScanRdbGenerator {
                 for (int i = 0; i < nodes.length; i++) {
                     byte[] key = nodes[i].getBytes().first();
                     if (version >= 10) {
-                        ExpireNodeConsumer context = new ExpireNodeConsumer();
+                        PExpireTimeNodeConsumer context = new PExpireTimeNodeConsumer();
                         r.post(context, "pexpiretime".getBytes(), key);
                         r.post(new DumpNodeConsumer(key, out, context), "dump".getBytes(), key);
                     } else {
-                        TTLNodeConsumer context = new TTLNodeConsumer();
+                        PTTLNodeConsumer context = new PTTLNodeConsumer();
                         r.post(context, "pttl".getBytes(), key);
                         r.post(new DumpNodeConsumer(key, out, context), "dump".getBytes(), key);
                     }
@@ -270,7 +270,11 @@ public class ScanRdbGenerator {
         } while (!cursor.equals("0"));
     }
     
-    private static class TTLNodeConsumer implements RESP2Client.NodeConsumer, TTLContext {
+    private static interface TTLContext {
+        Long getTTL();
+    }
+    
+    private static class PTTLNodeConsumer implements RESP2Client.NodeConsumer, TTLContext {
         
         private Long ttl;
         
@@ -291,11 +295,7 @@ public class ScanRdbGenerator {
         }
     }
     
-    private static interface TTLContext {
-        Long getTTL();
-    }
-    
-    private static class ExpireNodeConsumer implements RESP2Client.NodeConsumer, TTLContext {
+    private static class PExpireTimeNodeConsumer implements RESP2Client.NodeConsumer, TTLContext {
         
         private Long ttl;
         

@@ -39,6 +39,15 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
  * @since 3.7.0
  */
 public class RESP2Client implements Closeable {
+    
+    public static interface Function<T, R> {
+        R apply(T t) throws IOException;
+    }
+    
+    public static interface NodeConsumer {
+        void accept(RESP2.Node node) throws IOException;
+    }
+    
     private static final Logger logger = LoggerFactory.getLogger(RESP2Client.class);
     
     private final RESP2 resp2;
@@ -82,24 +91,8 @@ public class RESP2Client implements Closeable {
         logger.info("connected to redis-server[{}:{}]", host, port);
     }
     
-    public static RESP2Client valueOf(RESP2Client prev, int db, IOException reason, int attempts) throws IOException {
-        if (reason != null) {
-            logger.error("[redis-replicator] socket error. redis-server[{}:{}]", prev.host, prev.port, reason);
-        }
-        prev.close();
-        if (reason != null) {
-            logger.info("reconnecting to redis-server[{}:{}]. retry times:{}", prev.host, prev.port, attempts);
-        }
-        RESP2Client next = new RESP2Client(prev.host, prev.port, prev.configuration);
-        RESP2.Node select = next.newCommand().invoke("select", String.valueOf(db));
-        if (select.type == RESP2.Type.ERROR) {
-            throw new IOException(select.getError());
-        }
-        return next;
-    }
-    
     public Response newCommand() {
-        return new Response(resp2);
+        return new Response(this.resp2);
     }
     
     @Override
@@ -128,6 +121,22 @@ public class RESP2Client implements Closeable {
         logger.info("socket closed. redis-server[{}:{}]", host, port);
     }
     
+    public static RESP2Client valueOf(RESP2Client prev, int db, IOException reason, int attempts) throws IOException {
+        if (reason != null) {
+            logger.error("[redis-replicator] socket error. redis-server[{}:{}]", prev.host, prev.port, reason);
+        }
+        prev.close();
+        if (reason != null) {
+            logger.info("reconnecting to redis-server[{}:{}]. retry times:{}", prev.host, prev.port, attempts);
+        }
+        RESP2Client next = new RESP2Client(prev.host, prev.port, prev.configuration);
+        RESP2.Node select = next.newCommand().invoke("select", String.valueOf(db));
+        if (select.type == RESP2.Type.ERROR) {
+            throw new IOException(select.getError());
+        }
+        return next;
+    }
+    
     public static class Response {
         private RESP2 resp2;
         private Queue<Tuple2<NodeConsumer, byte[][]>> responses;
@@ -136,7 +145,19 @@ public class RESP2Client implements Closeable {
             this.resp2 = resp2;
             this.responses = new LinkedList<>();
         }
-        
+    
+        public Queue<Tuple2<NodeConsumer, byte[][]>> getResponses() {
+            return new LinkedList<>(this.responses);
+        }
+    
+        public void get() throws IOException {
+            while (!this.responses.isEmpty()) {
+                NodeConsumer consumer = this.responses.peek().getV1();
+                consumer.accept(this.resp2.parse());
+                this.responses.poll();
+            }
+        }
+    
         public RESP2.Node invoke(byte[]... command) throws IOException {
             this.resp2.emit(command);
             return this.resp2.parse();
@@ -155,25 +176,5 @@ public class RESP2Client implements Closeable {
         public Response post(NodeConsumer handler, String... command) throws IOException {
             return post(handler, stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
         }
-        
-        public void get() throws IOException {
-            while (!responses.isEmpty()) {
-                NodeConsumer consumer = responses.peek().getV1();
-                consumer.accept(resp2.parse());
-                responses.poll();
-            }
-        }
-        
-        public Queue<Tuple2<NodeConsumer, byte[][]>> responses() {
-            return new LinkedList<>(this.responses);
-        }
-    }
-    
-    public static interface Function<T, R> {
-        R apply(T t) throws IOException;
-    }
-    
-    public static interface NodeConsumer {
-        void accept(RESP2.Node node) throws IOException;
     }
 }

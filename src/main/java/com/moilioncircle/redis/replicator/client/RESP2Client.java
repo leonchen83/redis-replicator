@@ -152,10 +152,7 @@ public class RESP2Client implements Closeable {
         }
         
         public Response post(NodeConsumer handler, String... command) throws IOException {
-            byte[][] bc = Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new);
-            this.resp2.emit(bc);
-            this.responses.offer(Tuples.of(handler, bc));
-            return this;
+            return post(handler, Arrays.stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
         }
         
         public void get() throws IOException {

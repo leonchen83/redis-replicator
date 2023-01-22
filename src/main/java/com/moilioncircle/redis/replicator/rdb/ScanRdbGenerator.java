@@ -45,13 +45,13 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
  */
 public class ScanRdbGenerator {
     
+    private int db = 0;
+    private RESP2Client client;
+    
     protected final int port;
     protected final String host;
-    
-    protected int db = 0;
-    private CRCOutputStream out;
-    private RESP2Client client;
-    private Configuration configuration;
+    private final CRCOutputStream out;
+    private final Configuration configuration;
     
     private static Map<String, Integer> VERSIONS = new HashMap<>();
     

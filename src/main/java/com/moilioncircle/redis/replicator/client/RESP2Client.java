@@ -31,6 +31,7 @@ import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.io.RedisOutputStream;
 import com.moilioncircle.redis.replicator.net.RedisSocketFactory;
+import com.moilioncircle.redis.replicator.util.Strings;
 import com.moilioncircle.redis.replicator.util.Tuples;
 import com.moilioncircle.redis.replicator.util.type.Tuple2;
 
@@ -80,7 +81,19 @@ public class RESP2Client implements Closeable {
                 auth = newCommand().invoke("auth", pswd);
             }
             if (auth.type == RESP2.Type.ERROR) {
-                throw new AssertionError(auth.getError());
+                String reply = auth.getError();
+                String mask = "#" + Strings.mask(pswd);
+                if (reply.contains("no password") || reply.contains("without any password")) {
+                    if (user == null) {
+                        logger.warn("[AUTH {}] failed. {}", mask, reply);
+                    } else {
+                        logger.warn("[AUTH {} {}] failed. {}", user, mask, reply);
+                    }
+                } else if (user == null) {
+                    throw new AssertionError("[AUTH " + mask + "] failed. " + reply);
+                } else {
+                    throw new AssertionError("[AUTH " + user + " " + mask + "] failed. " + reply);
+                }
             }
         } else {
             RESP2.Node ping = newCommand().invoke("ping");

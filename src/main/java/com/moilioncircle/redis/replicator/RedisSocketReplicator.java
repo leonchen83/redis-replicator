@@ -216,7 +216,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
             final String reply = Strings.toString(reply());
             logger.info(reply);
             if (Objects.equals(reply, "OK")) return;
-            if (reply.contains("no password")) {
+            if (reply.contains("no password") || reply.contains("without any password")) {
                 if (user == null) {
                     logger.warn("[AUTH {}] failed. {}", mask, reply);
                 } else {

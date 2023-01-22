@@ -45,7 +45,7 @@ public class ScanExample {
      * scan all redis data
      */
     public void scan() throws Exception {
-        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=128");
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379?enableScan=yes&scanStep=512");
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {

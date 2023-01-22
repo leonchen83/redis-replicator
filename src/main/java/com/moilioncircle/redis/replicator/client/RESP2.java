@@ -36,15 +36,15 @@ import com.moilioncircle.redis.replicator.util.Strings;
  */
 public class RESP2 {
     
-    private RedisInputStream in;
-    private RedisOutputStream out;
+    private final RedisInputStream in;
+    private final RedisOutputStream out;
     
-    public RESP2(RedisInputStream in, RedisOutputStream out) {
+    RESP2(RedisInputStream in, RedisOutputStream out) {
         this.in = in;
         this.out = out;
     }
     
-    public void emit(byte[]... command) throws IOException {
+    void emit(byte[]... command) throws IOException {
         out.write(STAR);
         out.write(String.valueOf(command.length).getBytes());
         out.writeCrLf();
@@ -58,7 +58,7 @@ public class RESP2 {
         out.flush();
     }
     
-    public Node parse() throws IOException {
+    Node parse() throws IOException {
         while (true) {
             int c = in.read();
             switch (c) {
@@ -151,11 +151,15 @@ public class RESP2 {
         }
     }
     
+    public static enum Type {
+        ARRAY, NUMBER, STRING, ERROR, NULL;
+    }
+    
     public static class Node {
-        public RESP2.Type type;
-        public Object value;
+        public final RESP2.Type type;
+        public final Object value;
         
-        public Node(RESP2.Type type, Object value) {
+        private Node(RESP2.Type type, Object value) {
             this.type = type;
             this.value = value;
         }
@@ -179,10 +183,6 @@ public class RESP2 {
         public String getString() {
             return type == Type.STRING ? Strings.toString(((ByteArray) value).first()) : null;
         }
-    }
-    
-    public static enum Type {
-        ARRAY, NUMBER, STRING, ERROR, NULL;
     }
 }
 

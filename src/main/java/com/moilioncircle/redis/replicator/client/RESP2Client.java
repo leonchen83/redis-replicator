@@ -41,14 +41,6 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
  */
 public class RESP2Client implements Closeable {
     
-    public static interface Function<T, R> {
-        R apply(T t) throws IOException;
-    }
-    
-    public static interface NodeConsumer {
-        void accept(RESP2.Node node) throws IOException;
-    }
-    
     private static final Logger logger = LoggerFactory.getLogger(RESP2Client.class);
     
     private final RESP2 resp2;
@@ -152,6 +144,14 @@ public class RESP2Client implements Closeable {
             throw new IOException(select.getError());
         }
         return next;
+    }
+    
+    public static interface Function<T, R> {
+        R apply(T t) throws IOException;
+    }
+    
+    public static interface NodeConsumer {
+        void accept(RESP2.Node node) throws IOException;
     }
     
     public static class Response {

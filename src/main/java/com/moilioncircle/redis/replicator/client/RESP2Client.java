@@ -98,7 +98,11 @@ public class RESP2Client implements Closeable {
         } else {
             RESP2.Node ping = newCommand().invoke("ping");
             if (ping.type == RESP2.Type.ERROR) {
-                throw new IOException(ping.getError());
+                String reply = ping.getError();
+                if (reply.contains("NOAUTH")) throw new AssertionError(reply);
+                if (reply.contains("NOPERM")) throw new AssertionError(reply);
+                if (reply.contains("operation not permitted")) throw new AssertionError("-NOAUTH Authentication required.");
+                throw new IOException(reply);
             }
         }
         logger.info("connected to redis-server[{}:{}]", host, port);

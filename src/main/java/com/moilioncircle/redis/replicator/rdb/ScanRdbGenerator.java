@@ -404,17 +404,6 @@ public class ScanRdbGenerator {
     }
     
     private void close() {
-        if (out != null) {
-            try {
-                out.flush();
-            } catch (IOException e) {
-            }
-            try {
-                out.close();
-            } catch (IOException e) {
-            }
-        }
-        
         if (client != null) {
             try {
                 client.close();

@@ -190,6 +190,7 @@ public class ScanRdbGenerator {
             
             out.write(RDB_OPCODE_EOF);
             out.write(out.getCRC64());
+            out.flush();
         } finally {
             close();
         }

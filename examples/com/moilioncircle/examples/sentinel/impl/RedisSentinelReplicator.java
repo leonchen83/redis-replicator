@@ -31,6 +31,7 @@ import com.moilioncircle.examples.util.Reflections;
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.ExceptionListener;
+import com.moilioncircle.redis.replicator.RedisScanReplicator;
 import com.moilioncircle.redis.replicator.RedisSocketReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.Replicators;
@@ -57,13 +58,17 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
 
     private HostAndPort prev;
     private final Sentinel sentinel;
-    private final RedisSocketReplicator replicator;
+    private final Replicator replicator;
     protected final ExecutorService executors = newSingleThreadExecutor();
 
     public RedisSentinelReplicator(RedisSentinelURI uri, Configuration configuration) {
         Objects.requireNonNull(uri);
         Objects.requireNonNull(configuration);
-        this.replicator = new RedisSocketReplicator("", 1, configuration);
+        if (configuration.isEnableScan()) {
+            this.replicator = new RedisScanReplicator("", 1, configuration);
+        } else {
+            this.replicator = new RedisSocketReplicator("", 1, configuration);
+        }
         this.sentinel = new DefaultSentinel(uri, configuration);
         this.sentinel.addSentinelListener(this);
     }

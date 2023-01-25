@@ -22,7 +22,6 @@ import static java.lang.Integer.parseInt;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static redis.clients.jedis.Protocol.Command.UNSUBSCRIBE;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,6 +58,7 @@ public class DefaultSentinel implements Sentinel {
     protected static final Logger logger = LoggerFactory.getLogger(DefaultSentinel.class);
     
     protected volatile Jedis jedis;
+    protected volatile PubSub pubSub;
     protected final String masterName;
     protected final RedisSentinelURI uri;
     protected final JedisClientConfig config;
@@ -71,7 +71,7 @@ public class DefaultSentinel implements Sentinel {
     public DefaultSentinel(RedisSentinelURI uri, Configuration configuration) {
         this.uri = uri;
         this.configuration = configuration;
-        this.masterName = Objects.requireNonNull(uri.getParameters().get("master"));;
+        this.masterName = Objects.requireNonNull(uri.getParameters().get("master"));
         DefaultJedisClientConfig.Builder builder = DefaultJedisClientConfig.builder();
         if (uri.isSsl()) {
             builder.ssl(true);
@@ -140,7 +140,7 @@ public class DefaultSentinel implements Sentinel {
                 doSwitchListener(new HostAndPort(host, port));
                 this.jedis = jedis;
                 logger.info("subscribe sentinel {}", sentinel);
-                jedis.subscribe(new PubSub(), this.channel);
+                jedis.subscribe(pubSub = new PubSub(), this.channel);
             } catch (Throwable cause) {
                 logger.warn("suspend sentinel {}, cause: {}", sentinel, cause);
             }
@@ -180,9 +180,16 @@ public class DefaultSentinel implements Sentinel {
     
     protected void unsubscribe(String channel) {
         for (int retry = 0; retry < 5; retry++) {
-            if(!running.get()) break;
-            if(jedis == null || !jedis.isConnected()) continue;
-            run(() -> jedis.sendCommand(UNSUBSCRIBE, channel));
+            if (!running.get()) {
+                break;
+            }
+            if (pubSub == null || !pubSub.isSubscribed()) {
+                continue;
+            }
+            run(() -> {
+                pubSub.unsubscribe(channel);
+                return null;
+            });
             sleep(1, SECONDS);
         }
     }

@@ -40,7 +40,9 @@ import com.moilioncircle.redis.replicator.StatusListener;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RawByteListener;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
@@ -66,6 +68,14 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
         Objects.requireNonNull(configuration);
         if (configuration.isEnableScan()) {
             this.replicator = new RedisScanReplicator("", 1, configuration);
+            addEventListener(new EventListener() {
+                @Override
+                public void onEvent(Replicator replicator, Event event) {
+                    if (event instanceof PostRdbSyncEvent) {
+                        Replicators.closeQuietly(RedisSentinelReplicator.this);
+                    }
+                }
+            });
         } else {
             this.replicator = new RedisSocketReplicator("", 1, configuration);
         }

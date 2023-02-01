@@ -77,9 +77,11 @@ public class RedisScanReplicatorTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PreRdbSyncEvent) {
+                    System.out.println("pre rdb event");
                     replicator.addRawByteListener(listener);
                 }
                 if (event instanceof PostRdbSyncEvent) {
+                    System.out.println("post rdb event");
                     replicator.removeRawByteListener(listener);
                     try {
                         out.close();
@@ -91,6 +93,8 @@ public class RedisScanReplicatorTest {
         });
         
         replicator.open();
+    
+        System.out.println("start checking rdb file");
         
         AtomicInteger acc = new AtomicInteger();
         //check rdb file

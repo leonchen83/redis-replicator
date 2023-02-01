@@ -95,6 +95,7 @@ public class ScanRdbGenerator {
                 String value = server.getString();
                 String[] lines = value.split("\r\n");
                 for (int i = 1; i < lines.length; i++) {
+                    System.out.println(lines[i]);
                     String[] kv = lines[i].split(":");
                     String key = kv[0];
                     String val = kv[1];

@@ -163,7 +163,7 @@ public class RESP2Client implements Closeable {
             this.responses = new LinkedList<>();
         }
     
-        public Queue<Tuple2<NodeConsumer, byte[][]>> getResponses() {
+        public Queue<Tuple2<NodeConsumer, byte[][]>> getCommands() {
             return new LinkedList<>(this.responses);
         }
     

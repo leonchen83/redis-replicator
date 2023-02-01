@@ -250,7 +250,7 @@ public class ScanRdbGenerator {
             cursor = ary[0].getString();
             
             // key value pipeline
-            RESP2Client.Command response = retry(client -> {
+            RESP2Client.Command command = retry(client -> {
                 RESP2Client.Command r = client.newCommand();
                 RESP2.Node[] nodes = ary[1].getArray();
                 for (int i = 0; i < nodes.length; i++) {
@@ -267,7 +267,7 @@ public class ScanRdbGenerator {
                 }
                 return r;
             });
-            retry(response);
+            retry(command);
         } while (!cursor.equals("0"));
     }
     
@@ -388,12 +388,12 @@ public class ScanRdbGenerator {
                 throw e;
             } catch (IOException e) {
                 exception = e;
-                Queue<Tuple2<RESP2Client.NodeConsumer, byte[][]>> responses = prev.getResponses();
+                Queue<Tuple2<RESP2Client.NodeConsumer, byte[][]>> commands = prev.getCommands();
                 RESP2Client.Command next = retry(client -> {
                     RESP2Client.Command r = client.newCommand();
-                    while (!responses.isEmpty()) {
-                        Tuple2<RESP2Client.NodeConsumer, byte[][]> tuple2 = responses.poll();
-                        r.post(tuple2.getV1(), tuple2.getV2());
+                    while (!commands.isEmpty()) {
+                        Tuple2<RESP2Client.NodeConsumer, byte[][]> tuple = commands.poll();
+                        r.post(tuple.getV1(), tuple.getV2());
                     }
                     return r;
                 });

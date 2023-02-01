@@ -389,6 +389,7 @@ public class ScanRdbGenerator {
                 throw e;
             } catch (IOException e) {
                 exception = e;
+                this.client = recreate(this.client, this.db, e);
                 Queue<Tuple2<RESP2Client.NodeConsumer, byte[][]>> commands = prev.getCommands();
                 RESP2Client.Command next = retry(client -> {
                     RESP2Client.Command r = client.newCommand();

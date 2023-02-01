@@ -98,9 +98,9 @@ public class ScanRdbGenerator {
                     System.out.println(lines[i]);
                     String[] kv = lines[i].split(":");
                     String key = kv[0];
-                    String val = kv[1];
                     
                     if (key.equals("redis_version")) {
+                        String val = kv[1];
                         ver = val;
                         
                         val = val.substring(0, val.lastIndexOf('.'));
@@ -110,6 +110,7 @@ public class ScanRdbGenerator {
                         
                         version = VERSIONS.get(val);
                     } else if (key.equals("arch_bits")) {
+                        String val = kv[1];
                         bits = val;
                     }
                 }

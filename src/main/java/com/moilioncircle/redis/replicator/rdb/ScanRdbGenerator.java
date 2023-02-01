@@ -142,9 +142,9 @@ public class ScanRdbGenerator {
                     for (int i = 1; i < lines.length; i++) {
                         String[] kv = lines[i].split(":");
                         String key = kv[0];
-                        String val = kv[1];
                         
                         if (key.equals("used_memory")) {
+                            String val = kv[1];
                             generateAux("used-mem", val);
                         }
                     }

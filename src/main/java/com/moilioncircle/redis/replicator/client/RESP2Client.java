@@ -156,22 +156,22 @@ public class RESP2Client implements Closeable {
     
     public static class Command {
         private RESP2 resp2;
-        private Queue<Tuple2<NodeConsumer, byte[][]>> responses;
+        private Queue<Tuple2<NodeConsumer, byte[][]>> commands;
         
         private Command(RESP2 resp2) {
             this.resp2 = resp2;
-            this.responses = new LinkedList<>();
+            this.commands = new LinkedList<>();
         }
     
         public Queue<Tuple2<NodeConsumer, byte[][]>> getCommands() {
-            return new LinkedList<>(this.responses);
+            return new LinkedList<>(this.commands);
         }
     
         public void get() throws IOException {
-            while (!this.responses.isEmpty()) {
-                NodeConsumer consumer = this.responses.peek().getV1();
+            while (!this.commands.isEmpty()) {
+                NodeConsumer consumer = this.commands.peek().getV1();
                 consumer.accept(this.resp2.parse());
-                this.responses.poll();
+                this.commands.poll();
             }
         }
     
@@ -186,7 +186,7 @@ public class RESP2Client implements Closeable {
         
         public Command post(NodeConsumer handler, byte[]... command) throws IOException {
             this.resp2.emit(command);
-            this.responses.offer(Tuples.of(handler, command));
+            this.commands.offer(Tuples.of(handler, command));
             return this;
         }
         

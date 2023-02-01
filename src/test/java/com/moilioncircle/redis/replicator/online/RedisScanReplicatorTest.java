@@ -18,11 +18,9 @@ package com.moilioncircle.redis.replicator.online;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
@@ -52,7 +50,7 @@ public class RedisScanReplicatorTest {
     
     @Test
     public void testScanToRdb() throws Exception {
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(new File("./dump.rdb")));
+        ByteArrayOutputStream out = new ByteArrayOutputStream(16384);
         RawByteListener listener = new RawByteListener() {
             @Override
             public void handle(byte... rawBytes) {
@@ -96,7 +94,7 @@ public class RedisScanReplicatorTest {
         
         AtomicInteger acc = new AtomicInteger();
         //check rdb file
-        replicator = new RedisRdbReplicator(new File("./dump.rdb"), Configuration.defaultSetting());
+        replicator = new RedisRdbReplicator(new ByteArrayInputStream(out.toByteArray()), Configuration.defaultSetting());
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {

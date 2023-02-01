@@ -93,6 +93,7 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
         Thread worker = this.threadFactory.newThread(this);
         worker.start();
         try {
+            System.out.println("peek from input " + (char)in.peek());
             if (in.peek() == 'R') {
                 new RdbParser(inputStream, this).parse();
             }

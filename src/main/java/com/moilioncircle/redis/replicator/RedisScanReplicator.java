@@ -86,7 +86,7 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
     @Override
     protected void doOpen() throws IOException {
         this.outputStream = new XPipedOutputStream();
-        PeekableInputStream in = new PeekableInputStream(new XPipedInputStream(outputStream));
+        PeekableInputStream in = new PeekableInputStream(new XPipedInputStream(outputStream, configuration.getAsyncCachedBytes()));
         this.inputStream = new RedisInputStream(in, this.configuration.getBufferSize());
         this.inputStream.setRawByteListeners(this.rawByteListeners);
         

@@ -80,6 +80,10 @@ public class RedisScanReplicator extends AbstractReplicator implements Runnable 
         } catch (EOFException ignore) {
         } catch (Throwable e) {
             this.exception = e;
+            try {
+                outputStream.close();
+            } catch (IOException ignore) {
+            }
         }
     }
     

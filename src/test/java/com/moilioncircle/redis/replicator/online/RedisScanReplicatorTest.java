@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.online;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -49,6 +50,24 @@ import redis.clients.jedis.Pipeline;
  */
 @SuppressWarnings("resource")
 public class RedisScanReplicatorTest {
+    
+    @Test
+    public void test() throws Exception {
+        Replicator replicator = new RedisReplicator("redis://127.0.0.1:7777?authPassword=test&enableScan=yes&scanStep=512");
+        replicator.setRdbVisitor(new SkipRdbVisitor(replicator));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+            }
+        });
+    
+        try {
+            replicator.open();
+            fail();
+        } catch (Throwable e) {
+        }
+        
+    }
     
     @Test
     public void testScanToRdb() throws Exception {

@@ -85,7 +85,7 @@ public class ScanRdbGenerator {
             String bits = null;
             
             RESP2.Node server = retry(client -> {
-                RESP2Client.Response r = client.newCommand();
+                RESP2Client.Command r = client.newCommand();
                 return r.invoke("info", "server");
             });
             
@@ -130,7 +130,7 @@ public class ScanRdbGenerator {
                 
                 // used-memory
                 RESP2.Node memory = retry(client -> {
-                    RESP2Client.Response r = client.newCommand();
+                    RESP2Client.Command r = client.newCommand();
                     return r.invoke("info", "memory");
                 });
                 
@@ -154,7 +154,7 @@ public class ScanRdbGenerator {
                  * rdb function
                  */
                 RESP2.Node functions = retry(client -> {
-                    RESP2Client.Response r = client.newCommand();
+                    RESP2Client.Command r = client.newCommand();
                     return r.invoke("function", "dump");
                 });
                 
@@ -172,7 +172,7 @@ public class ScanRdbGenerator {
              * rdb db info
              */
             RESP2.Node keyspace = retry(client -> {
-                RESP2Client.Response r = client.newCommand();
+                RESP2Client.Command r = client.newCommand();
                 return r.invoke("info", "keyspace");
             });
             
@@ -207,7 +207,7 @@ public class ScanRdbGenerator {
     private void generateDB(DB db, int version) throws IOException {
         BaseRdbEncoder encoder = new BaseRdbEncoder();
         RESP2.Node select = retry(client -> {
-            RESP2Client.Response r = client.newCommand();
+            RESP2Client.Command r = client.newCommand();
             return r.invoke("select", String.valueOf(db.getDbNumber()));
         });
         
@@ -239,7 +239,7 @@ public class ScanRdbGenerator {
         do {
             String temp = cursor;
             RESP2.Node scan = retry(client -> {
-                RESP2Client.Response r = client.newCommand();
+                RESP2Client.Command r = client.newCommand();
                 return r.invoke("scan", temp, "count", step);
             });
             if (scan.type == RESP2.Type.ERROR) {
@@ -250,8 +250,8 @@ public class ScanRdbGenerator {
             cursor = ary[0].getString();
             
             // key value pipeline
-            RESP2Client.Response response = retry(client -> {
-                RESP2Client.Response r = client.newCommand();
+            RESP2Client.Command response = retry(client -> {
+                RESP2Client.Command r = client.newCommand();
                 RESP2.Node[] nodes = ary[1].getArray();
                 for (int i = 0; i < nodes.length; i++) {
                     byte[] key = nodes[i].getBytes().first();
@@ -378,7 +378,7 @@ public class ScanRdbGenerator {
         throw exception;
     }
     
-    private void retry(RESP2Client.Response prev) throws IOException {
+    private void retry(RESP2Client.Command prev) throws IOException {
         IOException exception = null;
         for (int i = 0; i < configuration.getRetries() || configuration.getRetries() <= 0; i++) {
             try {
@@ -389,8 +389,8 @@ public class ScanRdbGenerator {
             } catch (IOException e) {
                 exception = e;
                 Queue<Tuple2<RESP2Client.NodeConsumer, byte[][]>> responses = prev.getResponses();
-                RESP2Client.Response next = retry(client -> {
-                    RESP2Client.Response r = client.newCommand();
+                RESP2Client.Command next = retry(client -> {
+                    RESP2Client.Command r = client.newCommand();
                     while (!responses.isEmpty()) {
                         Tuple2<RESP2Client.NodeConsumer, byte[][]> tuple2 = responses.poll();
                         r.post(tuple2.getV1(), tuple2.getV2());

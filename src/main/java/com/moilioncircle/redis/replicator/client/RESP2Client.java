@@ -100,8 +100,8 @@ public class RESP2Client implements Closeable {
         logger.info("connected to redis-server[{}:{}]", host, port);
     }
     
-    public Response newCommand() {
-        return new Response(this.resp2);
+    public Command newCommand() {
+        return new Command(this.resp2);
     }
     
     @Override
@@ -154,11 +154,11 @@ public class RESP2Client implements Closeable {
         void accept(RESP2.Node node) throws IOException;
     }
     
-    public static class Response {
+    public static class Command {
         private RESP2 resp2;
         private Queue<Tuple2<NodeConsumer, byte[][]>> responses;
         
-        private Response(RESP2 resp2) {
+        private Command(RESP2 resp2) {
             this.resp2 = resp2;
             this.responses = new LinkedList<>();
         }
@@ -184,13 +184,13 @@ public class RESP2Client implements Closeable {
             return invoke(stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
         }
         
-        public Response post(NodeConsumer handler, byte[]... command) throws IOException {
+        public Command post(NodeConsumer handler, byte[]... command) throws IOException {
             this.resp2.emit(command);
             this.responses.offer(Tuples.of(handler, command));
             return this;
         }
         
-        public Response post(NodeConsumer handler, String... command) throws IOException {
+        public Command post(NodeConsumer handler, String... command) throws IOException {
             return post(handler, stream(command).map(e -> e.getBytes()).toArray(byte[][]::new));
         }
     }

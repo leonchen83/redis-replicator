@@ -52,9 +52,10 @@
    * [6. 贡献者](#6-贡献者)
    * [7. 相关引用](#7-相关引用)
    * [8. 致谢](#8-致谢)
-      * [8.1. YourKit](#81-yourkit)
-      * [8.2. IntelliJ IDEA](#82-intellij-idea)
-      * [8.3. Redisson](#83-redisson)
+      * [8.1. 宁文君](#81-宁文君)
+      * [8.2. YourKit](#82-yourkit)
+      * [8.3. IntelliJ IDEA](#83-intellij-idea)
+      * [8.4. Redisson](#84-redisson)
   
 # 1. Redis-replicator  
 
@@ -682,7 +683,12 @@ Redis 7.0 添加了 `function` 的支持. `function` 的结构存储在rdb文件
 
 # 8. 致谢  
 
-## 8.1. YourKit  
+## 8.1. 宁文君
+
+27 January 2023, A sad day that I lost my mother 宁文君, She was encouraging and supporting me in developing this tool. Every time a company uses this tool, she got excited like a child and encouraged me to keep going.
+Without her I couldn't have maintained this tool for so many years. Even I didn't achieve much but she is still proud of me, R.I.P and hope God bless her.
+
+## 8.2. YourKit  
 
 ![YourKit](https://www.yourkit.com/images/yklogo.png)  
 YourKit is kindly supporting this open source project with its full-featured Java Profiler.  
@@ -691,12 +697,12 @@ Java and .NET applications. Take a look at YourKit's leading software products:
 <a href="http://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and
 <a href="http://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.  
 
-## 8.2. IntelliJ IDEA  
+## 8.3. IntelliJ IDEA  
 
 [IntelliJ IDEA](https://www.jetbrains.com/?from=redis-replicator) is a Java integrated development environment (IDE) for developing computer software.  
 It is developed by JetBrains (formerly known as IntelliJ), and is available as an Apache 2 Licensed community edition,  
 and in a proprietary commercial edition. Both can be used for commercial development.  
 
-## 8.3. Redisson
+## 8.4. Redisson
 
 [Redisson](https://github.com/redisson/redisson) is Redis based In-Memory Data Grid for Java offers distributed objects and services (`BitSet`, `Set`, `Multimap`, `SortedSet`, `Map`, `List`, `Queue`, `BlockingQueue`, `Deque`, `BlockingDeque`, `Semaphore`, `Lock`, `AtomicLong`, `CountDownLatch`, `Publish / Subscribe`, `Bloom filter`, `Remote service`, `Spring cache`, `Executor service`, `Live Object service`, `Scheduler service`) backed by Redis server. Redisson provides more convenient and easiest way to work with Redis. Redisson objects provides a separation of concern, which allows you to keep focus on the data modeling and application logic.

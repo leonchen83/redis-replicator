@@ -50,12 +50,13 @@ Table of Contents([中文说明](./README.zh_CN.md))
       * [5.10. Redis7 support](#510-redis7-support)
         * [5.10.1. Function](#5101-function)
    * [6. Contributors](#6-contributors)
-   * [7. References](#7-references)
-   * [8. Supported by](#8-supported-by)
-      * [8.1. 宁文君](#81-宁文君)
-      * [8.2. YourKit](#82-yourkit)
-      * [8.3. IntelliJ IDEA](#83-intellij-idea)
-      * [8.4. Redisson](#84-redisson)
+   * [7. Consulting](#7-consulting)
+   * [8. References](#8-references)
+   * [9. Supported by](#9-supported-by)
+      * [9.1. 宁文君](#91-宁文君)
+      * [9.2. YourKit](#92-yourkit)
+      * [9.3. IntelliJ IDEA](#93-intellij-idea)
+      * [9.4. Redisson](#94-redisson)
   
 # 1. Redis-replicator  
 
@@ -672,21 +673,29 @@ you can also parse `function` to `serialized` data so that use `FUNCTION RESTORE
 * [Maplestoria](https://github.com/maplestoria)  
 * Special thanks to [Kevin Zheng](https://github.com/KevinZheng001)  
   
-# 7. References  
+# 7 Consulting
+
+Commercial support for `redis-replicator` is available. The following services are currently available:
+* Onsite consulting. $10,000 per day
+* Onsite training. $10,000 per day
+
+You may also contact Baoyi Chen directly, mail to [chen.bao.yi@gmail.com](mailto:chen.bao.yi@gmail.com).
+
+# 8. References  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  
   * [Redis RDB File Format](https://github.com/leonchen83/redis-replicator/wiki/RDB-dump-data-format)  
   * [Redis Protocol specification](http://redis.io/topics/protocol)
   * [Redis Replication](http://redis.io/topics/replication)
   * [Redis-replicator Design and Implementation](https://github.com/leonchen83/mycode/blob/master/redis/redis-share/Redis-replicator%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0.md)
 
-# 8. Supported by  
+# 9. Supported by  
 
-## 8.1. 宁文君
+## 9.1. 宁文君
 
 27 January 2023, A sad day that I lost my mother 宁文君, She was encouraging and supporting me in developing this tool. Every time a company uses this tool, she got excited like a child and encouraged me to keep going.
 Without her I couldn't have maintained this tool for so many years. Even I didn't achieve much but she is still proud of me, R.I.P and hope God bless her.
 
-## 8.2. YourKit  
+## 9.2. YourKit  
 
 ![YourKit](https://www.yourkit.com/images/yklogo.png)  
 YourKit is kindly supporting this open source project with its full-featured Java Profiler.  
@@ -695,12 +704,12 @@ Java and .NET applications. Take a look at YourKit's leading software products:
 <a href="http://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and
 <a href="http://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.  
 
-## 8.3. IntelliJ IDEA  
+## 9.3. IntelliJ IDEA  
 
 [IntelliJ IDEA](https://www.jetbrains.com/?from=redis-replicator) is a Java integrated development environment (IDE) for developing computer software.  
 It is developed by JetBrains (formerly known as IntelliJ), and is available as an Apache 2 Licensed community edition,  
 and in a proprietary commercial edition. Both can be used for commercial development.  
 
-## 8.4. Redisson
+## 9.4. Redisson
 
 [Redisson](https://github.com/redisson/redisson) is Redis based In-Memory Data Grid for Java offers distributed objects and services (`BitSet`, `Set`, `Multimap`, `SortedSet`, `Map`, `List`, `Queue`, `BlockingQueue`, `Deque`, `BlockingDeque`, `Semaphore`, `Lock`, `AtomicLong`, `CountDownLatch`, `Publish / Subscribe`, `Bloom filter`, `Remote service`, `Spring cache`, `Executor service`, `Live Object service`, `Scheduler service`) backed by Redis server. Redisson provides more convenient and easiest way to work with Redis. Redisson objects provides a separation of concern, which allows you to keep focus on the data modeling and application logic.

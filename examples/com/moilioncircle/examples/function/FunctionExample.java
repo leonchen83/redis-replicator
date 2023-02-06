@@ -34,9 +34,6 @@ public class FunctionExample {
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof Function) {
                     Function function = (Function) event;
-                    function.getName();
-                    function.getEngineName();
-                    function.getDescription(); // nullable
                     function.getCode();
                     
                     // your code goes here

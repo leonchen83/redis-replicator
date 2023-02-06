@@ -681,7 +681,7 @@ Redis 7.0 添加了 `function` 的支持. `function` 的结构存储在rdb文件
 * 现场咨询. 50,000元/天
 * 现场培训. 50,000元/天
 
-可以直接联系`陈宝仪`, 发送邮件至 [chen.bao.yi@gmail.com](mailto:chen.bao.yi@gmail.com).
+可以直接联系`陈宝仪`, 发送邮件至 [chen.bao.yi@gmail.com](mailto:chen.bao.yi@qq.com).
   
 # 8. 相关引用  
   * [rdb.c](https://github.com/antirez/redis/blob/unstable/src/rdb.c)  

@@ -24,12 +24,19 @@ import java.lang.reflect.Field;
 public class Reflections {
 
     public static void setField(Object obj, String name, Object value) {
-        try {
-            Field field = obj.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            field.set(obj, value);
-        } catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+        Class<?> clazz = obj.getClass();
+        while (clazz != null) {
+            try {
+                Field field = clazz.getDeclaredField(name);
+                field.setAccessible(true);
+                field.set(obj, value);
+                return;
+            } catch (NoSuchFieldException e) {
+                clazz = clazz.getSuperclass();
+            } catch (SecurityException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
+        throw new RuntimeException(new NoSuchFieldException(name));
     }
 }

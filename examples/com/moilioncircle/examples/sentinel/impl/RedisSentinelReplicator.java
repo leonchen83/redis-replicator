@@ -222,4 +222,50 @@ public class RedisSentinelReplicator implements Replicator, SentinelListener {
         Replicators.closeQuietly(replicator);
         terminateQuietly(executors, getConfiguration().getConnectionTimeout(), MILLISECONDS);
     }
+    
+    private class XRedisScanReplicator extends RedisScanReplicator {
+        
+        private XRedisScanReplicator(String host, int port, Configuration configuration) {
+            super(host, port, configuration);
+        }
+        
+        protected void doCloseListener(Replicator replicator) {
+            super.doCloseListener(RedisSentinelReplicator.this);
+        }
+        
+        protected void doEventListener(Replicator replicator, Event event) {
+            super.doEventListener(RedisSentinelReplicator.this, event);
+        }
+        
+        protected void doStatusListener(Replicator replicator, Status status) {
+            super.doStatusListener(RedisSentinelReplicator.this, status);
+        }
+        
+        protected void doExceptionListener(Replicator replicator, Throwable throwable, Event event) {
+            super.doExceptionListener(RedisSentinelReplicator.this, throwable, event);
+        }
+    }
+    
+    private class XRedisSocketReplicator extends RedisSocketReplicator {
+        
+        private XRedisSocketReplicator(String host, int port, Configuration configuration) {
+            super(host, port, configuration);
+        }
+        
+        protected void doCloseListener(Replicator replicator) {
+            super.doCloseListener(RedisSentinelReplicator.this);
+        }
+        
+        protected void doEventListener(Replicator replicator, Event event) {
+            super.doEventListener(RedisSentinelReplicator.this, event);
+        }
+        
+        protected void doStatusListener(Replicator replicator, Status status) {
+            super.doStatusListener(RedisSentinelReplicator.this, status);
+        }
+        
+        protected void doExceptionListener(Replicator replicator, Throwable throwable, Event event) {
+            super.doExceptionListener(RedisSentinelReplicator.this, throwable, event);
+        }
+    }
 }

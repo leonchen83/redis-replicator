@@ -90,7 +90,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- log api -->
-        <slf4j.api.version>2.0.6</slf4j.api.version>
+        <slf4j.api.version>2.0.7</slf4j.api.version>
     </properties>
 
     <dependencies>

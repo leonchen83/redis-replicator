@@ -1,3 +1,10 @@
+### 3.8.0
+
+Support for redis 7.2-RC2
+Support for rdb v11.
+
+### 3.6.5
+
 ### 3.7.0
 
 Add support `SCAN` mode to instead of `PSYNC` command.  

@@ -117,6 +117,8 @@ public class RdbParser {
      * <p>
      * | $set
      * <p>
+     * | $setlistpack            (*Introduced in rdb version 11*)
+     * <p>
      * | $zset
      * <p>
      * | $hash
@@ -148,6 +150,8 @@ public class RdbParser {
      * | $listquicklist2);       (*Introduced in rdb version 10*)
      * <p>
      * | $streamlistpacks2);      (*Introduced in rdb version 10*)
+     * <p>
+     * | $streamlistpacks3);      (*Introduced in rdb version 11*)
      * <p>
      * @return read bytes
      * @throws IOException when read timeout

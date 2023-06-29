@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator.rdb.iterable;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_LISTPACK;
 import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.hash;
 import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.list;
 import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.module;
@@ -91,7 +92,7 @@ public class ValueIterableEventListener implements EventListener {
             KeyStringValueString ksvs = (KeyStringValueString) kv;
             listener.onEvent(replicator, string(ksvs, ksvs.getValue(), batch, true));
         } else if (kv instanceof KeyStringValueByteArrayIterator) {
-            if (type == RDB_TYPE_SET || type == RDB_TYPE_SET_INTSET) {
+            if (type == RDB_TYPE_SET || type == RDB_TYPE_SET_INTSET || type == RDB_TYPE_SET_LISTPACK) {
                 KeyStringValueByteArrayIterator skv = (KeyStringValueByteArrayIterator) kv;
                 Iterator<byte[]> it = skv.getValue();
                 Set<byte[]> prev = null, next = new ByteArraySet(order, batchSize);

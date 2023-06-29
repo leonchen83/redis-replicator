@@ -158,6 +158,14 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         valueVisitor.applySet(in, version);
         return null;
     }
+    
+    @Override
+    public Event applySetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        valueVisitor.applySetListPack(in, version);
+        return null;
+    }
 
     @Override
     public Event applyZSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
@@ -284,6 +292,14 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         valueVisitor.applyStreamListPacks2(in, version);
+        return null;
+    }
+    
+    @Override
+    public Event applyStreamListPacks3(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        valueVisitor.applyStreamListPacks3(in, version);
         return null;
     }
 }

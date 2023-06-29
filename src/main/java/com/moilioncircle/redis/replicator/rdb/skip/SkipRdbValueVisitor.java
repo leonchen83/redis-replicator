@@ -87,6 +87,13 @@ public class SkipRdbValueVisitor extends DefaultRdbValueVisitor {
     }
     
     @Override
+    public <T> T applySetListPack(RedisInputStream in, int version) throws IOException {
+        SkipRdbParser skip = new SkipRdbParser(in);
+        skip.rdbLoadPlainStringObject();
+        return null;
+    }
+    
+    @Override
     public <T> T applyZSet(RedisInputStream in, int version) throws IOException {
         SkipRdbParser skip = new SkipRdbParser(in);
         long len = skip.rdbLoadLen().len;
@@ -285,6 +292,48 @@ public class SkipRdbValueVisitor extends DefaultRdbValueVisitor {
             long consumerCount = skip.rdbLoadLen().len;
             while (consumerCount-- > 0) {
                 skip.rdbLoadPlainStringObject();
+                skip.rdbLoadMillisecondTime();
+                long consumerPel = skip.rdbLoadLen().len;
+                while (consumerPel-- > 0) {
+                    in.skip(16);
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public <T> T applyStreamListPacks3(RedisInputStream in, int version) throws IOException {
+        SkipRdbParser skip = new SkipRdbParser(in);
+        long listPacks = skip.rdbLoadLen().len;
+        while (listPacks-- > 0) {
+            skip.rdbLoadPlainStringObject();
+            skip.rdbLoadPlainStringObject();
+        }
+        skip.rdbLoadLen();
+        skip.rdbLoadLen();
+        skip.rdbLoadLen();
+        skip.rdbLoadLen();
+        skip.rdbLoadLen();
+        skip.rdbLoadLen();
+        skip.rdbLoadLen();
+        skip.rdbLoadLen();
+        long groupCount = skip.rdbLoadLen().len;
+        while (groupCount-- > 0) {
+            skip.rdbLoadPlainStringObject();
+            skip.rdbLoadLen();
+            skip.rdbLoadLen();
+            skip.rdbLoadLen();
+            long groupPel = skip.rdbLoadLen().len;
+            while (groupPel-- > 0) {
+                in.skip(16);
+                skip.rdbLoadMillisecondTime();
+                skip.rdbLoadLen();
+            }
+            long consumerCount = skip.rdbLoadLen().len;
+            while (consumerCount-- > 0) {
+                skip.rdbLoadPlainStringObject();
+                skip.rdbLoadMillisecondTime();
                 skip.rdbLoadMillisecondTime();
                 long consumerPel = skip.rdbLoadLen().len;
                 while (consumerPel-- > 0) {

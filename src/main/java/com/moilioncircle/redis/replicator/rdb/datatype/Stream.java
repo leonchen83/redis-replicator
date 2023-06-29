@@ -257,6 +257,7 @@ public class Stream implements Serializable {
         private static final long serialVersionUID = 1L;
         private byte[] name;
         private long seenTime;
+        private long activeTime = -1; /* since redis 7.2 */
         private NavigableMap<ID, Nack> pendingEntries;
 
         public Consumer() {
@@ -284,7 +285,15 @@ public class Stream implements Serializable {
         public void setSeenTime(long seenTime) {
             this.seenTime = seenTime;
         }
-
+    
+        public long getActiveTime() {
+            return activeTime;
+        }
+    
+        public void setActiveTime(long activeTime) {
+            this.activeTime = activeTime;
+        }
+    
         public NavigableMap<ID, Nack> getPendingEntries() {
             return pendingEntries;
         }
@@ -295,7 +304,7 @@ public class Stream implements Serializable {
 
         @Override
         public String toString() {
-            String r = "Consumer{" + "name='" + Strings.toString(name) + '\'' + ", seenTime=" + seenTime;
+            String r = "Consumer{" + "name='" + Strings.toString(name) + '\'' + ", seenTime=" + seenTime + ", activeTime=" + activeTime;
             if (pendingEntries != null && !pendingEntries.isEmpty()) r += ", cpel=" + pendingEntries.size();
             return r + '}';
         }

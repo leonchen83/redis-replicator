@@ -30,8 +30,10 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_3;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -123,6 +125,8 @@ public class IterableDumpValueParser implements DumpValueParser {
                     return KeyValuePairs.iterList(kv, valueVisitor.applyList(in, 0));
                 case RDB_TYPE_SET:
                     return KeyValuePairs.iterSet(kv, valueVisitor.applySet(in, 0));
+                case RDB_TYPE_SET_LISTPACK:
+                    return KeyValuePairs.iterSet(kv, valueVisitor.applySetListPack(in, 0));
                 case RDB_TYPE_ZSET:
                     return KeyValuePairs.iterZset(kv, valueVisitor.applyZSet(in, 0));
                 case RDB_TYPE_ZSET_2:
@@ -155,6 +159,8 @@ public class IterableDumpValueParser implements DumpValueParser {
                     return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks(in, 0));
                 case RDB_TYPE_STREAM_LISTPACKS_2:
                     return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks2(in, 0));
+                case RDB_TYPE_STREAM_LISTPACKS_3:
+                    return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks3(in, 0));
                 default:
                     throw new AssertionError("unexpected value type:" + valueType);
             }

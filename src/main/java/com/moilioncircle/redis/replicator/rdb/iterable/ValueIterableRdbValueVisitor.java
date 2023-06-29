@@ -103,6 +103,42 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
         };
         return (T) val;
     }
+    
+    @Override
+    public <T> T applySetListPack(RedisInputStream in, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        
+        RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        listPack.skip(4); // total-bytes
+        int len = listPack.readInt(2);
+        Iterator<byte[]> val = new Iter<byte[]>(len, null) {
+            @Override
+            public boolean hasNext() {
+                if (condition > 0) return true;
+                try {
+                    int lpend = listPack.read();
+                    if (lpend != 255) {
+                        throw new AssertionError("listpack expect 255 but " + lpend);
+                    }
+                    return false;
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+            
+            @Override
+            public byte[] next() {
+                try {
+                    byte[] element = listPackEntry(listPack);
+                    condition--;
+                    return element;
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        };
+        return (T) val;
+    }
 
     @Override
     public <T> T applyZSet(RedisInputStream in, int version) throws IOException {

@@ -28,8 +28,10 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_3;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -118,6 +120,21 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o2.setKey(key);
         o2.setValue(valueVisitor.applySet(in, version));
         return context.valueOf(o2);
+    }
+    
+    @Override
+    public Event applySetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], byte[]> o20 = new DumpKeyValuePair();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        if (this.version != -1 && this.version < 11 /* since redis rdb version 11 */) {
+            o20.setValueRdbType(RDB_TYPE_SET);
+        } else {
+            o20.setValueRdbType(RDB_TYPE_SET_LISTPACK);
+        }
+        o20.setKey(key);
+        o20.setValue(valueVisitor.applySetListPack(in, version));
+        return context.valueOf(o20);
     }
 
     @Override
@@ -328,5 +345,20 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o19.setKey(key);
         o19.setValue(valueVisitor.applyStreamListPacks2(in, version));
         return context.valueOf(o19);
+    }
+    
+    @Override
+    public Event applyStreamListPacks3(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], byte[]> o21 = new DumpKeyValuePair();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        if (this.version != -1 && this.version < 11 /* since redis rdb version 11 */) {
+            o21.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS);
+        } else {
+            o21.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS_3);
+        }
+        o21.setKey(key);
+        o21.setValue(valueVisitor.applyStreamListPacks3(in, version));
+        return context.valueOf(o21);
     }
 }

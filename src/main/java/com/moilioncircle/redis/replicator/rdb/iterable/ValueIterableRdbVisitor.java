@@ -26,6 +26,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_QUICKLI
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
@@ -84,6 +85,18 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         o2.setKey(key);
         o2.setValue(valueVisitor.applySet(in, version));
         return context.valueOf(o2);
+    }
+    
+    @Override
+    public Event applySetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Iterator<byte[]>> o20 = new KeyStringValueByteArrayIterator();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+    
+        o20.setValueRdbType(RDB_TYPE_SET_LISTPACK);
+        o20.setKey(key);
+        o20.setValue(valueVisitor.applySetListPack(in, version));
+        return context.valueOf(o20);
     }
 
     @Override

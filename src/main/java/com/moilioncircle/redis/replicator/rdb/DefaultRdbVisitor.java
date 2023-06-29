@@ -30,8 +30,10 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_3;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -104,7 +106,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
     @Override
     public int applyVersion(RedisInputStream in) throws IOException {
         int version = parseInt(BaseRdbParser.StringHelper.str(in, 4));
-        if (version < 2 || version > 10) {
+        if (version < 2 || version > 11) {
             throw new UnsupportedOperationException(String.valueOf("can't handle RDB format version " + version));
         }
         return version;
@@ -304,6 +306,19 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o2.setValue(set);
         o2.setKey(key);
         return context.valueOf(o2);
+    }
+    
+    @Override
+    public Event applySetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Set<byte[]>> o20 = new KeyStringValueSet();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        Set<byte[]> set = valueVisitor.applySetListPack(in, version);
+        o20.setValueRdbType(RDB_TYPE_SET_LISTPACK);
+        o20.setValue(set);
+        o20.setKey(key);
+        return context.valueOf(o20);
     }
 
     @Override
@@ -515,6 +530,20 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o19.setKey(key);
         return context.valueOf(o19);
     }
+    
+    @Override
+    @SuppressWarnings("resource")
+    public Event applyStreamListPacks3(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Stream> o21 = new KeyStringValueStream();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        Stream stream = valueVisitor.applyStreamListPacks3(in, version);
+        o21.setValueRdbType(RDB_TYPE_STREAM_LISTPACKS_3);
+        o21.setValue(stream);
+        o21.setKey(key);
+        return context.valueOf(o21);
+    }
 
     protected ModuleParser<? extends Module> lookupModuleParser(String moduleName, int moduleVersion) {
         return replicator.getModuleParser(moduleName, moduleVersion);
@@ -536,6 +565,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?, ?>) applyList(in, version, context);
             case RDB_TYPE_SET:
                 return (KeyValuePair<?, ?>) applySet(in, version, context);
+            case RDB_TYPE_SET_LISTPACK:
+                return (KeyValuePair<?, ?>) applySetListPack(in, version, context);
             case RDB_TYPE_ZSET:
                 return (KeyValuePair<?, ?>) applyZSet(in, version, context);
             case RDB_TYPE_ZSET_2:
@@ -568,6 +599,8 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?, ?>) applyStreamListPacks(in, version, context);
             case RDB_TYPE_STREAM_LISTPACKS_2:
                 return (KeyValuePair<?, ?>) applyStreamListPacks2(in, version, context);
+            case RDB_TYPE_STREAM_LISTPACKS_3:
+                return (KeyValuePair<?, ?>) applyStreamListPacks3(in, version, context);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
         }

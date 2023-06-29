@@ -114,6 +114,10 @@ public abstract class RdbVisitor {
     public Event applySet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
+    
+    public Event applySetListPack(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
 
     public Event applyZSet(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
@@ -176,6 +180,10 @@ public abstract class RdbVisitor {
     }
     
     public Event applyStreamListPacks2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+    
+    public Event applyStreamListPacks3(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         throw new UnsupportedOperationException("must implement this method.");
     }
 }

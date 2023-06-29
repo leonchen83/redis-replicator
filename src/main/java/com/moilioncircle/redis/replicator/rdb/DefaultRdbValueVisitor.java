@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.Function;
@@ -118,6 +119,26 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
             byte[] element = parser.rdbLoadEncodedStringObject().first();
             set.add(element);
             len--;
+        }
+        return (T) set;
+    }
+    
+    @Override
+    public <T> T applySetListPack(RedisInputStream in, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+    
+        RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        Set<byte[]> set = new ByteArraySet();
+        listPack.skip(4); // total-bytes
+        int len = listPack.readInt(2);
+        while (len > 0) {
+            byte[] element = listPackEntry(listPack);
+            set.add(element);
+            len--;
+        }
+        int lpend = listPack.read(); // lp-end
+        if (lpend != 255) {
+            throw new AssertionError("listpack expect 255 but " + lpend);
         }
         return (T) set;
     }
@@ -472,149 +493,22 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
     }
 
     @Override
-    @SuppressWarnings("resource")
     public <T> T applyStreamListPacks(RedisInputStream in, int version) throws IOException {
-        BaseRdbParser parser = new BaseRdbParser(in);
-
-        Stream stream = new Stream();
-
-        // Entries
-        NavigableMap<Stream.ID, Stream.Entry> entries = new TreeMap<>(Stream.ID.COMPARATOR);
-        long listPacks = parser.rdbLoadLen().len;
-        while (listPacks-- > 0) {
-            RedisInputStream rawId = new RedisInputStream(parser.rdbLoadPlainStringObject());
-            Stream.ID baseId = new Stream.ID(rawId.readLong(8, false), rawId.readLong(8, false));
-            RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
-            listPack.skip(4); // total-bytes
-            listPack.skip(2); // num-elements
-            /*
-             * Master entry
-             * +-------+---------+------------+---------+--/--+---------+---------+-+
-             * | count | deleted | num-fields | field_1 | field_2 | ... | field_N |0|
-             * +-------+---------+------------+---------+--/--+---------+---------+-+
-             */
-            long count = Long.parseLong(Strings.toString(listPackEntry(listPack))); // count
-            long deleted = Long.parseLong(Strings.toString(listPackEntry(listPack))); // deleted
-            int numFields = Integer.parseInt(Strings.toString(listPackEntry(listPack))); // num-fields
-            byte[][] tempFields = new byte[numFields][];
-            for (int i = 0; i < numFields; i++) {
-                tempFields[i] = listPackEntry(listPack);
-            }
-            listPackEntry(listPack); // 0
-
-            long total = count + deleted;
-            while (total-- > 0) {
-                Map<byte[], byte[]> fields = new ByteArrayMap();
-                /*
-                 * FLAG
-                 * +-----+--------+
-                 * |flags|entry-id|
-                 * +-----+--------+
-                 */
-                int flag = Integer.parseInt(Strings.toString(listPackEntry(listPack)));
-                long ms = Long.parseLong(Strings.toString(listPackEntry(listPack)));
-                long seq = Long.parseLong(Strings.toString(listPackEntry(listPack)));
-                Stream.ID id = baseId.delta(ms, seq);
-                boolean delete = (flag & STREAM_ITEM_FLAG_DELETED) != 0;
-                if ((flag & STREAM_ITEM_FLAG_SAMEFIELDS) != 0) {
-                    /*
-                     * SAMEFIELD
-                     * +-------+-/-+-------+--------+
-                     * |value-1|...|value-N|lp-count|
-                     * +-------+-/-+-------+--------+
-                     */
-                    for (int i = 0; i < numFields; i++) {
-                        byte[] value = listPackEntry(listPack);
-                        byte[] field = tempFields[i];
-                        fields.put(field, value);
-                    }
-                    entries.put(id, new Stream.Entry(id, delete, fields));
-                } else {
-                    /*
-                     * NONEFIELD
-                     * +----------+-------+-------+-/-+-------+-------+--------+
-                     * |num-fields|field-1|value-1|...|field-N|value-N|lp-count|
-                     * +----------+-------+-------+-/-+-------+-------+--------+
-                     */
-                    numFields = Integer.parseInt(Strings.toString(listPackEntry(listPack)));
-                    for (int i = 0; i < numFields; i++) {
-                        byte[] field = listPackEntry(listPack);
-                        byte[] value = listPackEntry(listPack);
-                        fields.put(field, value);
-                    }
-                    entries.put(id, new Stream.Entry(id, delete, fields));
-                }
-                listPackEntry(listPack); // lp-count
-            }
-            int lpend = listPack.read(); // lp-end
-            if (lpend != 255) {
-                throw new AssertionError("listpack expect 255 but " + lpend);
-            }
-        }
-
-        long length = parser.rdbLoadLen().len;
-        Stream.ID lastId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
-
-        // Group
-        List<Stream.Group> groups = new ArrayList<>();
-        long groupCount = parser.rdbLoadLen().len;
-        while (groupCount-- > 0) {
-            Stream.Group group = new Stream.Group();
-            byte[] groupName = parser.rdbLoadPlainStringObject().first();
-            Stream.ID groupLastId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
-
-            // Group PEL
-            NavigableMap<Stream.ID, Stream.Nack> groupPendingEntries = new TreeMap<>(Stream.ID.COMPARATOR);
-            long globalPel = parser.rdbLoadLen().len;
-            while (globalPel-- > 0) {
-                Stream.ID rawId = new Stream.ID(in.readLong(8, false), in.readLong(8, false));
-                long deliveryTime = parser.rdbLoadMillisecondTime();
-                long deliveryCount = parser.rdbLoadLen().len;
-                groupPendingEntries.put(rawId, new Stream.Nack(rawId, null, deliveryTime, deliveryCount));
-            }
-
-            // Consumer
-            List<Stream.Consumer> consumers = new ArrayList<>();
-            long consumerCount = parser.rdbLoadLen().len;
-            while (consumerCount-- > 0) {
-                Stream.Consumer consumer = new Stream.Consumer();
-                byte[] consumerName = parser.rdbLoadPlainStringObject().first();
-                long seenTime = parser.rdbLoadMillisecondTime();
-
-                // Consumer PEL
-                NavigableMap<Stream.ID, Stream.Nack> consumerPendingEntries = new TreeMap<>(Stream.ID.COMPARATOR);
-                long pel = parser.rdbLoadLen().len;
-                while (pel-- > 0) {
-                    Stream.ID rawId = new Stream.ID(in.readLong(8, false), in.readLong(8, false));
-                    Stream.Nack nack = groupPendingEntries.get(rawId);
-                    nack.setConsumer(consumer);
-                    consumerPendingEntries.put(rawId, nack);
-                }
-
-                consumer.setName(consumerName);
-                consumer.setSeenTime(seenTime);
-                consumer.setPendingEntries(consumerPendingEntries);
-                consumers.add(consumer);
-            }
-
-            group.setName(groupName);
-            group.setLastId(groupLastId);
-            group.setPendingEntries(groupPendingEntries);
-            group.setConsumers(consumers);
-            groups.add(group);
-        }
-
-        stream.setLastId(lastId);
-        stream.setEntries(entries);
-        stream.setLength(length);
-        stream.setGroups(groups);
-
-        return (T) stream;
+        return applyStreamListPacks(in, version, Constants.RDB_TYPE_STREAM_LISTPACKS);
     }
     
     @Override
-    @SuppressWarnings("resource")
     public <T> T applyStreamListPacks2(RedisInputStream in, int version) throws IOException {
+        return applyStreamListPacks(in, version, Constants.RDB_TYPE_STREAM_LISTPACKS_2);
+    }
+    
+    @Override
+    public <T> T applyStreamListPacks3(RedisInputStream in, int version) throws IOException {
+        return applyStreamListPacks(in, version, Constants.RDB_TYPE_STREAM_LISTPACKS_3);
+    }
+    
+    @SuppressWarnings("resource")
+    protected <T> T applyStreamListPacks(RedisInputStream in, int version, int type) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
     
         Stream stream = new Stream();
@@ -695,10 +589,16 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
     
         long length = parser.rdbLoadLen().len;
         Stream.ID lastId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
-        Stream.ID firstId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
-        Stream.ID maxDeletedEntryId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
-        long entriesAdded = parser.rdbLoadLen().len;
-        
+    
+        Stream.ID firstId = null;
+        Stream.ID maxDeletedEntryId = null;
+        Long entriesAdded = null;
+        if (type >= Constants.RDB_TYPE_STREAM_LISTPACKS_2) {
+            firstId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
+            maxDeletedEntryId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
+            entriesAdded = parser.rdbLoadLen().len;
+        }
+    
         // Group
         List<Stream.Group> groups = new ArrayList<>();
         long groupCount = parser.rdbLoadLen().len;
@@ -706,7 +606,11 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
             Stream.Group group = new Stream.Group();
             byte[] groupName = parser.rdbLoadPlainStringObject().first();
             Stream.ID groupLastId = new Stream.ID(parser.rdbLoadLen().len, parser.rdbLoadLen().len);
-            long entriesRead = parser.rdbLoadLen().len;
+            Long entriesRead = null;
+            if (type >= Constants.RDB_TYPE_STREAM_LISTPACKS_2) {
+                entriesRead = parser.rdbLoadLen().len;
+            }
+            
             // Group PEL
             NavigableMap<Stream.ID, Stream.Nack> groupPendingEntries = new TreeMap<>(Stream.ID.COMPARATOR);
             long globalPel = parser.rdbLoadLen().len;
@@ -724,6 +628,10 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
                 Stream.Consumer consumer = new Stream.Consumer();
                 byte[] consumerName = parser.rdbLoadPlainStringObject().first();
                 long seenTime = parser.rdbLoadMillisecondTime();
+                long activeTime = -1;
+                if (type >= Constants.RDB_TYPE_STREAM_LISTPACKS_3) {
+                    activeTime = parser.rdbLoadMillisecondTime();
+                }
             
                 // Consumer PEL
                 NavigableMap<Stream.ID, Stream.Nack> consumerPendingEntries = new TreeMap<>(Stream.ID.COMPARATOR);
@@ -737,22 +645,29 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
             
                 consumer.setName(consumerName);
                 consumer.setSeenTime(seenTime);
+                if (type >= Constants.RDB_TYPE_STREAM_LISTPACKS_3) {
+                    consumer.setActiveTime(activeTime);
+                }
                 consumer.setPendingEntries(consumerPendingEntries);
                 consumers.add(consumer);
             }
         
             group.setName(groupName);
             group.setLastId(groupLastId);
-            group.setEntriesRead(entriesRead);
+            if (type >= Constants.RDB_TYPE_STREAM_LISTPACKS_2) {
+                group.setEntriesRead(entriesRead);
+            }
             group.setPendingEntries(groupPendingEntries);
             group.setConsumers(consumers);
             groups.add(group);
         }
     
         stream.setLastId(lastId);
-        stream.setFirstId(firstId);
-        stream.setMaxDeletedEntryId(maxDeletedEntryId);
-        stream.setEntriesAdded(entriesAdded);
+        if (type >= Constants.RDB_TYPE_STREAM_LISTPACKS_2) {
+            stream.setFirstId(firstId);
+            stream.setMaxDeletedEntryId(maxDeletedEntryId);
+            stream.setEntriesAdded(entriesAdded);
+        }
         stream.setEntries(entries);
         stream.setLength(length);
         stream.setGroups(groups);

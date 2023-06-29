@@ -92,6 +92,8 @@ public class Constants {
     public static final int RDB_TYPE_ZSET_LISTPACK = 17;
     public static final int RDB_TYPE_LIST_QUICKLIST_2 = 18;
     public static final int RDB_TYPE_STREAM_LISTPACKS_2 = 19;
+    public static final int RDB_TYPE_SET_LISTPACK = 20; /* since redis 7.2 */
+    public static final int RDB_TYPE_STREAM_LISTPACKS_3 = 21; /* since redis 7.2 */
 
     /**
      * Module serialized values sub opcodes

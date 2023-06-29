@@ -39,8 +39,10 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_MODULE_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_3;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
@@ -221,6 +223,9 @@ public class RdbParser {
                 case RDB_TYPE_SET:
                     event = rdbVisitor.applySet(in, version, kv);
                     break;
+                case RDB_TYPE_SET_LISTPACK:
+                    event = rdbVisitor.applySetListPack(in, version, kv);
+                    break;
                 case RDB_TYPE_ZSET:
                     event = rdbVisitor.applyZSet(in, version, kv);
                     break;
@@ -268,6 +273,9 @@ public class RdbParser {
                     break;
                 case RDB_TYPE_STREAM_LISTPACKS_2:
                     event = rdbVisitor.applyStreamListPacks2(in, version, kv);
+                    break;
+                case RDB_TYPE_STREAM_LISTPACKS_3:
+                    event = rdbVisitor.applyStreamListPacks3(in, version, kv);
                     break;
                 default:
                     throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");

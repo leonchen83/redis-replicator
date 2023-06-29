@@ -90,7 +90,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <!-- log api -->
-        <slf4j.api.version>2.0.6</slf4j.api.version>
+        <slf4j.api.version>2.0.7</slf4j.api.version>
     </properties>
 
     <dependencies>
@@ -127,7 +127,7 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>4.3.1</version>
+            <version>4.4.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -183,7 +183,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.3.1</version>
                         <configuration>
                             <encoding>${project.build.sourceEncoding}</encoding>
                         </configuration>
@@ -316,7 +316,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.3.1</version>
                         <configuration>
                             <encoding>${project.build.sourceEncoding}</encoding>
                         </configuration>
@@ -423,7 +423,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
+                <version>0.8.10</version>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -436,7 +436,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>add-test-source</id>

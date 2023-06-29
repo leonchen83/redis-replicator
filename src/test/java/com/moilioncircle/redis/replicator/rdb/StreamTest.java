@@ -18,6 +18,7 @@ package com.moilioncircle.redis.replicator.rdb;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_2;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_STREAM_LISTPACKS_3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -391,6 +392,114 @@ public class StreamTest {
             }
             if (new String(group.getName()).equals("g3")) {
                 assertNull(group.getEntriesRead());
+            }
+        }
+        assertEquals(9L, stream.getLength());
+        NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
+        int i = 0;
+        for (Stream.Entry entry : map.values()) {
+            if (i < 7) {
+                assertTrue(entry.isDeleted());
+            } else {
+                assertFalse(entry.isDeleted());
+            }
+            i++;
+        }
+    }
+    
+    @Test
+    public void testDump4() {
+        final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dumpV11.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        final List<DumpKeyValuePair> list = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof DumpKeyValuePair) {
+                    list.add((DumpKeyValuePair) event);
+                }
+            }
+        });
+        try {
+            replicator.open();
+        } catch (Throwable e) {
+            fail();
+        }
+        
+        TestCase.assertEquals(2, list.size());
+        DumpKeyValuePair dkv = list.get(1);
+        assertEquals(RDB_TYPE_STREAM_LISTPACKS_3, dkv.getValueRdbType());
+        DumpValueParser parser = new DefaultDumpValueParser(replicator);
+        KeyStringValueStream kv = (KeyStringValueStream)parser.parse(dkv);
+        Stream stream = kv.getValue();
+        assertEquals(Stream.ID.valueOf("1646121872530", "0"), stream.getFirstId());
+        assertEquals(Stream.ID.valueOf("1646121870418", "0"), stream.getMaxDeletedEntryId());
+        assertEquals(16L, stream.getEntriesAdded().longValue());
+        List<Stream.Group> groups = stream.getGroups();
+        for (Stream.Group group : groups) {
+            if (new String(group.getName()).equals("g4")) {
+                assertEquals(4L, group.getEntriesRead().longValue());
+            }
+            if (new String(group.getName()).equals("g3")) {
+                assertEquals(3L, group.getEntriesRead().longValue());
+            }
+            List<Stream.Consumer> consumers = group.getConsumers();
+            for (Stream.Consumer consumer : consumers) {
+                assertTrue(consumer.getActiveTime() > 0);
+            }
+        }
+        assertEquals(9L, stream.getLength());
+        NavigableMap<Stream.ID, Stream.Entry> map = stream.getEntries();
+        int i = 0;
+        for (Stream.Entry entry : map.values()) {
+            if (i < 7) {
+                assertTrue(entry.isDeleted());
+            } else {
+                assertFalse(entry.isDeleted());
+            }
+            i++;
+        }
+    }
+    
+    @Test
+    public void testDump5() {
+        final Replicator replicator = new RedisReplicator(StreamTest.class.getClassLoader().getResourceAsStream("dumpV11.rdb"), FileType.RDB, Configuration.defaultSetting());
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator, 9));
+        final List<DumpKeyValuePair> list = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof DumpKeyValuePair) {
+                    list.add((DumpKeyValuePair) event);
+                }
+            }
+        });
+        try {
+            replicator.open();
+        } catch (Throwable e) {
+            fail();
+        }
+        
+        TestCase.assertEquals(2, list.size());
+        DumpKeyValuePair dkv = list.get(1);
+        assertEquals(RDB_TYPE_STREAM_LISTPACKS, dkv.getValueRdbType());
+        DumpValueParser parser = new DefaultDumpValueParser(replicator);
+        KeyStringValueStream kv = (KeyStringValueStream)parser.parse(dkv);
+        Stream stream = kv.getValue();
+        assertNull(stream.getFirstId());
+        assertNull(stream.getMaxDeletedEntryId());
+        assertNull(stream.getEntriesAdded());
+        List<Stream.Group> groups = stream.getGroups();
+        for (Stream.Group group : groups) {
+            if (new String(group.getName()).equals("g4")) {
+                assertNull(group.getEntriesRead());
+            }
+            if (new String(group.getName()).equals("g3")) {
+                assertNull(group.getEntriesRead());
+            }
+            List<Stream.Consumer> consumers = group.getConsumers();
+            for (Stream.Consumer consumer : consumers) {
+                assertEquals(-1, consumer.getActiveTime());
             }
         }
         assertEquals(9L, stream.getLength());

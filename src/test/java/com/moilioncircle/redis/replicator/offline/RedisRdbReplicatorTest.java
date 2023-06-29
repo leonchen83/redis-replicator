@@ -17,10 +17,12 @@
 package com.moilioncircle.redis.replicator.offline;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -28,6 +30,7 @@ import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.CloseListener;
 import com.moilioncircle.redis.replicator.Configuration;
+import com.moilioncircle.redis.replicator.Constants;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
@@ -35,6 +38,7 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
 
@@ -196,6 +200,27 @@ public class RedisRdbReplicatorTest {
         redisReplicator.open();
         assertEquals(92499, acc.get());
         assertEquals(7, acc1.get());
+    }
+    
+    @Test
+    public void testFileV11() throws IOException {
+        Replicator redisReplicator = new RedisReplicator(
+                RedisRdbReplicatorTest.class.getClassLoader().getResourceAsStream("dumpV11.rdb"), FileType.RDB,
+                Configuration.defaultSetting());
+        List<byte[]> v = new ArrayList<>();
+        redisReplicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueSet) {
+                    KeyStringValueSet set = (KeyStringValueSet) event;
+                    assertTrue(set.getValueRdbType() == Constants.RDB_TYPE_SET_LISTPACK);
+                    Set<byte[]> value = set.getValue();
+                    v.addAll(value);
+                }
+            }
+        });
+        redisReplicator.open();
+        assertEquals(4, v.size());
     }
     
 }

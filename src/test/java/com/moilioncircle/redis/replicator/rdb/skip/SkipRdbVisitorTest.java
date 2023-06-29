@@ -54,7 +54,7 @@ public class SkipRdbVisitorTest {
                 "regular_sorted_set.rdb", "sorted_set_as_ziplist.rdb", "uncompressible_string_keys.rdb",
                 "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
                 "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
-                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb", "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "binarydump.rdb", "module.rdb", "dump-stream.rdb", "dumpV10.rdb"};
+                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb", "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "binarydump.rdb", "module.rdb", "dump-stream.rdb", "dumpV10.rdb", "dumpV11.rdb"};
         for (String file : resources) {
             testFile(file);
         }

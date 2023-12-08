@@ -17,6 +17,8 @@
 package com.moilioncircle.redis.replicator;
 
 import static com.moilioncircle.redis.replicator.Constants.DOLLAR;
+import static com.moilioncircle.redis.replicator.Constants.REPL_ID;
+import static com.moilioncircle.redis.replicator.Constants.REPL_OFFSET;
 import static com.moilioncircle.redis.replicator.Constants.STAR;
 import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.PSYNC;
 import static com.moilioncircle.redis.replicator.RedisSocketReplicator.SyncMode.SYNC;
@@ -34,6 +36,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -141,8 +145,10 @@ public class RedisSocketReplicator extends AbstractReplicator {
             this.db = -1;
             parseDump(this);
             String[] ary = reply.split(" ");
-            configuration.setReplId(ary[1]);
-            configuration.setReplOffset(Long.parseLong(ary[2]));
+            Map<String, Object> context = new HashMap<>(4);
+            context.put(REPL_ID, ary[1]);
+            context.put(REPL_OFFSET, ary[2]);
+            configuration.setContext(context);
             return PSYNC;
         } else if (reply.startsWith("CONTINUE")) {
             String[] ary = reply.split(" ");

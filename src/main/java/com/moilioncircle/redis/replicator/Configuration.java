@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
@@ -197,6 +198,11 @@ public class Configuration {
      * set SCAN COUNT if enableScan = true
      */
     private int scanStep = 512;
+    
+    /**
+     * @since 3.8.1
+     */
+    private Map<String, Object> context = new HashMap<>(4);
     
     public int getConnectionTimeout() {
         return connectionTimeout;
@@ -446,6 +452,14 @@ public class Configuration {
         return this;
     }
     
+    public Map<String, Object> getContext() {
+        return context;
+    }
+    
+    public void setContext(Map<String, Object> context) {
+        this.context = context;
+    }
+    
     public Configuration merge(SslConfiguration sslConfiguration) {
         if (sslConfiguration == null) return this;
         this.setSslParameters(sslConfiguration.getSslParameters());
@@ -597,6 +611,7 @@ public class Configuration {
                 ", replStreamDB=" + replStreamDB +
                 ", replOffset=" + replOffset +
                 ", replFilters=" + Arrays.toString(replFilters) +
+                ", context=" + context +
                 '}';
     }
 }

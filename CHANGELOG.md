@@ -1,3 +1,7 @@
+### 3.8.1
+
+Fix full sync offset bug.
+
 ### 3.8.0
 
 Support for redis 7.2-RC2

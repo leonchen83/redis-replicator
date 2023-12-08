@@ -39,6 +39,9 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.REPL_ID;
+import static com.moilioncircle.redis.replicator.Constants.REPL_OFFSET;
+import static com.moilioncircle.redis.replicator.Constants.REPL_STREAM_DB;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
@@ -159,9 +162,12 @@ public class DefaultRdbVisitor extends RdbVisitor {
             if (logger.isInfoEnabled()) {
                 logger.info("RDB {}: {}", auxKey, auxValue);
             }
-            if (auxKey.equals("repl-id")) replicator.getConfiguration().setReplId(auxValue);
-            if (auxKey.equals("repl-offset")) replicator.getConfiguration().setReplOffset(parseLong(auxValue));
-            if (auxKey.equals("repl-stream-db")) replicator.getConfiguration().setReplStreamDB(parseInt(auxValue));
+            Map<String, Object> context = replicator.getConfiguration().getContext();
+            if (context != null) {
+                if (auxKey.equals("repl-id")) context.put(REPL_ID, auxValue);
+                if (auxKey.equals("repl-offset")) context.put(REPL_OFFSET, auxValue);
+                if (auxKey.equals("repl-stream-db")) context.put(REPL_STREAM_DB, auxValue);
+            }
             return new AuxField(auxKey, auxValue);
         } else {
             if (logger.isWarnEnabled()) {

@@ -95,6 +95,8 @@ public class PsyncTest {
                 
                 if (event instanceof PostRdbSyncEvent) {
                     if (flag.compareAndSet(false, true)) {
+                        // will trigger full sync at this time
+                        close(replicator);
                         Thread thread = new Thread(new JRun());
                         thread.setDaemon(true);
                         thread.start();
@@ -129,7 +131,7 @@ public class PsyncTest {
             }
         });
         r.open();
-        assertEquals(2, acc1.get());
+        assertEquals(3, acc1.get());
         assertEquals(1500, acc.get());
     }
 

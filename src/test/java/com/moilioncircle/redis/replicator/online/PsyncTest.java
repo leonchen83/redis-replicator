@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
+import org.slf4j.Logger;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.RedisSocketReplicator;
@@ -64,11 +65,11 @@ public class PsyncTest {
                 setRetryTimeInterval(1000).
                 setUseDefaultExceptionListener(false);
         @SuppressWarnings("resource")
-        Replicator replicator = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
+        TestRedisSocketReplicator r = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
         final AtomicBoolean flag = new AtomicBoolean(false);
         final Set<AuxField> set = new LinkedHashSet<>();
         final AtomicInteger acc = new AtomicInteger();
-        replicator.addEventListener(new EventListener() {
+        r.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof AuxField) {
@@ -93,6 +94,7 @@ public class PsyncTest {
                     if (acc.get() == 1010) {
                         //close current process port;
                         //that will auto trigger psync command
+                        r.getLogger().info("id:{}, offset:{}", configuration.getReplId(), configuration.getReplOffset());
                         close(replicator);
                     }
                     if (acc.get() == 1480) {
@@ -107,7 +109,7 @@ public class PsyncTest {
                 }
             }
         });
-        replicator.open();
+        r.open();
         assertEquals(1500, acc.get());
     }
 
@@ -145,6 +147,10 @@ public class PsyncTest {
 
         public TestRedisSocketReplicator(String host, int port, Configuration configuration) {
             super(host, port, configuration);
+        }
+        
+        public Logger getLogger() {
+            return TestRedisSocketReplicator.logger;
         }
 
         public Socket getSocket() {

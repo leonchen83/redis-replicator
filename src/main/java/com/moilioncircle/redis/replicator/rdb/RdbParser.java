@@ -48,20 +48,15 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
-import static com.moilioncircle.redis.replicator.Constants.REPL_ID;
-import static com.moilioncircle.redis.replicator.Constants.REPL_OFFSET;
-import static com.moilioncircle.redis.replicator.Constants.REPL_STREAM_DB;
 import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.util.Tuples.of;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.moilioncircle.redis.replicator.AbstractReplicator;
-import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
@@ -294,15 +289,6 @@ public class RdbParser {
             if (event == null) continue;
             if (replicator.verbose() && logger.isDebugEnabled()) logger.debug("{}", event);
             if (!discard) this.replicator.submitEvent(event, of(start, offset));
-        }
-        
-        // we should set repl_id, repl_offset, repl_stream_db after full sync done to avoid losing data.
-        Map<String, Object> context = replicator.getConfiguration().getContext();
-        if (context != null) {
-            Configuration conf = replicator.getConfiguration();
-            if (context.containsKey(REPL_ID)) conf.setReplId((String) context.get(REPL_ID));
-            if (context.containsKey(REPL_OFFSET)) conf.setReplOffset(Long.parseLong((String) context.get(REPL_OFFSET)));
-            if (context.containsKey(REPL_STREAM_DB)) conf.setReplStreamDB(Integer.parseInt((String) context.get(REPL_STREAM_DB)));
         }
         return offset;
     }

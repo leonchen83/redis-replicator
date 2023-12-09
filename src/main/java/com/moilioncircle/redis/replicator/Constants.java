@@ -136,12 +136,4 @@ public class Constants {
     public static final byte MINUS = '-';
     public static final byte COLON = ':';
     public static final byte HASHTAG = '#'; // since redis 7.0 TS timestamp
-    
-    /**
-     * replication protocol
-     */
-    public static final String REPL_ID = "$REPL_ID";
-    public static final String REPL_OFFSET = "$REPL_OFFSET";
-    public static final String REPL_STREAM_DB = "$REPL_STREAM_DB";
-
 }

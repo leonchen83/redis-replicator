@@ -83,12 +83,14 @@ public class PsyncTest {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PreRdbSyncEvent) {
+                    r.getLogger().info("id:{}, offset:{}", configuration.getReplId(), configuration.getReplOffset());
                     acc1.incrementAndGet();
                 }
                 
                 if (event instanceof KeyValuePair) {
                     if (flag1.compareAndSet(false, true)) {
                         // will trigger full sync at this time
+                        r.getLogger().info("psync close 1");
                         close(replicator);
                     }
                 }
@@ -96,6 +98,7 @@ public class PsyncTest {
                 if (event instanceof PostRdbSyncEvent) {
                     if (flag.compareAndSet(false, true)) {
                         // will trigger full sync at this time
+                        r.getLogger().info("psync close 2");
                         close(replicator);
                         Thread thread = new Thread(new JRun());
                         thread.setDaemon(true);
@@ -108,6 +111,7 @@ public class PsyncTest {
                     if (acc.get() == 500) {
                         //close current process port;
                         //that will auto trigger psync command
+                        r.getLogger().info("psync close 3");
                         r.getLogger().info("id:{}, offset:{}", configuration.getReplId(), configuration.getReplOffset());
                         close(replicator);
                     }
@@ -115,6 +119,7 @@ public class PsyncTest {
                     if (acc.get() == 1010) {
                         //close current process port;
                         //that will auto trigger psync command
+                        r.getLogger().info("psync close 4");
                         r.getLogger().info("id:{}, offset:{}", configuration.getReplId(), configuration.getReplOffset());
                         close(replicator);
                     }

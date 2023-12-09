@@ -37,6 +37,7 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
 
 import redis.clients.jedis.Jedis;
@@ -50,6 +51,15 @@ public class PsyncTest {
 
     @Test
     public void psync() throws IOException {
+    
+        try (Jedis jedis = new Jedis("127.0.0.1", 6380)) {
+            jedis.auth("test");
+            Pipeline pipeline = jedis.pipelined();
+            for (int i = 0; i < 100; i++) {
+                pipeline.set("pre-psync " + i, "pre-psync" + i);
+            }
+            pipeline.sync();
+        }
 
         final Configuration configuration = Configuration.defaultSetting().
                 setAuthPassword("test").
@@ -67,6 +77,7 @@ public class PsyncTest {
         final AtomicBoolean flag = new AtomicBoolean(false);
         final AtomicInteger acc = new AtomicInteger();
     
+        final AtomicBoolean flag1 = new AtomicBoolean(false);
         final AtomicInteger acc1 = new AtomicInteger();
         r.addEventListener(new EventListener() {
             @Override
@@ -74,10 +85,16 @@ public class PsyncTest {
                 if (event instanceof PreRdbSyncEvent) {
                     acc1.incrementAndGet();
                 }
-                if (event instanceof PostRdbSyncEvent) {
-                    if (flag.compareAndSet(false, true)) {
+                
+                if (event instanceof KeyValuePair) {
+                    if (flag1.compareAndSet(false, true)) {
                         // will trigger full sync at this time
                         close(replicator);
+                    }
+                }
+                
+                if (event instanceof PostRdbSyncEvent) {
+                    if (flag.compareAndSet(false, true)) {
                         Thread thread = new Thread(new JRun());
                         thread.setDaemon(true);
                         thread.start();

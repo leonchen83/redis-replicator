@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,7 +36,7 @@ import com.moilioncircle.redis.replicator.cmd.impl.SetCommand;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
-import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
+import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.util.Strings;
 
 import redis.clients.jedis.Jedis;
@@ -67,16 +65,19 @@ public class PsyncTest {
         @SuppressWarnings("resource")
         TestRedisSocketReplicator r = new TestRedisSocketReplicator("127.0.0.1", 6380, configuration);
         final AtomicBoolean flag = new AtomicBoolean(false);
-        final Set<AuxField> set = new LinkedHashSet<>();
         final AtomicInteger acc = new AtomicInteger();
+    
+        final AtomicInteger acc1 = new AtomicInteger();
         r.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof AuxField) {
-                    set.add((AuxField) event);
+                if (event instanceof PreRdbSyncEvent) {
+                    acc1.incrementAndGet();
                 }
                 if (event instanceof PostRdbSyncEvent) {
                     if (flag.compareAndSet(false, true)) {
+                        // will trigger full sync at this time
+                        close(replicator);
                         Thread thread = new Thread(new JRun());
                         thread.setDaemon(true);
                         thread.start();
@@ -88,6 +89,7 @@ public class PsyncTest {
                     if (acc.get() == 500) {
                         //close current process port;
                         //that will auto trigger psync command
+                        r.getLogger().info("id:{}, offset:{}", configuration.getReplId(), configuration.getReplOffset());
                         close(replicator);
                     }
 
@@ -110,6 +112,7 @@ public class PsyncTest {
             }
         });
         r.open();
+        assertEquals(2, acc1.get());
         assertEquals(1500, acc.get());
     }
 

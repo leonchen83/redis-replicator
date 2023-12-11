@@ -1,11 +1,12 @@
 ### 3.8.1
 
-Fix full sync offset bug.
+Fix full sync offset bug. this bug could cause losing data in reconnection  
+Support for java 21.  
 
 ### 3.8.0
 
-Support for redis 7.2-RC2
-Support for rdb v11.
+Support for redis 7.2-RC2.  
+Support for rdb v11.  
 
 ### 3.6.5
 

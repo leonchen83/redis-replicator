@@ -17,7 +17,6 @@
 package com.moilioncircle.examples.migration;
 
 import static redis.clients.jedis.Protocol.Command.AUTH;
-import static redis.clients.jedis.Protocol.Command.RESTORE;
 import static redis.clients.jedis.Protocol.Command.SELECT;
 import static redis.clients.jedis.Protocol.toByteArray;
 
@@ -40,6 +39,7 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
 import com.moilioncircle.redis.replicator.rdb.dump.DumpRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpFunction;
 import com.moilioncircle.redis.replicator.rdb.dump.datatype.DumpKeyValuePair;
 import com.moilioncircle.redis.replicator.util.Strings;
 
@@ -47,6 +47,8 @@ import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Protocol;
+import redis.clients.jedis.args.FunctionRestorePolicy;
+import redis.clients.jedis.params.RestoreParams;
 
 /**
  * @author Leon Chen
@@ -84,6 +86,15 @@ public class MigrationExample {
         r.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
+                
+                // function since redis 7.0
+                if (event instanceof DumpFunction) {
+                    DumpFunction dfn = (DumpFunction) event;
+                    Object r = target.restoreFunction(dfn.getSerialized(), true);
+                    System.out.println(r);
+                }
+                
+                // key value
                 if (event instanceof DumpKeyValuePair) {
                     DumpKeyValuePair dkv = (DumpKeyValuePair) event;
                     // Step1: select db
@@ -107,6 +118,7 @@ public class MigrationExample {
                     }
                 }
 
+                // incremental commands
                 if (event instanceof DefaultCommand) {
                     // Step3: sync aof command
                     DefaultCommand dc = (DefaultCommand) event;
@@ -255,9 +267,17 @@ public class MigrationExample {
 
         public Object restore(byte[] key, long expired, byte[] dumped, boolean replace) {
             if (!replace) {
-                return send(RESTORE, key, toByteArray(expired), dumped);
+                return jedis.restore(key, expired, dumped);
             } else {
-                return send(RESTORE, key, toByteArray(expired), dumped, "REPLACE".getBytes());
+                return jedis.restore(key, expired, dumped, RestoreParams.restoreParams().replace());
+            }
+        }
+        
+        public Object restoreFunction(byte[] dumped, boolean replace) {
+            if (!replace) {
+                return jedis.functionRestore(dumped, FunctionRestorePolicy.APPEND);
+            } else {
+                return jedis.functionRestore(dumped, FunctionRestorePolicy.REPLACE);
             }
         }
     

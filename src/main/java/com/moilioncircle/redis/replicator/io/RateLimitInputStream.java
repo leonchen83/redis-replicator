@@ -16,13 +16,13 @@
 
 package com.moilioncircle.redis.replicator.io;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.lang.System.currentTimeMillis;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static java.lang.System.currentTimeMillis;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Leon Chen
@@ -32,7 +32,8 @@ public class RateLimitInputStream extends InputStream {
     private static final Logger logger = LoggerFactory.getLogger(RateLimitInputStream.class);
 
     private static final int DEFAULT_PERMITS = 100 * 1024 * 1000; // 97.65MB/sec
-
+    
+    private final int unit;
     private final int permits;
     private RateLimiter limiter;
     private final InputStream in;
@@ -48,6 +49,8 @@ public class RateLimitInputStream extends InputStream {
 
         this.in = in;
         this.permits = permits;
+        // permits per ms
+        this.unit = this.permits / 1000;
         this.limiter = new TokenBucketRateLimiter(this.permits);
     }
 
@@ -66,7 +69,7 @@ public class RateLimitInputStream extends InputStream {
     public int read(byte[] b, int offset, int length) throws IOException {
         int total = length, index = offset;
         while (total > 0) {
-            int len = Math.min(permits, total);
+            int len = Math.min(unit, total);
             limiter.acquire(len);
             int r = in.read(b, index, len);
             index += r;
@@ -82,7 +85,7 @@ public class RateLimitInputStream extends InputStream {
     public long skip(long length) throws IOException {
         long total = length;
         while (total > 0) {
-            int skip = (int) Math.min(permits, total);
+            int skip = (int) Math.min(unit, total);
             limiter.acquire(skip);
             long r = in.skip(skip);
             total -= r;
@@ -109,17 +112,14 @@ public class RateLimitInputStream extends InputStream {
     private class TokenBucketRateLimiter implements RateLimiter {
 
         private long access;
-        private long borrow;
         private long permits;
         private final long size;
-        private final double sleep;
 
         private TokenBucketRateLimiter(int permits) {
             this.access = currentTimeMillis();
             this.size = this.permits = permits;
-            this.sleep = 1 * this.size / 1000d;
         }
-
+        
         @Override
         public void acquire(long permits) {
             try {
@@ -131,17 +131,13 @@ public class RateLimitInputStream extends InputStream {
                         this.permits -= permits;
                         return;
                     }
-                    double r = permits / sleep;
-                    if (r < 1) {
-                        this.borrow += permits;
-                        while (this.borrow >= sleep) {
-                            Thread.sleep(1);
-                            this.borrow -= sleep;
-                        }
-                        return;
-                    } else {
-                        Thread.sleep((int) r);
+                    long x = permits / unit;
+                    long y = permits % unit;
+                    if (y != 0) {
+                        x += 1;
+                        this.permits -= (unit - y);
                     }
+                    Thread.sleep(x);
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

@@ -99,7 +99,7 @@ redis 2.6 - 7.0
 ## 2.3. Install from source code  
   
 ```
-    step 1: install jdk-9.0.x for compile(or jdk-11.0.x)
+    step 1: install jdk-11.0.x for compile
     step 2: git clone https://github.com/leonchen83/redis-replicator.git
     step 3: $cd ./redis-replicator 
     step 4: $mvn clean install package -DskipTests
@@ -109,7 +109,8 @@ redis 2.6 - 7.0
 
 | **redis version**  | **redis-replicator version** |  
 |--------------------|------------------------------|  
-| \[2.6, 7.2.x\]     | \[3.8.0, \]                  |  
+| \[2.6, 8.0.x\]     | \[3.9.0, \]                  |  
+| \[2.6, 7.2.x\]     | \[3.8.0, 3.8.1\]             |  
 | \[2.6, 7.0.x\]     | \[3.6.4, 3.7.0\]             |  
 | \[2.6, 7.0.x-RC2\] | \[3.6.2, 3.6.3\]             |  
 | \[2.6, 7.0.0-RC1\] | \[3.6.0, 3.6.1\]             |  

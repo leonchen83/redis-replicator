@@ -26,6 +26,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.ExpirableValue;
  * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
  * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
-public class BatchedKeyStringValueExpirableHash extends BatchedKeyValuePair<byte[], Map<byte[], ExpirableValue<byte[]>>> {
+public class BatchedKeyStringValueExpirableHash extends BatchedKeyValuePair<byte[], Map<byte[], ExpirableValue>> {
     private static final long serialVersionUID = 1L;
 }

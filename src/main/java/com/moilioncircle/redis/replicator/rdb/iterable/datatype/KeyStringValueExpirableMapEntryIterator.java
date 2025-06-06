@@ -28,6 +28,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
  * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
  * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
-public class KeyStringValueExpirableMapEntryIterator extends KeyValuePair<byte[], Iterator<Map.Entry<byte[], ExpirableValue<byte[]>>>> {
+public class KeyStringValueExpirableMapEntryIterator extends KeyValuePair<byte[], Iterator<Map.Entry<byte[], ExpirableValue>>> {
     private static final long serialVersionUID = 1L;
 }

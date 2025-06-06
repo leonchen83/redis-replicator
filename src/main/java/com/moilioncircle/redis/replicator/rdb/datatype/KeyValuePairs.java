@@ -16,6 +16,7 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueExpirableHash;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueModule;
@@ -25,6 +26,7 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyString
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueZSet;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueExpirableMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
 
@@ -100,6 +102,13 @@ public class KeyValuePairs {
         kv.setValue(value);
         return kv;
     }
+    
+    public static KeyStringValueExpirableMapEntryIterator iterMetaHash(KeyValuePair<byte[], ?> raw, Iterator<Map.Entry<byte[], ExpirableValue>> value) {
+        KeyStringValueExpirableMapEntryIterator kv = new KeyStringValueExpirableMapEntryIterator();
+        copy(raw, kv);
+        kv.setValue(value);
+        return kv;
+    }
 
     public static KeyStringValueByteArrayIterator iterList(KeyValuePair<byte[], ?> raw, Iterator<byte[]> value) {
         KeyStringValueByteArrayIterator kv = new KeyStringValueByteArrayIterator();
@@ -141,6 +150,13 @@ public class KeyValuePairs {
 
     public static BatchedKeyStringValueHash hash(KeyValuePair<byte[], ?> raw, Map<byte[], byte[]> value, int batch, boolean last) {
         BatchedKeyStringValueHash kv = new BatchedKeyStringValueHash();
+        copy(raw, kv, batch, last);
+        kv.setValue(value);
+        return kv;
+    }
+    
+    public static BatchedKeyStringValueExpirableHash metaHash(KeyValuePair<byte[], ?> raw, Map<byte[], ExpirableValue> value, int batch, boolean last) {
+        BatchedKeyStringValueExpirableHash kv = new BatchedKeyStringValueExpirableHash();
         copy(raw, kv, batch, last);
         kv.setValue(value);
         return kv;

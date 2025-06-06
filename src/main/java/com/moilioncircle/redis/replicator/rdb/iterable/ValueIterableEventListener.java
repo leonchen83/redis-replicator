@@ -21,6 +21,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_INTSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_SET_LISTPACK;
 import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.hash;
 import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.list;
+import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.metaHash;
 import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.module;
 import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.set;
 import static com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePairs.stream;
@@ -37,6 +38,7 @@ import java.util.Set;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
+import com.moilioncircle.redis.replicator.rdb.datatype.ExpirableValue;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
@@ -45,8 +47,10 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueExpirableMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
+import com.moilioncircle.redis.replicator.util.ByteArrayExpirableMap;
 import com.moilioncircle.redis.replicator.util.ByteArrayList;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import com.moilioncircle.redis.replicator.util.ByteArraySet;
@@ -147,6 +151,23 @@ public class ValueIterableEventListener implements EventListener {
             final boolean last = next.isEmpty();
             if (prev != null) listener.onEvent(replicator, hash(mkv, prev, batch++, last));
             if (!last) listener.onEvent(replicator, hash(mkv, next, batch++, true));
+        } else if (kv instanceof KeyStringValueExpirableMapEntryIterator) {
+            KeyStringValueExpirableMapEntryIterator mkv = (KeyStringValueExpirableMapEntryIterator) kv;
+            Iterator<Map.Entry<byte[], ExpirableValue>> it = mkv.getValue();
+            Map<byte[], ExpirableValue> prev = null, next = new ByteArrayExpirableMap(order, batchSize);
+            while (it.hasNext()) {
+                Map.Entry<byte[], ExpirableValue> entry = it.next();
+                next.put(entry.getKey(), entry.getValue());
+                if (next.size() == batchSize) {
+                    if (prev != null)
+                        listener.onEvent(replicator, metaHash(mkv, prev, batch++, false));
+                    prev = next;
+                    next = new ByteArrayExpirableMap(order, batchSize);
+                }
+            }
+            final boolean last = next.isEmpty();
+            if (prev != null) listener.onEvent(replicator, metaHash(mkv, prev, batch++, last));
+            if (!last) listener.onEvent(replicator, metaHash(mkv, next, batch++, true));
         } else if (kv instanceof KeyStringValueZSetEntryIterator) {
             KeyStringValueZSetEntryIterator zkv = (KeyStringValueZSetEntryIterator) kv;
             Iterator<ZSetEntry> it = zkv.getValue();

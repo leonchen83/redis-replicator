@@ -25,40 +25,43 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+
+import com.moilioncircle.redis.replicator.rdb.datatype.ExpirableValue;
 
 /**
  * @author Leon Chen
  * @since 2.2.0
  */
 //@NonThreadSafe
-public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
+public class ByteArrayExpirableMap implements Map<byte[], ExpirableValue>, Serializable {
     private static final long serialVersionUID = 1L;
     
-    protected final Map<Element, Element> map;
+    protected final Map<Element, ExpirableValue> map;
     
-    public ByteArrayMap(Map<? extends byte[], ? extends byte[]> m) {
+    public ByteArrayExpirableMap(Map<? extends byte[], ? extends ExpirableValue> m) {
         this(true, m);
     }
     
-    public ByteArrayMap(boolean ordered, Map<? extends byte[], ? extends byte[]> m) {
+    public ByteArrayExpirableMap(boolean ordered, Map<? extends byte[], ? extends ExpirableValue> m) {
         this(ordered, m == null ? 0 : m.size(), 0.75f);
         putAll(m);
     }
     
-    public ByteArrayMap() {
+    public ByteArrayExpirableMap() {
         this(true);
     }
     
-    public ByteArrayMap(boolean ordered) {
+    public ByteArrayExpirableMap(boolean ordered) {
         this(ordered, 16);
     }
     
-    public ByteArrayMap(boolean ordered, int initialCapacity) {
+    public ByteArrayExpirableMap(boolean ordered, int initialCapacity) {
         this(ordered, initialCapacity, 0.75f);
     }
     
-    public ByteArrayMap(boolean ordered, int initialCapacity, float loadFactor) {
+    public ByteArrayExpirableMap(boolean ordered, int initialCapacity, float loadFactor) {
         if (ordered) map = new LinkedHashMap<>(initialCapacity, loadFactor);
         else map = new HashMap<>(initialCapacity, loadFactor);
     }
@@ -81,35 +84,40 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
     
     @Override
     public boolean containsValue(Object value) {
-        if (value != null && !(value instanceof byte[])) return false;
-        return map.containsValue(new Element((byte[]) value));
+        if (value == null) return false;
+        if (value instanceof ExpirableValue) {
+            ExpirableValue ev = (ExpirableValue) value;
+            return map.containsValue(ev);
+        }
+        if (value instanceof byte[]) {
+            return map.containsValue(new ExpirableValue(0L, (byte[]) value));
+        }
+        return false;
     }
     
     @Override
-    public byte[] get(Object key) {
+    public ExpirableValue get(Object key) {
         if (key != null && !(key instanceof byte[])) return null;
-        final Element value = map.get(new Element((byte[]) key));
-        return value == null ? null : value.bytes;
+        return map.get(new Element((byte[]) key));
     }
     
     @Override
-    public byte[] put(byte[] key, byte[] value) {
-        Element element = map.put(new Element(key), new Element(value));
-        return element != null ? element.bytes : null;
+    public ExpirableValue put(byte[] key, ExpirableValue value) {
+        return map.put(new Element(key), value);
     }
     
     @Override
-    public void putAll(Map<? extends byte[], ? extends byte[]> m) {
+    public void putAll(Map<? extends byte[], ? extends ExpirableValue> m) {
         if (m == null) return;
-        for (Map.Entry<? extends byte[], ? extends byte[]> entry : m.entrySet()) {
+        for (Entry<? extends byte[], ? extends ExpirableValue> entry : m.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
     
     @Override
-    public byte[] remove(Object key) {
+    public ExpirableValue remove(Object key) {
         if (key != null && !(key instanceof byte[])) return null;
-        return map.remove(new Element((byte[]) key)).bytes;
+        return map.remove(new Element((byte[]) key));
     }
     
     @Override
@@ -123,12 +131,12 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
     }
     
     @Override
-    public Collection<byte[]> values() {
+    public Collection<ExpirableValue> values() {
         return new Values();
     }
     
     @Override
-    public Set<Entry<byte[], byte[]>> entrySet() {
+    public Set<Entry<byte[], ExpirableValue>> entrySet() {
         return new EntrySet();
     }
     
@@ -155,52 +163,52 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         }
     }
     
-    private final class EntrySet extends AbstractSet<Entry<byte[], byte[]>> {
+    private final class EntrySet extends AbstractSet<Entry<byte[], ExpirableValue>> {
         
         @Override
         public final int size() {
-            return ByteArrayMap.this.size();
+            return ByteArrayExpirableMap.this.size();
         }
         
         @Override
         public final void clear() {
-            ByteArrayMap.this.clear();
+            ByteArrayExpirableMap.this.clear();
         }
         
         @Override
-        public final Iterator<Entry<byte[], byte[]>> iterator() {
+        public final Iterator<Entry<byte[], ExpirableValue>> iterator() {
             return new EntryIterator();
         }
         
         @Override
         public final boolean contains(Object o) {
             if (!(o instanceof Map.Entry)) return false;
-            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
+            Entry<?, ?> e = (Entry<?, ?>) o;
             Object k = e.getKey();
             Object v = e.getValue();
             if (k != null && !(k instanceof byte[])) return false;
-            if (v != null && !(v instanceof byte[])) return false;
+            if (v != null && !(v instanceof ExpirableValue)) return false;
             byte[] key = (byte[]) k;
-            byte[] value = (byte[]) v;
-            if (!ByteArrayMap.this.containsKey(key)) return false;
-            byte[] val = ByteArrayMap.this.get(key);
-            return Arrays.equals(val, value);
+            ExpirableValue value = (ExpirableValue) v;
+            if (!ByteArrayExpirableMap.this.containsKey(key)) return false;
+            ExpirableValue val = ByteArrayExpirableMap.this.get(key);
+            return Objects.equals(val, value);
         }
         
         @Override
         public final boolean remove(Object o) {
             if (!(o instanceof Map.Entry)) return false;
-            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
+            Entry<?, ?> e = (Entry<?, ?>) o;
             Object k = e.getKey();
             Object v = e.getValue();
             if (k != null && !(k instanceof byte[])) return false;
-            if (v != null && !(v instanceof byte[])) return false;
+            if (v != null && !(v instanceof ExpirableValue)) return false;
             byte[] key = (byte[]) k;
-            byte[] value = (byte[]) v;
-            if (!ByteArrayMap.this.containsKey(key)) return false;
-            byte[] val = ByteArrayMap.this.get(key);
-            if (Arrays.equals(val, value))
-                return ByteArrayMap.this.remove(key) != null;
+            ExpirableValue value = (ExpirableValue) v;
+            if (!ByteArrayExpirableMap.this.containsKey(key)) return false;
+            ExpirableValue val = ByteArrayExpirableMap.this.get(key);
+            if (Objects.equals(val, value))
+                return ByteArrayExpirableMap.this.remove(key) != null;
             return false;
         }
     }
@@ -209,12 +217,12 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         
         @Override
         public final int size() {
-            return ByteArrayMap.this.size();
+            return ByteArrayExpirableMap.this.size();
         }
         
         @Override
         public final void clear() {
-            ByteArrayMap.this.clear();
+            ByteArrayExpirableMap.this.clear();
         }
         
         @Override
@@ -224,29 +232,29 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         
         @Override
         public final boolean contains(Object o) {
-            return ByteArrayMap.this.containsKey(o);
+            return ByteArrayExpirableMap.this.containsKey(o);
         }
         
         @Override
         public final boolean remove(Object key) {
-            return ByteArrayMap.this.remove(key) != null;
+            return ByteArrayExpirableMap.this.remove(key) != null;
         }
     }
     
-    private final class Values extends AbstractCollection<byte[]> {
+    private final class Values extends AbstractCollection<ExpirableValue> {
         
         @Override
         public final int size() {
-            return ByteArrayMap.this.size();
+            return ByteArrayExpirableMap.this.size();
         }
         
         @Override
         public final void clear() {
-            ByteArrayMap.this.clear();
+            ByteArrayExpirableMap.this.clear();
         }
         
         @Override
-        public final Iterator<byte[]> iterator() {
+        public final Iterator<ExpirableValue> iterator() {
             return new ValueIterator();
         }
         
@@ -277,9 +285,9 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         }
     }
     
-    private final class ValueIterator implements Iterator<byte[]> {
+    private final class ValueIterator implements Iterator<ExpirableValue> {
         
-        private final Iterator<Element> iterator = map.values().iterator();
+        private final Iterator<ExpirableValue> iterator = map.values().iterator();
         
         @Override
         public boolean hasNext() {
@@ -287,8 +295,8 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         }
         
         @Override
-        public byte[] next() {
-            return iterator.next().bytes;
+        public ExpirableValue next() {
+            return iterator.next();
         }
         
         @Override
@@ -297,9 +305,9 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         }
     }
     
-    private final class EntryIterator implements Iterator<Map.Entry<byte[], byte[]>> {
+    private final class EntryIterator implements Iterator<Entry<byte[], ExpirableValue>> {
         
-        private final Iterator<Map.Entry<Element, Element>> iterator = map.entrySet().iterator();
+        private final Iterator<Entry<Element, ExpirableValue>> iterator = map.entrySet().iterator();
         
         @Override
         public boolean hasNext() {
@@ -307,9 +315,9 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         }
         
         @Override
-        public Entry<byte[], byte[]> next() {
-            Map.Entry<Element, Element> v = iterator.next();
-            return new Node(v.getKey().bytes, v.getValue().bytes);
+        public Entry<byte[], ExpirableValue> next() {
+            Entry<Element, ExpirableValue> v = iterator.next();
+            return new Node(v.getKey().bytes, v.getValue());
         }
         
         @Override
@@ -318,13 +326,13 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         }
     }
     
-    public static final class Node implements Map.Entry<byte[], byte[]>, Serializable {
+    public static final class Node implements Entry<byte[], ExpirableValue>, Serializable {
         private static final long serialVersionUID = 1L;
         
-        private byte[] value;
         private final byte[] key;
+        private ExpirableValue value;
         
-        private Node(byte[] key, byte[] value) {
+        private Node(byte[] key, ExpirableValue value) {
             this.key = key;
             this.value = value;
         }
@@ -335,13 +343,13 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         }
         
         @Override
-        public byte[] getValue() {
+        public ExpirableValue getValue() {
             return this.value;
         }
         
         @Override
-        public byte[] setValue(byte[] value) {
-            byte[] oldValue = this.value;
+        public ExpirableValue setValue(ExpirableValue value) {
+            ExpirableValue oldValue = this.value;
             this.value = value;
             return oldValue;
         }
@@ -351,15 +359,12 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Node node = (Node) o;
-            return Arrays.equals(value, node.value) &&
-                    Arrays.equals(key, node.key);
+            return Objects.equals(value, node.value) && Arrays.equals(key, node.key);
         }
         
         @Override
         public int hashCode() {
-            int result = Arrays.hashCode(value);
-            result = 31 * result + Arrays.hashCode(key);
-            return result;
+            return Objects.hash(value, Arrays.hashCode(key));
         }
     }
 }

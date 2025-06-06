@@ -23,6 +23,6 @@ import java.util.Map;
  * @since 3.9.0
  * @see com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor
  */
-public class KeyStringValueExpirableHash extends KeyValuePair<byte[], Map<byte[], ExpirableValue<byte[]>>> {
+public class KeyStringValueExpirableHash extends KeyValuePair<byte[], Map<byte[], ExpirableValue>> {
 	private static final long serialVersionUID = 1L;
 }

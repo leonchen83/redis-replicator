@@ -17,22 +17,25 @@
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
 import java.io.Serializable;
+import java.util.Arrays;
+
+import com.moilioncircle.redis.replicator.util.Strings;
 
 /**
  * @author Leon Chen
  * @since 3.9.0
  */
-public class ExpirableValue<T> implements Serializable {
+public class ExpirableValue implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
     private Long expires;
-    private T value;
+    private byte[] value;
 
     public ExpirableValue() {
     }
 
-    public ExpirableValue(Long expires, T value) {
+    public ExpirableValue(Long expires, byte[] value) {
         this.expires = expires;
         this.value = value;
     }
@@ -45,11 +48,29 @@ public class ExpirableValue<T> implements Serializable {
         this.expires = expires;
     }
 
-    public T getValue() {
+    public byte[] getValue() {
         return value;
     }
 
-    public void setValue(T value) {
+    public void setValue(byte[] value) {
         this.value = value;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExpirableValue that = (ExpirableValue) o;
+        return Arrays.equals(value, that.value);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(value);
+    }
+    
+    @Override
+    public String toString() {
+        return "[" + Strings.toString(value) + ", " + expires + "]";
     }
 }

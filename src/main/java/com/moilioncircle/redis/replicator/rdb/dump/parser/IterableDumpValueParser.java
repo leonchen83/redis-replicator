@@ -167,8 +167,7 @@ public class IterableDumpValueParser implements DumpValueParser {
                     // TODO
                     return KeyValuePairs.iterHash(kv, valueVisitor.applyHashListPackEx(in, 0));
                 case RDB_TYPE_HASH_METADATA:
-                    // TODO
-                    return KeyValuePairs.iterHash(kv, valueVisitor.applyHashMetadata(in, 0));
+                    return KeyValuePairs.iterMetaHash(kv, valueVisitor.applyHashMetadata(in, 0));
                 default:
                     throw new AssertionError("unexpected value type:" + valueType);
             }

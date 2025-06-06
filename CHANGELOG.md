@@ -1,3 +1,8 @@
+### 3.9.0
+
+Support for redis 8.0.  
+Fix rate limit bug.  
+
 ### 3.8.1
 
 Fix full sync offset bug. this bug could cause losing data in reconnection  

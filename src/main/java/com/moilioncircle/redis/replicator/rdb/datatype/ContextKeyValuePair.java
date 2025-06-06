@@ -26,6 +26,7 @@ public class ContextKeyValuePair extends KeyValuePair<Void, Void> {
     
     public <K, V> KeyValuePair<K, V> valueOf(KeyValuePair<K, V> kv) {
         kv.setDb(this.getDb());
+        kv.setSlot(this.getSlot());
         kv.setEvictType(this.getEvictType());
         kv.setEvictValue(this.getEvictValue());
         kv.setExpiredType(this.getExpiredType());

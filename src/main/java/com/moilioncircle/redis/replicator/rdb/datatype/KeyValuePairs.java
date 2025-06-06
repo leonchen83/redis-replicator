@@ -180,6 +180,7 @@ public class KeyValuePairs {
     private static void copy(KeyValuePair<byte[], ?> source, KeyValuePair<byte[], ?> target) {
         target.setContext(source.getContext());
         target.setDb(source.getDb());
+        target.setSlot(source.getSlot());
         target.setExpiredType(source.getExpiredType());
         target.setExpiredValue(source.getExpiredValue());
         target.setEvictType(source.getEvictType());
@@ -191,6 +192,7 @@ public class KeyValuePairs {
     private static void copy(KeyValuePair<byte[], ?> source, BatchedKeyValuePair<byte[], ?> target, int batch, boolean last) {
         target.setContext(source.getContext());
         target.setDb(source.getDb());
+        target.setSlot(source.getSlot());
         target.setExpiredType(source.getExpiredType());
         target.setExpiredValue(source.getExpiredValue());
         target.setEvictType(source.getEvictType());

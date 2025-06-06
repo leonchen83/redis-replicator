@@ -69,6 +69,7 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueZSet;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
+import com.moilioncircle.redis.replicator.rdb.datatype.Slot;
 import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
@@ -150,6 +151,15 @@ public class DefaultRdbVisitor extends RdbVisitor {
         if (db != null) db.setDbsize(dbsize);
         if (db != null) db.setExpires(expiresSize);
         return db;
+    }
+    
+    @Override
+    public Slot applySlotInfo(RedisInputStream in, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        long slotId = parser.rdbLoadLen().len;
+        long slotSize = parser.rdbLoadLen().len;
+        long expiresSlotSize = parser.rdbLoadLen().len;
+        return new Slot(slotId, slotSize, expiresSlotSize);
     }
 
     @Override

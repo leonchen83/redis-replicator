@@ -27,6 +27,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_MODULE_AUX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SLOT_INFO;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
@@ -65,6 +66,7 @@ import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.DB;
+import com.moilioncircle.redis.replicator.rdb.datatype.Slot;
 
 /**
  * Redis RDB format
@@ -177,6 +179,7 @@ public class RdbParser {
         int version = rdbVisitor.applyVersion(in);
         offset += in.unmark();
         DB db = null;
+        Slot slot = null;
         /*
          * rdb
          */
@@ -187,6 +190,7 @@ public class RdbParser {
             int type = rdbVisitor.applyType(in);
             ContextKeyValuePair kv = new ContextKeyValuePair();
             kv.setDb(db);
+            kv.setSlot(slot);
             switch (type) {
                 case RDB_OPCODE_EXPIRETIME:
                     event = rdbVisitor.applyExpireTime(in, version, kv);
@@ -217,6 +221,9 @@ public class RdbParser {
                     break;
                 case RDB_OPCODE_SELECTDB:
                     db = rdbVisitor.applySelectDB(in, version);
+                    break;
+                case RDB_OPCODE_SLOT_INFO:
+                    slot = rdbVisitor.applySlotInfo(in, version);
                     break;
                 case RDB_OPCODE_EOF:
                     long checksum = rdbVisitor.applyEof(in, version);

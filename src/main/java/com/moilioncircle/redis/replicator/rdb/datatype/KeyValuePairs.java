@@ -64,6 +64,13 @@ public class KeyValuePairs {
         kv.setValue(value);
         return kv;
     }
+    
+    public static KeyValuePair<byte[], Map<byte[], ExpirableValue>> metaHash(KeyValuePair<byte[], ?> raw, Map<byte[], ExpirableValue> value) {
+        KeyStringValueExpirableHash kv = new KeyStringValueExpirableHash();
+        copy(raw, kv);
+        kv.setValue(value);
+        return kv;
+    }
 
     public static KeyValuePair<byte[], List<byte[]>> list(KeyValuePair<byte[], ?> raw, List<byte[]> value) {
         KeyStringValueList kv = new KeyStringValueList();

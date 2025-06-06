@@ -93,11 +93,13 @@ public class RdbParser {
     /**
      * The RDB E-BNF
      * <p>
-     * RDB        =    'REDIS', $version, [AUX], [MODULE_AUX], [FUNCTION], {SELECTDB, [RESIZEDB], {RECORD}}, '0xFF', [$checksum];
+     * RDB        =    'REDIS', $version, [AUX], [MODULE_AUX], [FUNCTION], {SELECTDB, [RESIZEDB],[SLOTINFO] {RECORD}}, '0xFF', [$checksum];
      * <p>
      * RECORD     =    [EXPIRED], [IDLE | FREQ], KEY, VALUE;
      * <p>
      * SELECTDB   =    '0xFE', $length;
+     * <p>
+     * SLOTINFO   =    '0xF4', $length, $length, $length; (*Introduced in rdb version 12*)
      * <p>
      * AUX        =    {'0xFA', $string, $string};            (*Introduced in rdb version 7*)
      * <p>

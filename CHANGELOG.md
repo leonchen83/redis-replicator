@@ -11,9 +11,7 @@ Support for java 21.
 ### 3.8.0
 
 Support for redis 7.2-RC2.  
-Support for rdb v11.  
-
-### 3.6.5
+Support for rdb v11.
 
 ### 3.7.0
 

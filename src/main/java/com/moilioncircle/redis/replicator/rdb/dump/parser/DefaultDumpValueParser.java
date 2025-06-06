@@ -20,6 +20,8 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
@@ -146,6 +148,12 @@ public class DefaultDumpValueParser implements DumpValueParser {
                     return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks2(in, 0));
                 case RDB_TYPE_STREAM_LISTPACKS_3:
                     return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks3(in, 0));
+                case RDB_TYPE_HASH_LISTPACK_EX:
+                    // TODO
+                    return KeyValuePairs.hash(kv, valueVisitor.applyHashListPackEx(in, 0));
+                case RDB_TYPE_HASH_METADATA:
+                    // TODO
+                    return KeyValuePairs.hash(kv, valueVisitor.applyHashMetadata(in, 0));
                 default:
                     throw new AssertionError("unexpected value type:" + valueType);
             }

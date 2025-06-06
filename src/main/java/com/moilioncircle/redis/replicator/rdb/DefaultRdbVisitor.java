@@ -20,6 +20,8 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
@@ -39,6 +41,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
+import static com.moilioncircle.redis.replicator.Constants.RDB_VERSION;
 import static java.lang.Integer.parseInt;
 
 import java.io.IOException;
@@ -105,7 +108,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
     @Override
     public int applyVersion(RedisInputStream in) throws IOException {
         int version = parseInt(BaseRdbParser.StringHelper.str(in, 4));
-        if (version < 2 || version > 11) {
+        if (version < 2 || version > RDB_VERSION) {
             throw new UnsupportedOperationException(String.valueOf("can't handle RDB format version " + version));
         }
         return version;
@@ -545,6 +548,20 @@ public class DefaultRdbVisitor extends RdbVisitor {
         o21.setKey(key);
         return context.valueOf(o21);
     }
+    
+    @Override
+    @SuppressWarnings("resource")
+    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
+        // TODO
+        return null;
+    }
+    
+    @Override
+    @SuppressWarnings("resource")
+    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        // TODO
+        return null;
+    }
 
     protected ModuleParser<? extends Module> lookupModuleParser(String moduleName, int moduleVersion) {
         return replicator.getModuleParser(moduleName, moduleVersion);
@@ -602,6 +619,10 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?, ?>) applyStreamListPacks2(in, version, context);
             case RDB_TYPE_STREAM_LISTPACKS_3:
                 return (KeyValuePair<?, ?>) applyStreamListPacks3(in, version, context);
+            case RDB_TYPE_HASH_LISTPACK_EX:
+                return (KeyValuePair<?, ?>) applyHashListPackEx(in, version, context);
+            case RDB_TYPE_HASH_METADATA:
+                return (KeyValuePair<?, ?>) applyHashMetadata(in, version, context);
             default:
                 throw new AssertionError("unexpected value type:" + valueType);
         }

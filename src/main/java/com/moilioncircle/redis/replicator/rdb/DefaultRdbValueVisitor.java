@@ -674,4 +674,16 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
     
         return (T) stream;
     }
+    
+    @Override
+    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
+        // TODO
+        return null;
+    }
+    
+    @Override
+    public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 }

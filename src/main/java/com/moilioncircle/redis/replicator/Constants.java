@@ -31,6 +31,8 @@ public class Constants {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'
     };
     
+    public static final int RDB_VERSION = 12;
+    
     /**
      * len type
      */
@@ -58,6 +60,7 @@ public class Constants {
     /**
      * rdb protocol
      */
+    public static final int RDB_OPCODE_SLOT_INFO = 244; /* Individual slot info, such as slot id and size (cluster mode only). */
     public static final int RDB_OPCODE_FUNCTION = 246;
     public static final int RDB_OPCODE_FUNCTION2 = 245;
     public static final int RDB_OPCODE_MODULE_AUX = 247;
@@ -94,7 +97,9 @@ public class Constants {
     public static final int RDB_TYPE_STREAM_LISTPACKS_2 = 19;
     public static final int RDB_TYPE_SET_LISTPACK = 20; /* since redis 7.2 */
     public static final int RDB_TYPE_STREAM_LISTPACKS_3 = 21; /* since redis 7.2 */
-
+    public static final int RDB_TYPE_HASH_METADATA = 24; /* since redis 7.4 */
+    public static final int RDB_TYPE_HASH_LISTPACK_EX = 25; /* since redis 7.4 */
+    
     /**
      * Module serialized values sub opcodes
      */

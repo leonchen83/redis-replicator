@@ -66,6 +66,8 @@ public class ScanRdbGenerator {
         VERSIONS.put("6.2", 9);
         VERSIONS.put("7.0", 10);
         VERSIONS.put("7.2", 11);
+        VERSIONS.put("7.4", 12);
+        VERSIONS.put("8.0", 12);
     }
     
     public ScanRdbGenerator(String host, int port, Configuration configuration, OutputStream out) {

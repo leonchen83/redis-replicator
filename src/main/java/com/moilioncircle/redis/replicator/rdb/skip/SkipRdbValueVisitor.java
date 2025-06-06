@@ -343,4 +343,16 @@ public class SkipRdbValueVisitor extends DefaultRdbValueVisitor {
         }
         return null;
     }
+    
+    @Override
+    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
+        // TODO
+        return null;
+    }
+    
+    @Override
+    public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 }

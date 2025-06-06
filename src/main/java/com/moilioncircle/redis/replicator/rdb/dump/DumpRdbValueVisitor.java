@@ -857,4 +857,16 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             return (T) listener.getBytes();
         }
     }
+    
+    @Override
+    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
+        // TODO
+        return null;
+    }
+    
+    @Override
+    public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 }

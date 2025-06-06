@@ -361,4 +361,16 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o21.setValue(valueVisitor.applyStreamListPacks3(in, version));
         return context.valueOf(o21);
     }
+    
+    @Override
+    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
+        // TODO
+        return null;
+    }
+    
+    @Override
+    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        // TODO
+        return null;
+    }
 }

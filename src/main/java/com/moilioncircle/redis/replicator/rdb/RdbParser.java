@@ -29,6 +29,8 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
@@ -152,6 +154,10 @@ public class RdbParser {
      * | $streamlistpacks2);      (*Introduced in rdb version 10*)
      * <p>
      * | $streamlistpacks3);      (*Introduced in rdb version 11*)
+     * <p>
+     * | $hashlistpackex);      (*Introduced in rdb version 12*)
+     * <p>
+     * | $hashmetadata);      (*Introduced in rdb version 12*)
      * <p>
      * @return read bytes
      * @throws IOException when read timeout
@@ -280,6 +286,12 @@ public class RdbParser {
                     break;
                 case RDB_TYPE_STREAM_LISTPACKS_3:
                     event = rdbVisitor.applyStreamListPacks3(in, version, kv);
+                    break;
+                case RDB_TYPE_HASH_METADATA:
+                    event = rdbVisitor.applyHashMetadata(in, version, kv);
+                    break;
+                case RDB_TYPE_HASH_LISTPACK_EX:
+                    event = rdbVisitor.applyHashListPackEx(in, version, kv);
                     break;
                 default:
                     throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");

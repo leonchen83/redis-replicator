@@ -242,4 +242,16 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
         o18.setValue(valueVisitor.applyListQuickList2(in, version));
         return context.valueOf(o18);
     }
+    
+    @Override
+    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
+        // TODO
+        return null;
+    }
+    
+    @Override
+    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        // TODO
+        return null;
+    }
 }

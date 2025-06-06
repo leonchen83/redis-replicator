@@ -509,6 +509,18 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
         Iterator<byte[]> val = new QuickList2Iter(len, parser);
         return (T) val;
     }
+    
+    @Override
+    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
+        // TODO
+        return null;
+    }
+    
+    @Override
+    public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
+        // TODO
+        return null;
+    }
 
     private static abstract class Iter<T> implements Iterator<T> {
 

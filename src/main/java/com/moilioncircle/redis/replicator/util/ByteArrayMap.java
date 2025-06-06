@@ -132,7 +132,7 @@ public class ByteArrayMap implements Map<byte[], byte[]>, Serializable {
         return new EntrySet();
     }
     
-    private static final class Element implements Serializable {
+    static final class Element implements Serializable {
         private static final long serialVersionUID = 1L;
     
         final byte[] bytes;

@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.moilioncircle.redis.replicator.rdb.datatype.ExpirableValue;
+import static com.moilioncircle.redis.replicator.util.ByteArrayMap.Element;
 
 /**
  * @author Leon Chen
@@ -138,29 +139,6 @@ public class ByteArrayExpirableMap implements Map<byte[], ExpirableValue>, Seria
     @Override
     public Set<Entry<byte[], ExpirableValue>> entrySet() {
         return new EntrySet();
-    }
-    
-    private static final class Element implements Serializable {
-        private static final long serialVersionUID = 1L;
-    
-        final byte[] bytes;
-    
-        Element(byte[] bytes) {
-            this.bytes = bytes;
-        }
-        
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Element key = (Element) o;
-            return Arrays.equals(bytes, key.bytes);
-        }
-        
-        @Override
-        public int hashCode() {
-            return Arrays.hashCode(bytes);
-        }
     }
     
     private final class EntrySet extends AbstractSet<Entry<byte[], ExpirableValue>> {

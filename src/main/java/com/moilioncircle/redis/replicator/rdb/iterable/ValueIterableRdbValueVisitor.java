@@ -567,7 +567,7 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
                     condition--;
                     byte[] value = listPackEntry(listPack);
                     condition--;
-                    long ttl = Long.parseLong(new String(listPackEntry(listPack)));
+                    long ttl = Long.parseLong(Strings.toString(listPackEntry(listPack)));
                     condition--;
                     return new AbstractMap.SimpleEntry<>(field, new TTLValue(ttl != 0 ? ttl : null, value));
                 } catch (IOException e) {

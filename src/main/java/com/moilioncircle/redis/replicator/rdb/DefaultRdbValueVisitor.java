@@ -471,7 +471,7 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
             len--;
             byte[] value = listPackEntry(listPack);
             len--;
-            long ttl = Long.parseLong(new String(listPackEntry(listPack)));
+            long ttl = Long.parseLong(Strings.toString(listPackEntry(listPack)));
             len--;
             map.put(field, new TTLValue(ttl != 0 ? ttl : null, value));
         }

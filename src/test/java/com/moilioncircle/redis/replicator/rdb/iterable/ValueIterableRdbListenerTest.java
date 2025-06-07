@@ -34,6 +34,7 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyString
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueSet;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueStream;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueString;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueTTLHash;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueZSet;
 
 /**
@@ -219,5 +220,26 @@ public class ValueIterableRdbListenerTest {
             fail();
         }
         assertEquals(2, set.get());
+    }
+    
+    @Test
+    public void test7() {
+        final AtomicInteger set = new AtomicInteger(0);
+        Replicator r = new RedisReplicator(ValueIterableRdbListenerTest.class.getClassLoader().getResourceAsStream("dump-ttlhash.rdb"), FileType.RDB, Configuration.defaultSetting());
+        r.setRdbVisitor(new ValueIterableRdbVisitor(r));
+        r.addEventListener(new ValueIterableEventListener(2, new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof BatchedKeyStringValueTTLHash) {
+                    set.incrementAndGet();
+                }
+            }
+        }));
+        try {
+            r.open();
+        } catch (Exception e) {
+            fail();
+        }
+        assertEquals(578, set.get());
     }
 }

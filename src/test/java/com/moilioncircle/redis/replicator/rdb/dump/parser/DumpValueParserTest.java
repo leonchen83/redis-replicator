@@ -43,6 +43,7 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyString
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueSet;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueString;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueTTLHash;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueZSet;
 import com.moilioncircle.redis.replicator.util.Strings;
 
@@ -139,5 +140,35 @@ public class DumpValueParserTest {
         TestCase.assertEquals(5, list.get());
         TestCase.assertEquals(5, set.get());
         TestCase.assertEquals(5, zset.get());
+    }
+    
+    @Test
+    public void test2() {
+        final AtomicInteger ttlhash = new AtomicInteger(0);
+        int batch = 2;
+        Replicator r = new RedisReplicator(DumpRdbVisitorTest.class.getClassLoader().getResourceAsStream("dump-ttlhash.rdb"), FileType.RDB, Configuration.defaultSetting());
+        
+        r.setRdbVisitor(new DumpRdbVisitor(r));
+        r.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof DumpKeyValuePair) {
+                    DumpKeyValuePair dkv = (DumpKeyValuePair) event;
+                    DumpValueParser parser = new IterableDumpValueParser(batch, replicator);
+                    parser.parse(dkv, this);
+                } else if (event instanceof KeyValuePair) {
+                    if (event instanceof BatchedKeyStringValueTTLHash) {
+                        ttlhash.incrementAndGet();
+                    }
+                }
+            }
+        });
+        try {
+            r.open();
+        } catch (Exception e) {
+            fail();
+        }
+        // 1024/2 + 128/2 + 3/2 + 1 = 512 + 64 + 2
+        TestCase.assertEquals(578, ttlhash.get());
     }
 }

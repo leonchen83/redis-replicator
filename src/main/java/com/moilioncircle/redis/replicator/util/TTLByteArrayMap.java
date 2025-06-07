@@ -86,7 +86,7 @@ public class TTLByteArrayMap implements Map<byte[], TTLValue>, Serializable {
     @Override
     public boolean containsValue(Object value) {
         if (value != null && !(value instanceof TTLValue)) return false;
-        return map.containsValue(new TTLValue((byte[]) value));
+        return map.containsValue(value);
     }
     
     @Override

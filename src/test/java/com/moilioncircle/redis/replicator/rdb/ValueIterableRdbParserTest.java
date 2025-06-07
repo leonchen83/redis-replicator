@@ -34,12 +34,15 @@ import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueTTLHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueZSet;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.TTLValue;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueTTLMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
 
 /**
@@ -59,7 +62,8 @@ public class ValueIterableRdbParserTest {
                 "regular_sorted_set.rdb", "sorted_set_as_ziplist.rdb", "uncompressible_string_keys.rdb",
                 "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
                 "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
-                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb", "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "binarydump.rdb", "module.rdb", "dumpV11.rdb"};
+                "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb", "rdb_version_8_with_64b_length_and_scores.rdb", 
+                "non_ascii_values.rdb", "binarydump.rdb", "module.rdb", "dumpV11.rdb", "dump-ttlhash.rdb"};
         for (String f : resources) {
             assertEquals(testFile(f), testFile1(f));
         }
@@ -95,7 +99,14 @@ public class ValueIterableRdbParserTest {
                         it.next();
                         acc.incrementAndGet();
                     }
-                } else {
+                } else if (event instanceof KeyStringValueTTLMapEntryIterator) {
+                    KeyStringValueTTLMapEntryIterator kv1 = (KeyStringValueTTLMapEntryIterator) event;
+                    Iterator<Map.Entry<byte[], TTLValue>> it = kv1.getValue();
+                    while (it.hasNext()) {
+                        it.next();
+                        acc.incrementAndGet();
+                    }
+                }else {
                     acc.incrementAndGet();
                 }
             }
@@ -136,6 +147,11 @@ public class ValueIterableRdbParserTest {
                 } else if (event instanceof KeyStringValueZSet) {
                     KeyStringValueZSet kv1 = (KeyStringValueZSet) event;
                     for (ZSetEntry entry : kv1.getValue()) {
+                        acc.incrementAndGet();
+                    }
+                } else if (event instanceof KeyStringValueTTLHash) {
+                    KeyStringValueTTLHash kv1 = (KeyStringValueTTLHash) event;
+                    for (Map.Entry<byte[], TTLValue> entry : kv1.getValue().entrySet()) {
                         acc.incrementAndGet();
                     }
                 } else {

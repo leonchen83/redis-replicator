@@ -115,7 +115,7 @@ public class DumpRdbVisitorTest {
                 "ziplist_that_compresses_easily.rdb", "ziplist_that_doesnt_compress.rdb",
                 "ziplist_with_integers.rdb", "zipmap_that_compresses_easily.rdb",
                 "zipmap_that_doesnt_compress.rdb", "zipmap_with_big_values.rdb",
-                "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "dump-stream.rdb", "dump-module-2.rdb", "dumpV10.rdb", "dumpV11.rdb"};
+                "rdb_version_8_with_64b_length_and_scores.rdb", "non_ascii_values.rdb", "dump-stream.rdb", "dump-module-2.rdb", "dumpV10.rdb", "dumpV11.rdb", "dump-ttlhash.rdb", "dump-slot.rdb"};
         for (String resource : resources) {
             template(resource);
         }

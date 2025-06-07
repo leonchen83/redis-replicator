@@ -495,7 +495,6 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
     
     @Override
-    @SuppressWarnings("resource")
     public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], Map<byte[], TTLValue>> o24 = new KeyStringValueTTLHash();
@@ -509,7 +508,6 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
     
     @Override
-    @SuppressWarnings("resource")
     public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], Map<byte[], TTLValue>> o25 = new KeyStringValueTTLHash();

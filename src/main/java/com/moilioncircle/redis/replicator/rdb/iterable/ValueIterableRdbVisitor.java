@@ -18,6 +18,8 @@ package com.moilioncircle.redis.replicator.rdb.iterable;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
@@ -43,11 +45,15 @@ import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.RdbValueVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueTTLHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
+import com.moilioncircle.redis.replicator.rdb.datatype.TTLValue;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueTTLMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
+import com.moilioncircle.redis.replicator.util.TTLByteArrayMap;
 
 /**
  * @author Leon Chen
@@ -245,13 +251,25 @@ public class ValueIterableRdbVisitor extends DefaultRdbVisitor {
     
     @Override
     public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Iterator<Map.Entry<byte[], TTLValue>>> o24 = new KeyStringValueTTLMapEntryIterator();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        o24.setValueRdbType(RDB_TYPE_HASH_METADATA);
+        o24.setKey(key);
+        o24.setValue(valueVisitor.applyHashMetadata(in, version));
+        return context.valueOf(o24);
     }
     
     @Override
     public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Iterator<Map.Entry<byte[], TTLValue>>> o25 = new KeyStringValueTTLMapEntryIterator();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        o25.setValueRdbType(RDB_TYPE_HASH_LISTPACK_EX);
+        o25.setKey(key);
+        o25.setValue(valueVisitor.applyHashListPackEx(in, version));
+        return context.valueOf(o25);
     }
 }

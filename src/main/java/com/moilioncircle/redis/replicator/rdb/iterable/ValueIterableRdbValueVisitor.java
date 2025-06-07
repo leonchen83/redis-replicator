@@ -31,6 +31,7 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbValueVisitor;
+import com.moilioncircle.redis.replicator.rdb.datatype.TTLValue;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.util.ByteArray;
 import com.moilioncircle.redis.replicator.util.Strings;
@@ -512,14 +513,69 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
     
     @Override
     public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+        long minExpire = parser.rdbLoadMillisecondTime();
+        long len = parser.rdbLoadLen().len;
+        Iterator<Map.Entry<byte[], TTLValue>> val = new Iter<Map.Entry<byte[], TTLValue>>(len, parser) {
+            @Override
+            public boolean hasNext() {
+                return condition > 0;
+            }
+            
+            @Override
+            public Map.Entry<byte[], TTLValue> next() {
+                try {
+                    long ttl = parser.rdbLoadLen().len;
+                    byte[] field = parser.rdbLoadEncodedStringObject().first();
+                    byte[] value = parser.rdbLoadEncodedStringObject().first();
+                    condition--;
+                    return new AbstractMap.SimpleEntry<>(field, new TTLValue(ttl != 0 ? ttl + minExpire - 1 : null, value));
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        };
+        return (T) val;
     }
     
     @Override
     public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
+        BaseRdbParser parser = new BaseRdbParser(in);
+        long minExpire = parser.rdbLoadMillisecondTime();
+        RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+        listPack.skip(4); // total-bytes
+        int len = listPack.readInt(2);
+        Iterator<Map.Entry<byte[], TTLValue>> val = new Iter<Map.Entry<byte[], TTLValue>>(len, null) {
+            @Override
+            public boolean hasNext() {
+                if (condition > 0) return true;
+                try {
+                    int lpend = listPack.read();
+                    if (lpend != 255) {
+                        throw new AssertionError("listpack expect 255 but " + lpend);
+                    }
+                    return false;
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+            
+            @Override
+            public Map.Entry<byte[], TTLValue> next() {
+                try {
+                    byte[] field = listPackEntry(listPack);
+                    condition--;
+                    byte[] value = listPackEntry(listPack);
+                    condition--;
+                    long ttl = Long.parseLong(new String(listPackEntry(listPack)));
+                    condition--;
+                    return new AbstractMap.SimpleEntry<>(field, new TTLValue(ttl != 0 ? ttl : null, value));
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        };
+        return (T) val;
     }
 
     private static abstract class Iter<T> implements Iterator<T> {

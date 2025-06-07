@@ -47,7 +47,7 @@ public class TTLByteArrayMapTest {
     @Test
     public void test() {
         Map<byte[], TTLValue> m = new LinkedHashMap<>();
-        m.put(new byte[]{1, 2, 3}, new TTLValue(new byte[]{4, 5, 6}));
+        m.put(new byte[]{1, 2, 3}, new TTLValue(System.currentTimeMillis(), new byte[]{4, 5, 6}));
         m.put(null, new TTLValue(new byte[]{4}));
         m.put(new byte[]{4, 5, 6}, null);
         TTLByteArrayMap bytes = new TTLByteArrayMap(m);

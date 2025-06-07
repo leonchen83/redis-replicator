@@ -19,7 +19,7 @@ package com.moilioncircle.redis.replicator.rdb.iterable.datatype;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.moilioncircle.redis.replicator.rdb.datatype.ExpirableValue;
+import com.moilioncircle.redis.replicator.rdb.datatype.TTLValue;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 
 /**
@@ -28,6 +28,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
  * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
  * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
-public class KeyStringValueExpirableMapEntryIterator extends KeyValuePair<byte[], Iterator<Map.Entry<byte[], ExpirableValue>>> {
+public class KeyStringValueTTLMapEntryIterator extends KeyValuePair<byte[], Iterator<Map.Entry<byte[], TTLValue>>> {
     private static final long serialVersionUID = 1L;
 }

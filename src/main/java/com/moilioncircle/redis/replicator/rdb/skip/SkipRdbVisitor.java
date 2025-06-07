@@ -264,6 +264,22 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
     }
     
     @Override
+    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        valueVisitor.applyHashMetadata(in, version);
+        return null;
+    }
+    
+    @Override
+    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        valueVisitor.applyHashListPackEx(in, version);
+        return null;
+    }
+    
+    @Override
     public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
@@ -300,18 +316,6 @@ public class SkipRdbVisitor extends DefaultRdbVisitor {
         SkipRdbParser parser = new SkipRdbParser(in);
         parser.rdbLoadEncodedStringObject();
         valueVisitor.applyStreamListPacks3(in, version);
-        return null;
-    }
-    
-    @Override
-    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
-        // TODO
-        return null;
-    }
-    
-    @Override
-    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
-        // TODO
         return null;
     }
 }

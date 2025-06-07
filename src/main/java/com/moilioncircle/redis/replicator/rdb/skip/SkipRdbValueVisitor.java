@@ -200,6 +200,28 @@ public class SkipRdbValueVisitor extends DefaultRdbValueVisitor {
     }
     
     @Override
+    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
+        SkipRdbParser skip = new SkipRdbParser(in);
+        skip.rdbLoadMillisecondTime();
+        long len = skip.rdbLoadLen().len;
+        while (len > 0) {
+            skip.rdbLoadLen();
+            skip.rdbLoadEncodedStringObject();
+            skip.rdbLoadEncodedStringObject();
+            len--;
+        }
+        return null;
+    }
+    
+    @Override
+    public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
+        SkipRdbParser skip = new SkipRdbParser(in);
+        skip.rdbLoadMillisecondTime();
+        skip.rdbLoadPlainStringObject();
+        return null;
+    }
+    
+    @Override
     public <T> T applyModule(RedisInputStream in, int version) throws IOException {
         SkipRdbParser skip = new SkipRdbParser(in);
         char[] c = new char[9];
@@ -341,18 +363,6 @@ public class SkipRdbValueVisitor extends DefaultRdbValueVisitor {
                 }
             }
         }
-        return null;
-    }
-    
-    @Override
-    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
-        // TODO
-        return null;
-    }
-    
-    @Override
-    public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
-        // TODO
         return null;
     }
 }

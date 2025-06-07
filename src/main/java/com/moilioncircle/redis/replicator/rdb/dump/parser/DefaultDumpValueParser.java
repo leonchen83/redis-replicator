@@ -149,9 +149,9 @@ public class DefaultDumpValueParser implements DumpValueParser {
                 case RDB_TYPE_STREAM_LISTPACKS_3:
                     return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks3(in, 0));
                 case RDB_TYPE_HASH_LISTPACK_EX:
-                    return KeyValuePairs.metaHash(kv, valueVisitor.applyHashListPackEx(in, 0));
+                    return KeyValuePairs.ttlHash(kv, valueVisitor.applyHashListPackEx(in, 0));
                 case RDB_TYPE_HASH_METADATA:
-                    return KeyValuePairs.metaHash(kv, valueVisitor.applyHashMetadata(in, 0));
+                    return KeyValuePairs.ttlHash(kv, valueVisitor.applyHashMetadata(in, 0));
                 default:
                     throw new AssertionError("unexpected value type:" + valueType);
             }

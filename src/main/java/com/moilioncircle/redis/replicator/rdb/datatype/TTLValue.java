@@ -25,17 +25,21 @@ import com.moilioncircle.redis.replicator.util.Strings;
  * @author Leon Chen
  * @since 3.9.0
  */
-public class ExpirableValue implements Serializable {
+public class TTLValue implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
     private Long expires;
     private byte[] value;
 
-    public ExpirableValue() {
+    public TTLValue() {
+    }
+    
+    public TTLValue(byte[] value) {
+        this(null, value);
     }
 
-    public ExpirableValue(Long expires, byte[] value) {
+    public TTLValue(Long expires, byte[] value) {
         this.expires = expires;
         this.value = value;
     }
@@ -60,7 +64,7 @@ public class ExpirableValue implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ExpirableValue that = (ExpirableValue) o;
+        TTLValue that = (TTLValue) o;
         return Arrays.equals(value, that.value);
     }
     

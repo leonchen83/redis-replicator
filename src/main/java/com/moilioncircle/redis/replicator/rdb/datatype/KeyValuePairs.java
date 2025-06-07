@@ -16,7 +16,7 @@
 
 package com.moilioncircle.redis.replicator.rdb.datatype;
 
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueExpirableHash;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueTTLHash;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueHash;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueList;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueModule;
@@ -26,7 +26,7 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyString
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyStringValueZSet;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.BatchedKeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueByteArrayIterator;
-import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueExpirableMapEntryIterator;
+import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueTTLMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
 
@@ -65,8 +65,8 @@ public class KeyValuePairs {
         return kv;
     }
     
-    public static KeyValuePair<byte[], Map<byte[], ExpirableValue>> metaHash(KeyValuePair<byte[], ?> raw, Map<byte[], ExpirableValue> value) {
-        KeyStringValueExpirableHash kv = new KeyStringValueExpirableHash();
+    public static KeyValuePair<byte[], Map<byte[], TTLValue>> ttlHash(KeyValuePair<byte[], ?> raw, Map<byte[], TTLValue> value) {
+        KeyStringValueTTLHash kv = new KeyStringValueTTLHash();
         copy(raw, kv);
         kv.setValue(value);
         return kv;
@@ -110,8 +110,8 @@ public class KeyValuePairs {
         return kv;
     }
     
-    public static KeyStringValueExpirableMapEntryIterator iterMetaHash(KeyValuePair<byte[], ?> raw, Iterator<Map.Entry<byte[], ExpirableValue>> value) {
-        KeyStringValueExpirableMapEntryIterator kv = new KeyStringValueExpirableMapEntryIterator();
+    public static KeyStringValueTTLMapEntryIterator iterTTLHash(KeyValuePair<byte[], ?> raw, Iterator<Map.Entry<byte[], TTLValue>> value) {
+        KeyStringValueTTLMapEntryIterator kv = new KeyStringValueTTLMapEntryIterator();
         copy(raw, kv);
         kv.setValue(value);
         return kv;
@@ -162,8 +162,8 @@ public class KeyValuePairs {
         return kv;
     }
     
-    public static BatchedKeyStringValueExpirableHash metaHash(KeyValuePair<byte[], ?> raw, Map<byte[], ExpirableValue> value, int batch, boolean last) {
-        BatchedKeyStringValueExpirableHash kv = new BatchedKeyStringValueExpirableHash();
+    public static BatchedKeyStringValueTTLHash ttlHash(KeyValuePair<byte[], ?> raw, Map<byte[], TTLValue> value, int batch, boolean last) {
+        BatchedKeyStringValueTTLHash kv = new BatchedKeyStringValueTTLHash();
         copy(raw, kv, batch, last);
         kv.setValue(value);
         return kv;

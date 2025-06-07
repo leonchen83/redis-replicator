@@ -66,16 +66,19 @@ import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueModule;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueSet;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueString;
+import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueTTLHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueZSet;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.datatype.Slot;
 import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
+import com.moilioncircle.redis.replicator.rdb.datatype.TTLValue;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
 import com.moilioncircle.redis.replicator.rdb.skip.SkipRdbParser;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
 import com.moilioncircle.redis.replicator.util.Strings;
+import com.moilioncircle.redis.replicator.util.TTLByteArrayMap;
 
 /**
  * @author Leon Chen
@@ -492,6 +495,34 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
     
     @Override
+    @SuppressWarnings("resource")
+    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Map<byte[], TTLValue>> o24 = new KeyStringValueTTLHash();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        TTLByteArrayMap map = valueVisitor.applyHashMetadata(in, version);
+        o24.setValueRdbType(RDB_TYPE_HASH_METADATA);
+        o24.setValue(map);
+        o24.setKey(key);
+        return context.valueOf(o24);
+    }
+    
+    @Override
+    @SuppressWarnings("resource")
+    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Map<byte[], TTLValue>> o25 = new KeyStringValueTTLHash();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        
+        TTLByteArrayMap map = valueVisitor.applyHashListPackEx(in, version);
+        o25.setValueRdbType(RDB_TYPE_HASH_LISTPACK_EX);
+        o25.setValue(map);
+        o25.setKey(key);
+        return context.valueOf(o25);
+    }
+    
+    @Override
     public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], Module> o6 = new KeyStringValueModule();
@@ -559,20 +590,6 @@ public class DefaultRdbVisitor extends RdbVisitor {
         return context.valueOf(o21);
     }
     
-    @Override
-    @SuppressWarnings("resource")
-    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
-        // TODO
-        return null;
-    }
-    
-    @Override
-    @SuppressWarnings("resource")
-    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
-        // TODO
-        return null;
-    }
-
     protected ModuleParser<? extends Module> lookupModuleParser(String moduleName, int moduleVersion) {
         return replicator.getModuleParser(moduleName, moduleVersion);
     }

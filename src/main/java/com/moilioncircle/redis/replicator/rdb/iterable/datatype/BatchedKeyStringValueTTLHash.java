@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Leon Chen
+ * Copyright 2016-2018 Leon Chen
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.rdb.datatype;
+package com.moilioncircle.redis.replicator.rdb.iterable.datatype;
 
 import java.util.Map;
+
+import com.moilioncircle.redis.replicator.rdb.datatype.TTLValue;
 
 /**
  * @author Leon Chen
  * @since 3.9.0
- * @see com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableRdbVisitor
+ * @see com.moilioncircle.redis.replicator.rdb.iterable.ValueIterableEventListener
  */
-public class KeyStringValueExpirableHash extends KeyValuePair<byte[], Map<byte[], ExpirableValue>> {
-	private static final long serialVersionUID = 1L;
+public class BatchedKeyStringValueTTLHash extends BatchedKeyValuePair<byte[], Map<byte[], TTLValue>> {
+    private static final long serialVersionUID = 1L;
 }

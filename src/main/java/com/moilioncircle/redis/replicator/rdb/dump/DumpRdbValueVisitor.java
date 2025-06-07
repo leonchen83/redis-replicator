@@ -25,6 +25,8 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
@@ -558,6 +560,92 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             return (T) listener.getBytes();
         }
     }
+    
+    @Override
+    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
+        if (this.version != -1 && this.version < 12 /* since redis rdb version 12 */) {
+            // downgrade to RDB_TYPE_HASH
+            BaseRdbParser parser = new BaseRdbParser(in);
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH, version);
+            try (ByteBufferOutputStream out = new ByteBufferOutputStream(size)) {
+                parser.rdbLoadMillisecondTime(); // ignore minExpire
+                long len = parser.rdbLoadLen().len;
+                listener.handle(encoder.rdbSaveLen(len));
+                while (len > 0) {
+                    parser.rdbLoadLen(); // ignore ttl
+                    ByteArray field = parser.rdbLoadEncodedStringObject();
+                    encoder.rdbGenericSaveStringObject(field, out);
+                    ByteArray value = parser.rdbLoadEncodedStringObject();
+                    encoder.rdbGenericSaveStringObject(value, out);
+                    len--;
+                }
+                listener.handle(out.toByteBuffer());
+                return (T) listener.getBytes();
+            }
+        } else {
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_METADATA, version);
+            replicator.addRawByteListener(listener);
+            try {
+                SkipRdbParser skipParser = new SkipRdbParser(in);
+                skipParser.rdbLoadMillisecondTime();
+                long len = skipParser.rdbLoadLen().len;
+                while (len > 0) {
+                    skipParser.rdbLoadLen();
+                    skipParser.rdbLoadEncodedStringObject();
+                    skipParser.rdbLoadEncodedStringObject();
+                    len--;
+                }
+            } finally {
+                replicator.removeRawByteListener(listener);
+            }
+            return (T) listener.getBytes();
+        }
+    }
+    
+    @Override
+    public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
+        if (this.version != -1 && this.version < 12 /* since redis rdb version 12 */) {
+            // downgrade to RDB_TYPE_HASH
+            BaseRdbParser parser = new BaseRdbParser(in);
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH, version);
+            try (ByteBufferOutputStream out = new ByteBufferOutputStream(size)) {
+                parser.rdbLoadMillisecondTime(); // ignore minExpire
+                RedisInputStream listPack = new RedisInputStream(parser.rdbLoadPlainStringObject());
+                listPack.skip(4); // total-bytes
+                int len = listPack.readInt(2);
+                listener.handle(encoder.rdbSaveLen(len / 3));
+                while (len > 0) {
+                    byte[] field = listPackEntry(listPack);
+                    encoder.rdbGenericSaveStringObject(new ByteArray(field), out);
+                    len--;
+                    byte[] value = listPackEntry(listPack);
+                    encoder.rdbGenericSaveStringObject(new ByteArray(value), out);
+                    len--;
+                    listPackEntry(listPack); // ignore ttl
+                    len--;
+                }
+                int lpend = listPack.read(); // lp-end
+                if (lpend != 255) {
+                    throw new AssertionError("listpack expect 255 but " + lpend);
+                }
+                listener.handle(out.toByteBuffer());
+                return (T) listener.getBytes();
+            }
+        } else {
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_LISTPACK_EX, version);
+            replicator.addRawByteListener(listener);
+            try {
+                SkipRdbParser skipParser = new SkipRdbParser(in);
+                skipParser.rdbLoadMillisecondTime();
+                skipParser.rdbLoadPlainStringObject();
+            } finally {
+                replicator.removeRawByteListener(listener);
+            }
+            return (T) listener.getBytes();
+        }
+    }
 
     @Override
     public <T> T applyModule(RedisInputStream in, int version) throws IOException {
@@ -856,17 +944,5 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
             }
             return (T) listener.getBytes();
         }
-    }
-    
-    @Override
-    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
-        // TODO
-        return null;
-    }
-    
-    @Override
-    public <T> T applyHashListPackEx(RedisInputStream in, int version) throws IOException {
-        // TODO
-        return null;
     }
 }

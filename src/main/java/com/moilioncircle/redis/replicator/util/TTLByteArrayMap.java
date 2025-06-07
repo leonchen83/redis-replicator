@@ -33,7 +33,7 @@ import static com.moilioncircle.redis.replicator.util.ByteArrayMap.Element;
 
 /**
  * @author Leon Chen
- * @since 2.2.0
+ * @since 3.9.0
  */
 //@NonThreadSafe
 public class TTLByteArrayMap implements Map<byte[], TTLValue>, Serializable {

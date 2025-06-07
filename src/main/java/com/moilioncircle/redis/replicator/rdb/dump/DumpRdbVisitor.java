@@ -18,6 +18,8 @@ package com.moilioncircle.redis.replicator.rdb.dump;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPLIST;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_ZIPMAP;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_LIST;
@@ -295,6 +297,36 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o18.setValue(valueVisitor.applyListQuickList2(in, version));
         return context.valueOf(o18);
     }
+    
+    @Override
+    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], byte[]> o24 = new DumpKeyValuePair();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        if (this.version != -1 && this.version < 12 /* since redis rdb version 12 */) {
+            o24.setValueRdbType(RDB_TYPE_HASH);
+        } else {
+            o24.setValueRdbType(RDB_TYPE_HASH_METADATA);
+        }
+        o24.setKey(key);
+        o24.setValue(valueVisitor.applyHashMetadata(in, version));
+        return context.valueOf(o24);
+    }
+    
+    @Override
+    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], byte[]> o25 = new DumpKeyValuePair();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        if (this.version != -1 && this.version < 12 /* since redis rdb version 12 */) {
+            o25.setValueRdbType(RDB_TYPE_HASH);
+        } else {
+            o25.setValueRdbType(RDB_TYPE_HASH_LISTPACK_EX);
+        }
+        o25.setKey(key);
+        o25.setValue(valueVisitor.applyHashListPackEx(in, version));
+        return context.valueOf(o25);
+    }
 
     @Override
     public Event applyModule(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
@@ -360,17 +392,5 @@ public class DumpRdbVisitor extends DefaultRdbVisitor {
         o21.setKey(key);
         o21.setValue(valueVisitor.applyStreamListPacks3(in, version));
         return context.valueOf(o21);
-    }
-    
-    @Override
-    public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
-        // TODO
-        return null;
-    }
-    
-    @Override
-    public Event applyHashListPackEx(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
-        // TODO
-        return null;
     }
 }

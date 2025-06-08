@@ -334,7 +334,7 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("FUNCTION"), new FunctionParser());
         // since redis 7.4
         addCommandParser(CommandName.name("HSETEX"), new HSetExParser());
-        addCommandParser(CommandName.name("HPEXPIRE"), new HPExpireAtParser());
+        addCommandParser(CommandName.name("HPEXPIREAT"), new HPExpireAtParser());
         addCommandParser(CommandName.name("HPERSIST"), new HPersistParser());
     }
     

@@ -239,7 +239,7 @@ public class MigrationExample {
         r.addCommandParser(CommandName.name("FUNCTION"), new DefaultCommandParser());
         // since redis 7.4
         r.addCommandParser(CommandName.name("HSETEX"), new DefaultCommandParser());
-        r.addCommandParser(CommandName.name("HPEXPIRE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("HPEXPIREAT"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("HPERSIST"), new DefaultCommandParser());
         return r;
     }

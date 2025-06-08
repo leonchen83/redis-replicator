@@ -59,7 +59,6 @@ public class HPExpireAtParser implements CommandParser<HPExpireAtCommand> {
         
         idx += 2; // skip FIELDS numFields
         byte[][] fields = new byte[command.length - idx][];
-        System.out.println(fields.length);
         for (int i = idx, j = 0; i < command.length; i++, j++) {
             fields[j] = toBytes(command[i]);
         }

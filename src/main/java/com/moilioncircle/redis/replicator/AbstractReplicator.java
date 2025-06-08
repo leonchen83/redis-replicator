@@ -54,6 +54,9 @@ import com.moilioncircle.redis.replicator.cmd.parser.GetSetParser;
 import com.moilioncircle.redis.replicator.cmd.parser.HDelParser;
 import com.moilioncircle.redis.replicator.cmd.parser.HIncrByParser;
 import com.moilioncircle.redis.replicator.cmd.parser.HMSetParser;
+import com.moilioncircle.redis.replicator.cmd.parser.HPExpireAtParser;
+import com.moilioncircle.redis.replicator.cmd.parser.HPersistParser;
+import com.moilioncircle.redis.replicator.cmd.parser.HSetExParser;
 import com.moilioncircle.redis.replicator.cmd.parser.HSetNxParser;
 import com.moilioncircle.redis.replicator.cmd.parser.HSetParser;
 import com.moilioncircle.redis.replicator.cmd.parser.IncrByParser;
@@ -329,6 +332,10 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         // since redis 7.0
         addCommandParser(CommandName.name("SPUBLISH"), new SPublishParser());
         addCommandParser(CommandName.name("FUNCTION"), new FunctionParser());
+        // since redis 7.4
+        addCommandParser(CommandName.name("HSETEX"), new HSetExParser());
+        addCommandParser(CommandName.name("HPEXPIRE"), new HPExpireAtParser());
+        addCommandParser(CommandName.name("HPERSIST"), new HPersistParser());
     }
     
     @Override

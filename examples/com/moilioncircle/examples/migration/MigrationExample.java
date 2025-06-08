@@ -33,6 +33,9 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.CommandName;
 import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
 import com.moilioncircle.redis.replicator.cmd.parser.DefaultCommandParser;
+import com.moilioncircle.redis.replicator.cmd.parser.HPExpireAtParser;
+import com.moilioncircle.redis.replicator.cmd.parser.HPersistParser;
+import com.moilioncircle.redis.replicator.cmd.parser.HSetExParser;
 import com.moilioncircle.redis.replicator.cmd.parser.PingParser;
 import com.moilioncircle.redis.replicator.cmd.parser.ReplConfParser;
 import com.moilioncircle.redis.replicator.event.Event;
@@ -234,6 +237,10 @@ public class MigrationExample {
         // since redis 7.0
         r.addCommandParser(CommandName.name("SPUBLISH"), new DefaultCommandParser());
         r.addCommandParser(CommandName.name("FUNCTION"), new DefaultCommandParser());
+        // since redis 7.4
+        r.addCommandParser(CommandName.name("HSETEX"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("HPEXPIRE"), new DefaultCommandParser());
+        r.addCommandParser(CommandName.name("HPERSIST"), new DefaultCommandParser());
         return r;
     }
 

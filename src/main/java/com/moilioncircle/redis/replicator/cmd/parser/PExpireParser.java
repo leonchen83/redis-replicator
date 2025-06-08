@@ -17,10 +17,14 @@
 package com.moilioncircle.redis.replicator.cmd.parser;
 
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.PExpireCommand;
 
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen
@@ -33,7 +37,23 @@ public class PExpireParser implements CommandParser<PExpireCommand> {
         byte[] key = toBytes(command[idx]);
         idx++;
         long ex = toLong(command[idx++]);
-        return new PExpireCommand(key, ex);
+        
+        ExistType existType = ExistType.NONE;
+        CompareType compareType = CompareType.NONE;
+        while (idx < command.length) {
+            String param = toRune(command[idx]);
+            if (isEquals(param, "NX")) {
+                existType = ExistType.NX;
+            } else if (isEquals(param, "XX")) {
+                existType = ExistType.XX;
+            } else if (isEquals(param, "GT")) {
+                compareType = CompareType.GT;
+            } else if (isEquals(param, "LT")) {
+                compareType = CompareType.LT;
+            }
+            idx++;
+        }
+        return new PExpireCommand(key, ex, existType, compareType);
     }
 
 }

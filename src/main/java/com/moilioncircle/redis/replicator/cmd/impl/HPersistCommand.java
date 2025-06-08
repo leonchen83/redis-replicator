@@ -24,5 +24,23 @@ import com.moilioncircle.redis.replicator.cmd.CommandSpec;
  */
 @CommandSpec(command = "HPERSIST")
 public class HPersistCommand extends GenericKeyCommand {
-	// TODO
+    private static final long serialVersionUID = 1L;
+    
+    private byte[][] fields;
+    
+    public HPersistCommand() {
+    }
+    
+    public HPersistCommand(byte[] key, byte[][] fields) {
+        super(key);
+        this.fields = fields;
+    }
+    
+    public byte[][] getFields() {
+        return fields;
+    }
+    
+    public void setFields(byte[][] fields) {
+        this.fields = fields;
+    }
 }

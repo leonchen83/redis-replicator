@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.HPersistCommand;
 
@@ -27,8 +29,15 @@ public class HPersistParser implements CommandParser<HPersistCommand> {
     
     @Override
     public HPersistCommand parse(Object[] command) {
-        // TODO
-        return null;
+        int idx = 1;
+        byte[] key = toBytes(command[idx]);
+        idx++;
+        idx += 2; // skip FIELDS numFields
+        byte[][] fields = new byte[command.length - 4][];
+        for (int i = idx, j = 0; i < command.length; i++, j++) {
+            fields[j] = toBytes(command[i]);
+        }
+        return new HPersistCommand(key, fields);
     }
     
 }

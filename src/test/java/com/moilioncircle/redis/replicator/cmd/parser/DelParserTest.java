@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.DelCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.HDelCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.HPersistCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.LRemCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.SRemCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.UnLinkCommand;
@@ -46,6 +47,14 @@ public class DelParserTest extends AbstractParserTest {
         {
             HDelParser parser = new HDelParser();
             HDelCommand cmd = parser.parse(toObjectArray("hdel key f1 f2".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals("f1", cmd.getFields()[0]);
+            assertEquals("f2", cmd.getFields()[1]);
+        }
+        
+        {
+            HPersistParser parser = new HPersistParser();
+            HPersistCommand cmd = parser.parse(toObjectArray("hpersist key fields 2 f1 f2".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals("f1", cmd.getFields()[0]);
             assertEquals("f2", cmd.getFields()[1]);

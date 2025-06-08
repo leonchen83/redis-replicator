@@ -16,11 +16,15 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
-
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toInt;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
 
 /**
  * @author Leon Chen
@@ -33,7 +37,23 @@ public class ExpireParser implements CommandParser<ExpireCommand> {
         byte[] key = toBytes(command[idx]);
         idx++;
         int ex = toInt(command[idx++]);
-        return new ExpireCommand(key, ex);
+        
+        ExistType existType = ExistType.NONE;
+        CompareType compareType = CompareType.NONE;
+        while (idx < command.length) {
+            String param = toRune(command[idx]);
+            if (isEquals(param, "NX")) {
+                existType = ExistType.NX;
+            } else if (isEquals(param, "XX")) {
+                existType = ExistType.XX;
+            } else if (isEquals(param, "GT")) {
+                compareType = CompareType.GT;
+            } else if (isEquals(param, "LT")) {
+                compareType = CompareType.LT;
+            }
+            idx++;
+        }
+        return new ExpireCommand(key, ex, existType, compareType);
     }
 
 }

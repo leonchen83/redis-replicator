@@ -24,5 +24,57 @@ import com.moilioncircle.redis.replicator.cmd.CommandSpec;
  */
 @CommandSpec(command = "HPEXPIREAT")
 public class HPExpireAtCommand extends GenericKeyCommand {
-	// TODO
+	
+	private static final long serialVersionUID = 1L;
+	
+	private long ex;
+	
+	private byte[][] fields;
+	
+	private ExistType existType;
+	
+	private CompareType compareType;
+	
+	public HPExpireAtCommand() {
+	}
+	
+	public HPExpireAtCommand(byte[] key, byte[][] fields, long ex, ExistType existType, CompareType compareType) {
+		super(key);
+		this.fields = fields;
+		this.ex = ex;
+		this.existType = existType;
+		this.compareType = compareType;
+	}
+	
+	public long getEx() {
+		return ex;
+	}
+	
+	public void setEx(long ex) {
+		this.ex = ex;
+	}
+	
+	public byte[][] getFields() {
+		return fields;
+	}
+	
+	public void setFields(byte[][] fields) {
+		this.fields = fields;
+	}
+	
+	public ExistType getExistType() {
+		return existType;
+	}
+	
+	public void setExistType(ExistType existType) {
+		this.existType = existType;
+	}
+	
+	public CompareType getCompareType() {
+		return compareType;
+	}
+	
+	public void setCompareType(CompareType compareType) {
+		this.compareType = compareType;
+	}
 }

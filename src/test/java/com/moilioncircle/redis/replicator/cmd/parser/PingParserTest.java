@@ -25,8 +25,10 @@ import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.cmd.impl.AggregateType;
 import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
 import com.moilioncircle.redis.replicator.cmd.impl.EvalCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.EvalShaCommand;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.ExpireAtCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.GetSetCommand;
@@ -191,6 +193,26 @@ public class PingParserTest extends AbstractParserTest {
             ExpireAtCommand cmd = parser.parse(toObjectArray("expireat key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+            TestCase.assertEquals(CompareType.NONE, cmd.getCompareType());
+        }
+        
+        {
+            ExpireAtParser parser = new ExpireAtParser();
+            ExpireAtCommand cmd = parser.parse(toObjectArray("expireat key 5 xx".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+            TestCase.assertEquals(CompareType.NONE, cmd.getCompareType());
+        }
+        
+        {
+            ExpireAtParser parser = new ExpireAtParser();
+            ExpireAtCommand cmd = parser.parse(toObjectArray("expireat key 5 gt".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+            TestCase.assertEquals(CompareType.GT, cmd.getCompareType());
         }
     
         {
@@ -205,6 +227,26 @@ public class PingParserTest extends AbstractParserTest {
             PExpireAtCommand cmd = parser.parse(toObjectArray("pexpireat key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+            TestCase.assertEquals(CompareType.NONE, cmd.getCompareType());
+        }
+        
+        {
+            PExpireAtParser parser = new PExpireAtParser();
+            PExpireAtCommand cmd = parser.parse(toObjectArray("pexpireat key 5 nx".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.NX, cmd.getExistType());
+            TestCase.assertEquals(CompareType.NONE, cmd.getCompareType());
+        }
+        
+        {
+            PExpireAtParser parser = new PExpireAtParser();
+            PExpireAtCommand cmd = parser.parse(toObjectArray("pexpireat key 5 lt".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+            TestCase.assertEquals(CompareType.LT, cmd.getCompareType());
         }
     
         {
@@ -212,6 +254,26 @@ public class PingParserTest extends AbstractParserTest {
             PExpireCommand cmd = parser.parse(toObjectArray("pexpire key 5".split(" ")));
             assertEquals("key", cmd.getKey());
             assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+            TestCase.assertEquals(CompareType.NONE, cmd.getCompareType());
+        }
+        
+        {
+            PExpireParser parser = new PExpireParser();
+            PExpireCommand cmd = parser.parse(toObjectArray("pexpire key 5 xx".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+            TestCase.assertEquals(CompareType.NONE, cmd.getCompareType());
+        }
+        
+        {
+            PExpireParser parser = new PExpireParser();
+            PExpireCommand cmd = parser.parse(toObjectArray("pexpire key 5 lt".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(5, cmd.getEx());
+            TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+            TestCase.assertEquals(CompareType.LT, cmd.getCompareType());
         }
     
         {

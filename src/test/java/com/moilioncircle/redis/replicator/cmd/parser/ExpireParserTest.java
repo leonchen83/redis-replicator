@@ -18,7 +18,11 @@ package com.moilioncircle.redis.replicator.cmd.parser;
 
 import org.junit.Test;
 
+import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
+
+import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
@@ -27,10 +31,33 @@ import com.moilioncircle.redis.replicator.cmd.impl.ExpireCommand;
 public class ExpireParserTest extends AbstractParserTest {
     @Test
     public void parse() {
-        ExpireParser parser = new ExpireParser();
-        ExpireCommand cmd = parser.parse(toObjectArray("expire key 100".split(" ")));
-        assertEquals("key", cmd.getKey());
-        assertEquals(100, cmd.getEx());
+        {
+            ExpireParser parser = new ExpireParser();
+            ExpireCommand cmd = parser.parse(toObjectArray("expire key 100".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(100, cmd.getEx());
+            TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+            TestCase.assertEquals(CompareType.NONE, cmd.getCompareType());
+        }
+        
+        {
+            ExpireParser parser = new ExpireParser();
+            ExpireCommand cmd = parser.parse(toObjectArray("expire key 100 xx".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(100, cmd.getEx());
+            TestCase.assertEquals(ExistType.XX, cmd.getExistType());
+            TestCase.assertEquals(CompareType.NONE, cmd.getCompareType());
+        }
+        
+        {
+            ExpireParser parser = new ExpireParser();
+            ExpireCommand cmd = parser.parse(toObjectArray("expire key 100 gt".split(" ")));
+            assertEquals("key", cmd.getKey());
+            assertEquals(100, cmd.getEx());
+            TestCase.assertEquals(ExistType.NONE, cmd.getExistType());
+            TestCase.assertEquals(CompareType.GT, cmd.getCompareType());
+        }
+        
     }
 
 }

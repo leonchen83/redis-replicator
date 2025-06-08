@@ -28,6 +28,10 @@ public class ExpireAtCommand extends GenericKeyCommand {
     private static final long serialVersionUID = 1L;
 
     private long ex;
+    
+    private ExistType existType;
+    
+    private CompareType compareType;
 
     public ExpireAtCommand() {
     }
@@ -36,6 +40,12 @@ public class ExpireAtCommand extends GenericKeyCommand {
         super(key);
         this.ex = ex;
     }
+    
+    public ExpireAtCommand(byte[] key, long ex, ExistType existType, CompareType compareType) {
+        this(key, ex);
+        this.existType = existType;
+        this.compareType = compareType;
+    }
 
     public long getEx() {
         return ex;
@@ -43,5 +53,21 @@ public class ExpireAtCommand extends GenericKeyCommand {
 
     public void setEx(long ex) {
         this.ex = ex;
+    }
+    
+    public ExistType getExistType() {
+        return existType;
+    }
+    
+    public void setExistType(ExistType existType) {
+        this.existType = existType;
+    }
+    
+    public CompareType getCompareType() {
+        return compareType;
+    }
+    
+    public void setCompareType(CompareType compareType) {
+        this.compareType = compareType;
     }
 }

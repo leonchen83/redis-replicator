@@ -23,52 +23,52 @@ import java.io.Serializable;
  * @since 3.9.0
  */
 public class Slot  implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	private long slotId;
-	private long slotSize;
-	private long expiresSlotSize;
-	
-	public Slot() {
-	}
-	
-	public Slot(long slotId, long slotSize, long expiresSlotSize) {
-		this.slotId = slotId;
-		this.slotSize = slotSize;
-		this.expiresSlotSize = expiresSlotSize;
-	}
-	
-	public long getSlotId() {
-		return slotId;
-	}
-	
-	public void setSlotId(long slotId) {
-		this.slotId = slotId;
-	}
-	
-	public long getSlotSize() {
-		return slotSize;
-	}
-	
-	public void setSlotSize(long slotSize) {
-		this.slotSize = slotSize;
-	}
-	
-	public long getExpiresSlotSize() {
-		return expiresSlotSize;
-	}
-	
-	public void setExpiresSlotSize(long expiresSlotSize) {
-		this.expiresSlotSize = expiresSlotSize;
-	}
-	
-	@Override
-	public String toString() {
-		return "Slot{" +
-				"slotId=" + slotId +
-				", slotSize=" + slotSize +
-				", expiresSlotSize=" + expiresSlotSize +
-				'}';
-	}
+    
+    private static final long serialVersionUID = 1L;
+    
+    private long slotId;
+    private long slotSize;
+    private long expiresSlotSize;
+    
+    public Slot() {
+    }
+    
+    public Slot(long slotId, long slotSize, long expiresSlotSize) {
+        this.slotId = slotId;
+        this.slotSize = slotSize;
+        this.expiresSlotSize = expiresSlotSize;
+    }
+    
+    public long getSlotId() {
+        return slotId;
+    }
+    
+    public void setSlotId(long slotId) {
+        this.slotId = slotId;
+    }
+    
+    public long getSlotSize() {
+        return slotSize;
+    }
+    
+    public void setSlotSize(long slotSize) {
+        this.slotSize = slotSize;
+    }
+    
+    public long getExpiresSlotSize() {
+        return expiresSlotSize;
+    }
+    
+    public void setExpiresSlotSize(long expiresSlotSize) {
+        this.expiresSlotSize = expiresSlotSize;
+    }
+    
+    @Override
+    public String toString() {
+        return "Slot{" +
+                "slotId=" + slotId +
+                ", slotSize=" + slotSize +
+                ", expiresSlotSize=" + expiresSlotSize +
+                '}';
+    }
 }

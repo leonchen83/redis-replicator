@@ -24,5 +24,5 @@ import java.util.Map;
  * @see com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor
  */
 public class KeyStringValueTTLHash extends KeyValuePair<byte[], Map<byte[], TTLValue>> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 }

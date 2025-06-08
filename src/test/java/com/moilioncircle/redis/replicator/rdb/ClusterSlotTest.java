@@ -36,48 +36,48 @@ import com.moilioncircle.redis.replicator.rdb.datatype.Slot;
 
 /**
  * @author Leon Chen
- * @since 3.9.0k
+ * @since 3.9.0
  */
 public class ClusterSlotTest {
-	
-	@Test
-	public void test() {
-		Replicator r = new RedisReplicator(ClusterSlotTest.class.getClassLoader().getResourceAsStream("dump-slot.rdb"), FileType.RDB, Configuration.defaultSetting());
-		List<Slot> list = new ArrayList<>();
-		r.addEventListener(new EventListener() {
-			@Override
-			public void onEvent(Replicator replicator, Event event) {
-				if (event instanceof KeyValuePair<?, ?>) {
-					KeyValuePair<?, ?> kv = (KeyValuePair<?, ?>) event;
-					list.add(kv.getSlot());
-				}
-			}
-		});
-		try {
-			r.open();
-		} catch (IOException e) {
-			fail();
-		}
-		
-		assertEquals(5, list.size());
-		assertEquals(98, list.get(0).getSlotId());
-		assertEquals(1, list.get(0).getSlotSize());
-		assertEquals(0, list.get(0).getExpiresSlotSize());
-		
-		assertEquals(230, list.get(1).getSlotId());
-		assertEquals(1, list.get(1).getSlotSize());
-		assertEquals(0, list.get(1).getExpiresSlotSize());
-		
-		assertEquals(4163, list.get(2).getSlotId());
-		assertEquals(1, list.get(2).getSlotSize());
-		assertEquals(0, list.get(2).getExpiresSlotSize());
-		
-		assertEquals(4772, list.get(3).getSlotId());
-		assertEquals(2, list.get(3).getSlotSize());
-		assertEquals(0, list.get(3).getExpiresSlotSize());
-		
-		assertEquals(4772, list.get(4).getSlotId());
-		assertEquals(2, list.get(4).getSlotSize());
-		assertEquals(0, list.get(4).getExpiresSlotSize());
-	}
+    
+    @Test
+    public void test() {
+        Replicator r = new RedisReplicator(ClusterSlotTest.class.getClassLoader().getResourceAsStream("dump-slot.rdb"), FileType.RDB, Configuration.defaultSetting());
+        List<Slot> list = new ArrayList<>();
+        r.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyValuePair<?, ?>) {
+                    KeyValuePair<?, ?> kv = (KeyValuePair<?, ?>) event;
+                    list.add(kv.getSlot());
+                }
+            }
+        });
+        try {
+            r.open();
+        } catch (IOException e) {
+            fail();
+        }
+        
+        assertEquals(5, list.size());
+        assertEquals(98, list.get(0).getSlotId());
+        assertEquals(1, list.get(0).getSlotSize());
+        assertEquals(0, list.get(0).getExpiresSlotSize());
+        
+        assertEquals(230, list.get(1).getSlotId());
+        assertEquals(1, list.get(1).getSlotSize());
+        assertEquals(0, list.get(1).getExpiresSlotSize());
+        
+        assertEquals(4163, list.get(2).getSlotId());
+        assertEquals(1, list.get(2).getSlotSize());
+        assertEquals(0, list.get(2).getExpiresSlotSize());
+        
+        assertEquals(4772, list.get(3).getSlotId());
+        assertEquals(2, list.get(3).getSlotSize());
+        assertEquals(0, list.get(3).getExpiresSlotSize());
+        
+        assertEquals(4772, list.get(4).getSlotId());
+        assertEquals(2, list.get(4).getSlotSize());
+        assertEquals(0, list.get(4).getExpiresSlotSize());
+    }
 }

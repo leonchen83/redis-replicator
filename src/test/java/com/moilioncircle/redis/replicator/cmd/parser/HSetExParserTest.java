@@ -127,6 +127,21 @@ public class HSetExParserTest extends AbstractParserTest {
         TestCase.assertEquals(XATType.PXAT, cmd.getXatType());
         assertEquals(1614139099000L, cmd.getXatValue());
         TestCase.assertEquals(FieldExistType.FXX, cmd.getExistType());
+        
+        cmd = parser.parse(toObjectArray("hsetex a fxx keepttl fields 2 f1 v1 f2 v2".split(" ")));
+        assertEquals("a", cmd.getKey());
+        assertEquals(2, cmd.getFields().length);
+        assertEquals(2, cmd.getValues().length);
+        assertEquals("f1", cmd.getFields()[0]);
+        assertEquals("f2", cmd.getFields()[1]);
+        assertEquals("v1", cmd.getValues()[0]);
+        assertEquals("v2", cmd.getValues()[1]);
+        TestCase.assertEquals(ExpiredType.NONE, cmd.getExpiredType());
+        assertEquals(true, cmd.getKeepTtl());
+        assertNull(cmd.getExpiredValue());
+        TestCase.assertEquals(XATType.NONE, cmd.getXatType());
+        assertNull(cmd.getXatValue());
+        TestCase.assertEquals(FieldExistType.FXX, cmd.getExistType());
     
     }
 

@@ -1,7 +1,17 @@
 ### 3.9.0
 
-Support for redis 8.0.  
+Support for redis 7.4.x and 8.0.x  
 Fix rate limit bug.  
+
+RDB
+1. Add support for Rdb event `RDB_TYPE_HASH_METADATA`.
+2. Add support for Rdb event `RDB_TYPE_HASH_LISTPACK_EX`.
+3. Add support for Rdb event `RDB_OPCODE_SLOT_INFO`.
+
+AOF
+1. Add support for `HPERSIST` command.
+2. Add support for `HSETEX` command.
+3. Add support for `HPEXPIREAT` command.
 
 ### 3.8.1
 

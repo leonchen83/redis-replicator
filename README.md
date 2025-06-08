@@ -456,23 +456,24 @@ Replicator replicator = new RedisReplicator("rediss://user:pass@127.0.0.1:6379?r
   
 ## 5.1. Built-in command parser  
 
-|**commands**|**commands**    |  **commands**       |**commands**  |**commands**  | **commands**       |
-| ---------- | -------------- | --------------------| ------------ | ------------ | ------------------ |    
-|  **PING**  |  **APPEND**    |  **SET**            |  **SETEX**   |  **MSET**    |  **DEL**           |  
-|  **SADD**  |  **HMSET**     |  **HSET**           |  **LSET**    |  **EXPIRE**  |  **EXPIREAT**      |  
-| **GETSET** | **HSETNX**     |  **MSETNX**         | **PSETEX**   | **SETNX**    |  **SETRANGE**      |  
-| **HDEL**   | **UNLINK**     |  **SREM**           | **LPOP**     |  **LPUSH**   | **LPUSHX**         |  
-| **LRem**   | **RPOP**       |  **RPUSH**          | **RPUSHX**   |  **ZREM**    |  **ZINTERSTORE**   |  
-| **INCR**   |  **DECR**      |  **INCRBY**         |**PERSIST**   |  **SELECT**  | **FLUSHALL**       |  
-|**FLUSHDB** |  **HINCRBY**   | **ZINCRBY**         | **MOVE**     |  **SMOVE**   |**BRPOPLPUSH**      |  
-|**PFCOUNT** |  **PFMERGE**   | **SDIFFSTORE**      |**RENAMENX**  | **PEXPIREAT**|**SINTERSTORE**     |  
-|**ZADD**    | **BITFIELD**   |**SUNIONSTORE**      |**RESTORE**   | **LINSERT**  |**ZREMRANGEBYLEX**  |  
-|**GEOADD**  | **PEXPIRE**    |**ZUNIONSTORE**      |**EVAL**      |  **SCRIPT**  |**ZREMRANGEBYRANK** |  
-|**PUBLISH** |  **BITOP**     |**SETBIT**           | **SWAPDB**   | **PFADD**    |**ZREMRANGEBYSCORE**|  
-|**RENAME**  |  **MULTI**     |  **EXEC**           | **LTRIM**    |**RPOPLPUSH** |     **SORT**       |  
-|**EVALSHA** | **ZPOPMAX**    | **ZPOPMIN**         | **XACK**     | **XADD**     |  **XCLAIM**        |  
-|**XDEL**    | **XGROUP**     | **XTRIM**           | **XSETID**   | **COPY**     |  **LMOVE**         |  
-|**BLMOVE**  | **ZDIFFSTORE** | **GEOSEARCHSTORE**  | **FUNCTION** | **SPUBLISH** |                    |  
+| **commands** |**commands**    | **commands**       | **commands** | **commands**  | **commands**         |
+|--------------| -------------- |--------------------|--------------|---------------|----------------------|    
+| **PING**     |  **APPEND**    | **SET**            | **SETEX**    | **MSET**      | **DEL**              |  
+| **SADD**     |  **HMSET**     | **HSET**           | **LSET**     | **EXPIRE**    | **EXPIREAT**         |  
+| **GETSET**   | **HSETNX**     | **MSETNX**         | **PSETEX**   | **SETNX**     | **SETRANGE**         |  
+| **HDEL**     | **UNLINK**     | **SREM**           | **LPOP**     | **LPUSH**     | **LPUSHX**           |  
+| **LRem**     | **RPOP**       | **RPUSH**          | **RPUSHX**   | **ZREM**      | **ZINTERSTORE**      |  
+| **INCR**     |  **DECR**      | **INCRBY**         | **PERSIST**  | **SELECT**    | **FLUSHALL**         |  
+| **FLUSHDB**  |  **HINCRBY**   | **ZINCRBY**        | **MOVE**     | **SMOVE**     | **BRPOPLPUSH**       |  
+| **PFCOUNT**  |  **PFMERGE**   | **SDIFFSTORE**     | **RENAMENX** | **PEXPIREAT** | **SINTERSTORE**      |  
+| **ZADD**     | **BITFIELD**   | **SUNIONSTORE**    | **RESTORE**  | **LINSERT**   | **ZREMRANGEBYLEX**   |  
+| **GEOADD**   | **PEXPIRE**    | **ZUNIONSTORE**    | **EVAL**     | **SCRIPT**    | **ZREMRANGEBYRANK**  |  
+| **PUBLISH**  |  **BITOP**     | **SETBIT**         | **SWAPDB**   | **PFADD**     | **ZREMRANGEBYSCORE** |  
+| **RENAME**   |  **MULTI**     | **EXEC**           | **LTRIM**    | **RPOPLPUSH** | **SORT**             |  
+| **EVALSHA**  | **ZPOPMAX**    | **ZPOPMIN**        | **XACK**     | **XADD**      | **XCLAIM**           |  
+| **XDEL**     | **XGROUP**     | **XTRIM**          | **XSETID**   | **COPY**      | **LMOVE**            |  
+| **BLMOVE**   | **ZDIFFSTORE** | **GEOSEARCHSTORE** | **FUNCTION** | **SPUBLISH**  | **HPERSIST**         |  
+| **HSETEX**   | **HPEXPIREAT** |                    |              |               |                      |  
   
 ## 5.2. EOFException
   

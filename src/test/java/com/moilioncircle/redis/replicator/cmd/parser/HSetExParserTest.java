@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.9.0
  */
 public class HSetExParserTest extends AbstractParserTest {
     @Test

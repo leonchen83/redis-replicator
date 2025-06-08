@@ -31,27 +31,27 @@ import com.moilioncircle.redis.replicator.util.Strings;
  * @since 3.9.0
  */
 public class TTLHashExample {
-	public static void main(String[] args) throws Exception {
-		Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
-		r.addEventListener(new EventListener() {
-			@SuppressWarnings("unused")
-			@Override
-			public void onEvent(Replicator replicator, Event event) {
-				if (event instanceof KeyStringValueTTLHash) {
-					KeyStringValueTTLHash skv = (KeyStringValueTTLHash) event;
-					// key
-					byte[] key = skv.getKey();
-					
-					// ttl hash
-					Map<byte[], TTLValue> ttlHash = skv.getValue();
-					for (Map.Entry<byte[], TTLValue> entry : ttlHash.entrySet()) {
-						System.out.println("field:" + Strings.toString(entry.getKey()));
-						System.out.println("value:" + Strings.toString(entry.getValue().getValue()));
-						System.out.println("field ttl:" + entry.getValue().getExpires());
-					}
-				}
-			}
-		});
-		r.open();
-	}
+    public static void main(String[] args) throws Exception {
+        Replicator r = new RedisReplicator("redis://127.0.0.1:6379");
+        r.addEventListener(new EventListener() {
+            @SuppressWarnings("unused")
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueTTLHash) {
+                    KeyStringValueTTLHash skv = (KeyStringValueTTLHash) event;
+                    // key
+                    byte[] key = skv.getKey();
+                    
+                    // ttl hash
+                    Map<byte[], TTLValue> ttlHash = skv.getValue();
+                    for (Map.Entry<byte[], TTLValue> entry : ttlHash.entrySet()) {
+                        System.out.println("field:" + Strings.toString(entry.getKey()));
+                        System.out.println("value:" + Strings.toString(entry.getValue().getValue()));
+                        System.out.println("field ttl:" + entry.getValue().getExpires());
+                    }
+                }
+            }
+        });
+        r.open();
+    }
 }

@@ -16,10 +16,10 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.util.Strings.format;
+
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.DefaultCommand;
-
-import static com.moilioncircle.redis.replicator.util.Strings.format;
 
 /**
  * @author Leon Chen

@@ -16,18 +16,18 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
+import java.util.Objects;
+
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.Limit;
 import com.moilioncircle.redis.replicator.cmd.impl.MaxLen;
 import com.moilioncircle.redis.replicator.cmd.impl.MinId;
 import com.moilioncircle.redis.replicator.cmd.impl.XTrimCommand;
-
-import java.util.Objects;
-
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen

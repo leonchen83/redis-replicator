@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator.cmd.parser;
+package com.moilioncircle.redis.replicator.cmd.impl;
 
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
-
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.AppendCommand;
+import java.io.Serializable;
 
 /**
  * @author Leon Chen
- * @since 2.1.0
+ * @since 3.9.0
  */
-public class AppendParser implements CommandParser<AppendCommand> {
-
-    @Override
-    public AppendCommand parse(Object[] command) {
-        return new AppendCommand(toBytes(command[1]), toBytes(command[2]));
-    }
-
+public enum FieldExistType implements Serializable {
+    /**
+     * not set
+     */
+    NONE,
+    /**
+     * Don't update already existing field
+     */
+    FNX,
+    /**
+     * Only update field that already exist
+     */
+    FXX
 }

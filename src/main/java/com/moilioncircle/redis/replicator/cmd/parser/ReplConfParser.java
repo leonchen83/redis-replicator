@@ -16,12 +16,12 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.ReplConfCommand;
 import com.moilioncircle.redis.replicator.cmd.impl.ReplConfGetAckCommand;
-
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
-import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
 
 /**
  * @author Leon Chen

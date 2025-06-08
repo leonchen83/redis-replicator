@@ -16,18 +16,18 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
-import com.moilioncircle.redis.replicator.cmd.impl.Geo;
-import com.moilioncircle.redis.replicator.cmd.impl.GeoAddCommand;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toDouble;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
+import com.moilioncircle.redis.replicator.cmd.impl.Geo;
+import com.moilioncircle.redis.replicator.cmd.impl.GeoAddCommand;
 
 /**
  * @author Leon Chen

@@ -16,13 +16,6 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.Limit;
-import com.moilioncircle.redis.replicator.cmd.impl.SortCommand;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
@@ -30,6 +23,13 @@ import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.ASC;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.DESC;
 import static com.moilioncircle.redis.replicator.cmd.impl.OrderType.NONE;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.Limit;
+import com.moilioncircle.redis.replicator.cmd.impl.SortCommand;
 
 /**
  * @author Leon Chen

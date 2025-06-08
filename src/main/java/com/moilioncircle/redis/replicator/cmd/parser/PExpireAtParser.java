@@ -16,15 +16,15 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
-import com.moilioncircle.redis.replicator.cmd.CommandParser;
-import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
-import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
-import com.moilioncircle.redis.replicator.cmd.impl.PExpireAtCommand;
-
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
 import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
 import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
+import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
+import com.moilioncircle.redis.replicator.cmd.impl.PExpireAtCommand;
 
 /**
  * @author Leon Chen

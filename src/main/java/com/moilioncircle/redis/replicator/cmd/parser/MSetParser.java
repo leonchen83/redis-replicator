@@ -16,11 +16,11 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
 import com.moilioncircle.redis.replicator.cmd.impl.MSetCommand;
 import com.moilioncircle.redis.replicator.util.ByteArrayMap;
-
-import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
 
 /**
  * @author Leon Chen

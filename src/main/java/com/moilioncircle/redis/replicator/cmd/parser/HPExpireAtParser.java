@@ -16,7 +16,14 @@
 
 package com.moilioncircle.redis.replicator.cmd.parser;
 
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toBytes;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toLong;
+import static com.moilioncircle.redis.replicator.cmd.CommandParsers.toRune;
+import static com.moilioncircle.redis.replicator.util.Strings.isEquals;
+
 import com.moilioncircle.redis.replicator.cmd.CommandParser;
+import com.moilioncircle.redis.replicator.cmd.impl.CompareType;
+import com.moilioncircle.redis.replicator.cmd.impl.ExistType;
 import com.moilioncircle.redis.replicator.cmd.impl.HPExpireAtCommand;
 
 /**
@@ -27,8 +34,36 @@ public class HPExpireAtParser implements CommandParser<HPExpireAtCommand> {
     
     @Override
     public HPExpireAtCommand parse(Object[] command) {
-        // TODO
-        return null;
+        int idx = 1;
+        byte[] key = toBytes(command[idx]);
+        idx++;
+        long ex = toLong(command[idx++]);
+        
+        ExistType existType = ExistType.NONE;
+        CompareType compareType = CompareType.NONE;
+        while (idx < command.length) {
+            String param = toRune(command[idx]);
+            if (isEquals(param, "NX")) {
+                existType = ExistType.NX;
+            } else if (isEquals(param, "XX")) {
+                existType = ExistType.XX;
+            } else if (isEquals(param, "GT")) {
+                compareType = CompareType.GT;
+            } else if (isEquals(param, "LT")) {
+                compareType = CompareType.LT;
+            } else if (isEquals(param, "FIELDS")) {
+                break;
+            }
+            idx++;
+        }
+        
+        idx += 2; // skip FIELDS numFields
+        byte[][] fields = new byte[command.length - idx][];
+        System.out.println(fields.length);
+        for (int i = idx, j = 0; i < command.length; i++, j++) {
+            fields[j] = toBytes(command[i]);
+        }
+        return new HPExpireAtCommand(key, fields, ex, existType, compareType);
     }
     
 }

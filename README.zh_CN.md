@@ -72,7 +72,7 @@
 [![Hex.pm](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/leonchen83/redis-replicator/blob/master/LICENSE)
 [![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](./ANTI-996-LICENSE_CN)  
   
-Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实现了Redis Replication协议. 支持SYNC, PSYNC, PSYNC2等三种同步命令. 还支持远程RDB文件备份以及数据同步等功能. 此文中提到的 `命令` 特指Redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`), 支持的redis版本范围从2.6到6.2  
+Redis Replicator是一款RDB解析以及AOF解析的工具. 此工具完整实现了Redis Replication协议. 支持SYNC, PSYNC, PSYNC2等三种同步命令. 还支持远程RDB文件备份以及数据同步等功能. 此文中提到的 `命令` 特指Redis中的写(比如 `set`,`hmset`)命令，不包括读命令(比如 `get`,`hmget`), 支持的redis版本范围从2.6到8.0.x  
 
 ## 1.2. QQ讨论组  
   
@@ -94,7 +94,7 @@ redis 2.6 - 7.0
     <dependency>
         <groupId>com.moilioncircle</groupId>
         <artifactId>redis-replicator</artifactId>
-        <version>3.8.1</version>
+        <version>3.9.0</version>
     </dependency>
 ```
 
@@ -111,7 +111,8 @@ redis 2.6 - 7.0
 
 | **redis 版本**       | **redis-replicator 版本** |  
 |--------------------|-------------------------|  
-| \[2.6, 7.2.x\]     | \[3.8.0, \]             |  
+| \[2.6, 8.0.x\]     | \[3.9.0, \]             |  
+| \[2.6, 7.2.x\]     | \[3.8.0, 3.8.1\]        |  
 | \[2.6, 7.0.x\]     | \[3.6.4, 3.7.0\]        |  
 | \[2.6, 7.0.x-RC2\] | \[3.6.2, 3.6.3\]        |  
 | \[2.6, 7.0.0-RC1\] | \[3.6.0, 3.6.1\]        |  
@@ -121,7 +122,7 @@ redis 2.6 - 7.0
 | \[2.6, 5.0.x\]     | \[2.6.1, 3.3.3\]        |  
 | \[2.6, 4.0.x\]     | \[2.3.0, 2.5.0\]        |  
 | \[2.6, 4.0-RC3\]   | \[2.1.0, 2.2.0\]        |  
-| \[2.6, 3.2.x\]     | \[1.0.18\](不再提供支持)      |  
+| \[2.6, 3.2.x\]     | \[1.0.18\](不再提供支持) |  
 
 
 # 3. 简要用法  

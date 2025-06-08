@@ -49,6 +49,8 @@ Table of Contents([中文说明](./README.zh_CN.md))
          * [5.9.2. ACL support](#592-acl-support)
       * [5.10. Redis7 support](#510-redis7-support)
         * [5.10.1. Function](#5101-function)
+      * [5.11. Redis7.4 support](#511-redis74-support)
+        * [5.11.1. TTL Hash](#5111-ttl-hash)
    * [6. Contributors](#6-contributors)
    * [7. Consulting](#7-consulting)
    * [8. References](#8-references)
@@ -665,6 +667,37 @@ you can also parse `function` to `serialized` data so that use `FUNCTION RESTORE
     });
     replicator.open();
 ```
+
+## 5.11. Redis7.4 support
+
+### 5.11.1. TTL Hash
+
+Since redis 7.4 add `ttl hash` support. and `ttl hash` structure stored in rdb file. we can use following method to parse `ttl hash`.
+
+```java  
+
+    Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+    replicator.addEventListener(new EventListener() {
+        @Override
+        public void onEvent(Replicator replicator, Event event) {
+            if (event instanceof KeyStringValueTTLHash) {
+                KeyStringValueTTLHash skv = (KeyStringValueTTLHash) event;
+                // key
+                byte[] key = skv.getKey();
+                
+                // ttl hash
+                Map<byte[], TTLValue> ttlHash = skv.getValue();
+                for (Map.Entry<byte[], TTLValue> entry : ttlHash.entrySet()) {
+                    System.out.println("field:" + Strings.toString(entry.getKey()));
+                    System.out.println("value:" + Strings.toString(entry.getValue().getValue()));
+                    System.out.println("field ttl:" + entry.getValue().getExpires());
+                }
+            }
+        }
+    });
+    replicator.open();
+```
+
 # 6. Contributors  
 * [Leon Chen](https://github.com/leonchen83)  
 * [Adrian Yao](https://github.com/adrianyao89)  

@@ -16,6 +16,10 @@
 
 package com.moilioncircle.examples.other;
 
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
@@ -23,10 +27,6 @@ import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
-
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author Leon Chen

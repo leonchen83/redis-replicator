@@ -16,14 +16,14 @@
 
 package com.moilioncircle.examples.stream;
 
+import java.util.NavigableMap;
+
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueStream;
 import com.moilioncircle.redis.replicator.rdb.datatype.Stream;
-
-import java.util.NavigableMap;
 
 /**
  * @author Leon Chen

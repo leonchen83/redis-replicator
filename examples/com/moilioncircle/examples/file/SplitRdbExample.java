@@ -16,6 +16,16 @@
 
 package com.moilioncircle.examples.file;
 
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -29,16 +39,6 @@ import com.moilioncircle.redis.replicator.rdb.datatype.AuxField;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.util.ByteBuilder;
 import com.moilioncircle.redis.replicator.util.type.Tuple2;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_EOF;
 
 /**
  * @author Leon Chen

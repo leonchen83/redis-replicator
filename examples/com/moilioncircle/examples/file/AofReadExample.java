@@ -16,6 +16,9 @@
 
 package com.moilioncircle.examples.file;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
 import com.moilioncircle.redis.replicator.RedisReplicator;
@@ -23,9 +26,6 @@ import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.cmd.Command;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.EventListener;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @author Leon Chen

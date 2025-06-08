@@ -47,3 +47,7 @@ Redis哨兵用例.
 ### stream
 
 Redis-5.0 stream 示例.  
+
+### ttl hash
+
+Redis-7.4 ttl hash 示例.  

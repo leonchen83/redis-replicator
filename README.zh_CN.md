@@ -49,6 +49,8 @@
          * [5.9.2. ACL支持](#592-acl支持)
       * [5.10. Redis7支持](#510-redis7支持)
         * [5.10.1. Function](#5101-function)
+      * [5.11. Redis7.4支持](#511-redis74支持)
+        * [5.11.1. TTL Hash](#5111-ttl-hash)
    * [6. 贡献者](#6-贡献者)
    * [7. 商业咨询](#7-商业咨询)
    * [8. 相关引用](#8-相关引用)
@@ -659,6 +661,36 @@ Redis 7.0 添加了 `function` 的支持. `function` 的结构存储在rdb文件
                 byte[] serialized = function.getSerialized();
                 // your code goes here
                 // you can use FUNCTION RESTORE to restore above serialized data to target redis
+            }
+        }
+    });
+    replicator.open();
+```
+
+## 5.11. Redis7.4支持
+
+### 5.11.1. TTL Hash
+
+Redis 7.4 添加了 `ttl hash` 的支持. `ttl hash` 的结构存储在rdb文件中. 因此我们能用如下方式解析`ttl hash`.
+
+```java  
+
+    Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+    replicator.addEventListener(new EventListener() {
+        @Override
+        public void onEvent(Replicator replicator, Event event) {
+            if (event instanceof KeyStringValueTTLHash) {
+                KeyStringValueTTLHash skv = (KeyStringValueTTLHash) event;
+                // key
+                byte[] key = skv.getKey();
+                
+                // ttl hash
+                Map<byte[], TTLValue> ttlHash = skv.getValue();
+                for (Map.Entry<byte[], TTLValue> entry : ttlHash.entrySet()) {
+                    System.out.println("field:" + Strings.toString(entry.getKey()));
+                    System.out.println("value:" + Strings.toString(entry.getValue().getValue()));
+                    System.out.println("field ttl:" + entry.getValue().getExpires());
+                }
             }
         }
     });

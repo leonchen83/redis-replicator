@@ -48,4 +48,8 @@ Replication data via Socket.
 
 Redis-5.0 stream example.  
 
+### ttl hash
+
+Redis-7.4 ttl hash example.  
+
 

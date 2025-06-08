@@ -16,11 +16,11 @@
 
 package com.moilioncircle.examples.failover;
 
-import com.moilioncircle.redis.replicator.RedisReplicator;
-import com.moilioncircle.redis.replicator.Replicator;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import com.moilioncircle.redis.replicator.RedisReplicator;
+import com.moilioncircle.redis.replicator.Replicator;
 
 /**
  * @author Leon Chen

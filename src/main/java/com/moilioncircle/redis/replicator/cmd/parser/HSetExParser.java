@@ -78,7 +78,7 @@ public class HSetExParser  implements CommandParser<HSetExCommand> {
             }
         }
         
-        idx += 2; // skip FIELDS numFields
+        idx += 1; // skip FIELDS numFields
         int n = command.length - idx;
         byte[][] fields = new byte[n / 2][];
         byte[][] values = new byte[n / 2][];

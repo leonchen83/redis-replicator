@@ -35,8 +35,7 @@ public class HSetExParser  implements CommandParser<HSetExCommand> {
     @Override
     public HSetExCommand parse(Object[] command) {
         byte[] key = toBytes(command[1]);
-        byte[] value = toBytes(command[2]);
-        int idx = 3;
+        int idx = 2;
         FieldExistType existType = FieldExistType.NONE;
         Long expiredValue = null;
         XATType xatType = XATType.NONE;

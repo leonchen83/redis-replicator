@@ -562,7 +562,7 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
     }
     
     @Override
-    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
+    public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException {
         if (this.version != -1 && this.version < 12 /* since redis rdb version 12 */) {
             // downgrade to RDB_TYPE_HASH
             BaseRdbParser parser = new BaseRdbParser(in);

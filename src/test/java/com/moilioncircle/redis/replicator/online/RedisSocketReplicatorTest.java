@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -68,17 +69,17 @@ import redis.clients.jedis.params.ZParams;
  * @since 2.1.0
  */
 @SuppressWarnings("resource")
-public class RedisSocketReplicatorTest {
+public class RedisSocketReplicatorTest extends OnlineTestBase {
 
     @Test
     public void testSet() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
+        Replicator replicator = new RedisReplicator(HOST, PORT, config());
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                    try (Jedis jedis = jedis()) {
                         jedis.del("abc");
                         jedis.set("abc", "bcd");
                     }
@@ -102,12 +103,12 @@ public class RedisSocketReplicatorTest {
     @Test
     public void testZInterStore() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
+        final Replicator replicator = new RedisReplicator(HOST, PORT, config());
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                    try (Jedis jedis = jedis()) {
                         jedis.del("zset1");
                         jedis.del("zset2");
                         jedis.del("out");
@@ -116,7 +117,6 @@ public class RedisSocketReplicatorTest {
                         jedis.zadd("zset2", 1, "one");
                         jedis.zadd("zset2", 2, "two");
                         jedis.zadd("zset2", 3, "three");
-                        //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
                         ZParams zParams = new ZParams();
                         zParams.weights(2, 3);
                         zParams.aggregate(ZParams.Aggregate.MIN);
@@ -147,12 +147,12 @@ public class RedisSocketReplicatorTest {
     @Test
     public void testZUnionStore() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
+        final Replicator replicator = new RedisReplicator(HOST, PORT, config());
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                    try (Jedis jedis = jedis()) {
                         jedis.del("zset3");
                         jedis.del("zset4");
                         jedis.del("out1");
@@ -161,7 +161,6 @@ public class RedisSocketReplicatorTest {
                         jedis.zadd("zset4", 1, "one");
                         jedis.zadd("zset4", 2, "two");
                         jedis.zadd("zset4", 3, "three");
-                        //ZINTERSTORE out 2 zset1 zset2 WEIGHTS 2 3
                         ZParams zParams = new ZParams();
                         zParams.weights(2, 3);
                         zParams.aggregate(ZParams.Aggregate.SUM);
@@ -191,8 +190,9 @@ public class RedisSocketReplicatorTest {
 
     @Test
     public void testCloseListener() {
+        // Uses a deliberately unreachable port — not parameterized
         final AtomicInteger acc = new AtomicInteger(0);
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6666, Configuration.defaultSetting().setUseDefaultExceptionListener(false));
+        Replicator replicator = new RedisReplicator(HOST, 6666, Configuration.defaultSetting().setUseDefaultExceptionListener(false));
         replicator.addCloseListener(new CloseListener() {
             @Override
             public void handle(Replicator replicator) {
@@ -211,12 +211,12 @@ public class RedisSocketReplicatorTest {
     @Test
     public void testZAdd() throws Exception {
         final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
+        final Replicator replicator = new RedisReplicator(HOST, PORT, config());
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                    try (Jedis jedis = jedis()) {
                         jedis.del("abc");
                         jedis.zrem("zzlist", "member");
                         jedis.set("abc", "bcd");
@@ -247,39 +247,8 @@ public class RedisSocketReplicatorTest {
     }
 
     @Test
-    public void testV7() throws Exception {
-        final AtomicReference<String> ref = new AtomicReference<>(null);
-        final Replicator replicator = new RedisReplicator("127.0.0.1", 6380, Configuration.defaultSetting().setAuthPassword("test").setRetries(0));
-
-        replicator.addEventListener(new EventListener() {
-            @Override
-            public void onEvent(Replicator replicator, Event event) {
-                if (event instanceof PostRdbSyncEvent) {
-                    try (Jedis jedis = new Jedis("127.0.0.1", 6380)) {
-                        jedis.auth("test");
-                        jedis.del("abc");
-                        jedis.set("abc", "bcd");
-                    }
-                }
-                if (event instanceof SetCommand) {
-                    SetCommand setCommand = (SetCommand) event;
-                    assertEquals("abc", Strings.toString(setCommand.getKey()));
-                    assertEquals("bcd", Strings.toString(setCommand.getValue()));
-                    ref.compareAndSet(null, "ok");
-                    try {
-                        replicator.close();
-                    } catch (IOException e) {
-                    }
-                }
-            }
-        });
-        replicator.open();
-        assertEquals("ok", ref.get());
-    }
-
-    @Test
     public void testExpireV6() throws Exception {
-        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+        try (Jedis jedis = jedis()) {
             jedis.del("abc");
             jedis.del("bbb");
             jedis.set("abc", "bcd");
@@ -288,7 +257,7 @@ public class RedisSocketReplicatorTest {
             jedis.expireAt("bbb", System.currentTimeMillis() + 1000000);
         }
 
-        Replicator replicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting().setRetries(0));
+        Replicator replicator = new RedisReplicator(HOST, PORT, config());
         final List<KeyValuePair<?, ?>> list = new ArrayList<>();
         replicator.addEventListener(new EventListener() {
             @Override
@@ -316,7 +285,7 @@ public class RedisSocketReplicatorTest {
 
     @Test
     public void testCount() throws IOException {
-        try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+        try (Jedis jedis = jedis()) {
             Pipeline pipeline = jedis.pipelined();
             for (int i = 0; i < 8000; i++) {
                 pipeline.del("test_" + i);
@@ -325,7 +294,7 @@ public class RedisSocketReplicatorTest {
             pipeline.sync();
         }
 
-        Replicator redisReplicator = new RedisReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        Replicator redisReplicator = new RedisReplicator(HOST, PORT, config());
         final AtomicInteger acc = new AtomicInteger(0);
         redisReplicator.addEventListener(new EventListener() {
             @Override
@@ -347,12 +316,12 @@ public class RedisSocketReplicatorTest {
         redisReplicator.open();
         assertEquals(8000, acc.get());
     }
-    
+
     @Test
     public void testExecutor1() throws IOException {
-        Configuration configuration = Configuration.defaultSetting();
+        Configuration configuration = config();
         configuration.setScheduledExecutor(Executors.newScheduledThreadPool(4));
-        RedisSocketReplicator replicator = new RedisSocketReplicator("127.0.0.1", 6379, configuration);
+        RedisSocketReplicator replicator = new RedisSocketReplicator(HOST, PORT, configuration);
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
@@ -369,10 +338,10 @@ public class RedisSocketReplicatorTest {
         assertFalse(configuration.getScheduledExecutor().isTerminated());
         Concurrents.terminateQuietly(configuration.getScheduledExecutor(), 30, TimeUnit.SECONDS);
     }
-    
+
     @Test
     public void testExecutor2() throws Exception {
-        RedisSocketReplicator replicator = new RedisSocketReplicator("127.0.0.1", 6379, Configuration.defaultSetting());
+        RedisSocketReplicator replicator = new RedisSocketReplicator(HOST, PORT, config());
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
@@ -387,21 +356,23 @@ public class RedisSocketReplicatorTest {
         replicator.open();
         Field field = RedisSocketReplicator.class.getDeclaredField("executor");
         field.setAccessible(true);
-        XScheduledExecutorService executor = (XScheduledExecutorService)field.get(replicator);
+        XScheduledExecutorService executor = (XScheduledExecutorService) field.get(replicator);
         assertTrue(executor.isShutdown());
         assertTrue(executor.isTerminated());
     }
-    
+
     @Test
     @SuppressWarnings("resource")
     public void testSetUrl() throws Exception {
+        // URI-based test: only runs for default Redis flavor
+        if (FLAVOR != null) return;
         final AtomicReference<String> ref = new AtomicReference<>(null);
         Replicator replicator = new RedisReplicator("redis://127.0.0.1?retries=0");
         replicator.addEventListener(new EventListener() {
             @Override
             public void onEvent(Replicator replicator, Event event) {
                 if (event instanceof PostRdbSyncEvent) {
-                    try (Jedis jedis = new Jedis("127.0.0.1", 6379)) {
+                    try (Jedis jedis = new Jedis(HOST, 6379)) {
                         jedis.del("abca");
                         jedis.set("abca", "bcd");
                     }
@@ -418,13 +389,13 @@ public class RedisSocketReplicatorTest {
                 }
             }
         });
-        
         replicator.open();
         assertEquals("ok", ref.get());
     }
-    
+
     @Test
     public void testMixClose13() throws IOException, URISyntaxException, InterruptedException {
+        // Uses a deliberately unreachable port — not parameterized
         final Replicator replicator = new RedisReplicator("redis://127.0.0.1:7777?retries=-1");
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addEventListener(new EventListener() {
@@ -444,7 +415,7 @@ public class RedisSocketReplicatorTest {
                 assertEquals(0, acc.get());
             }
         });
-    
+
         new Thread(() -> {
             try {
                 Thread.sleep(2000);
@@ -455,10 +426,10 @@ public class RedisSocketReplicatorTest {
         }).start();
         replicator.open();
     }
-    
+
     @Test
     public void testMixClose10() throws IOException, URISyntaxException, InterruptedException {
-        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+        final Replicator replicator = new RedisReplicator(HOST, PORT, config());
         final AtomicInteger acc = new AtomicInteger(0);
         CompletableFuture<Void> future = new CompletableFuture<>();
         replicator.addEventListener(new EventListener() {
@@ -479,7 +450,7 @@ public class RedisSocketReplicatorTest {
                 assertEquals(1, acc.get());
             }
         });
-    
+
         new Thread(() -> {
             try {
                 future.get();
@@ -489,13 +460,12 @@ public class RedisSocketReplicatorTest {
             }
         }).start();
         replicator.open();
-        
     }
-    
+
     @SuppressWarnings("resource")
     @Test
     public void testMixClose8() throws IOException, URISyntaxException {
-        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+        final Replicator replicator = new RedisReplicator(HOST, PORT, config());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addEventListener(new EventListener() {
             @Override
@@ -515,11 +485,11 @@ public class RedisSocketReplicatorTest {
         assertEquals(0, acc.get());
         assertEquals(DISCONNECTED, replicator.getStatus());
     }
-    
+
     @SuppressWarnings("resource")
     @Test
     public void testMixClose9() throws IOException, URISyntaxException {
-        final Replicator replicator = new RedisReplicator("redis://127.0.0.1:6379");
+        final Replicator replicator = new RedisReplicator(HOST, PORT, config());
         final AtomicInteger acc = new AtomicInteger(0);
         replicator.addEventListener(new EventListener() {
             @Override

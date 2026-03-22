@@ -193,11 +193,27 @@ public class Configuration {
     
     /**
      * @since 3.7.0
-     * 
+     *
      * set SCAN COUNT if enableScan = true
      */
     private int scanStep = 512;
-    
+
+    /**
+     * @since 3.12.0
+     *
+     * Set FLAVOR to VALKEY if the target server is Valkey.
+     */
+    private Flavor flavor = Flavor.REDIS;
+
+    public Flavor getFlavor() {
+        return flavor;
+    }
+
+    public Configuration setFlavor(Flavor flavor) {
+        this.flavor = flavor;
+        return this;
+    }
+
     public int getConnectionTimeout() {
         return connectionTimeout;
     }

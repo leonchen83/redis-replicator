@@ -30,11 +30,11 @@ import com.moilioncircle.redis.replicator.client.RESP2Client;
  * @author Leon Chen
  * @since 3.7.0
  */
-public class RESP2ClientTest {
-    
+public class RESP2ClientTest extends OnlineTestBase {
+
     @Test
     public void test() throws IOException {
-        try (RESP2Client client = new RESP2Client("127.0.0.1", 6379, Configuration.defaultSetting())) {
+        try (RESP2Client client = new RESP2Client(HOST, PORT, config())) {
             RESP2Client.Command command = client.newCommand();
             RESP2.Node pong = command.invoke("ping".getBytes());
             assertEquals(RESP2.Type.STRING, pong.type);
@@ -55,7 +55,7 @@ public class RESP2ClientTest {
     
     @Test
     public void test1() throws IOException {
-        try (RESP2Client client = new RESP2Client("127.0.0.1", 6380, Configuration.defaultSetting().setAuthPassword("test"))) {
+        try (RESP2Client client = new RESP2Client("127.0.0.1", 6379, config().setAuthPassword("test"))) {
             RESP2Client.Command command = client.newCommand();
             RESP2.Node pong = command.invoke("ping");
             assertEquals(RESP2.Type.STRING, pong.type);

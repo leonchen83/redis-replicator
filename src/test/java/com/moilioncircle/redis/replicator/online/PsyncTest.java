@@ -47,7 +47,7 @@ import redis.clients.jedis.Pipeline;
  * @author Leon Chen
  * @since 2.1.0
  */
-public class PsyncTest {
+public class PsyncTest extends OnlineTestBase {
 
     @Test
     public void psync() throws IOException {
@@ -61,7 +61,7 @@ public class PsyncTest {
             pipeline.sync();
         }
 
-        final Configuration configuration = Configuration.defaultSetting().
+        final Configuration configuration = config().
                 setAuthPassword("test").
                 setConnectionTimeout(3000).
                 setReadTimeout(3000).

@@ -49,7 +49,7 @@ import redis.clients.jedis.Pipeline;
  * @since 3.7.0
  */
 @SuppressWarnings("resource")
-public class RedisScanReplicatorTest {
+public class RedisScanReplicatorTest extends OnlineTestBase {
     
     @Test
     public void test() throws Exception {

@@ -20,7 +20,6 @@ import static com.moilioncircle.redis.replicator.Status.CONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTED;
 import static com.moilioncircle.redis.replicator.Status.DISCONNECTING;
 
-import com.moilioncircle.redis.replicator.Flavor;
 import static com.moilioncircle.redis.replicator.util.Tuples.of;
 
 import java.io.EOFException;
@@ -135,7 +134,6 @@ import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
-import com.moilioncircle.redis.replicator.rdb.ValkeyRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleKey;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleParser;
@@ -149,7 +147,7 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
     protected RedisInputStream inputStream;
-    protected RdbVisitor rdbVisitor;
+    protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
     protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
@@ -240,11 +238,6 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     
     @Override
     public RdbVisitor getRdbVisitor() {
-        if (this.rdbVisitor == null) {
-            this.rdbVisitor = configuration.getFlavor() == Flavor.REDIS
-                    ? new DefaultRdbVisitor(this)
-                    : new ValkeyRdbVisitor(this);
-        }
         return this.rdbVisitor;
     }
     

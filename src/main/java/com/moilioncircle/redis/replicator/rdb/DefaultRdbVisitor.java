@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.moilioncircle.redis.replicator.Flavor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,10 +113,9 @@ public class DefaultRdbVisitor extends RdbVisitor {
 
     @Override
     public int applyVersion(RedisInputStream in) throws IOException {
-        int version = parseInt(BaseRdbParser.StringHelper.str(in, 4));
-        if (version < 2 || version > RDB_VERSION) {
-            throw new UnsupportedOperationException("can't handle RDB format version " + version);
-        }
+        final Flavor flavor = replicator.getConfiguration().getFlavor();
+        int version = parseInt(BaseRdbParser.StringHelper.str(in, flavor.getVersionDigits()));
+        flavor.validateRdbVersion(version);
         return version;
     }
 

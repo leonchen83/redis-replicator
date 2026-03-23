@@ -8,3 +8,11 @@ sudo wget https://github.com/antirez/redis/archive/3.0.7.tar.gz && tar -xvzf 3.0
 sudo mvn clean package
 ```
 
+* For Valkey development, start a Valkey 9 server and run tests with the Valkey flavor:
+
+```
+docker run -d --rm -p 6380:6380 valkey/valkey:9 --port 6380 --requirepass test
+docker run -d --rm -p 6379:6379 valkey/valkey:9
+mvn test -Dtest.flavor=valkey
+```
+

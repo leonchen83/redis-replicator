@@ -27,26 +27,26 @@ import java.util.Map;
  * @since 3.12.0
  */
 public enum Flavor {
-    REDIS("REDIS"), VALKEY("VALKEY");
+    REDIS("REDIS", 4), VALKEY("VALKEY", 3);
     
     private String magic;
-    
-    Flavor(String magic) {
+    private int versionDigits;
+
+    Flavor(String magic, int versionDigits) {
         this.magic = magic;
+        this.versionDigits = versionDigits;
     }
     
     public String getMagic() {
         return magic;
     }
+
+    public int getVersionDigits() {
+        return versionDigits;
+    }
     
     public String convertToRdbVersion(int rdbVer) {
-        if (this == REDIS) {
-            return lappend(rdbVer, 4, '0');
-        } else if (this == VALKEY) {
-            return lappend(rdbVer, 3, '0');
-        } else {
-            throw ERROR;
-        }
+        return lappend(rdbVer, versionDigits, '0');
     }
     
     public int getRdbVersion(String version) {
@@ -64,7 +64,19 @@ public enum Flavor {
             throw ERROR;
         }
     }
-    
+
+    public void validateRdbVersion(int version) {
+        if (this == REDIS) {
+            if (version < 2 || version > RDB_VERSION) {
+                throw new UnsupportedOperationException("can't handle RDB format version " + version);
+            }
+        } else if (this == VALKEY) {
+            if (version != VALKEY_VERSION) {
+                throw new UnsupportedOperationException("can't handle RDB format version " + version);
+            }
+        }
+    }
+
     public static Flavor toFlavor(String flavor) {
         if (flavor == null) throw ERROR;
         if (flavor.equals(REDIS.magic.toLowerCase())) return REDIS;

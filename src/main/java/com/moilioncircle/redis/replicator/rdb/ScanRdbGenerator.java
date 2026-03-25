@@ -29,7 +29,7 @@ import java.io.OutputStream;
 import java.util.Queue;
 
 import com.moilioncircle.redis.replicator.Configuration;
-import com.moilioncircle.redis.replicator.Flavor;
+import com.moilioncircle.redis.replicator.FlavorSupport;
 import com.moilioncircle.redis.replicator.client.RESP2;
 import com.moilioncircle.redis.replicator.client.RESP2Client;
 import com.moilioncircle.redis.replicator.io.CRCOutputStream;
@@ -59,7 +59,7 @@ public class ScanRdbGenerator {
     }
     
     public void generate() throws IOException {
-        Flavor flavor = configuration.getFlavor();
+        FlavorSupport flavor = configuration.getFlavor();
         try {
             this.client = new RESP2Client(host, port, configuration);
             /*
@@ -88,7 +88,7 @@ public class ScanRdbGenerator {
                         ver = val;
                         
                         val = val.substring(0, val.lastIndexOf('.'));
-                        version = flavor.getRdbVersion(val);
+                        version = flavor.resolveRdbVersion(val);
                     } else if (key.equals("arch_bits")) {
                         bits = kv[1];
                     }
@@ -98,8 +98,8 @@ public class ScanRdbGenerator {
             /*
              * version
              */
-            out.write(flavor.getMagic().getBytes());
-            out.write(flavor.convertToRdbVersion(version).getBytes());
+            out.write(flavor.magic().getBytes());
+            out.write(flavor.formatRdbVersion(version).getBytes());
             
             /*
              * aux

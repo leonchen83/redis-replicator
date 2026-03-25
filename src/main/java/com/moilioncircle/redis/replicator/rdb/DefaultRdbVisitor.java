@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.moilioncircle.redis.replicator.Flavor;
+import com.moilioncircle.redis.replicator.FlavorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +103,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 
     @Override
     public String applyMagic(RedisInputStream in) throws IOException {
-        String m1 = replicator.getConfiguration().getFlavor().getMagic();
+        String m1 = replicator.getConfiguration().getFlavor().magic();
         String m2 = BaseRdbParser.StringHelper.str(in, m1.length());
         if (!m2.equals(m1)) {
             throw new UnsupportedOperationException("can't read MAGIC STRING [" + m1 + "] ,value:" + m2);
@@ -113,7 +113,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
 
     @Override
     public int applyVersion(RedisInputStream in) throws IOException {
-        final Flavor flavor = replicator.getConfiguration().getFlavor();
+        final FlavorSupport flavor = replicator.getConfiguration().getFlavor();
         int version = parseInt(BaseRdbParser.StringHelper.str(in, flavor.getVersionDigits()));
         flavor.validateRdbVersion(version);
         return version;

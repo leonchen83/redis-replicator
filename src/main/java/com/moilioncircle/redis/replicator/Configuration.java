@@ -203,13 +203,13 @@ public class Configuration {
      *
      * Set FLAVOR to VALKEY if the target server is Valkey.
      */
-    private Flavor flavor = Flavor.REDIS;
+    private FlavorSupport flavor = Flavor.REDIS;
 
-    public Flavor getFlavor() {
+    public FlavorSupport getFlavor() {
         return flavor;
     }
 
-    public Configuration setFlavor(Flavor flavor) {
+    public Configuration setFlavor(FlavorSupport flavor) {
         this.flavor = flavor;
         return this;
     }

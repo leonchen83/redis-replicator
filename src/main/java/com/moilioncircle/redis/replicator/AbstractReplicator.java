@@ -132,7 +132,6 @@ import com.moilioncircle.redis.replicator.cmd.parser.ZUnionStoreParser;
 import com.moilioncircle.redis.replicator.event.AbstractEvent;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.Module;
 import com.moilioncircle.redis.replicator.rdb.module.ModuleKey;
@@ -147,7 +146,7 @@ import com.moilioncircle.redis.replicator.util.type.Tuple2;
 public abstract class AbstractReplicator extends AbstractReplicatorListener implements Replicator {
     protected Configuration configuration;
     protected RedisInputStream inputStream;
-    protected RdbVisitor rdbVisitor = new DefaultRdbVisitor(this);
+    protected RdbVisitor rdbVisitor;
     protected final AtomicReference<Status> connected = new AtomicReference<>(DISCONNECTED);
     protected final Map<ModuleKey, ModuleParser<? extends Module>> modules = new ConcurrentHashMap<>();
     protected final Map<CommandName, CommandParser<? extends Command>> commands = new ConcurrentHashMap<>();
@@ -238,6 +237,9 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
     
     @Override
     public RdbVisitor getRdbVisitor() {
+        if (this.rdbVisitor == null) {
+            this.rdbVisitor = configuration.getFlavor().rdbVisitor(this);
+        }
         return this.rdbVisitor;
     }
     

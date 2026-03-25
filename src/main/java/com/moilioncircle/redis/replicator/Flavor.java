@@ -23,80 +23,102 @@ import static com.moilioncircle.redis.replicator.util.Strings.lappend;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
+import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
+
 /**
  * @since 3.12.0
  */
-public enum Flavor {
-    REDIS("REDIS", 4), VALKEY("VALKEY", 3);
-    
-    private String magic;
-    private int versionDigits;
-
-    Flavor(String magic, int versionDigits) {
-        this.magic = magic;
-        this.versionDigits = versionDigits;
-    }
-    
-    public String getMagic() {
-        return magic;
-    }
-
-    public int getVersionDigits() {
-        return versionDigits;
-    }
-    
-    public String convertToRdbVersion(int rdbVer) {
-        return lappend(rdbVer, versionDigits, '0');
-    }
-    
-    public int getRdbVersion(String version) {
-        if (this == REDIS) {
-            if (!REDIS_VERSIONS.containsKey(version)) {
-                throw new AssertionError("unsupported redis version :" + version);
-            }
-            return REDIS_VERSIONS.get(version);
-        } else if (this == VALKEY) {
-            if (!VALKEY_VERSIONS.containsKey(version)) {
-                throw new AssertionError("unsupported valkey version :" + version);
-            }
-            return VALKEY_VERSIONS.get(version);
-        } else {
-            throw ERROR;
+public enum Flavor implements FlavorSupport {
+    REDIS {
+        @Override
+        public String magic() {
+            return "REDIS";
         }
-    }
 
-    // "9.0.0" is the minimum Valkey server version whose RDB format this replicator supports.
-    // If Valkey's versioning evolves to require different RDB formats per release,
-    // consider introducing a more granular Flavor (e.g., VALKEY_9, VALKEY_10) at that point.
-    public String getSlaveRdbVersion() {
-        if (this == VALKEY) return "9.0.0";
-        throw new UnsupportedOperationException(this + " does not use slave RDB version negotiation");
-    }
+        @Override
+        public int getVersionDigits() {
+            return 4;
+        }
 
-    public void validateRdbVersion(int version) {
-        if (this == REDIS) {
+        @Override
+        public String formatRdbVersion(int version) {
+            return lappend(version, 4, '0');
+        }
+
+        @Override
+        public int resolveRdbVersion(String version) {
+            return REDIS_VERSIONS.get(version);
+        }
+
+        @Override
+        public void validateRdbVersion(int version) {
             if (version < 2 || version > RDB_VERSION) {
                 throw new UnsupportedOperationException("can't handle RDB format version " + version);
             }
-        } else if (this == VALKEY) {
+        }
+
+        @Override
+        public String getSlaveRdbVersion() {
+            throw new UnsupportedOperationException(this + " does not use slave RDB version negotiation");
+        }
+
+        @Override
+        public RdbVisitor rdbVisitor(Replicator replicator) {
+            return new DefaultRdbVisitor(replicator);
+        }
+    }, VALKEY {
+        @Override
+        public String magic() {
+            return "VALKEY";
+        }
+
+        @Override
+        public int getVersionDigits() {
+            return 3;
+        }
+
+        @Override
+        public String formatRdbVersion(int version) {
+            return lappend(version, 3, '0');
+        }
+
+        @Override
+        public int resolveRdbVersion(String version) {
+            return VALKEY_VERSIONS.get(version);
+        }
+
+        @Override
+        public void validateRdbVersion(int version) {
             if (version != VALKEY_VERSION) {
                 throw new UnsupportedOperationException("can't handle RDB format version " + version);
             }
         }
-    }
+
+        // "9.0.0" is the minimum Valkey server version whose RDB format this replicator supports.
+        // If Valkey's versioning evolves to require different RDB formats per release,
+        // consider introducing a more granular Flavor (e.g., VALKEY_9, VALKEY_10) at that point.
+        @Override
+        public String getSlaveRdbVersion() {
+            return "9.0.0";
+        }
+
+        @Override
+        public RdbVisitor rdbVisitor(Replicator replicator) {
+            return new DefaultRdbVisitor(replicator);
+        }
+    };
 
     public static Flavor toFlavor(String flavor) {
-        if (flavor == null) throw ERROR;
-        if (flavor.equals(REDIS.magic.toLowerCase())) return REDIS;
-        if (flavor.equals(VALKEY.magic.toLowerCase())) return VALKEY;
-        throw ERROR;
+        if (flavor.equals(REDIS.magic().toLowerCase())) return REDIS;
+        if (flavor.equals(VALKEY.magic().toLowerCase())) return VALKEY;
+        throw new AssertionError(flavor);
     }
-    
+
     //
     private static final Map<String, Integer> REDIS_VERSIONS = new HashMap<>();
     private static final Map<String, Integer> VALKEY_VERSIONS = new HashMap<>();
-    private static Error ERROR = new AssertionError("unsupported flavor");
-    
+
     static {
         REDIS_VERSIONS.put("2.6", 6);
         REDIS_VERSIONS.put("2.8", 6);
@@ -112,7 +134,7 @@ public enum Flavor {
         REDIS_VERSIONS.put("8.0", RDB_VERSION);
         REDIS_VERSIONS.put("8.2", RDB_VERSION);
         REDIS_VERSIONS.put("8.4", RDB_VERSION);
-        
+
         // VALKEY_VERSIONS.put("7.2", 11);
         // VALKEY_VERSIONS.put("8.0", 11);
         // VALKEY_VERSIONS.put("8.1", 11);

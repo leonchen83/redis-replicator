@@ -41,7 +41,6 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_ZSET_ZIPLIST;
-import static com.moilioncircle.redis.replicator.Constants.RDB_VERSION;
 import static java.lang.Integer.parseInt;
 
 import java.io.IOException;
@@ -114,7 +113,7 @@ public class DefaultRdbVisitor extends RdbVisitor {
     @Override
     public int applyVersion(RedisInputStream in) throws IOException {
         final FlavorSupport flavor = replicator.getConfiguration().getFlavor();
-        int version = parseInt(BaseRdbParser.StringHelper.str(in, flavor.getVersionDigits()));
+        int version = parseInt(BaseRdbParser.StringHelper.str(in, flavor.versionDigits()));
         flavor.validateRdbVersion(version);
         return version;
     }

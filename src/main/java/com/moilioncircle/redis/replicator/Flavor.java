@@ -37,13 +37,13 @@ public enum Flavor implements FlavorSupport {
         }
 
         @Override
-        public int getVersionDigits() {
+        public int versionDigits() {
             return 4;
         }
 
         @Override
         public String formatRdbVersion(int version) {
-            return lappend(version, 4, '0');
+            return lappend(version, versionDigits(), '0');
         }
 
         @Override
@@ -59,7 +59,7 @@ public enum Flavor implements FlavorSupport {
         }
 
         @Override
-        public String getSlaveRdbVersion() {
+        public String slaveRdbVersion() {
             throw new UnsupportedOperationException(this + " does not use slave RDB version negotiation");
         }
 
@@ -74,13 +74,13 @@ public enum Flavor implements FlavorSupport {
         }
 
         @Override
-        public int getVersionDigits() {
+        public int versionDigits() {
             return 3;
         }
 
         @Override
         public String formatRdbVersion(int version) {
-            return lappend(version, 3, '0');
+            return lappend(version, versionDigits(), '0');
         }
 
         @Override
@@ -99,7 +99,7 @@ public enum Flavor implements FlavorSupport {
         // If Valkey's versioning evolves to require different RDB formats per release,
         // consider introducing a more granular Flavor (e.g., VALKEY_9, VALKEY_10) at that point.
         @Override
-        public String getSlaveRdbVersion() {
+        public String slaveRdbVersion() {
             return "9.0.0";
         }
 

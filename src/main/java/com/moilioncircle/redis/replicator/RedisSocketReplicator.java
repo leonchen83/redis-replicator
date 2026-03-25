@@ -196,7 +196,7 @@ public class RedisSocketReplicator extends AbstractReplicator {
         sendSlaveCapa("eof");
         sendSlaveCapa("psync2");
         if (configuration.getFlavor() == Flavor.VALKEY) {
-            sendSlaveRdbVersion(configuration.getFlavor().getSlaveRdbVersion());
+            sendSlaveRdbVersion(configuration.getFlavor().slaveRdbVersion());
         }
         if (this.replFilters != null) {
             for (ReplFilter filter : this.replFilters) {

@@ -195,6 +195,9 @@ public class RedisSocketReplicator extends AbstractReplicator {
         sendSlaveIp();
         sendSlaveCapa("eof");
         sendSlaveCapa("psync2");
+        if (configuration.getFlavor() == Flavor.VALKEY) {
+            sendSlaveRdbVersion(configuration.getFlavor().getSlaveRdbVersion());
+        }
         if (this.replFilters != null) {
             for (ReplFilter filter : this.replFilters) {
                 sendSlaveFilter(filter);
@@ -265,6 +268,16 @@ public class RedisSocketReplicator extends AbstractReplicator {
         logger.warn("[REPLCONF ip-address {}] failed. {}", socket.getLocalAddress().getHostAddress(), reply);
     }
     
+    protected void sendSlaveRdbVersion(String version) throws IOException {
+        // REPLCONF rdb-version ${version}
+        logger.info("REPLCONF version {}", version);
+        send("REPLCONF".getBytes(), "version".getBytes(), version.getBytes());
+        final String reply = Strings.toString(reply());
+        logger.info(reply);
+        if (Objects.equals(reply, "OK")) return;
+        logger.warn("[REPLCONF rdb-version {}] failed. {}", version, reply);
+    }
+
     protected void sendSlaveCapa(String cmd) throws IOException {
         // REPLCONF capa eof
         logger.info("REPLCONF capa {}", cmd);

@@ -65,6 +65,14 @@ public enum Flavor {
         }
     }
 
+    // "9.0.0" is the minimum Valkey server version whose RDB format this replicator supports.
+    // If Valkey's versioning evolves to require different RDB formats per release,
+    // consider introducing a more granular Flavor (e.g., VALKEY_9, VALKEY_10) at that point.
+    public String getSlaveRdbVersion() {
+        if (this == VALKEY) return "9.0.0";
+        throw new UnsupportedOperationException(this + " does not use slave RDB version negotiation");
+    }
+
     public void validateRdbVersion(int version) {
         if (this == REDIS) {
             if (version < 2 || version > RDB_VERSION) {

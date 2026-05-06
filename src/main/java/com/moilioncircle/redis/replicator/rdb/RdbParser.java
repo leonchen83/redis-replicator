@@ -29,6 +29,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SLOT_INFO;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
@@ -295,6 +296,9 @@ public class RdbParser {
                     break;
                 case RDB_TYPE_STREAM_LISTPACKS_3:
                     event = rdbVisitor.applyStreamListPacks3(in, version, kv);
+                    break;
+                case RDB_TYPE_HASH_2:
+                    event = rdbVisitor.applyHash2(in, version, kv);
                     break;
                 case RDB_TYPE_HASH_METADATA:
                     event = rdbVisitor.applyHashMetadata(in, version, kv);

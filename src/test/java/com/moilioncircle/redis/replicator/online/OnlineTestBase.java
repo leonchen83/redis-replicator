@@ -16,6 +16,8 @@
 
 package com.moilioncircle.redis.replicator.online;
 
+import org.junit.Rule;
+
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.Flavor;
 
@@ -34,6 +36,9 @@ public abstract class OnlineTestBase {
     protected static final int PORT = 6379;
     protected static final Flavor FLAVOR = "valkey".equalsIgnoreCase(System.getProperty("test.flavor"))
             ? Flavor.VALKEY : null;
+
+    @Rule
+    public final FlavorRule flavorRule = new FlavorRule();
 
     protected Configuration config() {
         Configuration config = Configuration.defaultSetting().setRetries(0);

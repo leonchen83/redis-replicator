@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.rdb;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FREQ;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
@@ -497,11 +498,23 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
     
     @Override
+    public Event applyHash2(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        KeyValuePair<byte[], Map<byte[], TTLValue>> o22 = new KeyStringValueTTLHash();
+        byte[] key = parser.rdbLoadEncodedStringObject().first();
+        TTLByteArrayMap map = valueVisitor.applyHash2(in, version);
+        o22.setValueRdbType(RDB_TYPE_HASH_2);
+        o22.setValue(map);
+        o22.setKey(key);
+        return context.valueOf(o22);
+    }
+
+    @Override
     public Event applyHashMetadata(RedisInputStream in, int version, ContextKeyValuePair context) throws IOException{
         BaseRdbParser parser = new BaseRdbParser(in);
         KeyValuePair<byte[], Map<byte[], TTLValue>> o24 = new KeyStringValueTTLHash();
         byte[] key = parser.rdbLoadEncodedStringObject().first();
-        
+
         TTLByteArrayMap map = valueVisitor.applyHashMetadata(in, version);
         o24.setValueRdbType(RDB_TYPE_HASH_METADATA);
         o24.setValue(map);
@@ -646,7 +659,9 @@ public class DefaultRdbVisitor extends RdbVisitor {
                 return (KeyValuePair<?, ?>) applyStreamListPacks2(in, version, context);
             case RDB_TYPE_STREAM_LISTPACKS_3:
                 return (KeyValuePair<?, ?>) applyStreamListPacks3(in, version, context);
-            case RDB_TYPE_HASH_LISTPACK_EX: 
+            case RDB_TYPE_HASH_2:
+                return (KeyValuePair<?, ?>) applyHash2(in, version, context);
+            case RDB_TYPE_HASH_LISTPACK_EX:
                 return (KeyValuePair<?, ?>) applyHashListPackEx(in, version, context);
             case RDB_TYPE_HASH_METADATA:
                 return (KeyValuePair<?, ?>) applyHashMetadata(in, version, context);

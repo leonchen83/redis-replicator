@@ -443,6 +443,21 @@ public class DefaultRdbValueVisitor extends RdbValueVisitor {
     }
     
     @Override
+    public <T> T applyHash2(RedisInputStream in, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        long len = parser.rdbLoadLen().len;
+        TTLByteArrayMap map = new TTLByteArrayMap();
+        while (len > 0) {
+            byte[] field = parser.rdbLoadEncodedStringObject().first();
+            byte[] value = parser.rdbLoadEncodedStringObject().first();
+            long expiry = parser.rdbLoadMillisecondTime();
+            map.put(field, new TTLValue(expiry == -1L ? null : expiry, value));
+            len--;
+        }
+        return (T) map;
+    }
+
+    @Override
     public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException{
         BaseRdbParser parser = new BaseRdbParser(in);
         long minExpire = parser.rdbLoadMillisecondTime();

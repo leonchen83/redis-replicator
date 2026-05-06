@@ -19,6 +19,7 @@ package com.moilioncircle.redis.replicator.rdb.dump.parser;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
@@ -148,6 +149,8 @@ public class DefaultDumpValueParser implements DumpValueParser {
                     return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks2(in, 0));
                 case RDB_TYPE_STREAM_LISTPACKS_3:
                     return KeyValuePairs.stream(kv, valueVisitor.applyStreamListPacks3(in, 0));
+                case RDB_TYPE_HASH_2:
+                    return KeyValuePairs.ttlHash(kv, valueVisitor.applyHash2(in, 0));
                 case RDB_TYPE_HASH_LISTPACK_EX:
                     return KeyValuePairs.ttlHash(kv, valueVisitor.applyHashListPackEx(in, 0));
                 case RDB_TYPE_HASH_METADATA:

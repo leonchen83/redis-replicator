@@ -19,6 +19,10 @@ package com.moilioncircle.redis.replicator;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.moilioncircle.redis.replicator.cmd.CommandName;
+import com.moilioncircle.redis.replicator.cmd.parser.HExpireAtParser;
+import com.moilioncircle.redis.replicator.cmd.parser.HExpireParser;
+import com.moilioncircle.redis.replicator.cmd.parser.HPExpireParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
 
@@ -67,6 +71,14 @@ public enum Flavor implements FlavorSupport {
         @Override
         public RdbVisitor rdbVisitor(Replicator replicator) {
             return new DefaultRdbVisitor(replicator);
+        }
+
+        @Override
+        public void extendCommandParsers(Replicator replicator) {
+            // since valkey 9
+            replicator.addCommandParser(CommandName.name("HEXPIRE"), new HExpireParser());
+            replicator.addCommandParser(CommandName.name("HPEXPIRE"), new HPExpireParser());
+            replicator.addCommandParser(CommandName.name("HEXPIREAT"), new HExpireAtParser());
         }
     };
 

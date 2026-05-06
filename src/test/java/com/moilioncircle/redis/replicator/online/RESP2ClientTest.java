@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.client.RESP2;
 import com.moilioncircle.redis.replicator.client.RESP2Client;
 

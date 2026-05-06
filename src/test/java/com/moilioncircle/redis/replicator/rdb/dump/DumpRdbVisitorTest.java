@@ -17,6 +17,7 @@
 package com.moilioncircle.redis.replicator.rdb.dump;
 
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
@@ -42,6 +43,7 @@ import org.junit.Test;
 
 import com.moilioncircle.redis.replicator.Configuration;
 import com.moilioncircle.redis.replicator.FileType;
+import com.moilioncircle.redis.replicator.Flavor;
 import com.moilioncircle.redis.replicator.RedisReplicator;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
@@ -1098,6 +1100,132 @@ public class DumpRdbVisitorTest {
         });
         replicator.open();
         
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            Map.Entry<byte[], TTLValue> e1 = expected.get(i);
+            Map.Entry<byte[], byte[]> e2 = actual.get(i);
+            assertArrayEquals(e1.getKey(), e2.getKey());
+            assertArrayEquals(e1.getValue().getValue(), e2.getValue());
+        }
+    }
+
+    // dump-hash2.rdb was generated against Valkey 9 (RDB v80) with:
+    //   CONFIG SET hash-max-listpack-entries 0     # force hashtable encoding so the type byte is RDB_TYPE_HASH_2 (0x16),
+    //                                              # not RDB_TYPE_HASH_LISTPACK_EX
+    //   HSET ttlhash2 field1 value1 ... field5 value5
+    //   HEXPIRE ttlhash2 <secs> FIELDS 1 fieldN    # one HEXPIRE per field, distinct TTLs
+    //   SAVE
+    // then copy <dir>/dump.rdb to src/test/resources/dump-hash2.rdb.
+    @Test
+    @SuppressWarnings("resource")
+    public void testHash2Passthrough() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dump-hash2.rdb")
+                , FileType.RDB, Configuration.defaultSetting().setFlavor(Flavor.VALKEY));
+        List<Map.Entry<byte[], TTLValue>> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueTTLHash) {
+                    KeyStringValueTTLHash kv = (KeyStringValueTTLHash) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("ttlhash2") && kv.getValueRdbType() == RDB_TYPE_HASH_2) {
+                        for (Map.Entry<byte[], TTLValue> entry: kv.getValue().entrySet()) {
+                            expected.add(entry);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dump-hash2.rdb")
+                , FileType.RDB, Configuration.defaultSetting().setFlavor(Flavor.VALKEY));
+        List<Map.Entry<byte[], TTLValue>> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("ttlhash2") && kv.getValueRdbType() == RDB_TYPE_HASH_2) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueTTLHash kv = (KeyStringValueTTLHash) event;
+                            for (Map.Entry<byte[], TTLValue> entry: kv.getValue().entrySet()) {
+                                actual.add(entry);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+
+        assertEquals(expected.size(), actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            Map.Entry<byte[], TTLValue> e1 = expected.get(i);
+            Map.Entry<byte[], TTLValue> e2 = actual.get(i);
+            assertArrayEquals(e1.getKey(), e2.getKey());
+            assertArrayEquals(e1.getValue().getValue(), e2.getValue().getValue());
+            assertEquals(e1.getValue().getExpires(), e2.getValue().getExpires());
+        }
+    }
+
+    @Test
+    @SuppressWarnings("resource")
+    public void testHash2DowngradeToHash() throws IOException {
+        Replicator replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dump-hash2.rdb")
+                , FileType.RDB, Configuration.defaultSetting().setFlavor(Flavor.VALKEY));
+        List<Map.Entry<byte[], TTLValue>> expected = new ArrayList<>();
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (event instanceof KeyStringValueTTLHash) {
+                    KeyStringValueTTLHash kv = (KeyStringValueTTLHash) event;
+                    String key = new String(kv.getKey());
+                    if (key.equals("ttlhash2") && kv.getValueRdbType() == RDB_TYPE_HASH_2) {
+                        for (Map.Entry<byte[], TTLValue> entry: kv.getValue().entrySet()) {
+                            expected.add(entry);
+                        }
+                    }
+                }
+            }
+        });
+        replicator.open();
+
+        replicator = new RedisReplicator(DumpRdbVisitorTest.class.
+                getClassLoader().getResourceAsStream("dump-hash2.rdb")
+                , FileType.RDB, Configuration.defaultSetting().setFlavor(Flavor.VALKEY));
+        List<Map.Entry<byte[], byte[]>> actual = new ArrayList<>();
+        replicator.setRdbVisitor(new DumpRdbVisitor(replicator, 79));
+        replicator.addEventListener(new EventListener() {
+            @Override
+            public void onEvent(Replicator replicator, Event event) {
+                if (!(event instanceof DumpKeyValuePair)) return;
+                DumpKeyValuePair kv = (DumpKeyValuePair) event;
+                String key = new String(kv.getKey());
+                if (key.equals("ttlhash2") && kv.getValueRdbType() == RDB_TYPE_HASH) {
+                    DumpValueParser parser = new DefaultDumpValueParser(replicator);
+                    parser.parse(kv, new EventListener() {
+                        @Override
+                        public void onEvent(Replicator replicator, Event event) {
+                            KeyStringValueHash kv = (KeyStringValueHash) event;
+                            for (Map.Entry<byte[], byte[]> entry: kv.getValue().entrySet()) {
+                                actual.add(entry);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        replicator.open();
+
         assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             Map.Entry<byte[], TTLValue> e1 = expected.get(i);

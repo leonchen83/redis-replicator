@@ -98,6 +98,7 @@ public class Constants {
     public static final int RDB_TYPE_STREAM_LISTPACKS_2 = 19;
     public static final int RDB_TYPE_SET_LISTPACK = 20; /* since redis 7.2 */
     public static final int RDB_TYPE_STREAM_LISTPACKS_3 = 21; /* since redis 7.2 */
+    public static final int RDB_TYPE_HASH_2 = 22; /* valkey 9, hash with field-level expiration */
     public static final int RDB_TYPE_HASH_METADATA = 24; /* since redis 7.4 */
     public static final int RDB_TYPE_HASH_LISTPACK_EX = 25; /* since redis 7.4 */
     

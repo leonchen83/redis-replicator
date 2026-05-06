@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Leon Chen
+ * Copyright 2026
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package com.moilioncircle.redis.replicator;
+package com.moilioncircle.redis.replicator.online;
 
-import com.moilioncircle.redis.replicator.rdb.RdbVisitor;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * @author Baoyi Chen
+ * Skips a test class or method unless {@code -Dtest.flavor=valkey} is set.
+ * Enforced by {@link FlavorRule}, which is wired into {@link OnlineTestBase}.
  */
-public interface FlavorSupport {
-
-	String magic();
-
-	int resolveRdbVersion(String version);
-
-	boolean isValidRdbVersion(int version);
-
-	RdbVisitor rdbVisitor(Replicator replicator);
-
-	default void extendCommandParsers(Replicator replicator) {
-	}
-
-	default String prepend(String suffix) {
-		return magic().toLowerCase() + suffix;
-	}
+@Retention(RUNTIME)
+@Target({TYPE, METHOD})
+public @interface EnabledIfValkey {
 }

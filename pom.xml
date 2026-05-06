@@ -428,6 +428,16 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Run tests on the classpath instead of the module path so JUnit
+                         can reflect on @Rule fields without requiring `opens` directives
+                         in module-info.java. -->
+                    <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

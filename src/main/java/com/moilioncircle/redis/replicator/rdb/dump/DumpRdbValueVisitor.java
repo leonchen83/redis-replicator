@@ -24,6 +24,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_EOF
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_FUNCTION2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
+import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_2;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_LISTPACK_EX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_METADATA;
@@ -561,6 +562,46 @@ public class DumpRdbValueVisitor extends DefaultRdbValueVisitor {
         }
     }
     
+    @Override
+    public <T> T applyHash2(RedisInputStream in, int version) throws IOException {
+        if (this.version != -1 && this.version < 80 /* since valkey rdb version 80 */) {
+            // downgrade to RDB_TYPE_HASH, dropping per-field TTLs
+            BaseRdbParser parser = new BaseRdbParser(in);
+            BaseRdbEncoder encoder = new BaseRdbEncoder();
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH, version);
+            try (ByteBufferOutputStream out = new ByteBufferOutputStream(size)) {
+                long len = parser.rdbLoadLen().len;
+                listener.handle(encoder.rdbSaveLen(len));
+                while (len > 0) {
+                    ByteArray field = parser.rdbLoadEncodedStringObject();
+                    encoder.rdbGenericSaveStringObject(field, out);
+                    ByteArray value = parser.rdbLoadEncodedStringObject();
+                    encoder.rdbGenericSaveStringObject(value, out);
+                    parser.rdbLoadMillisecondTime(); // ignore per-field expiry
+                    len--;
+                }
+                listener.handle(out.toByteBuffer());
+                return (T) listener.getBytes();
+            }
+        } else {
+            DefaultRawByteListener listener = new DefaultRawByteListener((byte) RDB_TYPE_HASH_2, version);
+            replicator.addRawByteListener(listener);
+            try {
+                SkipRdbParser skipParser = new SkipRdbParser(in);
+                long len = skipParser.rdbLoadLen().len;
+                while (len > 0) {
+                    skipParser.rdbLoadEncodedStringObject();
+                    skipParser.rdbLoadEncodedStringObject();
+                    skipParser.rdbLoadMillisecondTime();
+                    len--;
+                }
+            } finally {
+                replicator.removeRawByteListener(listener);
+            }
+            return (T) listener.getBytes();
+        }
+    }
+
     @Override
     public <T> T applyHashMetadata(RedisInputStream in, int version) throws IOException {
         if (this.version != -1 && this.version < 12 /* since redis rdb version 12 */) {

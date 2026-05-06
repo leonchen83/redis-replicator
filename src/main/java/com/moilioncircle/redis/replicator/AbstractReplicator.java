@@ -347,6 +347,8 @@ public abstract class AbstractReplicator extends AbstractReplicatorListener impl
         addCommandParser(CommandName.name("XDELEX"), new XDelExParser());
         // since redis 8.4
         addCommandParser(CommandName.name("MSETEX"), new MSetExParser());
+        // flavor-specific parsers (e.g., Valkey 9 hash field TTL)
+        configuration.getFlavor().extendCommandParsers(this);
     }
     
     @Override

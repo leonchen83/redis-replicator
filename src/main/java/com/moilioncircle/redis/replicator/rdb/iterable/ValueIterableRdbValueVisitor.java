@@ -577,6 +577,32 @@ public class ValueIterableRdbValueVisitor extends DefaultRdbValueVisitor {
         };
         return (T) val;
     }
+    
+    @Override
+    public <T> T applyHash2(RedisInputStream in, int version) throws IOException {
+        BaseRdbParser parser = new BaseRdbParser(in);
+        long len = parser.rdbLoadLen().len;
+        Iterator<Map.Entry<byte[], TTLValue>> val = new Iter<Map.Entry<byte[], TTLValue>>(len, parser) {
+            @Override
+            public boolean hasNext() {
+                return condition > 0;
+            }
+            
+            @Override
+            public Map.Entry<byte[], TTLValue> next() {
+                try {
+                    byte[] field = parser.rdbLoadEncodedStringObject().first();
+                    byte[] value = parser.rdbLoadEncodedStringObject().first();
+                    long expiry = parser.rdbLoadMillisecondTime();
+                    condition--;
+                    return new AbstractMap.SimpleEntry<>(field, new TTLValue(expiry == -1L ? null : expiry, value));
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        };
+        return (T) val;
+    }
 
     private static abstract class Iter<T> implements Iterator<T> {
 

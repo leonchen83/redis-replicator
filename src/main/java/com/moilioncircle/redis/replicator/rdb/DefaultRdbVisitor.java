@@ -49,10 +49,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.moilioncircle.redis.replicator.FlavorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.moilioncircle.redis.replicator.FlavorSupport;
 import com.moilioncircle.redis.replicator.Replicator;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.io.RedisInputStream;

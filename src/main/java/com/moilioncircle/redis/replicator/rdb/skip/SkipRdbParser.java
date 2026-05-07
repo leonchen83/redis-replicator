@@ -16,11 +16,6 @@
 
 package com.moilioncircle.redis.replicator.rdb.skip;
 
-import com.moilioncircle.redis.replicator.io.RedisInputStream;
-import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
-
-import java.io.IOException;
-
 import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT16;
 import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT32;
 import static com.moilioncircle.redis.replicator.Constants.RDB_ENC_INT8;
@@ -31,6 +26,11 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_FLO
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_SINT;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_STRING;
 import static com.moilioncircle.redis.replicator.Constants.RDB_MODULE_OPCODE_UINT;
+
+import java.io.IOException;
+
+import com.moilioncircle.redis.replicator.io.RedisInputStream;
+import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 
 /**
  * @author Leon Chen

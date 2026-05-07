@@ -46,7 +46,6 @@ import com.moilioncircle.redis.replicator.rdb.BaseRdbParser;
 import com.moilioncircle.redis.replicator.rdb.DefaultRdbVisitor;
 import com.moilioncircle.redis.replicator.rdb.RdbValueVisitor;
 import com.moilioncircle.redis.replicator.rdb.datatype.ContextKeyValuePair;
-import com.moilioncircle.redis.replicator.rdb.datatype.KeyStringValueTTLHash;
 import com.moilioncircle.redis.replicator.rdb.datatype.KeyValuePair;
 import com.moilioncircle.redis.replicator.rdb.datatype.TTLValue;
 import com.moilioncircle.redis.replicator.rdb.datatype.ZSetEntry;
@@ -54,7 +53,6 @@ import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueBy
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueTTLMapEntryIterator;
 import com.moilioncircle.redis.replicator.rdb.iterable.datatype.KeyStringValueZSetEntryIterator;
-import com.moilioncircle.redis.replicator.util.TTLByteArrayMap;
 
 /**
  * @author Leon Chen

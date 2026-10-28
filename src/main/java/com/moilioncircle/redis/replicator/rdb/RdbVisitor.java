@@ -74,6 +74,10 @@ public abstract class RdbVisitor {
         throw new UnsupportedOperationException("must implement this method.");
     }
 
+    public Event applySlotImport(RedisInputStream in, int version) throws IOException {
+        throw new UnsupportedOperationException("must implement this method.");
+    }
+
     /*
      * checksum
      */

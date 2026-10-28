@@ -169,6 +169,19 @@ public class DefaultRdbVisitor extends RdbVisitor {
     }
 
     @Override
+    public Event applySlotImport(RedisInputStream in, int version) throws IOException {
+        // slot import state is server-internal and not emitted as an event, so skip it without allocating
+        SkipRdbParser parser = new SkipRdbParser(in);
+        parser.rdbLoadEncodedStringObject();
+        long ranges = parser.rdbLoadLen().len;
+        for (long i = 0; i < ranges; i++) {
+            parser.rdbLoadLen();
+            parser.rdbLoadLen();
+        }
+        return null;
+    }
+
+    @Override
     public Event applyAux(RedisInputStream in, int version) throws IOException {
         BaseRdbParser parser = new BaseRdbParser(in);
         String auxKey = Strings.toString(parser.rdbLoadEncodedStringObject().first());

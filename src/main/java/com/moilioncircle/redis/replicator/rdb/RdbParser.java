@@ -27,6 +27,7 @@ import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_IDLE;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_MODULE_AUX;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_RESIZEDB;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SELECTDB;
+import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SLOT_IMPORT;
 import static com.moilioncircle.redis.replicator.Constants.RDB_OPCODE_SLOT_INFO;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH;
 import static com.moilioncircle.redis.replicator.Constants.RDB_TYPE_HASH_2;
@@ -61,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.moilioncircle.redis.replicator.AbstractReplicator;
+import com.moilioncircle.redis.replicator.Flavor;
 import com.moilioncircle.redis.replicator.event.Event;
 import com.moilioncircle.redis.replicator.event.PostRdbSyncEvent;
 import com.moilioncircle.redis.replicator.event.PreRdbSyncEvent;
@@ -306,6 +308,12 @@ public class RdbParser {
                 case RDB_TYPE_HASH_LISTPACK_EX:
                     event = rdbVisitor.applyHashListPackEx(in, version, kv);
                     break;
+                case RDB_OPCODE_SLOT_IMPORT:
+                    // redis 8.6+ writes 243 as RDB_OPCODE_KEY_META with a different layout, so redis falls through to default
+                    if (replicator.getConfiguration().getFlavor() == Flavor.VALKEY) {
+                        event = rdbVisitor.applySlotImport(in, version);
+                        break;
+                    }
                 default:
                     throw new AssertionError("unexpected value type:" + type + ", check your ModuleParser or ValueIterableRdbVisitor.");
             }

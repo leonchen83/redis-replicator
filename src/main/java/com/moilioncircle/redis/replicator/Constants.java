@@ -61,6 +61,7 @@ public class Constants {
     /**
      * rdb protocol
      */
+    public static final int RDB_OPCODE_SLOT_IMPORT = 243; /* valkey 9 only, slot import state of atomic slot migration (cluster mode only). */
     public static final int RDB_OPCODE_SLOT_INFO = 244; /* Individual slot info, such as slot id and size (cluster mode only). */
     public static final int RDB_OPCODE_FUNCTION = 246;
     public static final int RDB_OPCODE_FUNCTION2 = 245;

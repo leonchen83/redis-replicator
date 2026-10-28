@@ -38,3 +38,20 @@ jobs:
         run: mvn clean package -DskipTests -P CI --batch-mode --quiet
       - name: Test
         run: mvn test ${{ matrix.flavor == 'valkey' && '-Dtest.flavor=valkey' || '' }} --batch-mode --quiet
+
+  valkey-cluster:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    name: Test (valkey-9-cluster)
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup JDK 11
+        uses: actions/setup-java@v5
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          check-latest: false
+      - name: Compile
+        run: mvn clean package -DskipTests -P CI --batch-mode --quiet
+      - name: Test
+        run: .github/scripts/valkey-cluster.sh test valkey/valkey:9 --batch-mode --quiet
